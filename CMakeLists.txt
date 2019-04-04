@@ -34,5 +34,4 @@ endif()
 
 subdirs(File Compiler)
 subdirs(FileFormats/Blend)
-subdirs(Example)
 subdirs(FileTest)
