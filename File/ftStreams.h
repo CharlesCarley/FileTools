@@ -68,32 +68,25 @@ public:
 
 	void open(const char* path, ftStream::StreamMode mode);
 	void close(void);
+	bool eof(void) const;
 
-	bool isOpen(void)   const {return m_handle != 0;}
-	bool eof(void)      const;
+    FBTsize     read(void* dest, FBTsize nr) const;
+    void        write(ftMemoryStream &ms) const;
+    FBTsize     write(const void* src, FBTsize nr);
+	
+    FBTsize     writef(const char* buf, ...);
+	FBTsize     position(void) const;
+	FBTsize     size(void)     const;
+	FBTsize     seek(FBTint32 off, FBTint32 way);
 
-	FBTsize  read(void* dest, FBTsize nr) const;
-	FBTsize  write(const void* src, FBTsize nr);
-	FBTsize  writef(const char* buf, ...);
 
-
-	FBTsize  position(void) const;
-	FBTsize  size(void)     const;
-	FBTsize seek(FBTint32 off, FBTint32 way);
-
-	void write(ftMemoryStream &ms) const;
+    ftINLINE bool isOpen(void) const { return m_handle != 0; }
 
 protected:
-
-
-	ftFixedString<272> m_file;
-	ftFileHandle       m_handle;
+	ftFileHandle        m_handle;
 	int                 m_mode;
 	int					m_size;
 };
-
-
-
 
 #if ftUSE_GZ_FILE == 1
 
@@ -117,11 +110,8 @@ public:
 	FBTsize  position(void) const;
 	FBTsize size(void) const;
 
-	// watch it no size / seek
-
+	// no size / seek
 protected:
-
-
 	ftFixedString<272> m_file;
 	ftFileHandle       m_handle;
 	int                 m_mode;
@@ -145,10 +135,10 @@ public:
 	void open(const void* buffer, FBTsize size, ftStream::StreamMode mode,bool compressed=false);
 
 
-	bool     isOpen(void)    const   {return m_buffer != 0;}
-	bool     eof(void)       const   {return !m_buffer || m_pos >= m_size;}
-	FBTsize  position(void)  const   {return m_pos;}
-	FBTsize  size(void)      const   {return m_size;}
+	ftINLINE bool     isOpen(void)    const   {return m_buffer != 0;}
+    ftINLINE bool     eof(void)       const   {return !m_buffer || m_pos >= m_size;}
+    ftINLINE FBTsize  position(void)  const   {return m_pos;}
+    ftINLINE FBTsize  size(void)      const   {return m_size;}
 
 	FBTsize  read(void* dest, FBTsize nr) const;
 	FBTsize  write(const void* src, FBTsize nr);

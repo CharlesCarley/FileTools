@@ -31,46 +31,37 @@
 
 
 ftFileStream::ftFileStream() 
-	:    m_file(), m_handle(0), m_mode(0), m_size(0)
+	: m_handle(0), m_mode(0), m_size(0)
 {
 }
-
 
 ftFileStream::~ftFileStream()
 {
 	close();
 }
 
-
-
 void ftFileStream::open(const char* p, ftStream::StreamMode mode)
 {
-	if (m_handle != 0 && m_file != p)
+	if (m_handle != 0 &&  p != 0)
 		fclose((FILE *)m_handle);
 
-	char fm[3] = {0, 0, 0};
+	char fm[3] = {};
 	char* mp = &fm[0];
 	if (mode & ftStream::SM_READ)
 		*mp++ = 'r';
 	else if (mode & ftStream::SM_WRITE)
 		*mp++ = 'w';
 	*mp++ = 'b';
-	fm[2] = 0;
 
-	m_file = p;
-	m_handle = fopen(m_file.c_str(), fm);
-
+	m_handle = fopen(p, fm);
 	if (m_handle && (mode & ftStream::SM_READ))
 	{
 		FILE *fp = (FILE*)m_handle;
+        fseek(fp, 0, SEEK_END);
 
-		position();
-		fseek(fp, 0, SEEK_END);
-		m_size = ftell(fp);
+        m_size = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 	}
-
-
 }
 
 
@@ -81,8 +72,6 @@ void ftFileStream::close(void)
 		fclose((FILE*)m_handle);
 		m_handle = 0;
 	}
-
-	m_file.clear();
 }
 
 

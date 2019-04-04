@@ -1504,14 +1504,14 @@ enum ftPRIM_TYPE
 	ftPRIM_CHAR,		// 0
 	ftPRIM_UCHAR,		// 1
 	ftPRIM_SHORT,		// 2
-	ftPRIM_USHORT,	// 3
-	ftPRIM_INT,		// 4
+	ftPRIM_USHORT,	    // 3
+	ftPRIM_INT,		    // 4
 	ftPRIM_LONG,		// 5
 	ftPRIM_ULONG,		// 6
 	ftPRIM_FLOAT,		// 7
-	ftPRIM_DOUBLE,	// 8
+	ftPRIM_DOUBLE,	    // 8
 	ftPRIM_VOID,		// 9
-	ftPRIM_UNKNOWN	// 10
+	ftPRIM_UNKNOWN	    // 10
 };
 
 ftPRIM_TYPE ftGetPrimType(FBTuint32 typeKey);

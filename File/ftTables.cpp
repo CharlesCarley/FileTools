@@ -166,20 +166,18 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 			}
 		}
 		++cp;
-
-		//ftPrintf("%d %d: %s %s %u %u\n", m_nameNr, m_base.size(), name.m_name, bn.c_str(), name.m_nameId, bn.hash());
-
 		m_name[m_nameNr++] = name;
 		m_base.push_back(bn.hash());
 		++i;
 	}
 
-	// read alignment
-	opad = (FBTintPtr)cp;
+    
+    opad = (FBTintPtr)cp;
 	opad = ((opad + 3) & ~3) - opad;
 	while (opad--) cp++;
 
-	if (!ftCharNEq(cp, ftIdNames::ftTYPE, 4))
+
+    if (!ftCharNEq(cp, ftIdNames::ftTYPE, 4))
 	{
 		ftPrintf("Bin table is missing the type id!\n");
 		return false;
@@ -214,11 +212,9 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 		++i;
 	}
 
-	// read alignment
-	opad = (FBTintPtr)cp;
+    opad = (FBTintPtr)cp;
 	opad = ((opad + 3) & ~3) - opad;
 	while (opad--) cp++;
-
 	if (!ftCharNEq(cp, ftIdNames::ftTLEN, 4))
 	{
 		ftPrintf("Bin table is missing the tlen id!\n");
@@ -226,22 +222,18 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	}
 
 	cp += 4;
-
 	tp = (FBTtype*)cp;
 
-	i = 0;
+    i = 0;
 	while (i < m_typeNr)
 	{
-
 		m_tlen[i] = *tp++;
 		if (swap)
 			m_tlen[i] = ftSwap16(m_tlen[i]);
 		++i;
 	}
 
-	// read alignment
-	if (m_typeNr & 1) ++tp;
-
+    if (m_typeNr & 1) ++tp;
 	cp = (char*)tp;
 
 	if (!ftCharNEq(cp, ftIdNames::ftSTRC, 4))
@@ -252,8 +244,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
 	cp += 4;
 
-
-	ip = (FBTuint32*)cp;
+    ip = (FBTuint32*)cp;
 	nl = *ip++;
 	tp = (FBTtype*)ip;
 
@@ -267,32 +258,25 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	else
 		m_strc = (Strcs)ftMalloc(nl * ftMaxMember * sizeof(FBTtype) + 1);
 
-
 	m_typeFinder.reserve(m_typeNr);
-
 
 	i = 0;
 	while (i < nl)
 	{
 		m_strc[m_strcNr++] = tp;
-
-
 		if (swap)
 		{
 			tp[0] = ftSwap16(tp[0]);
 			tp[1] = ftSwap16(tp[1]);
 
 			m_type[tp[0]].m_strcId = m_strcNr - 1;
-
 			m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
-
-			k = tp[1];
+            k = tp[1];
 			ftASSERT( k < ftMaxMember );
 
 			j = 0;
 			tp += 2;
-
 			while (j < k)
 			{
 				tp[0] = ftSwap16(tp[0]);
@@ -310,7 +294,6 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
 			tp += (2 * tp[1]) + 2;
 		}
-
 		++i;
 	}
 
@@ -388,7 +371,7 @@ void ftBinTables::compile(void)
 
 	if (!m_strc || m_strcNr <= 0)
 	{
-		ftPrintf("Build ==> No structurs.");
+		ftPrintf("Build ==> No structures.");
 		return;
 	}
 

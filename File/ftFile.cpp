@@ -58,12 +58,9 @@ struct ftChunk
 		Block32     = sizeof (ftFile::Chunk32),
 		Block64     = sizeof (ftFile::Chunk64),
 	};
-
 	static int read(ftFile::Chunk* dest, ftStream* stream, int flags);
 	static int write(ftFile::Chunk* src, ftStream* stream);
 };
-
-
 
 
 ftFile::ftFile(const char* uid)
@@ -90,19 +87,12 @@ ftFile::~ftFile()
 	while (node)
 	{
 		if (node->m_block)
-		{
-			//printf("free  m_block: 0x%x\n", node->m_block);fflush(stdout);
 			ftFree(node->m_block);
-		}
 		if (node->m_newBlock)
-		{
-			//printf("free m_newBlock: 0x%x\n", node->m_newBlock);fflush(stdout);
 			ftFree(node->m_newBlock);
-		}
 
-		tnd  = node;
+        tnd  = node;
 		node = node->m_next;
-
 		ftFree(tnd);
 	}
 
@@ -123,9 +113,7 @@ int ftFile::parse(const char* path, int mode)
 			stream = new ftGzStream();
 		else
 #endif
-		{
 			stream = new ftFileStream();
-		}
 
 		stream->open(path, ftStream::SM_READ);
 	}
@@ -146,7 +134,6 @@ int ftFile::parse(const char* path, int mode)
 
 
 	FBTsize pl = strlen(path);
-
 	m_curFile = (char*)ftMalloc(pl + 1);
 	if (m_curFile)
 	{
@@ -292,14 +279,13 @@ int ftFile::parseStreamImpl(ftStream* stream, bool suppressHeaderWarning)
 
 
 		void* curPtr = ftMalloc(chunk.m_len);
-		//printf("alloc curPtr: 0x%x\n", curPtr);fflush(stdout);
 		if (!curPtr)
 		{
 			ftMALLOC_FAILED;
 			return FS_BAD_ALLOC;
 		}
 
-		if (stream->read(curPtr, chunk.m_len) <= 0)
+        if (stream->read(curPtr, chunk.m_len) <= 0)
 		{
 			ftINVALID_READ;
 			return FS_INV_READ;
@@ -419,10 +405,9 @@ ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer,
 	for (i = 0; i < s; i++)
 	{
 		ftStruct* strc2 = &md[i];
-
 		if (strc2->m_nr == member->m_nr && strc2->m_dp ==  member->m_dp)
 		{
-			if (strc2->m_val.k32[1] == member->m_val.k32[1]) //base name
+			if (strc2->m_val.k32[1] == member->m_val.k32[1])
 			{				
 				if (!strc2->m_keyChain.equal(member->m_keyChain))
 					continue;
@@ -468,20 +453,19 @@ int ftLinkCompiler::link(void)
 			strc->m_link->m_link = strc;
 
 		p2 = strc->m_members.ptr();
-
-		//ftPrintf("+%-3d %s\n", i, m_mp->getStructType(strc));
 		for (i2 = 0; i2 < strc->m_members.size(); ++i2)
 		{
 			ftStruct* member = &strc->m_members[i2];
-			//ftPrintf("  %3d %s %s\n", i2, m_mp->getStructType(strc2), m_mp->getStructName(strc2));
-
 			ftASSERT(!member->m_link);
-			member->m_flag |= strc->m_link ? 0 : ftStruct::MISSING;
+
+            
+            member->m_flag |= strc->m_link ? 0 : ftStruct::MISSING;
 
 			if (!(member->m_flag & ftStruct::MISSING))
 			{
 				ftASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
-				bool isPointer = m_mp->m_name[member->m_key.k16[1]].m_ptrCount > 0;
+			
+                bool isPointer = m_mp->m_name[member->m_key.k16[1]].m_ptrCount > 0;
 				bool needCast = false;
 				member->m_link = find(strc->m_link, member, isPointer, needCast);
 				if (member->m_link)
@@ -529,7 +513,6 @@ void castValue(FBTsize* srcPtr, FBTsize* dstPtr, ftPRIM_TYPE srctp, ftPRIM_TYPE 
 		ptr += sizeof(cast); \
 		if (++match >= 2) continue; \
 	}
-
 	double value = 0.0;
 
 	FBTsizeType i;
@@ -588,8 +571,6 @@ int ftFile::link(void)
 		{
 			FBTsize totSize = node->m_chunk.m_len;
 			node->m_newBlock = ftMalloc(totSize);
-			//printf("alloc1 m_newBlock: 0x%x %d\n", node->m_newBlock, totSize);fflush(stdout);
-
 			if (!node->m_newBlock)
 			{
 				ftMALLOC_FAILED;
@@ -600,59 +581,44 @@ int ftFile::link(void)
 			continue;
 		}
 
-
-		if (skip(m_memory->m_type[ms->m_key.k16[0]].m_typeId))
+        if (skip(m_memory->m_type[ms->m_key.k16[0]].m_typeId))
 			continue;
 
 
 		FBTsize totSize = (node->m_chunk.m_nr * ms->m_len);
-
 		node->m_chunk.m_len = totSize;
 
-
-		node->m_newBlock = ftMalloc(totSize);
-		//printf("alloc2 m_newBlock: 0x%x %d\n", node->m_newBlock, totSize);fflush(stdout);
-
+        node->m_newBlock = ftMalloc(totSize);
 		if (!node->m_newBlock)
 		{
 			ftMALLOC_FAILED;
 			return FS_BAD_ALLOC;
 		}
 
-
-
-		// always zero this
-		ftMemset(node->m_newBlock, 0, totSize);
+        ftMemset(node->m_newBlock, 0, totSize);
 	}
 
 
 
 	FBTuint8 mps = m_memory->m_ptr, fps = m_file->m_ptr;
-
 	for (node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
 	{
 		if (node->m_newTypeId > m_memory->m_strcNr)
 			continue;
 
-
-
-		ftStruct* cs = md[node->m_newTypeId];
+        ftStruct* cs = md[node->m_newTypeId];
 		if (m_memory->m_type[cs->m_key.k16[0]].m_typeId == hk)
 			continue;
 
 		if (!cs->m_link || skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
 		{
-			//printf("free  m_newBlock: 0x%x \n", node->m_newBlock);fflush(stdout);
-
 			ftFree(node->m_newBlock);
 			node->m_newBlock = 0;
-
 			continue;
 		}
 
 		s2 = cs->m_members.size();
 		p2 = cs->m_members.ptr();
-
 		for (n = 0; n < node->m_chunk.m_nr; ++n)
 		{
 			dst = static_cast<char*>(node->m_newBlock) + (cs->m_len * n);
@@ -664,20 +630,14 @@ int ftFile::link(void)
 				ftStruct* dstStrc = &p2[i2];
 				ftStruct* srcStrc = dstStrc->m_link;
 
-				// If it's missing we can safely skip this block
-				if (!srcStrc)
+                if (!srcStrc)
 					continue;
-
-
-				dstPtr = reinterpret_cast<FBTsize*>(dst + dstStrc->m_off);
+                
+                dstPtr = reinterpret_cast<FBTsize*>(dst + dstStrc->m_off);
 				srcPtr = reinterpret_cast<FBTsize*>(src + srcStrc->m_off);
 
-
-
-				const ftName& nameD = m_memory->m_name[dstStrc->m_key.k16[1]];
+                const ftName& nameD = m_memory->m_name[dstStrc->m_key.k16[1]];
 				const ftName& nameS = m_file->m_name[srcStrc->m_key.k16[1]];
-
-
 				if (nameD.m_ptrCount > 0)
 				{
 					if ((*srcPtr))
@@ -691,18 +651,15 @@ int ftFile::link(void)
 									(*dstPtr) = (FBTsize)bin->m_newBlock;
 								else
 								{
-									// take pointer size out of the equation
 									total = bin->m_chunk.m_len / fps;
-
-
 									FBTsize* nptr = (FBTsize*)ftMalloc(total * mps);
 									ftMemset(nptr, 0, total * mps);
 
-									// always use 32 bit, then offset + 2 for 64 bit (Old pointers are sorted in this mannor)
+									// always use 32 bit, then offset + 2 for 64 bit 
+                                    // (Old pointers are sorted in this manor)
 									FBTuint32* optr = (FBTuint32*)bin->m_block;
 
-
-									for (pi = 0; pi < total; pi++, optr += (fps == 4 ? 1 : 2))
+                                    for (pi = 0; pi < total; pi++, optr += (fps == 4 ? 1 : 2))
 										nptr[pi] = (FBTsize)findPtr((FBTsize) * optr);
 
 									(*dstPtr) = (FBTsize)(nptr);
@@ -725,7 +682,8 @@ int ftFile::link(void)
 
 							FBTsize* dptr = (FBTsize*)dstPtr;
 
-							// always use 32 bit, then offset + 2 for 64 bit (Old pointers are sorted in this mannor)
+							// always use 32 bit, then offset + 2 for 64 bit 
+                            // (Old pointers are sorted in this manor)
 							FBTuint32* sptr = (FBTuint32*)srcPtr;
 
 
@@ -744,9 +702,7 @@ int ftFile::link(void)
 
 					if (!needCast && !needSwap && srcStrc->m_val.k32[0] == dstStrc->m_val.k32[0]) //same type
 					{						
-						// Take the minimum length of any array.
 						mlen = ftMin(srcStrc->m_len, dstStrc->m_len);
-
 						ftMemcpy(dstPtr, srcPtr, mlen);
 						continue;
 					}
@@ -756,7 +712,7 @@ int ftFile::link(void)
 
 					ftPRIM_TYPE stp = ftPRIM_UNKNOWN, dtp  = ftPRIM_UNKNOWN;
 
-					if (needCast || needSwap)
+                    if (needCast || needSwap)
 					{
 						stp = ftGetPrimType(srcStrc->m_val.k32[0]);
 						dtp = ftGetPrimType(dstStrc->m_val.k32[0]);
@@ -802,9 +758,7 @@ int ftFile::link(void)
 		notifyData(node->m_newBlock, node->m_chunk);
 	}
 
-
-
-	for (node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
+    for (node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
 	{
 		if (node->m_block)
 		{
@@ -812,12 +766,8 @@ int ftFile::link(void)
 			node->m_block = 0;
 		}
 	}
-
 	return ftFile::FS_OK;
 }
-
-
-
 
 void* ftFile::findPtr(const FBTsize& iptr)
 {
@@ -873,26 +823,14 @@ int ftFile::save(const char* path, const int mode, const ftEndian& endian)
 	FBTuint8 cp = ftVOID8 ? FM_64_BIT : FM_32_BIT;
 	FBTuint8 ce = ((FBTuint8)ftGetEndian()) == ftENDIAN_IS_BIG ? FM_BIG_ENDIAN : FM_LITTLE_ENDIAN;
 
-//	Commented for now since the rest of the code does not care
-//	if (endian != ftENDIAN_NATIVE)
-//	{
-//		if (endian == ftENDIAN_IS_BIG)
-//			ce = FM_BIG_ENDIAN;
-//		else
-//			ce = FM_LITTLE_ENDIAN;
-//	}
-
-	// put magic
-	//fs->writef("%s%c%c%i", m_uhid, cp, ce, m_version);
 	char header[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
 	char version[33];
 	sprintf(version, "%i",m_version);
 	
 	strncpy(&header[0], m_uhid, 7); // 7 first bytes of header
 	header[7] = cp;					// 8th byte = pointer size
-	header[8] = ce;					// 9th byte = endianness
-	strncpy(&header[9], version, 3);// last 3 bytes vor 3 version char
-	
+	header[8] = ce;					// 9th byte = endian
+	strncpy(&header[9], version, 3);// last 3 bytes v or 3 version char
 	fs->write(header, 12);
 	
 	writeData(fs);
@@ -966,7 +904,6 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 
 	if (ftVOID8)
 	{
-
 		if (bitsVary)
 		{
 			ftFile::Chunk32 src;
@@ -1000,24 +937,18 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 			}
 		}
 
-
-		if (swapEndian)
+        if (swapEndian)
 		{
 			if ((c64.m_code & 0xFFFF) == 0)
 				c64.m_code >>= 16;
-
 			c64.m_len    = ftSwap32(c64.m_len);
 			c64.m_nr     = ftSwap32(c64.m_nr);
 			c64.m_typeid = ftSwap32(c64.m_typeid);
 		}
-
-
-
 		cpy = (ftFile::Chunk*)(&c64);
 	}
 	else
 	{
-
 		if (bitsVary)
 		{
 			ftFile::Chunk64 src;
@@ -1026,12 +957,8 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 				ftINVALID_READ;
 				return ftFile::FS_INV_READ;
 			}
-
-			// copy down
-
 			c32.m_code    = src.m_code;
 			c32.m_len     = src.m_len;
-
 			union
 			{
 				FBTuint64   m_ptr;
@@ -1041,7 +968,7 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 			ptr.m_doublePtr[1] = 0;
 			ptr.m_ptr = src.m_old;
 
-			c32.m_old       = ptr.m_doublePtr[0] != 0 ? ptr.m_doublePtr[0] : ptr.m_doublePtr[1];
+            c32.m_old       = ptr.m_doublePtr[0] != 0 ? ptr.m_doublePtr[0] : ptr.m_doublePtr[1];
 			c32.m_typeid    = src.m_typeid;
 			c32.m_nr        = src.m_nr;
 		}
@@ -1053,20 +980,14 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 				return ftFile::FS_INV_READ;
 			}
 		}
-
-
 		if (swapEndian)
 		{
 			if ((c32.m_code & 0xFFFF) == 0)
 				c32.m_code >>= 16;
-
 			c32.m_len    = ftSwap32(c32.m_len);
 			c32.m_nr     = ftSwap32(c32.m_nr);
 			c32.m_typeid = ftSwap32(c32.m_typeid);
 		}
-
-
-
 		cpy = (ftFile::Chunk*)(&c32);
 	}
 

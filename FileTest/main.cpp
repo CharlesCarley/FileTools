@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 		return 1;
 
     ftBlend fp;
-	if (fp.parse(argv[argc-1], ftFile::PM_READTOMEMORY) != ftFile::FS_OK)
+	if (fp.parse(argv[argc-1], ftFile::PM_UNCOMPRESSED) != ftFile::FS_OK)
 	{
 		return 1;
 	}
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     for (Mesh* me = (Mesh*)mesh.first; me; me = (Mesh*)me->id.next)
     {
         ftPrintf("     Name                : %s\n", me->id.name + 2);
-        ftPrintf("     Total Verticies     : %i\n", me->totvert);
+        ftPrintf("     Total Vertices      : %i\n", me->totvert);
         ftPrintf("     Total Faces         : %i\n", me->totface);
         ftPrintf("     Total Polygons      : %i\n", me->totpoly);
 
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
         {
             for (int f = 0; f < me->totpoly; ++f)
             {
-                ftPrintf("     Poly %i:\n", f);
+                ftPrintf("     Polygon %i:\n", f);
                 Blender::MPoly& cp = me->mpoly[f];
                 for (int i = 0; i < cp.totloop; ++i)
                 {
