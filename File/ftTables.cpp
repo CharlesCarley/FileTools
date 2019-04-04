@@ -134,7 +134,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	i = 0;
 	while (i < nl && i < ftMaxTable)
 	{
-		ftName name = {cp, i, ftCharHashKey(cp).hash(), 0, 0, 0, 1};
+		ftName name = {cp, (int)i, ftCharHashKey(cp).hash(), 0, 0, 0, 1};
 
 		ftFixedString<64> bn;
 
@@ -205,7 +205,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	i = 0;
 	while (i < nl)
 	{
-		ftType typeData = {cp, ftCharHashKey(cp).hash(), -1};
+		ftType typeData = {cp, ftCharHashKey(cp).hash(), FileTools_NPOS};
 		m_type[m_typeNr++] = typeData;
 		while (*cp) ++cp;
 		++cp;

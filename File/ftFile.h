@@ -29,7 +29,6 @@ class ftBinTables;
 class ftFile
 {
 public:
-
 	enum FileMagic
 	{
 		FM_BIG_ENDIAN       = 'V',
@@ -38,11 +37,10 @@ public:
 		FM_64_BIT           = '-',
 
 		// place custom rules here, note that the
-		// full header string must be <= 12 char's
+		// full header string must be <= 12 chars
 	};
 
-
-	enum FileStatus
+    enum FileStatus
 	{
 		FS_LINK_FAILED = -7,
 		FS_INV_INSERT,
@@ -54,8 +52,7 @@ public:
 		FS_OK,
 	};
 
-
-	enum ParseMode
+    enum ParseMode
 	{
 		PM_UNCOMPRESSED,
 		PM_COMPRESSED,
@@ -70,8 +67,7 @@ public:
 		FH_VAR_BITS     = (1 << 2),
 	};
 
-
-	struct Chunk32
+    struct Chunk32
 	{
 		FBTuint32       m_code;
 		FBTuint32       m_len;
@@ -89,8 +85,7 @@ public:
 		FBTuint32       m_nr;
 	};
 
-
-	struct Chunk
+    struct Chunk
 	{
 		FBTuint32       m_code;
 		FBTuint32       m_len;
@@ -99,8 +94,7 @@ public:
 		FBTuint32       m_nr;
 	};
 
-
-	struct MemoryChunk
+    struct MemoryChunk
 	{
 		enum Flag
 		{
@@ -121,11 +115,8 @@ public:
 	ftFile(const char* uid);
 	virtual ~ftFile();
 
-
-	int parse(const char* path, int mode = PM_UNCOMPRESSED);
+    int parse(const char* path, int mode = PM_UNCOMPRESSED);
 	int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED, bool suppressHeaderWarning=false);
-
-
 
 	/// Saving in non native endianness is not implemented yet.
 	int save(const char* path, const int mode = PM_UNCOMPRESSED, const ftEndian& endian = FileTools_ENDIAN_NATIVE);
@@ -136,16 +127,13 @@ public:
 
 
 	ftBinTables* getMemoryTable(void)  {
-    
         if (!m_memory)
             initializeMemory();
         return m_memory;
     }
 	ftBinTables* getFileTable(void)    {return m_file;}
 
-
-	ftList& getChunks(void) {return m_chunks;}
-
+	FileTools_INLINE ftList& getChunks(void) {return m_chunks;}
     virtual void setIgnoreList(FBTuint32 *stripList) {}
 
 	bool _setuid(const char* uid);
@@ -180,6 +168,7 @@ protected:
 
 
 	virtual bool skip(const FBTuint32& id) {return false;}
+
 	void* findPtr(const FBTsize& iptr);
 	MemoryChunk* findBlock(const FBTsize& iptr);
 

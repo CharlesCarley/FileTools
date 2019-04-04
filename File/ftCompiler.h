@@ -31,13 +31,9 @@ typedef ftArray<ftId>               ftStringPtrArray;
 typedef ftArray<ftPath>             ftPathArray;
 
 
-
-
-
 class ftVariable
 {
 public:
-
 	ftVariable()
 		:   m_type(), 
 			m_name(), 
@@ -83,7 +79,7 @@ public:
 public:
 
     ftCompileStruct()
-		:   m_structId(-1),
+		:   m_structId(FileTools_NPOS),
 		    m_line(-1),
 		    m_nrDependentTypes(0)
 	{
