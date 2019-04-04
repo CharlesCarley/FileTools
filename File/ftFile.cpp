@@ -17,7 +17,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define FileTools_IN_SOURCE
+#define ftIN_SOURCE
 
 #include "ftFile.h"
 #include "ftStreams.h"
@@ -25,27 +25,27 @@
 #include "ftPlatformHeaders.h"
 
 // Common Identifiers
-const FBTuint32 ENDB = FileTools_ID('E', 'N', 'D', 'B');
-const FBTuint32 DNA1 = FileTools_ID('D', 'N', 'A', '1');
-const FBTuint32 DATA = FileTools_ID('D', 'A', 'T', 'A');
-const FBTuint32 SDNA = FileTools_ID('S', 'D', 'N', 'A');
+const FBTuint32 ENDB = ftID('E', 'N', 'D', 'B');
+const FBTuint32 DNA1 = ftID('D', 'N', 'A', '1');
+const FBTuint32 DATA = ftID('D', 'A', 'T', 'A');
+const FBTuint32 SDNA = ftID('S', 'D', 'N', 'A');
 
 
 // Compile asserts
-FileTools_ASSERTCOMP(ChunkLen32, sizeof(ftFile::Chunk32) == 20);
-FileTools_ASSERTCOMP(ChunkLen64, sizeof(ftFile::Chunk64) == 24);
+ftASSERTCOMP(ChunkLen32, sizeof(ftFile::Chunk32) == 20);
+ftASSERTCOMP(ChunkLen64, sizeof(ftFile::Chunk64) == 24);
 
-#if FileTools_ARCH == FileTools_ARCH_32
-FileTools_ASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
+#if ftARCH == ftARCH_32
+ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
 #else
-FileTools_ASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
+ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
 #endif
 
-#define FileTools_MALLOC_FAILED   ftPrintf("Failed to allocate memory!\n");
-#define FileTools_INVALID_READ    ftPrintf("Invalid read!\n");
-#define FileTools_INVALID_LEN     ftPrintf("Invalid block length!\n");
-#define FileTools_INVALID_INS     ftPrintf("Table insertion failed!\n");
-#define FileTools_LINK_FAILED     ftPrintf("Linking failed!\n");
+#define ftMALLOC_FAILED   ftPrintf("Failed to allocate memory!\n");
+#define ftINVALID_READ    ftPrintf("Invalid read!\n");
+#define ftINVALID_LEN     ftPrintf("Invalid block length!\n");
+#define ftINVALID_INS     ftPrintf("Table insertion failed!\n");
+#define ftLINK_FAILED     ftPrintf("Linking failed!\n");
 
 
 struct ftChunk
@@ -116,7 +116,7 @@ int ftFile::parse(const char* path, int mode)
 
 	if (mode == PM_UNCOMPRESSED || mode == PM_COMPRESSED)
 	{
-#if FileTools_USE_GZ_FILE == 1
+#if ftUSE_GZ_FILE == 1
 		if (mode == PM_COMPRESSED)
 			stream = new ftGzStream();
 		else
@@ -195,19 +195,19 @@ int ftFile::parseHeader(ftStream* stream, bool suppressHeaderWarning)
 	if (*(headerMagic++) == FM_64_BIT)
 	{
 		m_fileHeader |= FH_CHUNK_64;
-		if (FileTools_VOID4)
+		if (ftVOID4)
 			m_fileHeader |= FH_VAR_BITS;
 	}
-	else if (FileTools_VOID8)
+	else if (ftVOID8)
 		m_fileHeader |= FH_VAR_BITS;
 
 
 	if (*(headerMagic++) == FM_BIG_ENDIAN)
 	{
-		if (FileTools_ENDIAN_IS_LITTLE)
+		if (ftENDIAN_IS_LITTLE)
 			m_fileHeader |= FH_ENDIAN_SWAP;
 	}
-	else if (FileTools_ENDIAN_IS_BIG)
+	else if (ftENDIAN_IS_BIG)
 		m_fileHeader |= FH_ENDIAN_SWAP;
 
 
@@ -272,7 +272,7 @@ int ftFile::parseStreamImpl(ftStream* stream, bool suppressHeaderWarning)
 	{
 		if ((status = ftChunk::read(&chunk, stream, m_fileHeader)) <= 0)
 		{
-			FileTools_INVALID_READ;
+			ftINVALID_READ;
 			return FS_INV_READ;
 		}
 
@@ -293,13 +293,13 @@ int ftFile::parseStreamImpl(ftStream* stream, bool suppressHeaderWarning)
 		//printf("alloc curPtr: 0x%x\n", curPtr);fflush(stdout);
 		if (!curPtr)
 		{
-			FileTools_MALLOC_FAILED;
+			ftMALLOC_FAILED;
 			return FS_BAD_ALLOC;
 		}
 
 		if (stream->read(curPtr, chunk.m_len) <= 0)
 		{
-			FileTools_INVALID_READ;
+			ftINVALID_READ;
 			return FS_INV_READ;
 		}
 
@@ -319,28 +319,28 @@ int ftFile::parseStreamImpl(ftStream* stream, bool suppressHeaderWarning)
 
 			if ((status = link()) != FS_OK)
 			{
-				FileTools_LINK_FAILED;
+				ftLINK_FAILED;
 				return FS_LINK_FAILED;
 			}
 			break;
 		}
 		else
 		{
-#if FileTools_ASSERT_INSERT
+#if ftASSERT_INSERT
 			FBTsizeType pos;
-			if ((pos = m_map.find(chunk.m_old)) != FileTools_NPOS)
+			if ((pos = m_map.find(chunk.m_old)) != ftNPOS)
 			{
 				ftFree(curPtr);
 				curPtr = 0;
 				int result = ftMemcmp(&m_map.at(pos)->m_chunk, &chunk, ftChunk::BlockSize);
 				if (result != 0)
 				{
-					FileTools_INVALID_READ;
+					ftINVALID_READ;
 					return FS_INV_READ;
 				}
 			}
 #else
-			if (m_map.find(chunk.m_old) != FileTools_NPOS)
+			if (m_map.find(chunk.m_old) != ftNPOS)
 			{
 				//printf("free  curPtr: 0x%x\n", curPtr);
 				ftFree(curPtr);
@@ -352,7 +352,7 @@ int ftFile::parseStreamImpl(ftStream* stream, bool suppressHeaderWarning)
 				MemoryChunk* bin = static_cast<MemoryChunk*>(ftMalloc(sizeof(MemoryChunk)));
 				if (!bin)
 				{
-					FileTools_MALLOC_FAILED;
+					ftMALLOC_FAILED;
 					return FS_BAD_ALLOC;
 				}
 				ftMemset(bin, 0, sizeof(MemoryChunk));
@@ -368,7 +368,7 @@ int ftFile::parseStreamImpl(ftStream* stream, bool suppressHeaderWarning)
 
 				if (m_map.insert(bin->m_chunk.m_old, bin) == false)
 				{
-					FileTools_INVALID_INS;
+					ftINVALID_INS;
 					return FS_INV_INSERT;
 				}
 			}
@@ -473,12 +473,12 @@ int ftLinkCompiler::link(void)
 			ftStruct* member = &strc->m_members[i2];
 			//ftPrintf("  %3d %s %s\n", i2, m_mp->getStructType(strc2), m_mp->getStructName(strc2));
 
-			FileTools_ASSERT(!member->m_link);
+			ftASSERT(!member->m_link);
 			member->m_flag |= strc->m_link ? 0 : ftStruct::MISSING;
 
 			if (!(member->m_flag & ftStruct::MISSING))
 			{
-				FileTools_ASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
+				ftASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
 				bool isPointer = m_mp->m_name[member->m_key.k16[1]].m_ptrCount > 0;
 				bool needCast = false;
 				member->m_link = find(strc->m_link, member, isPointer, needCast);
@@ -510,7 +510,7 @@ void copyValues(FBTbyte* srcPtr, FBTbyte* dstPtr, FBTsize srcElmSize, FBTsize ds
 	}
 }
 
-void castValue(FBTsize* srcPtr, FBTsize* dstPtr, FileTools_PRIM_TYPE srctp, FileTools_PRIM_TYPE dsttp, FBTsize len)
+void castValue(FBTsize* srcPtr, FBTsize* dstPtr, ftPRIM_TYPE srctp, ftPRIM_TYPE dsttp, FBTsize len)
 {
 #define GET_V(value, current, type, cast, ptr, match) \
 	if (current == type) \
@@ -534,20 +534,20 @@ void castValue(FBTsize* srcPtr, FBTsize* dstPtr, FileTools_PRIM_TYPE srctp, File
 	for (i = 0; i < len; i++)
 	{
 		int match = 0;
-		GET_V(value, srctp, FileTools_PRIM_CHAR,    char,            srcPtr, match);
-		SET_V(value, dsttp, FileTools_PRIM_CHAR,    char,            dstPtr, match);
-		GET_V(value, srctp, FileTools_PRIM_SHORT,   short,           srcPtr, match);
-		SET_V(value, dsttp, FileTools_PRIM_SHORT,   short,           dstPtr, match);
-		GET_V(value, srctp, FileTools_PRIM_USHORT,  unsigned short,  srcPtr, match);
-		SET_V(value, dsttp, FileTools_PRIM_USHORT,  unsigned short,  dstPtr, match);
-		GET_V(value, srctp, FileTools_PRIM_INT,     int,             srcPtr, match);
-		SET_V(value, dsttp, FileTools_PRIM_INT,     int,             dstPtr, match);
-		GET_V(value, srctp, FileTools_PRIM_LONG,    int,             srcPtr, match);
-		SET_V(value, dsttp, FileTools_PRIM_LONG,    int,             dstPtr, match);
-		GET_V(value, srctp, FileTools_PRIM_FLOAT,   float,           srcPtr, match);
-		SET_V(value, dsttp, FileTools_PRIM_FLOAT,   float,           dstPtr, match);
-		GET_V(value, srctp, FileTools_PRIM_DOUBLE,  double,          srcPtr, match);
-		SET_V(value, dsttp, FileTools_PRIM_DOUBLE,  double,          dstPtr, match);
+		GET_V(value, srctp, ftPRIM_CHAR,    char,            srcPtr, match);
+		SET_V(value, dsttp, ftPRIM_CHAR,    char,            dstPtr, match);
+		GET_V(value, srctp, ftPRIM_SHORT,   short,           srcPtr, match);
+		SET_V(value, dsttp, ftPRIM_SHORT,   short,           dstPtr, match);
+		GET_V(value, srctp, ftPRIM_USHORT,  unsigned short,  srcPtr, match);
+		SET_V(value, dsttp, ftPRIM_USHORT,  unsigned short,  dstPtr, match);
+		GET_V(value, srctp, ftPRIM_INT,     int,             srcPtr, match);
+		SET_V(value, dsttp, ftPRIM_INT,     int,             dstPtr, match);
+		GET_V(value, srctp, ftPRIM_LONG,    int,             srcPtr, match);
+		SET_V(value, dsttp, ftPRIM_LONG,    int,             dstPtr, match);
+		GET_V(value, srctp, ftPRIM_FLOAT,   float,           srcPtr, match);
+		SET_V(value, dsttp, ftPRIM_FLOAT,   float,           dstPtr, match);
+		GET_V(value, srctp, ftPRIM_DOUBLE,  double,          srcPtr, match);
+		SET_V(value, dsttp, ftPRIM_DOUBLE,  double,          dstPtr, match);
 	}
 #undef GET_V
 #undef SET_V
@@ -590,7 +590,7 @@ int ftFile::link(void)
 
 			if (!node->m_newBlock)
 			{
-				FileTools_MALLOC_FAILED;
+				ftMALLOC_FAILED;
 				return FS_BAD_ALLOC;
 			}
 
@@ -613,7 +613,7 @@ int ftFile::link(void)
 
 		if (!node->m_newBlock)
 		{
-			FileTools_MALLOC_FAILED;
+			ftMALLOC_FAILED;
 			return FS_BAD_ALLOC;
 		}
 
@@ -752,14 +752,14 @@ int ftFile::link(void)
 					FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
 					FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
 
-					FileTools_PRIM_TYPE stp = FileTools_PRIM_UNKNOWN, dtp  = FileTools_PRIM_UNKNOWN;
+					ftPRIM_TYPE stp = ftPRIM_UNKNOWN, dtp  = ftPRIM_UNKNOWN;
 
 					if (needCast || needSwap)
 					{
 						stp = ftGetPrimType(srcStrc->m_val.k32[0]);
 						dtp = ftGetPrimType(dstStrc->m_val.k32[0]);
 
-						FileTools_ASSERT(ftIsNumberType(stp) && ftIsNumberType(dtp) && stp != dtp);
+						ftASSERT(ftIsNumberType(stp) && ftIsNumberType(dtp) && stp != dtp);
 					}
 
 					FBTsize alen = ftMin(nameS.m_arraySize, nameD.m_arraySize);
@@ -775,11 +775,11 @@ int ftFile::link(void)
 							tmp = tmpBuf;
 							ftMemcpy(tmpBuf, srcBPtr, srcElmSize);
 
-							if (stp == FileTools_PRIM_SHORT || stp == FileTools_PRIM_USHORT) 
+							if (stp == ftPRIM_SHORT || stp == ftPRIM_USHORT) 
 								ftSwap16((FBTuint16*)tmpBuf, 1);
-							else if (stp >= FileTools_PRIM_INT && stp <= FileTools_PRIM_FLOAT) 
+							else if (stp >= ftPRIM_INT && stp <= ftPRIM_FLOAT) 
 								ftSwap32((FBTuint32*)tmpBuf, 1);
-							else if (stp == FileTools_PRIM_DOUBLE)
+							else if (stp == ftPRIM_DOUBLE)
 								ftSwap64((FBTuint64*)tmpBuf, 1);
 							else
 								ftMemset(tmpBuf, 0, sizeof(tmpBuf)); //unknown type
@@ -820,7 +820,7 @@ int ftFile::link(void)
 void* ftFile::findPtr(const FBTsize& iptr)
 {
 	FBTsizeType i;
-	if ((i = m_map.find(iptr)) != FileTools_NPOS)
+	if ((i = m_map.find(iptr)) != ftNPOS)
 		return m_map.at(i)->m_newBlock;
 	return 0;
 }
@@ -829,7 +829,7 @@ void* ftFile::findPtr(const FBTsize& iptr)
 ftFile::MemoryChunk* ftFile::findBlock(const FBTsize& iptr)
 {
 	FBTsizeType i;
-	if ((i = m_map.find(iptr)) != FileTools_NPOS)
+	if ((i = m_map.find(iptr)) != ftNPOS)
 		return m_map.at(i);
 	return 0;
 }
@@ -856,7 +856,7 @@ int ftFile::save(const char* path, const int mode, const ftEndian& endian)
 {
 	ftStream* fs;
 	
-#if FileTools_USE_GZ_FILE == 1
+#if ftUSE_GZ_FILE == 1
 	if (mode == PM_COMPRESSED)
 		fs = new ftGzStream();
 	else
@@ -868,13 +868,13 @@ int ftFile::save(const char* path, const int mode, const ftEndian& endian)
 	fs->open(path, ftStream::SM_WRITE);
 
 
-	FBTuint8 cp = FileTools_VOID8 ? FM_64_BIT : FM_32_BIT;
-	FBTuint8 ce = ((FBTuint8)ftGetEndian()) == FileTools_ENDIAN_IS_BIG ? FM_BIG_ENDIAN : FM_LITTLE_ENDIAN;
+	FBTuint8 cp = ftVOID8 ? FM_64_BIT : FM_32_BIT;
+	FBTuint8 ce = ((FBTuint8)ftGetEndian()) == ftENDIAN_IS_BIG ? FM_BIG_ENDIAN : FM_LITTLE_ENDIAN;
 
 //	Commented for now since the rest of the code does not care
-//	if (endian != FileTools_ENDIAN_NATIVE)
+//	if (endian != ftENDIAN_NATIVE)
 //	{
-//		if (endian == FileTools_ENDIAN_IS_BIG)
+//		if (endian == ftENDIAN_IS_BIG)
 //			ce = FM_BIG_ENDIAN;
 //		else
 //			ce = FM_LITTLE_ENDIAN;
@@ -962,7 +962,7 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 	ftFile::Chunk*  cpy;
 
 
-	if (FileTools_VOID8)
+	if (ftVOID8)
 	{
 
 		if (bitsVary)
@@ -970,7 +970,7 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 			ftFile::Chunk32 src;
 			if ((bytesRead = stream->read(&src, Block32)) <= 0)
 			{
-				FileTools_INVALID_READ;
+				ftINVALID_READ;
 				return ftFile::FS_INV_READ;
 			}
 
@@ -993,7 +993,7 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 		{
 			if ((bytesRead = stream->read(&c64, BlockSize)) <= 0)
 			{
-				FileTools_INVALID_READ;
+				ftINVALID_READ;
 				return ftFile::FS_INV_READ;
 			}
 		}
@@ -1021,7 +1021,7 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 			ftFile::Chunk64 src;
 			if ((bytesRead = stream->read(&src, Block64)) <= 0)
 			{
-				FileTools_INVALID_READ;
+				ftINVALID_READ;
 				return ftFile::FS_INV_READ;
 			}
 
@@ -1047,7 +1047,7 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 		{
 			if ((bytesRead = stream->read(&c32, BlockSize)) <= 0)
 			{
-				FileTools_INVALID_READ;
+				ftINVALID_READ;
 				return ftFile::FS_INV_READ;
 			}
 		}
@@ -1068,9 +1068,9 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 		cpy = (ftFile::Chunk*)(&c32);
 	}
 
-	if (cpy->m_len == FileTools_NPOS)
+	if (cpy->m_len == ftNPOS)
 	{
-		FileTools_INVALID_LEN;
+		ftINVALID_LEN;
 		return ftFile::FS_INV_LENGTH;
 	}
 

@@ -23,7 +23,7 @@
 
 
 
-const FBTuint32 GLOB = FileTools_ID('G', 'L', 'O', 'B');
+const FBTuint32 GLOB = ftID('G', 'L', 'O', 'B');
 
 struct ftIdDB
 {
@@ -33,34 +33,34 @@ struct ftIdDB
 
 ftIdDB ftData[] =
 {
-	{ FileTools_ID2('S', 'C'), &ftBlend::m_scene},
-	{ FileTools_ID2('L', 'I'), &ftBlend::m_library },
-	{ FileTools_ID2('O', 'B'), &ftBlend::m_object },
-	{ FileTools_ID2('M', 'E'), &ftBlend::m_mesh },
-	{ FileTools_ID2('C', 'U'), &ftBlend::m_curve },
-	{ FileTools_ID2('M', 'B'), &ftBlend::m_mball },
-	{ FileTools_ID2('M', 'A'), &ftBlend::m_mat },
-	{ FileTools_ID2('T', 'E'), &ftBlend::m_tex },
-	{ FileTools_ID2('I', 'M'), &ftBlend::m_image },
-	{ FileTools_ID2('L', 'T'), &ftBlend::m_latt },
-	{ FileTools_ID2('L', 'A'), &ftBlend::m_lamp },
-	{ FileTools_ID2('C', 'A'), &ftBlend::m_camera },
-	{ FileTools_ID2('I', 'P'), &ftBlend::m_ipo },
-	{ FileTools_ID2('K', 'E'), &ftBlend::m_key },
-	{ FileTools_ID2('W', 'O'), &ftBlend::m_world },
-	{ FileTools_ID2('S', 'N'), &ftBlend::m_screen},
-	{ FileTools_ID2('P', 'Y'), &ftBlend::m_script },
-	{ FileTools_ID2('V', 'F'), &ftBlend::m_vfont },
-	{ FileTools_ID2('T', 'X'), &ftBlend::m_text },
-	{ FileTools_ID2('S', 'O'), &ftBlend::m_sound },
-	{ FileTools_ID2('G', 'R'), &ftBlend::m_group },
-	{ FileTools_ID2('A', 'R'), &ftBlend::m_armature },
-	{ FileTools_ID2('A', 'C'), &ftBlend::m_action },
-	{ FileTools_ID2('N', 'T'), &ftBlend::m_nodetree },
-	{ FileTools_ID2('B', 'R'), &ftBlend::m_brush },
-	{ FileTools_ID2('P', 'A'), &ftBlend::m_particle },
-	{ FileTools_ID2('G', 'D'), &ftBlend::m_gpencil },
-	{ FileTools_ID2('W', 'M'), &ftBlend::m_wm },
+	{ ftID2('S', 'C'), &ftBlend::m_scene},
+	{ ftID2('L', 'I'), &ftBlend::m_library },
+	{ ftID2('O', 'B'), &ftBlend::m_object },
+	{ ftID2('M', 'E'), &ftBlend::m_mesh },
+	{ ftID2('C', 'U'), &ftBlend::m_curve },
+	{ ftID2('M', 'B'), &ftBlend::m_mball },
+	{ ftID2('M', 'A'), &ftBlend::m_mat },
+	{ ftID2('T', 'E'), &ftBlend::m_tex },
+	{ ftID2('I', 'M'), &ftBlend::m_image },
+	{ ftID2('L', 'T'), &ftBlend::m_latt },
+	{ ftID2('L', 'A'), &ftBlend::m_lamp },
+	{ ftID2('C', 'A'), &ftBlend::m_camera },
+	{ ftID2('I', 'P'), &ftBlend::m_ipo },
+	{ ftID2('K', 'E'), &ftBlend::m_key },
+	{ ftID2('W', 'O'), &ftBlend::m_world },
+	{ ftID2('S', 'N'), &ftBlend::m_screen},
+	{ ftID2('P', 'Y'), &ftBlend::m_script },
+	{ ftID2('V', 'F'), &ftBlend::m_vfont },
+	{ ftID2('T', 'X'), &ftBlend::m_text },
+	{ ftID2('S', 'O'), &ftBlend::m_sound },
+	{ ftID2('G', 'R'), &ftBlend::m_group },
+	{ ftID2('A', 'R'), &ftBlend::m_armature },
+	{ ftID2('A', 'C'), &ftBlend::m_action },
+	{ ftID2('N', 'T'), &ftBlend::m_nodetree },
+	{ ftID2('B', 'R'), &ftBlend::m_brush },
+	{ ftID2('P', 'A'), &ftBlend::m_particle },
+	{ ftID2('G', 'D'), &ftBlend::m_gpencil },
+	{ ftID2('W', 'M'), &ftBlend::m_wm },
 	{ 0, 0 }
 };
 

@@ -27,16 +27,16 @@
 
 namespace ftIdNames
 {
-    const char FileTools_SDNA[4] = {'S', 'D', 'N', 'A'};
-    const char FileTools_NAME[4] = {'N', 'A', 'M', 'E'}; // Name array
-    const char FileTools_TYPE[4] = {'T', 'Y', 'P', 'E'}; // Type Array
-    const char FileTools_TLEN[4] = {'T', 'L', 'E', 'N'}; // Type length array
-    const char FileTools_STRC[4] = {'S', 'T', 'R', 'C'}; // Struct/Class Array
-    const char FileTools_OFFS[4] = {'O', 'F', 'F', 'S'}; // Offset map (Optional & TODO)
+    const char ftSDNA[4] = {'S', 'D', 'N', 'A'};
+    const char ftNAME[4] = {'N', 'A', 'M', 'E'}; // Name array
+    const char ftTYPE[4] = {'T', 'Y', 'P', 'E'}; // Type Array
+    const char ftTLEN[4] = {'T', 'L', 'E', 'N'}; // Type length array
+    const char ftSTRC[4] = {'S', 'T', 'R', 'C'}; // Struct/Class Array
+    const char ftOFFS[4] = {'O', 'F', 'F', 'S'}; // Offset map (Optional & TODO)
 }
 
 
-FileTools_INLINE ftFixedString<4> ftByteToString(FBTuint32 i)
+ftINLINE ftFixedString<4> ftByteToString(FBTuint32 i)
 {
 	union
 	{
@@ -61,7 +61,7 @@ typedef struct ftName
 	int             m_ptrCount;
 	int             m_numSlots, m_isFptr;
 	int             m_arraySize;
-	int             m_slots[FileTools_ARRAY_SLOTS];
+	int             m_slots[ftARRAY_SLOTS];
 } ftName;
 
 typedef struct ftType
@@ -182,7 +182,7 @@ public:
 	FBTuint32 m_typeNr;
 	FBTuint32 m_strcNr;
 
-	// It's safe to assume that memory len is FileTools_VOID and file len is FH_CHUNK_64 ? 8 : 4
+	// It's safe to assume that memory len is ftVOID and file len is FH_CHUNK_64 ? 8 : 4
 	// Othewise this library will not even compile (no more need for 'sizeof(ListBase) / 2')
 	FBTuint8    m_ptr;
 	void*       m_otherBlock;

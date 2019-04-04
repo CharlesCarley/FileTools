@@ -19,7 +19,7 @@ private:
     virtual int         writeData(ftStream* stream);
 
     // Initializes the memory tables. 
-    // This will be the compiled output from makefbt 
+    // This will be the compiled output from makeft 
     virtual int initializeTables(ftBinTables* tables);
 };
 

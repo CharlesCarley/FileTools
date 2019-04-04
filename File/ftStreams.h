@@ -93,7 +93,7 @@ protected:
 
 
 
-#if FileTools_USE_GZ_FILE == 1
+#if ftUSE_GZ_FILE == 1
 
 class ftGzStream : public ftStream
 {
@@ -151,7 +151,7 @@ public:
 	FBTsize  read(void* dest, FBTsize nr) const;
 	FBTsize  write(const void* src, FBTsize nr);
 	FBTsize  writef(const char* buf, ...);
-#if FileTools_USE_GZ_FILE == 1
+#if ftUSE_GZ_FILE == 1
 	bool gzipInflate( char* inBuf, int inSize);
 #endif
 	void*            ptr(void)          {return m_buffer;}

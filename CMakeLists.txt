@@ -17,19 +17,19 @@
 #------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.4)
 project(FileTools)
-list(APPEND CMAKE_MODULE_PATH ${FileTools_SOURCE_DIR}/CMake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 
 
-set(FileTools_USE_ZLIB 0)
-set(FileTools_ZLIB_INCLUDE "")
-set(FileTools_ZLIB_LIBRARY "")	
+set(ftUSE_ZLIB 0)
+set(ftZLIB_INCLUDE "")
+set(ftZLIB_LIBRARY "")	
 
-if (FileTools_USE_ZLIB)
-    add_definitions(-DFileTools_USE_GZ_FILE=1)
+if (ftUSE_ZLIB)
+    add_definitions(-DftUSE_GZ_FILE=1)
 endif()
 
-#add_definitions(-DFFileTools_USE_COMPILER_CHECKS=0)
-#add_definitions(-DFileTools_USE_DEBUG_ASSERTS=0)
+#add_definitions(-DFftUSE_COMPILER_CHECKS=0)
+#add_definitions(-DftUSE_DEBUG_ASSERTS=0)
 
 
 subdirs(File Compiler)

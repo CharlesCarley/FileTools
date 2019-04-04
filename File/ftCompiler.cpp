@@ -1,6 +1,8 @@
 /*
 -------------------------------------------------------------------------------
-  This software is provided 'as-is', without any express or implied
+    Copyright (c) 2010 Charlie C & Erwin Coumans.
+
+ This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
 
@@ -212,7 +214,7 @@ int ftCompiler::doParse(void)
 							if (TOK == CLASS || TOK == STRUCT)
 								TOK = ftLex(tp);
 
-							if (FileTools_TOK_IS_TYPE(TOK))
+							if (ftTOK_IS_TYPE(TOK))
 							{
 								ftId typeId = tp.m_buf;
 
@@ -238,10 +240,10 @@ int ftCompiler::doParse(void)
 										forceArray = true;
 										break;
 									case CONSTANT:
-										if (cur.m_numSlots + 1 > FileTools_ARRAY_SLOTS)
+										if (cur.m_numSlots + 1 > ftARRAY_SLOTS)
 										{
 											ftPrintf("Maximum number of array slots exceeded!\n");
-											ftPrintf("define FileTools_ARRAY_SLOTS to expand.\nCurrent = [] * %i\n", FileTools_ARRAY_SLOTS);
+											ftPrintf("define ftARRAY_SLOTS to expand.\nCurrent = [] * %i\n", ftARRAY_SLOTS);
 											return -1;
 										}
 
@@ -355,7 +357,7 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
 	fp.writef("\n};\n");
 	fp.writef("int %sLen=sizeof(%sFBT);\n", id.c_str(), id.c_str());
 
-#if FileTools_TYPE_LEN_VALIDATE == 1
+#if ftTYPE_LEN_VALIDATE == 1
 	writeValidationProgram(path.c_str());
 #endif
 }
@@ -367,28 +369,28 @@ void ftCompiler::writeStream(ftStream* fp)
 
 
 	int i;
-	writeBinPtr(fp, (void*)&ftIdNames::FileTools_SDNA[0], 4);
+	writeBinPtr(fp, (void*)&ftIdNames::ftSDNA[0], 4);
 
 
-	writeBinPtr(fp, (void*)&ftIdNames::FileTools_NAME[0], 4);
+	writeBinPtr(fp, (void*)&ftIdNames::ftNAME[0], 4);
 	i = m_build->m_name.size();
-#if FileTools_FAKE_ENDIAN == 1
+#if ftFAKE_ENDIAN == 1
 	i = ftSwap32(i);
 #endif
 	writeBinPtr(fp, &i, 4);
 	writeCharPtr(fp, m_build->m_name);
 
 
-	writeBinPtr(fp, (void*)&ftIdNames::FileTools_TYPE[0], 4);
+	writeBinPtr(fp, (void*)&ftIdNames::ftTYPE[0], 4);
 	i = m_build->m_type.size();
-#if FileTools_FAKE_ENDIAN == 1
+#if ftFAKE_ENDIAN == 1
 	i = ftSwap32(i);
 #endif
 	writeBinPtr(fp, &i, 4);
 	writeCharPtr(fp, m_build->m_type);
 
-	writeBinPtr(fp, (void*)&ftIdNames::FileTools_TLEN[0], 4);
-#if FileTools_FAKE_ENDIAN == 1
+	writeBinPtr(fp, (void*)&ftIdNames::ftTLEN[0], 4);
+#if ftFAKE_ENDIAN == 1
 	for (i = 0; i < (int)m_build->m_tlen.size(); i++)
 		m_build->m_tlen.at(i) = ftSwap16(m_build->m_tlen.at(i));
 #endif
@@ -400,16 +402,16 @@ void ftCompiler::writeStream(ftStream* fp)
 		writeBinPtr(fp, (void*)&pad[0], 2);
 	}
 
-	writeBinPtr(fp, (void*)&ftIdNames::FileTools_STRC[0], 4);
+	writeBinPtr(fp, (void*)&ftIdNames::ftSTRC[0], 4);
 	i = ft_struct_builders.size();
-#if FileTools_FAKE_ENDIAN == 1
+#if ftFAKE_ENDIAN == 1
 	i = ftSwap32(i);
 #endif
 	writeBinPtr(fp, &i, 4);
 
 
 
-#if FileTools_FAKE_ENDIAN == 1
+#if ftFAKE_ENDIAN == 1
 	for (i = 0; i < (int) m_build->m_strc.size(); i++)
 		m_build->m_strc.at(i) = ftSwap16( m_build->m_strc.at(i));
 #endif
@@ -489,7 +491,7 @@ ftBinTables* ftCompiler::write(void)
 
 void ftCompiler::writeValidationProgram(const ftPath& path)
 {
-#if FileTools_TYPE_LEN_VALIDATE == 1
+#if ftTYPE_LEN_VALIDATE == 1
 
 	ftPath string;
 	ftPathArray split;
@@ -522,12 +524,12 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
 
 
-	//ftPrintf("Writing Validator for ==> %s\n", string.c_str());
+	//ftPrintf("Writing validation for ==> %s\n", string.c_str());
 
 	FILE* fp = fopen(string.c_str(), "wb");
 	if (!fp)
 	{
-		ftPrintf("Failed to open validator file %s\n", string.c_str());
+		ftPrintf("Failed to open validation file %s\n", string.c_str());
 		return;
 	}
 
@@ -561,12 +563,12 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 		ftId& cur = m_build->m_type.at(bs.m_structId);
 		FBTtype len = m_build->m_tlen.at(bs.m_structId);
 
-		if (ft_skip.find(cur) != FileTools_NPOS)
+		if (ft_skip.find(cur) != ftNPOS)
 			continue;
 
 
 
-#if FileTools_FAKE_ENDIAN == 1
+#if ftFAKE_ENDIAN == 1
 		len = ftSwap16(len);
 #endif
 		fprintf(fp, "\t");
@@ -628,8 +630,8 @@ void ftBuildInfo::makeBuiltinTypes(void)
 	addType("ulong",        sizeof(long));
 	addType("float",        sizeof(float));
 	addType("double",       sizeof(double));
-#ifdef FileTools_USE_SCALAR
-	addType(FileTools_SCALAR,     sizeof(scalar_t));
+#ifdef ftUSE_SCALAR
+	addType(ftSCALAR,     sizeof(scalar_t));
 #endif
 	addType("void",         0);
 }
@@ -639,7 +641,7 @@ void ftBuildInfo::makeBuiltinTypes(void)
 FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 {
 	FBTsize loc;
-	if ((loc = m_type.find(type)) == FileTools_NPOS)
+	if ((loc = m_type.find(type)) == ftNPOS)
 	{
 		m_alloc.m_type += type.size() + 1;
 		m_alloc.m_tlen += sizeof(FBTtype);
@@ -655,14 +657,14 @@ FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 
 bool ftBuildInfo::hasType(const ftId& type)
 {
-	return m_type.find(type) != FileTools_NPOS;
+	return m_type.find(type) != ftNPOS;
 }
 
 
 FBTsizeType ftBuildInfo::addName(const ftId& name)
 {
 	FBTsize loc;
-	if ((loc = m_name.find(name)) == FileTools_NPOS)
+	if ((loc = m_name.find(name)) == ftNPOS)
 	{
 		m_alloc.m_name += name.size() + 1;
 		loc = m_name.size();
@@ -748,7 +750,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 			if (tlens[cur.m_structId] != 0)
 			{
 				FBTsizeType pos;
-				if ((pos = m_missingReport.find(cur.m_name)) != FileTools_NPOS)
+				if ((pos = m_missingReport.find(cur.m_name)) != ftNPOS)
 					m_missingReport.erase(pos);
 			}
 			else
@@ -768,11 +770,11 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 					if (v.m_ptrCount > 0)
 					{
 						hasPtr = true;
-						if (len % FileTools_VOID)
+						if (len % ftVOID)
 						{
 							ftERROR( v.m_path.c_str(),
-							          v.m_line, "align %i: %s %s add %i bytes\n", FileTools_VOID,
-							          v.m_type.c_str(), v.m_name.c_str(), FileTools_VOID - (len % FileTools_VOID)
+							          v.m_line, "align %i: %s %s add %i bytes\n", ftVOID,
+							          v.m_type.c_str(), v.m_name.c_str(), ftVOID - (len % ftVOID)
 							        );
 
 							status |= LNK_ALIGNEMENTP;
@@ -788,7 +790,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 							status |= LNK_ALIGNEMENTP;
 						}
 
-						len += FileTools_VOID * v.m_arraySize;
+						len += ftVOID * v.m_arraySize;
 						fake64 += 8 * v.m_arraySize;
 
 					}
@@ -797,7 +799,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
 						if (ct >= ft_start)
 						{
-							if (FileTools_VOID8 && (len % 8))
+							if (ftVOID8 && (len % 8))
 							{
 								ftERROR(v.m_path.c_str(),
 								         v.m_line, "align: %i alignment error add %i bytes\n",
@@ -836,7 +838,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 						next ++;
 						len = 0;
 
-						if (m_missingReport.find(cur.m_name) == FileTools_NPOS)
+						if (m_missingReport.find(cur.m_name) == ftNPOS)
 							m_missingReport.push_back(cur.m_name);
 
 						tln64[cur.m_structId] = 0;
@@ -910,7 +912,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 					ftVariable& cvar = it.getNext();
 					ftTRACE(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n",
 					         cvar.m_typeId, cvar.m_nameId,
-					         (cvar.m_ptrCount > 0 ? FileTools_VOID : tlens[cvar.m_typeId]) * cvar.m_arraySize,
+					         (cvar.m_ptrCount > 0 ? ftVOID : tlens[cvar.m_typeId]) * cvar.m_arraySize,
 					         cvar.m_type.c_str(),
 					         cvar.m_name.c_str()
 					        );

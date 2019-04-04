@@ -20,12 +20,12 @@
 #ifndef _ftPlatformHeaders_h_
 #define _ftPlatformHeaders_h_
 
-#ifndef FileTools_IN_SOURCE
+#ifndef ftIN_SOURCE
 #error source include only!
 #endif
 
-#if FileTools_PLATFORM == FileTools_PLATFORM_WIN32
-# if FileTools_COMPILER == FileTools_COMPILER_MSVC
+#if ftPLATFORM == ftPLATFORM_WIN32
+# if ftCOMPILER == ftCOMPILER_MSVC
 #   define _WIN32_WINNT 0x403
 # endif
 # ifndef WIN32_LEAN_AND_MEAN
@@ -46,7 +46,7 @@
 #pragma warning(disable : 4996)
 #endif
 
-#if FileTools_COMPILER == FileTools_COMPILER_MSVC
+#if ftCOMPILER == ftCOMPILER_MSVC
 # define ftp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, fmt, lst)
 #else
 # define ftp_printf vsnprintf

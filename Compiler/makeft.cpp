@@ -19,9 +19,9 @@
 */
 #include "ftCompiler.h"
 
-#ifdef FileTools_USE_SCALAR
-# ifndef FileTools_SCALAR
-#  error FileTools_USE_SCALAR defined without defining a type FileTools_SCALAR="name"
+#ifdef ftUSE_SCALAR
+# ifndef ftSCALAR
+#  error ftUSE_SCALAR defined without defining a type ftSCALAR="name"
 # endif
 #endif
 
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 	if (argc < 4)
 	{
 		ftPrintf("Usage:\n");
-		ftPrintf("\tmakefbt FileId outfile infile[0] ... infine[n]\n");
+		ftPrintf("\t makeft FileId <out-file> <in-file>[0] ... <in-file>[n]\n");
 		return 1;
 	}
 

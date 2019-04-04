@@ -17,12 +17,12 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define FileTools_IN_SOURCE
+#define ftIN_SOURCE
 #include "ftStreams.h"
 #include "ftPlatformHeaders.h"
 
 
-#if FileTools_USE_GZ_FILE == 1
+#if ftUSE_GZ_FILE == 1
 #include "zlib.h"
 #include "zconf.h"
 #endif
@@ -168,7 +168,7 @@ FBTsize ftFileStream::writef(const char* fmt, ...)
 }
 
 
-#if FileTools_USE_GZ_FILE == 1
+#if ftUSE_GZ_FILE == 1
 
 
 ftGzStream::ftGzStream() 
@@ -307,7 +307,7 @@ void ftMemoryStream::open(const ftFileStream& fs, ftStream::StreamMode mode)
 
 void ftMemoryStream::open(const void* buffer, FBTsize size, ftStream::StreamMode mode, bool compressed)
 {
-	if (buffer && size > 0 && size != FileTools_NPOS)
+	if (buffer && size > 0 && size != ftNPOS)
 	{
 		m_mode = mode;
 		m_pos  = 0;
@@ -321,7 +321,7 @@ void ftMemoryStream::open(const void* buffer, FBTsize size, ftStream::StreamMode
 
 		} else
 		{
-#if FileTools_USE_GZ_FILE == 1
+#if ftUSE_GZ_FILE == 1
 			bool result = gzipInflate((char*)buffer,size);
 #endif
 		}
@@ -329,7 +329,7 @@ void ftMemoryStream::open(const void* buffer, FBTsize size, ftStream::StreamMode
 	}
 }
 
-#if FileTools_USE_GZ_FILE == 1
+#if ftUSE_GZ_FILE == 1
 // this method was adapted from this snippet:
 // http://windrealm.org/tutorials/decompress-gzip-stream.php
 bool ftMemoryStream::gzipInflate( char* inBuf, int inSize) {

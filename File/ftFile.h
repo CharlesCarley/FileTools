@@ -118,8 +118,8 @@ public:
     int parse(const char* path, int mode = PM_UNCOMPRESSED);
 	int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED, bool suppressHeaderWarning=false);
 
-	/// Saving in non native endianness is not implemented yet.
-	int save(const char* path, const int mode = PM_UNCOMPRESSED, const ftEndian& endian = FileTools_ENDIAN_NATIVE);
+	/// Saving in non native endian is not implemented yet.
+	int save(const char* path, const int mode = PM_UNCOMPRESSED, const ftEndian& endian = ftENDIAN_NATIVE);
 
     const ftFixedString<12>&    getHeader(void)     const {return m_header;}
 	const int&                  getVersion(void)    const {return m_fileVersion;}
@@ -133,7 +133,7 @@ public:
     }
 	ftBinTables* getFileTable(void)    {return m_file;}
 
-	FileTools_INLINE ftList& getChunks(void) {return m_chunks;}
+	ftINLINE ftList& getChunks(void) {return m_chunks;}
     virtual void setIgnoreList(FBTuint32 *stripList) {}
 
 	bool _setuid(const char* uid);

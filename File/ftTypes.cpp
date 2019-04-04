@@ -20,7 +20,7 @@
 #include "ftTypes.h"
 
 
-#define FileTools_IN_SOURCE
+#define ftIN_SOURCE
 #include "ftPlatformHeaders.h"
 
 
@@ -28,10 +28,10 @@
 // Debug Utilities
 
 
-#ifdef FileTools_DEBUG
+#ifdef ftDEBUG
 bool ftDebugger::isDebugger(void)
 {
-#if FileTools_COMPILER == FileTools_COMPILER_MSVC
+#if ftCOMPILER == ftCOMPILER_MSVC
 	return IsDebuggerPresent() != 0;
 #else
 	return false;
@@ -40,14 +40,14 @@ bool ftDebugger::isDebugger(void)
 
 void ftDebugger::breakProcess(void)
 {
-#if FileTools_COMPILER == FileTools_COMPILER_MSVC
+#if ftCOMPILER == ftCOMPILER_MSVC
 	_asm int 3;
 #else
 	asm("int $3");
 #endif
 }
 
-#else//FileTools_DEBUG
+#else//ftDEBUG
 
 
 bool ftDebugger::isDebugger(void)
@@ -59,10 +59,10 @@ void ftDebugger::breakProcess(void)
 {
 }
 
-#endif//FileTools_DEBUG
+#endif//ftDEBUG
 
 
-#define FileTools_DEBUG_BUF_SIZE (1024)
+#define ftDEBUG_BUF_SIZE (1024)
 ftDebugger::Reporter ftDebugger::m_report = {0, 0};
 
 
@@ -75,17 +75,17 @@ void ftDebugger::setReportHook(Reporter& hook)
 
 void ftDebugger::report(const char* fmt, ...)
 {
-	char ReportBuf[FileTools_DEBUG_BUF_SIZE+1];
+	char ReportBuf[ftDEBUG_BUF_SIZE+1];
 
 	va_list lst;
 	va_start(lst, fmt);
-	int size = ftp_printf(ReportBuf, FileTools_DEBUG_BUF_SIZE, fmt, lst);
+	int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
 	va_end(lst);
 
 	if (size < 0)
 	{
-		ReportBuf[FileTools_DEBUG_BUF_SIZE] = 0;
-		size = FileTools_DEBUG_BUF_SIZE;
+		ReportBuf[ftDEBUG_BUF_SIZE] = 0;
+		size = ftDEBUG_BUF_SIZE;
 	}
 
 	if (size > 0)
@@ -94,7 +94,7 @@ void ftDebugger::report(const char* fmt, ...)
 
 		if (m_report.m_hook)
 		{
-#if FileTools_COMPILER == FileTools_COMPILER_MSVC
+#if ftCOMPILER == ftCOMPILER_MSVC
 			if (IsDebuggerPresent())
 				OutputDebugString(ReportBuf);
 
@@ -104,7 +104,7 @@ void ftDebugger::report(const char* fmt, ...)
 		else
 		{
 
-#if FileTools_COMPILER == FileTools_COMPILER_MSVC
+#if ftCOMPILER == ftCOMPILER_MSVC
 			if (IsDebuggerPresent())
 				OutputDebugString(ReportBuf);
 			else
@@ -118,25 +118,25 @@ void ftDebugger::report(const char* fmt, ...)
 
 void ftDebugger::reportIDE(const char* src, long line, const char* fmt, ...)
 {
-	static char ReportBuf[FileTools_DEBUG_BUF_SIZE+1];
+	static char ReportBuf[ftDEBUG_BUF_SIZE+1];
 
 	va_list lst;
 	va_start(lst, fmt);
 
 
-	int size = ftp_printf(ReportBuf, FileTools_DEBUG_BUF_SIZE, fmt, lst);
+	int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
 	va_end(lst);
 
 	if (size < 0)
 	{
-		ReportBuf[FileTools_DEBUG_BUF_SIZE] = 0;
-		size = FileTools_DEBUG_BUF_SIZE;
+		ReportBuf[ftDEBUG_BUF_SIZE] = 0;
+		size = ftDEBUG_BUF_SIZE;
 	}
 
 	if (size > 0)
 	{
 		ReportBuf[size] = 0;
-#if FileTools_COMPILER == FileTools_COMPILER_MSVC
+#if ftCOMPILER == ftCOMPILER_MSVC
 		report("%s(%i): warning: %s", src, line, ReportBuf);
 #else
 		report("%s:%i: warning: %s", src, line, ReportBuf);
@@ -147,25 +147,25 @@ void ftDebugger::reportIDE(const char* src, long line, const char* fmt, ...)
 
 void ftDebugger::errorIDE(const char* src, long line, const char* fmt, ...)
 {
-	static char ReportBuf[FileTools_DEBUG_BUF_SIZE+1];
+	static char ReportBuf[ftDEBUG_BUF_SIZE+1];
 
 	va_list lst;
 	va_start(lst, fmt);
 
 
-	int size = ftp_printf(ReportBuf, FileTools_DEBUG_BUF_SIZE, fmt, lst);
+	int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
 	va_end(lst);
 
 	if (size < 0)
 	{
-		ReportBuf[FileTools_DEBUG_BUF_SIZE] = 0;
-		size = FileTools_DEBUG_BUF_SIZE;
+		ReportBuf[ftDEBUG_BUF_SIZE] = 0;
+		size = ftDEBUG_BUF_SIZE;
 	}
 
 	if (size > 0)
 	{
 		ReportBuf[size] = 0;
-#if FileTools_COMPILER == FileTools_COMPILER_MSVC
+#if ftCOMPILER == ftCOMPILER_MSVC
 		report("%s(%i): error: %s", src, line, ReportBuf);
 #else
 		report("%s:%i: error: %s", src, line, ReportBuf);
@@ -173,7 +173,7 @@ void ftDebugger::errorIDE(const char* src, long line, const char* fmt, ...)
 	}
 }
 
-FileTools_PRIM_TYPE ftGetPrimType(FBTuint32 typeKey)
+ftPRIM_TYPE ftGetPrimType(FBTuint32 typeKey)
 {
 	static FBTuint32 charT    = ftCharHashKey("char").hash();
 	static FBTuint32 ucharT   = ftCharHashKey("uchar").hash();
@@ -186,18 +186,18 @@ FileTools_PRIM_TYPE ftGetPrimType(FBTuint32 typeKey)
 	static FBTuint32 doubleT  = ftCharHashKey("double").hash();
 	static FBTuint32 voidT    = ftCharHashKey("void").hash();
 
-	if (typeKey == charT)	return FileTools_PRIM_CHAR;
-	if (typeKey == ucharT)	return FileTools_PRIM_UCHAR;
-	if (typeKey == shortT)	return FileTools_PRIM_SHORT;
-	if (typeKey == ushortT)	return FileTools_PRIM_USHORT;
-	if (typeKey == intT)	return FileTools_PRIM_INT;
-	if (typeKey == longT)	return FileTools_PRIM_LONG;
-	if (typeKey == ulongT)	return FileTools_PRIM_ULONG;
-	if (typeKey == floatT)	return FileTools_PRIM_FLOAT;
-	if (typeKey == doubleT)	return FileTools_PRIM_DOUBLE;
-	if (typeKey == voidT)	return FileTools_PRIM_VOID;
+	if (typeKey == charT)	return ftPRIM_CHAR;
+	if (typeKey == ucharT)	return ftPRIM_UCHAR;
+	if (typeKey == shortT)	return ftPRIM_SHORT;
+	if (typeKey == ushortT)	return ftPRIM_USHORT;
+	if (typeKey == intT)	return ftPRIM_INT;
+	if (typeKey == longT)	return ftPRIM_LONG;
+	if (typeKey == ulongT)	return ftPRIM_ULONG;
+	if (typeKey == floatT)	return ftPRIM_FLOAT;
+	if (typeKey == doubleT)	return ftPRIM_DOUBLE;
+	if (typeKey == voidT)	return ftPRIM_VOID;
 
-	return FileTools_PRIM_UNKNOWN;
+	return ftPRIM_UNKNOWN;
 }
 
 

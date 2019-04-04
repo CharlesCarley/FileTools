@@ -25,7 +25,7 @@
 
 typedef ftFixedString<272>          ftPath;
 typedef ftFixedString<ftMaxID>      ftId;
-typedef int                         ftArraySlots[FileTools_ARRAY_SLOTS];
+typedef int                         ftArraySlots[ftARRAY_SLOTS];
 typedef void*                       ftParser;
 typedef ftArray<ftId>               ftStringPtrArray;
 typedef ftArray<ftPath>             ftPathArray;
@@ -79,7 +79,7 @@ public:
 public:
 
     ftCompileStruct()
-		:   m_structId(FileTools_NPOS),
+		:   m_structId(ftNPOS),
 		    m_line(-1),
 		    m_nrDependentTypes(0)
 	{

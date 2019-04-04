@@ -17,7 +17,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define FileTools_IN_SOURCE
+#define ftIN_SOURCE
 #include "ftTables.h"
 #include "ftPlatformHeaders.h"
 
@@ -40,7 +40,7 @@ ftBinTables::ftBinTables()
 	    m_nameNr(0),
 	    m_typeNr(0),
 	    m_strcNr(0),
-	    m_ptr(FileTools_VOID),
+	    m_ptr(ftVOID),
 	    m_otherBlock(0),
 	    m_otherLen(0)
 {
@@ -54,7 +54,7 @@ ftBinTables::ftBinTables(void* ptr, const FBTsize& len)
 	    m_nameNr(0),
 	    m_typeNr(0),
 	    m_strcNr(0),
-	    m_ptr(FileTools_VOID),
+	    m_ptr(ftVOID),
 	    m_otherBlock(ptr),
 	    m_otherLen(len)
 {
@@ -92,7 +92,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	char* cp = (char*)ptr;
 
 
-	if (!ftCharNEq(cp, ftIdNames::FileTools_SDNA, 4))
+	if (!ftCharNEq(cp, ftIdNames::ftSDNA, 4))
 	{
 		ftPrintf("Bin table is missing the start id!\n");
 		return false;
@@ -101,7 +101,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	cp += 4;
 
 
-	if (!ftCharNEq(cp, ftIdNames::FileTools_NAME, 4))
+	if (!ftCharNEq(cp, ftIdNames::ftNAME, 4))
 	{
 		ftPrintf("Bin table is missing the name id!\n");
 		return false;
@@ -177,7 +177,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	opad = ((opad + 3) & ~3) - opad;
 	while (opad--) cp++;
 
-	if (!ftCharNEq(cp, ftIdNames::FileTools_TYPE, 4))
+	if (!ftCharNEq(cp, ftIdNames::ftTYPE, 4))
 	{
 		ftPrintf("Bin table is missing the type id!\n");
 		return false;
@@ -205,7 +205,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	i = 0;
 	while (i < nl)
 	{
-		ftType typeData = {cp, ftCharHashKey(cp).hash(), FileTools_NPOS};
+		ftType typeData = {cp, ftCharHashKey(cp).hash(), ftNPOS};
 		m_type[m_typeNr++] = typeData;
 		while (*cp) ++cp;
 		++cp;
@@ -217,7 +217,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	opad = ((opad + 3) & ~3) - opad;
 	while (opad--) cp++;
 
-	if (!ftCharNEq(cp, ftIdNames::FileTools_TLEN, 4))
+	if (!ftCharNEq(cp, ftIdNames::ftTLEN, 4))
 	{
 		ftPrintf("Bin table is missing the tlen id!\n");
 		return false;
@@ -242,7 +242,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
 	cp = (char*)tp;
 
-	if (!ftCharNEq(cp, ftIdNames::FileTools_STRC, 4))
+	if (!ftCharNEq(cp, ftIdNames::ftSTRC, 4))
 	{
 		ftPrintf("Bin table is missing the tlen id!\n");
 		return false;
@@ -286,7 +286,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
 
 			k = tp[1];
-			FileTools_ASSERT( k < ftMaxMember );
+			ftASSERT( k < ftMaxMember );
 
 			j = 0;
 			tp += 2;
@@ -302,7 +302,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 		}
 		else
 		{
-			FileTools_ASSERT( tp[1] < ftMaxMember );
+			ftASSERT( tp[1] < ftMaxMember );
 			m_type[tp[0]].m_strcId = m_strcNr - 1;
 			m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
@@ -472,7 +472,7 @@ void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& c
 FBTtype ftBinTables::findTypeId(const ftCharHashKey &cp)
 {
 	FBTsizeType pos = m_typeFinder.find(cp);
-	if (pos != FileTools_NPOS)
+	if (pos != ftNPOS)
 		return m_typeFinder.at(pos).m_strcId;
 	return -1;
 }

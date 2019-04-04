@@ -20,7 +20,7 @@
 #ifndef _ftTypes_h_
 #define _ftTypes_h_
 
-#ifndef FileTools_HAVE_CONFIG
+#ifndef ftHAVE_CONFIG
 #include "ftConfig.h"
 #endif
 
@@ -31,86 +31,86 @@
 *  @{
 */
 
-#if (defined(DEBUG) || defined(_DEBUG)) && FileTools_USE_DEBUG_ASSERTS == 1
+#if (defined(DEBUG) || defined(_DEBUG)) && ftUSE_DEBUG_ASSERTS == 1
 # include <assert.h> // Keep this the only std include in headers
-# define FileTools_DEBUG 1
-# define FileTools_ASSERT(x) assert(x)
+# define ftDEBUG 1
+# define ftASSERT(x) assert(x)
 #else
-# define FileTools_ASSERT(x) ((void)0)
+# define ftASSERT(x) ((void)0)
 #endif
 
-#ifdef FileTools_USE_COMPILER_CHECKS
-#define FileTools_ASSERTCOMP(x, n) typedef bool x[(n) ? 1 : -1];
+#ifdef ftUSE_COMPILER_CHECKS
+#define ftASSERTCOMP(x, n) typedef bool x[(n) ? 1 : -1];
 #else
-#define FileTools_ASSERTCOMP(x, n)
+#define ftASSERTCOMP(x, n)
 #endif
 
 
-#define FileTools_PLATFORM_WIN32    0
-#define FileTools_PLATFORM_LINUX    2
-#define FileTools_PLATFORM_APPLE    3
+#define ftPLATFORM_WIN32    0
+#define ftPLATFORM_LINUX    2
+#define ftPLATFORM_APPLE    3
 
 #if defined (_WIN32)
-# define FileTools_PLATFORM FileTools_PLATFORM_WIN32
+# define ftPLATFORM ftPLATFORM_WIN32
 #elif defined(__APPLE__)
-# define FileTools_PLATFORM FileTools_PLATFORM_APPLE
+# define ftPLATFORM ftPLATFORM_APPLE
 #else
-# define FileTools_PLATFORM FileTools_PLATFORM_LINUX
+# define ftPLATFORM ftPLATFORM_LINUX
 #endif
 
-#define FileTools_COMPILER_MSVC    0
-#define FileTools_COMPILER_GNU     1
+#define ftCOMPILER_MSVC    0
+#define ftCOMPILER_GNU     1
 
 #if defined(_MSC_VER)
-# define FileTools_COMPILER FileTools_COMPILER_MSVC
+# define ftCOMPILER ftCOMPILER_MSVC
 #elif defined(__GNUC__)
-# define FileTools_COMPILER FileTools_COMPILER_GNU
+# define ftCOMPILER ftCOMPILER_GNU
 #else
 # error unknown compiler
 #endif
 
-#define FileTools_ENDIAN_LITTLE    0
-#define FileTools_ENDIAN_BIG       1
+#define ftENDIAN_LITTLE    0
+#define ftENDIAN_BIG       1
 
 #if defined(__sgi)      ||  defined (__sparc)        || \
     defined (__sparc__) ||  defined (__PPC__)        || \
     defined (__ppc__)   ||  defined (__BIG_ENDIAN__)
-#define FileTools_ENDIAN FileTools_ENDIAN_BIG
+#define ftENDIAN ftENDIAN_BIG
 #else
-#define FileTools_ENDIAN FileTools_ENDIAN_LITTLE
+#define ftENDIAN ftENDIAN_LITTLE
 #endif
 
-#if FileTools_ENDIAN == FileTools_ENDIAN_BIG
-# define FileTools_ID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
-# define FileTools_ID2(c, d)   ( (c)<<8 | (d) )
+#if ftENDIAN == ftENDIAN_BIG
+# define ftID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
+# define ftID2(c, d)   ( (c)<<8 | (d) )
 #else
-# define FileTools_ID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
-# define FileTools_ID2(c, d)   ( (d)<<8 | (c) )
+# define ftID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
+# define ftID2(c, d)   ( (d)<<8 | (c) )
 #endif
 
-#define FileTools_ARCH_32 0
-#define FileTools_ARCH_64 1
+#define ftARCH_32 0
+#define ftARCH_64 1
 
 #if defined(__x86_64__)     || defined(_M_X64)      || \
     defined(__powerpc64__)  || defined(__alpha__)   || \
     defined(__ia64__)       || defined(__s390__)    || \
     defined(__s390x__)
-#define FileTools_ARCH FileTools_ARCH_64
+#define ftARCH ftARCH_64
 #else
-#define FileTools_ARCH FileTools_ARCH_32
+#define ftARCH ftARCH_32
 #endif
 
 
-#if FileTools_PLATFORM == FileTools_PLATFORM_WIN32
+#if ftPLATFORM == ftPLATFORM_WIN32
 # if defined(__MINGW32__) || \
      defined(__CYGWIN__)  || \
      (defined (_MSC_VER) && _MSC_VER < 1300)
-#  define FileTools_INLINE inline
+#  define ftINLINE inline
 # else
-#  define FileTools_INLINE __forceinline
+#  define ftINLINE __forceinline
 # endif
 #else
-#  define FileTools_INLINE    inline
+#  define ftINLINE    inline
 #endif
 
 // Integer types
@@ -127,7 +127,7 @@ typedef signed char     FBTbyte;
 typedef bool            FBTint1;
 
 
-#if FileTools_COMPILER == FileTools_COMPILER_GNU
+#if ftCOMPILER == ftCOMPILER_GNU
 typedef long long          FBTint64;
 typedef unsigned long long FBTuint64;
 #else
@@ -137,7 +137,7 @@ typedef unsigned __int64 FBTuint64;
 
 // Arch dependent types
 
-#if FileTools_ARCH == FileTools_ARCH_64
+#if ftARCH == ftARCH_64
 typedef FBTuint64   FBTuintPtr;
 typedef FBTint64    FBTintPtr;
 #else
@@ -150,19 +150,19 @@ typedef FBTuintPtr  FBTsize;
 
 // Type for arrays & tables (Always unsigned & 32bit)
 typedef FBTuint32       FBTsizeType;
-const   FBTuint32       FileTools_NPOS = (FBTuint32) - 1;
+const   FBTuint32       ftNPOS = (FBTuint32) - 1;
 typedef FBTuint32       FBThash;
 typedef FBTuint16       FBTtype;
 
 
-FileTools_ASSERTCOMP(FBTsizeType_NPOS_VALIDATE, FileTools_NPOS == ((FBTuint32) - 1));
+ftASSERTCOMP(FBTsizeType_NPOS_VALIDATE, ftNPOS == ((FBTuint32) - 1));
 
-#define _FileTools_CACHE_LIMIT 999
+#define _ftCACHE_LIMIT 999
 
-template <typename T> FileTools_INLINE void    ftSwap(T& a, T& b)                              { T t(a); a = b; b = t; }
-template <typename T> FileTools_INLINE T       ftMax(const T& a, const T& b)                   { return a < b ? b : a; }
-template <typename T> FileTools_INLINE T       ftMin(const T& a, const T& b)                   { return a < b ? a : b; }
-template <typename T> FileTools_INLINE T       ftClamp(const T& v, const T& a, const T& b)     { return v < a ? a : v > b ? b : v; }
+template <typename T> ftINLINE void    ftSwap(T& a, T& b)                              { T t(a); a = b; b = t; }
+template <typename T> ftINLINE T       ftMax(const T& a, const T& b)                   { return a < b ? b : a; }
+template <typename T> ftINLINE T       ftMin(const T& a, const T& b)                   { return a < b ? a : b; }
+template <typename T> ftINLINE T       ftClamp(const T& v, const T& a, const T& b)     { return v < a ? a : v > b ? b : v; }
 
 
 #define ftNameOf(x) #x
@@ -208,9 +208,9 @@ private:
 
 typedef enum ftEndian
 {
-	FileTools_ENDIAN_IS_BIG       = 0,
-	FileTools_ENDIAN_IS_LITTLE    = 1,
-	FileTools_ENDIAN_NATIVE,
+	ftENDIAN_IS_BIG       = 0,
+	ftENDIAN_IS_LITTLE    = 1,
+	ftENDIAN_NATIVE,
 } ftEndian;
 
 typedef union ftEndianTest
@@ -221,43 +221,43 @@ typedef union ftEndianTest
 
 
 
-FileTools_INLINE ftEndian ftGetEndian(void)
+ftINLINE ftEndian ftGetEndian(void)
 {
 	ftEndianTest e;
-	e.test = FileTools_ENDIAN_IS_LITTLE;
+	e.test = ftENDIAN_IS_LITTLE;
 	return static_cast<ftEndian>(e.bo[0]);
 }
 
 
-FileTools_INLINE bool ftIsEndian(const ftEndian& endian)
+ftINLINE bool ftIsEndian(const ftEndian& endian)
 {
 	ftEndianTest e;
 	e.test = endian;
 	return static_cast<ftEndian>(e.bo[0]) == endian;
 }
 
-FileTools_INLINE FBTuint16 ftSwap16(FBTuint16 in)
+ftINLINE FBTuint16 ftSwap16(FBTuint16 in)
 {
 	return static_cast<FBTuint16>(((in & 0xFF00) >> 8) | ((in & 0x00FF) << 8));
 }
 
-FileTools_INLINE FBTuint32 ftSwap32(const FBTuint32& in)
+ftINLINE FBTuint32 ftSwap32(const FBTuint32& in)
 {
 	return (((in & 0xFF000000) >> 24) | ((in & 0x00FF0000) >> 8) | ((in & 0x0000FF00) << 8)  | ((in & 0x000000FF) << 24));
 }
 
-FileTools_INLINE FBTint16 ftSwap16(FBTint16 in)
+ftINLINE FBTint16 ftSwap16(FBTint16 in)
 {
 	return ftSwap16(static_cast<FBTuint16>(in));
 }
 
-FileTools_INLINE FBTint32 ftSwap32(const FBTint32& in)
+ftINLINE FBTint32 ftSwap32(const FBTint32& in)
 {
 	return ftSwap32(static_cast<FBTuint32>(in));
 }
 
 
-FileTools_INLINE FBTuint64 ftSwap64(const FBTuint64& in)
+ftINLINE FBTuint64 ftSwap64(const FBTuint64& in)
 {
 	FBTuint64 r = 0;
 	const FBTubyte* src = reinterpret_cast<const FBTubyte*>(&in);
@@ -275,7 +275,7 @@ FileTools_INLINE FBTuint64 ftSwap64(const FBTuint64& in)
 }
 
 
-FileTools_INLINE void ftSwap16(FBTuint16* sp, FBTsize len)
+ftINLINE void ftSwap16(FBTuint16* sp, FBTsize len)
 {
 	FBTsizeType i;
 	for (i = 0; i < len; ++i)
@@ -285,7 +285,7 @@ FileTools_INLINE void ftSwap16(FBTuint16* sp, FBTsize len)
 	}	
 }
 
-FileTools_INLINE void ftSwap32(FBTuint32* ip, FBTsize len)
+ftINLINE void ftSwap32(FBTuint32* ip, FBTsize len)
 {	 
 	FBTsizeType i;
 	for (i = 0; i < len; ++i)
@@ -296,7 +296,7 @@ FileTools_INLINE void ftSwap32(FBTuint32* ip, FBTsize len)
 }
 
 
-FileTools_INLINE void ftSwap64(FBTuint64* dp, FBTsize len)
+ftINLINE void ftSwap64(FBTuint64* dp, FBTsize len)
 {	 
 	FBTsizeType i;
 	for (i = 0; i < len; ++i)
@@ -307,7 +307,7 @@ FileTools_INLINE void ftSwap64(FBTuint64* dp, FBTsize len)
 }
 
 
-FileTools_INLINE FBTint64 ftSwap64(const FBTint64& in)
+ftINLINE FBTint64 ftSwap64(const FBTint64& in)
 {
 	return ftSwap64(static_cast<FBTuint64>(in));
 }
@@ -316,16 +316,16 @@ FileTools_INLINE FBTint64 ftSwap64(const FBTint64& in)
 
 enum ftPointerLen
 {
-	FileTools_VOID  = sizeof(void*),
-	FileTools_VOID4 = FileTools_VOID == 4,
-	FileTools_VOID8 = FileTools_VOID == 8,
+	ftVOID  = sizeof(void*),
+	ftVOID4 = ftVOID == 4,
+	ftVOID8 = ftVOID == 8,
 };
 
 
-#if FileTools_ARCH == FileTools_ARCH_64
-FileTools_ASSERTCOMP(FileTools_VOID8_ASSERT, FileTools_VOID8);
+#if ftARCH == ftARCH_64
+ftASSERTCOMP(ftVOID8_ASSERT, ftVOID8);
 #else
-FileTools_ASSERTCOMP(FileTools_VOID4_ASSERT, FileTools_VOID4);
+ftASSERTCOMP(ftVOID4_ASSERT, ftVOID4);
 #endif
 
 
@@ -396,12 +396,12 @@ public:
 
 	~ftArrayIterator() {}
 
-	FileTools_INLINE bool           hasMoreElements(void) const { return m_iterator && m_cur < m_capacity; }
-	FileTools_INLINE ValueType      getNext(void)               { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur++];  }
-	FileTools_INLINE ConstValueType getNext(void) const         { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur++];  }
-	FileTools_INLINE void           next(void) const            { FileTools_ASSERT(hasMoreElements()); ++m_cur; }
-	FileTools_INLINE ValueType      peekNext(void)              { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur]; }
-	FileTools_INLINE ConstValueType peekNext(void) const        { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur]; }
+	ftINLINE bool           hasMoreElements(void) const { return m_iterator && m_cur < m_capacity; }
+	ftINLINE ValueType      getNext(void)               { ftASSERT(hasMoreElements()); return m_iterator[m_cur++];  }
+	ftINLINE ConstValueType getNext(void) const         { ftASSERT(hasMoreElements()); return m_iterator[m_cur++];  }
+	ftINLINE void           next(void) const            { ftASSERT(hasMoreElements()); ++m_cur; }
+	ftINLINE ValueType      peekNext(void)              { ftASSERT(hasMoreElements()); return m_iterator[m_cur]; }
+	ftINLINE ConstValueType peekNext(void) const        { ftASSERT(hasMoreElements()); return m_iterator[m_cur]; }
 
 };
 
@@ -447,7 +447,7 @@ public:
 		else
 		{
 			++m_cache;
-			if (m_cache > _FileTools_CACHE_LIMIT )
+			if (m_cache > _ftCACHE_LIMIT )
 				clear(false);
 			else m_size = 0;
 		}
@@ -460,10 +460,10 @@ public:
 			if (m_data[i] == v)
 				return i;
 		}
-		return FileTools_NPOS;
+		return ftNPOS;
 	}
 
-	FileTools_INLINE void push_back(const T& v)
+	ftINLINE void push_back(const T& v)
 	{
 		if (m_size == m_capacity)
 			reserve(m_size == 0 ? 8 : m_size * 2);
@@ -472,7 +472,7 @@ public:
 		m_size++;
 	}
 
-	FileTools_INLINE void pop_back(void)
+	ftINLINE void pop_back(void)
 	{
 		m_size--;
 		m_data[m_size].~T();
@@ -488,7 +488,7 @@ public:
 	{
 		if (m_size > 0)
 		{
-			if (pos != FileTools_NPOS)
+			if (pos != ftNPOS)
 			{
 				swap(pos, m_size - 1);
 				m_size--;
@@ -552,23 +552,23 @@ public:
 			_sort(cmp, 0, m_size - 1);
 	}
 
-	FileTools_INLINE T& operator[](FBTsizeType idx)               { FileTools_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	FileTools_INLINE const T& operator[](FBTsizeType idx) const   { FileTools_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	FileTools_INLINE T& at(FBTsizeType idx)                       { FileTools_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	FileTools_INLINE const T& at(FBTsizeType idx) const           { FileTools_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	FileTools_INLINE T& front(void)                               { FileTools_ASSERT(m_size > 0); return m_data[0]; }
-	FileTools_INLINE T& back(void)                                { FileTools_ASSERT(m_size > 0); return m_data[m_size-1]; }
+	ftINLINE T& operator[](FBTsizeType idx)               { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	ftINLINE const T& operator[](FBTsizeType idx) const   { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	ftINLINE T& at(FBTsizeType idx)                       { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	ftINLINE const T& at(FBTsizeType idx) const           { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	ftINLINE T& front(void)                               { ftASSERT(m_size > 0); return m_data[0]; }
+	ftINLINE T& back(void)                                { ftASSERT(m_size > 0); return m_data[m_size-1]; }
 
-	FileTools_INLINE ConstPointer ptr(void) const             { return m_data; }
-	FileTools_INLINE Pointer      ptr(void)                   { return m_data; }
-	FileTools_INLINE bool         valid(void) const           { return m_data != 0;}
+	ftINLINE ConstPointer ptr(void) const             { return m_data; }
+	ftINLINE Pointer      ptr(void)                   { return m_data; }
+	ftINLINE bool         valid(void) const           { return m_data != 0;}
 
-	FileTools_INLINE FBTsizeType capacity(void) const         { return m_capacity; }
-	FileTools_INLINE FBTsizeType size(void) const             { return m_size; }
-	FileTools_INLINE bool empty(void) const                   { return m_size == 0;}
+	ftINLINE FBTsizeType capacity(void) const         { return m_capacity; }
+	ftINLINE FBTsizeType size(void) const             { return m_size; }
+	ftINLINE bool empty(void) const                   { return m_size == 0;}
 
-	FileTools_INLINE Iterator       iterator(void)       { return m_data && m_size > 0 ? Iterator(m_data, m_size) : Iterator(); }
-	FileTools_INLINE ConstIterator  iterator(void) const { return m_data && m_size > 0 ? ConstIterator(m_data, m_size) : ConstIterator(); }
+	ftINLINE Iterator       iterator(void)       { return m_data && m_size > 0 ? Iterator(m_data, m_size) : Iterator(); }
+	ftINLINE ConstIterator  iterator(void) const { return m_data && m_size > 0 ? ConstIterator(m_data, m_size) : ConstIterator(); }
 
 	ftArray<T> &operator= (const ftArray<T> &rhs)
 	{
@@ -586,13 +586,13 @@ public:
 		return *this;
 	}
 
-	FileTools_INLINE void copy(Pointer dst, ConstPointer src, FBTsizeType size)
+	ftINLINE void copy(Pointer dst, ConstPointer src, FBTsizeType size)
 	{
-		FileTools_ASSERT(size <= m_size);
+		ftASSERT(size <= m_size);
 		for (FBTsizeType i = 0; i < size; i++) dst[i] = src[i];
 	}
 
-	FileTools_INLINE bool equal(const ftArray<T> &rhs)
+	ftINLINE bool equal(const ftArray<T> &rhs)
 	{
 		if (rhs.size() != size()) return false;
 		if (empty()) return true;
@@ -674,28 +674,28 @@ public:
 
 	~ftHashTableIterator() {}
 
-	FileTools_INLINE bool      hasMoreElements(void) const  { return (m_iterator && m_cur < m_capacity); }
-	FileTools_INLINE Pair      getNext(void)                { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur++];}
-	FileTools_INLINE ConstPair getNext(void) const          { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur++];}
-	FileTools_INLINE void      next(void) const             { FileTools_ASSERT(hasMoreElements()); ++m_cur; }
+	ftINLINE bool      hasMoreElements(void) const  { return (m_iterator && m_cur < m_capacity); }
+	ftINLINE Pair      getNext(void)                { ftASSERT(hasMoreElements()); return m_iterator[m_cur++];}
+	ftINLINE ConstPair getNext(void) const          { ftASSERT(hasMoreElements()); return m_iterator[m_cur++];}
+	ftINLINE void      next(void) const             { ftASSERT(hasMoreElements()); ++m_cur; }
 
 
-	FileTools_INLINE Pair      peekNext(void)               { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur]; }
-	FileTools_INLINE KeyType   peekNextKey(void)            { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur].first;}
-	FileTools_INLINE ValueType peekNextValue(void)          { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur].second; }
+	ftINLINE Pair      peekNext(void)               { ftASSERT(hasMoreElements()); return m_iterator[m_cur]; }
+	ftINLINE KeyType   peekNextKey(void)            { ftASSERT(hasMoreElements()); return m_iterator[m_cur].first;}
+	ftINLINE ValueType peekNextValue(void)          { ftASSERT(hasMoreElements()); return m_iterator[m_cur].second; }
 
-	FileTools_INLINE ConstPair      peekNext(void)  const     { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur]; }
-	FileTools_INLINE ConstKeyType   peekNextKey(void) const   { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur].first;}
-	FileTools_INLINE ConstValueType peekNextValue(void) const { FileTools_ASSERT(hasMoreElements()); return m_iterator[m_cur].second; }
+	ftINLINE ConstPair      peekNext(void)  const     { ftASSERT(hasMoreElements()); return m_iterator[m_cur]; }
+	ftINLINE ConstKeyType   peekNextKey(void) const   { ftASSERT(hasMoreElements()); return m_iterator[m_cur].first;}
+	ftINLINE ConstValueType peekNextValue(void) const { ftASSERT(hasMoreElements()); return m_iterator[m_cur].second; }
 };
 
 
 
 // magic numbers from http://www.isthe.com/chongo/tech/comp/fnv/
-#define _FileTools_INITIAL_FNV  0x9E3779B1
-#define _FileTools_INITIAL_FNV2 0x9E3779B9
-#define _FileTools_MULTIPLE_FNV 0x1000193
-#define _FileTools_TWHASH(key)         \
+#define _ftINITIAL_FNV  0x9E3779B1
+#define _ftINITIAL_FNV2 0x9E3779B9
+#define _ftMULTIPLE_FNV 0x1000193
+#define _ftTWHASH(key)         \
         key += ~(key << 15);    \
         key ^=  (key >> 10);    \
         key +=  (key << 3);     \
@@ -711,31 +711,31 @@ protected:
 	mutable FBThash m_hash;
 
 public:
-	ftCharHashKey() : m_key(0), m_hash(FileTools_NPOS) {}
-	ftCharHashKey(char* k) : m_key(k), m_hash(FileTools_NPOS) {hash();}
-	ftCharHashKey(const char* k) : m_key(const_cast<char*>(k)), m_hash(FileTools_NPOS) {}
-	ftCharHashKey(const ftCharHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) { if (m_hash == FileTools_NPOS) hash(); }
+	ftCharHashKey() : m_key(0), m_hash(ftNPOS) {}
+	ftCharHashKey(char* k) : m_key(k), m_hash(ftNPOS) {hash();}
+	ftCharHashKey(const char* k) : m_key(const_cast<char*>(k)), m_hash(ftNPOS) {}
+	ftCharHashKey(const ftCharHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) { if (m_hash == ftNPOS) hash(); }
 
 
 	FBThash hash(void) const
 	{
-		if (!m_key) return FileTools_NPOS;
-		if (m_hash != FileTools_NPOS) return m_hash;
+		if (!m_key) return ftNPOS;
+		if (m_hash != ftNPOS) return m_hash;
 
 		// Fowler / Noll / Vo (FNV) Hash
-		m_hash = (FBThash)_FileTools_INITIAL_FNV;
+		m_hash = (FBThash)_ftINITIAL_FNV;
 		for (int i = 0; m_key[i]; i++)
 		{
 			m_hash = m_hash ^ (m_key[i]);   // xor  the low 8 bits
-			m_hash = m_hash * _FileTools_MULTIPLE_FNV;  // multiply by the magic number
+			m_hash = m_hash * _ftMULTIPLE_FNV;  // multiply by the magic number
 		}
 		return m_hash;
 	}
 
-	FileTools_INLINE bool operator== (const ftCharHashKey& v) const    {return hash() == v.hash();}
-	FileTools_INLINE bool operator!= (const ftCharHashKey& v) const    {return hash() != v.hash();}
-	FileTools_INLINE bool operator== (const FBThash& v) const           {return hash() == v;}
-	FileTools_INLINE bool operator!= (const FBThash& v) const           {return hash() != v;}
+	ftINLINE bool operator== (const ftCharHashKey& v) const    {return hash() == v.hash();}
+	ftINLINE bool operator!= (const ftCharHashKey& v) const    {return hash() != v.hash();}
+	ftINLINE bool operator== (const FBThash& v) const           {return hash() == v;}
+	ftINLINE bool operator!= (const FBThash& v) const           {return hash() != v;}
 };
 
 class ftIntHashKey
@@ -747,12 +747,12 @@ public:
 	ftIntHashKey(FBTint32 k) : m_key(k) {}
 	ftIntHashKey(const ftIntHashKey& k) : m_key(k.m_key) { }
 
-	FileTools_INLINE FBThash hash(void) const  { return static_cast<FBThash>(m_key) * _FileTools_INITIAL_FNV; }
+	ftINLINE FBThash hash(void) const  { return static_cast<FBThash>(m_key) * _ftINITIAL_FNV; }
 
-	FileTools_INLINE bool operator== (const ftIntHashKey& v) const {return hash() == v.hash();}
-	FileTools_INLINE bool operator!= (const ftIntHashKey& v) const {return hash() != v.hash();}
-	FileTools_INLINE bool operator== (const FBThash& v) const       {return hash() == v;}
-	FileTools_INLINE bool operator!= (const FBThash& v) const       {return hash() != v;}
+	ftINLINE bool operator== (const ftIntHashKey& v) const {return hash() == v.hash();}
+	ftINLINE bool operator!= (const ftIntHashKey& v) const {return hash() != v.hash();}
+	ftINLINE bool operator== (const FBThash& v) const       {return hash() == v;}
+	ftINLINE bool operator!= (const FBThash& v) const       {return hash() != v;}
 };
 
 
@@ -767,39 +767,39 @@ protected:
 
 public:
 	ftSizeHashKey()
-		: m_hash(FileTools_NPOS), m_key(0)
+		: m_hash(ftNPOS), m_key(0)
 	{
 	}
 
 
 	ftSizeHashKey(const FBTsize& k)
-		:   m_hash(FileTools_NPOS), m_key(k)
+		:   m_hash(ftNPOS), m_key(k)
 	{
 		hash();
 	}
 
 
 	ftSizeHashKey(const ftSizeHashKey& k)
-		:   m_hash(FileTools_NPOS), m_key(k.m_key)
+		:   m_hash(ftNPOS), m_key(k.m_key)
 	{
 		hash();
 	}
 
 
-	FileTools_INLINE FBThash hash(void) const
+	ftINLINE FBThash hash(void) const
 	{
-		if (m_hash != FileTools_NPOS)
+		if (m_hash != ftNPOS)
 			return m_hash;
 
 		m_hash = (FBThash)m_key;
-		_FileTools_TWHASH(m_hash);
+		_ftTWHASH(m_hash);
 		return m_hash;
 	}
 
-	FileTools_INLINE bool operator== (const ftSizeHashKey& v) const  { return hash() == v.hash();}
-	FileTools_INLINE bool operator!= (const ftSizeHashKey& v) const  { return hash() != v.hash();}
-	FileTools_INLINE bool operator== (const FBThash& v) const         { return hash() == v;}
-	FileTools_INLINE bool operator!= (const FBThash& v) const         { return hash() != v;}
+	ftINLINE bool operator== (const ftSizeHashKey& v) const  { return hash() == v.hash();}
+	ftINLINE bool operator!= (const ftSizeHashKey& v) const  { return hash() != v.hash();}
+	ftINLINE bool operator== (const FBThash& v) const         { return hash() == v;}
+	ftINLINE bool operator!= (const FBThash& v) const         { return hash() != v;}
 };
 
 
@@ -811,30 +811,30 @@ protected:
 	mutable FBThash m_hash;
 
 public:
-	ftTHashKey() : m_key(0), m_hash(FileTools_NPOS) { hash(); }
-	ftTHashKey(T* k) : m_key(k), m_hash(FileTools_NPOS) { hash(); }
-	ftTHashKey(const ftTHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) { if (m_hash == FileTools_NPOS) hash(); }
+	ftTHashKey() : m_key(0), m_hash(ftNPOS) { hash(); }
+	ftTHashKey(T* k) : m_key(k), m_hash(ftNPOS) { hash(); }
+	ftTHashKey(const ftTHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) { if (m_hash == ftNPOS) hash(); }
 
-	FileTools_INLINE T*          key(void)       {return m_key;}
-	FileTools_INLINE const T*    key(void) const {return m_key;}
+	ftINLINE T*          key(void)       {return m_key;}
+	ftINLINE const T*    key(void) const {return m_key;}
 
 
-	FileTools_INLINE FBThash hash(void) const
+	ftINLINE FBThash hash(void) const
 	{
-		if (m_hash != FileTools_NPOS)
+		if (m_hash != ftNPOS)
 			return m_hash;
 
 		// Yields the least collisions.
 		m_hash = static_cast<FBThash>(reinterpret_cast<FBTuintPtr>(m_key));
-		_FileTools_TWHASH(m_hash);
+		_ftTWHASH(m_hash);
 		return m_hash;
 	}
 
 
-	FileTools_INLINE bool operator== (const ftTHashKey& v) const  { return hash() == v.hash();}
-	FileTools_INLINE bool operator!= (const ftTHashKey& v) const  { return hash() != v.hash();}
-	FileTools_INLINE bool operator== (const FBThash& v) const      { return hash() == v;}
-	FileTools_INLINE bool operator!= (const FBThash& v) const      { return hash() != v;}
+	ftINLINE bool operator== (const ftTHashKey& v) const  { return hash() == v.hash();}
+	ftINLINE bool operator!= (const ftTHashKey& v) const  { return hash() != v.hash();}
+	ftINLINE bool operator== (const FBThash& v) const      { return hash() == v;}
+	ftINLINE bool operator!= (const FBThash& v) const      { return hash() != v;}
 };
 
 typedef ftTHashKey<void> ftPointerHashKey;
@@ -849,33 +849,33 @@ struct ftHashEntry
 	ftHashEntry() {}
 	ftHashEntry(const Key& k, const Value& v) : first(k), second(v) {}
 
-	FileTools_INLINE bool operator==(const ftHashEntry& rhs) const
+	ftINLINE bool operator==(const ftHashEntry& rhs) const
 	{
 		return first == rhs.first && second == rhs.second;
 	}
 };
 
-#define _FileTools_UTHASHTABLE_HASH(key)      ((key.hash() & (m_capacity - 1)))
-#define _FileTools_UTHASHTABLE_HKHASH(key)    ((hk & (m_capacity - 1)))
-#define _FileTools_UTHASHTABLE_FORCE_POW2     1
-#define _FileTools_UTHASHTABLE_INIT           32
-#define _FileTools_UTHASHTABLE_EXPANSE  (m_size * 2)
+#define _ftUTHASHTABLE_HASH(key)      ((key.hash() & (m_capacity - 1)))
+#define _ftUTHASHTABLE_HKHASH(key)    ((hk & (m_capacity - 1)))
+#define _ftUTHASHTABLE_FORCE_POW2     1
+#define _ftUTHASHTABLE_INIT           32
+#define _ftUTHASHTABLE_EXPANSE  (m_size * 2)
 
 
-#define _FileTools_UTHASHTABLE_STAT       FileTools_HASHTABLE_STAT
-#define _FileTools_UTHASHTABLE_STAT_ALLOC 0
+#define _ftUTHASHTABLE_STAT       ftHASHTABLE_STAT
+#define _ftUTHASHTABLE_STAT_ALLOC 0
 
 
-#if _FileTools_UTHASHTABLE_FORCE_POW2 == 1
-#define _FileTools_UTHASHTABLE_POW2(x) \
+#if _ftUTHASHTABLE_FORCE_POW2 == 1
+#define _ftUTHASHTABLE_POW2(x) \
     --x; x |= x >> 16; x |= x >> 8; x |= x >> 4; \
     x |= x >> 2; x |= x >> 1; ++x;
 
-#define _FileTools_UTHASHTABLE_IS_POW2(x) (x && !((x-1) & x))
+#define _ftUTHASHTABLE_IS_POW2(x) (x && !((x-1) & x))
 #endif
 
 
-#if _FileTools_UTHASHTABLE_STAT == 1
+#if _ftUTHASHTABLE_STAT == 1
 #include <typeinfo>
 #endif
 
@@ -915,19 +915,19 @@ public:
 public:
 
 	ftHashTable()
-		:    m_size(0), m_capacity(0), m_lastPos(FileTools_NPOS),
+		:    m_size(0), m_capacity(0), m_lastPos(ftNPOS),
 		     m_iptr(0), m_nptr(0), m_bptr(0), m_cache(0)
 	{
 	}
 
 	ftHashTable(FBTsizeType capacity)
-		:    m_size(0), m_capacity(0), m_lastPos(FileTools_NPOS),
+		:    m_size(0), m_capacity(0), m_lastPos(ftNPOS),
 		     m_iptr(0), m_nptr(0), m_bptr(0), m_cache(0)
 	{
 	}
 
 	ftHashTable(const ftHashTable& rhs)
-		:    m_size(0), m_capacity(0), m_lastPos(FileTools_NPOS),
+		:    m_size(0), m_capacity(0), m_lastPos(ftNPOS),
 		     m_iptr(0), m_nptr(0), m_bptr(0), m_cache(0)
 	{
 		doCopy(rhs);
@@ -947,8 +947,8 @@ public:
 		if (!useCache)
 		{
 			m_size = m_capacity = 0;
-			m_lastKey = FileTools_NPOS;
-			m_lastPos = FileTools_NPOS;
+			m_lastKey = ftNPOS;
+			m_lastPos = ftNPOS;
 			m_cache = 0;
 
 			delete [] m_bptr;
@@ -959,31 +959,31 @@ public:
 		else
 		{
 			++m_cache;
-			if (m_cache > _FileTools_CACHE_LIMIT)
+			if (m_cache > _ftCACHE_LIMIT)
 				clear(false);
 			else
 			{
 				m_size = 0;
-				m_lastKey = FileTools_NPOS;
-				m_lastPos = FileTools_NPOS;
+				m_lastKey = ftNPOS;
+				m_lastPos = ftNPOS;
 
 
 				FBTsizeType i;
 				for (i = 0; i < m_capacity; ++i)
 				{
-					m_iptr[i] = FileTools_NPOS;
-					m_nptr[i] = FileTools_NPOS;
+					m_iptr[i] = ftNPOS;
+					m_nptr[i] = ftNPOS;
 				}
 			}
 		}
 
 	}
-	Value&              at(FBTsizeType i)                    { FileTools_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-	Value&              operator [](FBTsizeType i)           { FileTools_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-	const Value&        at(FBTsizeType i)const               { FileTools_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-	const Value&        operator [](FBTsizeType i) const     { FileTools_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-	Key&                keyAt(FBTsizeType i)                 { FileTools_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
-	const Key&          keyAt(FBTsizeType i)const            { FileTools_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
+	Value&              at(FBTsizeType i)                    { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
+	Value&              operator [](FBTsizeType i)           { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
+	const Value&        at(FBTsizeType i)const               { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
+	const Value&        operator [](FBTsizeType i) const     { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
+	Key&                keyAt(FBTsizeType i)                 { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
+	const Key&          keyAt(FBTsizeType i)const            { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
 
 	Value* get(const Key& key) const
 	{
@@ -996,10 +996,10 @@ public:
 		if (m_lastKey != hr)
 		{
 			FBTsizeType i = find(key);
-			if (i == FileTools_NPOS) return (Value*)0;
+			if (i == ftNPOS) return (Value*)0;
 
 
-			FileTools_ASSERT(i >= 0 && i < m_size);
+			ftASSERT(i >= 0 && i < m_size);
 
 			m_lastKey = hr;
 			m_lastPos = i;
@@ -1014,28 +1014,28 @@ public:
 
 	FBTsizeType find(const Key& key) const
 	{
-		if (m_capacity == 0 || m_capacity == FileTools_NPOS || m_size == 0)
-			return FileTools_NPOS;
+		if (m_capacity == 0 || m_capacity == ftNPOS || m_size == 0)
+			return ftNPOS;
 
 		FBTsizeType hk = key.hash();
-		if (m_lastPos != FileTools_NPOS && m_lastKey == hk)
+		if (m_lastPos != ftNPOS && m_lastKey == hk)
 			return m_lastPos;
 
-		FBThash hr = _FileTools_UTHASHTABLE_HKHASH(hk);
+		FBThash hr = _ftUTHASHTABLE_HKHASH(hk);
 
-		FileTools_ASSERT(m_bptr && m_iptr && m_nptr);
+		ftASSERT(m_bptr && m_iptr && m_nptr);
 
 		FBTsizeType fh = m_iptr[hr];
-		while (fh != FileTools_NPOS && (key != m_bptr[fh].first))
+		while (fh != ftNPOS && (key != m_bptr[fh].first))
 			fh = m_nptr[fh];
 
 
-		if (fh != FileTools_NPOS)
+		if (fh != ftNPOS)
 		{
 			m_lastKey = hk;
 			m_lastPos = fh;
 
-			FileTools_ASSERT(fh >= 0  && fh < m_size);
+			ftASSERT(fh >= 0  && fh < m_size);
 		}
 		return fh;
 	}
@@ -1050,26 +1050,26 @@ public:
 		FBTsizeType index, pindex, findex;
 
 		findex = find(key);
-		if (findex == FileTools_NPOS || m_capacity == 0 || m_size == 0)
+		if (findex == ftNPOS || m_capacity == 0 || m_size == 0)
 			return;
 
-		m_lastKey = FileTools_NPOS;
-		m_lastPos = FileTools_NPOS;
-		FileTools_ASSERT(m_bptr && m_iptr && m_nptr);
+		m_lastKey = ftNPOS;
+		m_lastPos = ftNPOS;
+		ftASSERT(m_bptr && m_iptr && m_nptr);
 
-		hash = _FileTools_UTHASHTABLE_HASH(key);
+		hash = _ftUTHASHTABLE_HASH(key);
 
 		index  = m_iptr[hash];
-		pindex = FileTools_NPOS;
+		pindex = ftNPOS;
 		while (index != findex)
 		{
 			pindex = index;
 			index = m_nptr[index];
 		}
 
-		if (pindex != FileTools_NPOS)
+		if (pindex != ftNPOS)
 		{
-			FileTools_ASSERT(m_nptr[pindex] == findex);
+			ftASSERT(m_nptr[pindex] == findex);
 			m_nptr[pindex] = m_nptr[findex];
 		}
 		else
@@ -1083,18 +1083,18 @@ public:
 			return;
 		}
 
-		lhash = _FileTools_UTHASHTABLE_HASH(m_bptr[lindex].first);
+		lhash = _ftUTHASHTABLE_HASH(m_bptr[lindex].first);
 		index  = m_iptr[lhash];
-		pindex = FileTools_NPOS;
+		pindex = ftNPOS;
 		while (index != lindex)
 		{
 			pindex = index;
 			index = m_nptr[index];
 		}
 
-		if (pindex != FileTools_NPOS)
+		if (pindex != ftNPOS)
 		{
-			FileTools_ASSERT(m_nptr[pindex] == lindex);
+			ftASSERT(m_nptr[pindex] == lindex);
 			m_nptr[pindex] = m_nptr[lindex];
 		}
 		else
@@ -1111,15 +1111,15 @@ public:
 
 	bool insert(const Key& key, const Value& val)
 	{
-		if (find(key) != FileTools_NPOS)
+		if (find(key) != ftNPOS)
 			return false;
 
 		if (m_size == m_capacity)
-			reserve(m_size == 0 ? _FileTools_UTHASHTABLE_INIT : _FileTools_UTHASHTABLE_EXPANSE);
+			reserve(m_size == 0 ? _ftUTHASHTABLE_INIT : _ftUTHASHTABLE_EXPANSE);
 
-		const FBThash hr = _FileTools_UTHASHTABLE_HASH(key);
+		const FBThash hr = _ftUTHASHTABLE_HASH(key);
 
-		FileTools_ASSERT(m_bptr && m_iptr && m_nptr);
+		ftASSERT(m_bptr && m_iptr && m_nptr);
 		m_bptr[m_size] = Entry(key, val);
 		m_nptr[m_size] = m_iptr[hr];
 		m_iptr[hr] = m_size;
@@ -1127,14 +1127,14 @@ public:
 		return true;
 	}
 
-	FileTools_INLINE Pointer ptr(void)                { return m_bptr; }
-	FileTools_INLINE ConstPointer ptr(void) const     { return m_bptr; }
-	FileTools_INLINE bool valid(void) const           { return m_bptr != 0;}
+	ftINLINE Pointer ptr(void)                { return m_bptr; }
+	ftINLINE ConstPointer ptr(void) const     { return m_bptr; }
+	ftINLINE bool valid(void) const           { return m_bptr != 0;}
 
 
-	FileTools_INLINE FBTsizeType size(void) const         { return m_size; }
-	FileTools_INLINE FBTsizeType capacity(void) const     { return capacity; }
-	FileTools_INLINE bool empty(void) const               { return m_size == 0; }
+	ftINLINE FBTsizeType size(void) const         { return m_size; }
+	ftINLINE FBTsizeType capacity(void) const     { return capacity; }
+	ftINLINE bool empty(void) const               { return m_size == 0; }
 
 
 	Iterator        iterator(void)       { return m_bptr && m_size > 0 ? Iterator(m_bptr, m_size) : Iterator(); }
@@ -1143,18 +1143,18 @@ public:
 
 	void reserve(FBTsizeType nr)
 	{
-		if (m_capacity < nr && nr != FileTools_NPOS)
+		if (m_capacity < nr && nr != ftNPOS)
 			rehash(nr);
 	}
 
-#if _FileTools_UTHASHTABLE_STAT == 1
+#if _ftUTHASHTABLE_STAT == 1
 
 	void report(void) const
 	{
-		if (m_capacity == 0 || m_capacity == FileTools_NPOS || m_size == 0)
+		if (m_capacity == 0 || m_capacity == ftNPOS || m_size == 0)
 			return;
 
-		FileTools_ASSERT(m_bptr && m_iptr && m_nptr);
+		ftASSERT(m_bptr && m_iptr && m_nptr);
 
 
 		FBTsizeType min_col = m_size, max_col = 0;
@@ -1163,12 +1163,12 @@ public:
 		{
 			Key& key = m_bptr[i].first;
 
-			FBThash hr = _FileTools_UTHASHTABLE_HASH(key);
+			FBThash hr = _ftUTHASHTABLE_HASH(key);
 
 			FBTsizeType nr = 0;
 
 			FBTsizeType fh = m_iptr[hr];
-			while (fh != FileTools_NPOS && (key != m_bptr[fh].first))
+			while (fh != ftNPOS && (key != m_bptr[fh].first))
 			{
 				fh = m_nptr[fh];
 				nr++;
@@ -1183,7 +1183,7 @@ public:
 			avg += nr ? 1 : 0;
 		}
 
-#if _FileTools_UTHASHTABLE_FORCE_POW2 == 1
+#if _ftUTHASHTABLE_FORCE_POW2 == 1
 		ftPrintf("Results using forced power of 2 expansion.\n\n");
 #else
 		ftPrintf("Results using unaltered expansion.\n\n");
@@ -1217,7 +1217,7 @@ private:
 			m_capacity = rhs.m_capacity;
 
 			b = m_size > 0 ? m_size - 1 : 0;
-			for (i = b; i < m_capacity; ++i) m_nptr[i] = m_iptr[i] = FileTools_NPOS;
+			for (i = b; i < m_capacity; ++i) m_nptr[i] = m_iptr[i] = ftNPOS;
 
 			for (i = 0; i < m_size; ++i)
 			{
@@ -1249,22 +1249,22 @@ private:
 
 	void rehash(FBTsizeType nr)
 	{
-#if _FileTools_UTHASHTABLE_FORCE_POW2
+#if _ftUTHASHTABLE_FORCE_POW2
 
-		if (!_FileTools_UTHASHTABLE_IS_POW2(nr))
+		if (!_ftUTHASHTABLE_IS_POW2(nr))
 		{
-			_FileTools_UTHASHTABLE_POW2(nr);
+			_ftUTHASHTABLE_POW2(nr);
 		}
 
-#if _FileTools_UTHASHTABLE_STAT_ALLOC == 1
+#if _ftUTHASHTABLE_STAT_ALLOC == 1
 		ftPrintf("Expanding tables: %i\n", nr);
 #endif
-		FileTools_ASSERT(_FileTools_UTHASHTABLE_IS_POW2(nr));
+		ftASSERT(_ftUTHASHTABLE_IS_POW2(nr));
 
 
 #else
 
-#if _FileTools_UTHASHTABLE_STAT_ALLOC == 1
+#if _ftUTHASHTABLE_STAT_ALLOC == 1
 		ftPrintf("Expanding tables: %i\n", nr);
 #endif
 
@@ -1275,12 +1275,12 @@ private:
 		reserveType<FBTsizeType>(&m_nptr, nr);
 
 		m_capacity = nr;
-		FileTools_ASSERT(m_bptr && m_iptr && m_nptr);
+		ftASSERT(m_bptr && m_iptr && m_nptr);
 
 
 		FBTsizeType i, h;
-		for (i = 0; i < m_capacity; ++i) { m_iptr[i] = m_nptr[i] = FileTools_NPOS; }
-		for (i = 0; i < m_size; i++)     { h = _FileTools_UTHASHTABLE_HASH(m_bptr[i].first); m_nptr[i] = m_iptr[h]; m_iptr[h] = i;}
+		for (i = 0; i < m_capacity; ++i) { m_iptr[i] = m_nptr[i] = ftNPOS; }
+		for (i = 0; i < m_size; i++)     { h = _ftUTHASHTABLE_HASH(m_bptr[i].first); m_nptr[i] = m_iptr[h]; m_iptr[h] = i;}
 	}
 
 
@@ -1302,7 +1302,7 @@ private:
 #define ftCharEq(a, b)      ((a && b) && (*a == *b) && !strcmp(a, b))
 #define ftCharEqL(a, b, l)  ((a && b) && (*a == *b) && !memcmp(a, b, l))
 
-FileTools_INLINE int ftStrLen(const char* cp)
+ftINLINE int ftStrLen(const char* cp)
 {
 	int i = 0;
 	while (cp[i]) cp[i++];
@@ -1321,13 +1321,13 @@ public:
 public:
 
 	ftFixedString()
-		: m_size(0), m_hash(FileTools_NPOS)
+		: m_size(0), m_hash(ftNPOS)
 	{
 		m_buffer[m_size] = 0;
 	}
 
 	ftFixedString(const ftFixedString& rhs)
-		:   m_size(0), m_hash(FileTools_NPOS)
+		:   m_size(0), m_hash(ftNPOS)
 	{
 		if (rhs.size())
 		{
@@ -1341,7 +1341,7 @@ public:
 
 
 	ftFixedString(const char* rhs)
-		:   m_size(0), m_hash(FileTools_NPOS)
+		:   m_size(0), m_hash(ftNPOS)
 	{
 		if (rhs)
 		{
@@ -1353,7 +1353,7 @@ public:
 
 
 
-	FileTools_INLINE void push_back(char ch)
+	ftINLINE void push_back(char ch)
 	{
 		if (m_size >= L)
 			return;
@@ -1450,7 +1450,7 @@ public:
 	{
 		if (o.m_size > 0)
 		{
-			if (m_hash == FileTools_NPOS || m_hash != o.m_hash)
+			if (m_hash == ftNPOS || m_hash != o.m_hash)
 			{
 				FBTuint16 i;
 				m_size = 0;
@@ -1462,32 +1462,32 @@ public:
 		return *this;
 	}
 
-	FileTools_INLINE const char* c_str(void) const                 { return m_buffer; }
-	FileTools_INLINE char* ptr(void)                               { return m_buffer; }
-	FileTools_INLINE const char* ptr(void) const                   { return m_buffer; }
-	FileTools_INLINE const char operator [](FBTuint16 i) const     { FileTools_ASSERT(i < L); return m_buffer[i]; }
-	FileTools_INLINE const char at(FBTuint16 i) const              { FileTools_ASSERT(i < L); return m_buffer[i]; }
-	FileTools_INLINE void clear(void)                              { m_buffer[0] = 0; m_size = 0; }
-	FileTools_INLINE int empty(void) const                         { return m_size == 0; }
-	FileTools_INLINE int size(void) const                          { return m_size; }
-	FileTools_INLINE int capacity(void) const                      { return L; }
+	ftINLINE const char* c_str(void) const                 { return m_buffer; }
+	ftINLINE char* ptr(void)                               { return m_buffer; }
+	ftINLINE const char* ptr(void) const                   { return m_buffer; }
+	ftINLINE const char operator [](FBTuint16 i) const     { ftASSERT(i < L); return m_buffer[i]; }
+	ftINLINE const char at(FBTuint16 i) const              { ftASSERT(i < L); return m_buffer[i]; }
+	ftINLINE void clear(void)                              { m_buffer[0] = 0; m_size = 0; }
+	ftINLINE int empty(void) const                         { return m_size == 0; }
+	ftINLINE int size(void) const                          { return m_size; }
+	ftINLINE int capacity(void) const                      { return L; }
 
 
 
 	FBTsize hash(void) const
 	{
-		if (m_hash != FileTools_NPOS)
+		if (m_hash != ftNPOS)
 			return m_hash;
 
 		if (m_size == 0 || !m_buffer)
-			return FileTools_NPOS;
+			return ftNPOS;
 		ftCharHashKey chk(m_buffer);
 		m_hash = chk.hash();
 		return m_hash;
 	}
 
-	FileTools_INLINE bool operator == (const ftFixedString& str) const { return hash() == str.hash(); }
-	FileTools_INLINE bool operator != (const ftFixedString& str) const { return !(this->operator ==(str));}
+	ftINLINE bool operator == (const ftFixedString& str) const { return hash() == str.hash(); }
+	ftINLINE bool operator != (const ftFixedString& str) const { return !(this->operator ==(str));}
 
 protected:
 
@@ -1497,40 +1497,40 @@ protected:
 };
 
 
-enum FileTools_PRIM_TYPE
+enum ftPRIM_TYPE
 {
-	FileTools_PRIM_CHAR,		// 0
-	FileTools_PRIM_UCHAR,		// 1
-	FileTools_PRIM_SHORT,		// 2
-	FileTools_PRIM_USHORT,	// 3
-	FileTools_PRIM_INT,		// 4
-	FileTools_PRIM_LONG,		// 5
-	FileTools_PRIM_ULONG,		// 6
-	FileTools_PRIM_FLOAT,		// 7
-	FileTools_PRIM_DOUBLE,	// 8
-	FileTools_PRIM_VOID,		// 9
-	FileTools_PRIM_UNKNOWN	// 10
+	ftPRIM_CHAR,		// 0
+	ftPRIM_UCHAR,		// 1
+	ftPRIM_SHORT,		// 2
+	ftPRIM_USHORT,	// 3
+	ftPRIM_INT,		// 4
+	ftPRIM_LONG,		// 5
+	ftPRIM_ULONG,		// 6
+	ftPRIM_FLOAT,		// 7
+	ftPRIM_DOUBLE,	// 8
+	ftPRIM_VOID,		// 9
+	ftPRIM_UNKNOWN	// 10
 };
 
-FileTools_PRIM_TYPE ftGetPrimType(FBTuint32 typeKey);
-FileTools_INLINE FileTools_PRIM_TYPE ftGetPrimType(const char* typeName)
+ftPRIM_TYPE ftGetPrimType(FBTuint32 typeKey);
+ftINLINE ftPRIM_TYPE ftGetPrimType(const char* typeName)
 {
 	return ftGetPrimType(ftCharHashKey(typeName).hash());
 }
-FileTools_INLINE bool ftIsIntType(FBTuint32 typeKey)
+ftINLINE bool ftIsIntType(FBTuint32 typeKey)
 {
-	FileTools_PRIM_TYPE tp = ftGetPrimType(typeKey);
-	return tp < FileTools_PRIM_FLOAT;
+	ftPRIM_TYPE tp = ftGetPrimType(typeKey);
+	return tp < ftPRIM_FLOAT;
 }
-FileTools_INLINE bool ftIsFloatType(FBTuint32 typeKey)
+ftINLINE bool ftIsFloatType(FBTuint32 typeKey)
 {
-	FileTools_PRIM_TYPE tp = ftGetPrimType(typeKey);
-	return tp == FileTools_PRIM_FLOAT || tp == FileTools_PRIM_DOUBLE;
+	ftPRIM_TYPE tp = ftGetPrimType(typeKey);
+	return tp == ftPRIM_FLOAT || tp == ftPRIM_DOUBLE;
 }
-FileTools_INLINE bool ftIsNumberType(FBTuint32 typeKey)
+ftINLINE bool ftIsNumberType(FBTuint32 typeKey)
 {
-	FileTools_PRIM_TYPE tp = ftGetPrimType(typeKey);
-	return tp != FileTools_PRIM_VOID && tp != FileTools_PRIM_UNKNOWN;
+	ftPRIM_TYPE tp = ftGetPrimType(typeKey);
+	return tp != ftPRIM_VOID && tp != ftPRIM_UNKNOWN;
 }
 
 

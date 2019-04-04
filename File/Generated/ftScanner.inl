@@ -699,7 +699,7 @@ char *yytext;
 
 // Scalar types are defined as [a-z]"Scalar"
 // using camel hump notation
-#ifdef FileTools_SCALAR_DOUBLE
+#ifdef ftSCALAR_DOUBLE
 #define scalar_t double
 #else
 #define scalar_t float
@@ -740,7 +740,7 @@ typedef enum ftTokenID {
     NULL_TOKEN,
 }ftTokenID;
 
-#define FileTools_TOK_IS_TYPE(x) (x >= IDENTIFIER && x <= VOID)
+#define ftTOK_IS_TYPE(x) (x >= IDENTIFIER && x <= VOID)
 #define ECHO 
 
 int line = 1;

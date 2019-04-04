@@ -39,8 +39,8 @@ set(File_HDR
 #add_flex(ftScanner File_HDR ftScanner.l ft)
 set(ftScanner Generated/ftScanner.inl)
 
-if (FileTools_USE_ZLIB)
-    include_directories(${FileTools_ZLIB_INCLUDE})
-    link_libraries(${FileTools_ZLIB_LIBRARY})
+if (ftUSE_ZLIB)
+    include_directories(${ftZLIB_INCLUDE})
+    link_libraries(${ftZLIB_LIBRARY})
 endif()
 add_library(ftFile ${File_SRC} ${File_HDR} ${ftScanner})
