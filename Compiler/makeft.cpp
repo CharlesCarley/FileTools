@@ -29,26 +29,26 @@
 
 int main(int argc, char** argv)
 {
-	if (argc < 4)
-	{
-		ftPrintf("Usage:\n");
-		ftPrintf("\t makeft FileId <out-file> <in-file>[0] ... <in-file>[n]\n");
-		return 1;
-	}
+    if (argc < 4)
+    {
+        ftPrintf("Usage:\n");
+        ftPrintf("\t makeft FileId <out-file> <in-file>[0] ... <in-file>[n]\n");
+        return 1;
+    }
 
-	ftCompiler tables;
+    ftCompiler tables;
 
-	for (int i = 3; i < argc; ++i)
-	{
-		if (tables.parseFile(argv[i]) < 0)
-			return 1;
-	}
+    for (int i = 3; i < argc; ++i)
+    {
+        if (tables.parseFile(argv[i]) < 0)
+            return 1;
+    }
 
-	int code;
-	if (( code = tables.buildTypes()) != LNK_OK)
-		return code;
+    int code;
+    if ((code = tables.buildTypes()) != LNK_OK)
+        return code;
 
 
-	tables.writeFile(argv[1], argv[2]);
-	return 0;
+    tables.writeFile(argv[1], argv[2]);
+    return 0;
 }
