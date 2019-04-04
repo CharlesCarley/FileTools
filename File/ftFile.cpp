@@ -148,7 +148,7 @@ int ftFile::parse(const char* path, int mode)
 
 
 
-int ftFile::parse(const void* memory, FBTsize sizeInBytes, int mode, bool suppressHeaderWarning)
+int ftFile::parse(const void* memory, FBTsize sizeInBytes, int mode)
 {
 	ftMemoryStream ms;
 	ms.open( memory, sizeInBytes, ftStream::SM_READ, mode==PM_COMPRESSED );
@@ -159,22 +159,18 @@ int ftFile::parse(const void* memory, FBTsize sizeInBytes, int mode, bool suppre
 		return FS_FAILED;
 	}
 
-	return parseStreamImpl(&ms,suppressHeaderWarning);
+	return parseStreamImpl(&ms);
 }
 
 
 
-int ftFile::parseHeader(ftStream* stream, bool suppressHeaderWarning)
+int ftFile::parseHeader(ftStream* stream)
 {
 	m_header.resize(12);
 	stream->read(m_header.ptr(), 12);
 
 	if (!ftCharNEq(m_header.c_str(), m_uhid, 6) && !ftCharNEq(m_header.c_str(), m_aluhid, 7))
-	{
-		if (!suppressHeaderWarning)
-			ftPrintf("Unknown header ID '%s'\n", m_header.c_str());
 		return FS_INV_HEADER_STR;
-	}
 
 	char* headerMagic = (m_header.ptr() + 7);
 
@@ -226,11 +222,11 @@ int ftFile::initializeMemory(void)
 
 
 
-int ftFile::parseStreamImpl(ftStream* stream, bool suppressHeaderWarning)
+int ftFile::parseStreamImpl(ftStream* stream)
 {
 	int status;
 
-	status = parseHeader(stream,suppressHeaderWarning);
+	status = parseHeader(stream);
 	if (status != FS_OK)
 	{
 		ftPrintf("Failed to extract header!\n");

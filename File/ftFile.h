@@ -118,7 +118,7 @@ public:
 	virtual ~ftFile();
 
     int parse(const char* path, int mode = PM_UNCOMPRESSED);
-	int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED, bool suppressHeaderWarning=false);
+	int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
 
 	/// Saving in non native endian is not implemented yet.
 	int save(const char* path, const int mode = PM_UNCOMPRESSED, const ftEndian& endian = ftENDIAN_NATIVE);
@@ -177,8 +177,8 @@ protected:
 private:
 
 
-	int parseHeader(ftStream* stream, bool suppressHeaderWarning=false);
-	int parseStreamImpl(ftStream* stream, bool suppressHeaderWarning=false);
+	int parseHeader(ftStream* stream);
+	int parseStreamImpl(ftStream* stream);
 
 	int compileOffsets(void);
 	int link(void);
