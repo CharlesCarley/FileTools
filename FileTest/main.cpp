@@ -24,7 +24,7 @@ using namespace Blender;
 
 
 
-FBTuint32 SkipList[] = 
+FBTuint32 SkipList[] =
 {
     ftCharHashKey("FileGlobal").hash(),
     ftCharHashKey("Object").hash(),
@@ -41,25 +41,25 @@ FBTuint32 SkipList[] =
 
 int main(int argc, char** argv)
 {
-	if (argc < 2)
-		return 1;
+    if (argc < 2)
+        return 1;
 
     ftBlend fp;
     fp.setIgnoreList(SkipList);
 
-    if (fp.parse(argv[argc-1], ftFile::PM_UNCOMPRESSED) != ftFile::FS_OK)
-		return 1;
+    if (fp.parse(argv[argc - 1], ftFile::PM_UNCOMPRESSED) != ftFile::FS_OK)
+        return 1;
 
     fp.generateTypeCastLog("log.html");
 
-	Blender::FileGlobal* fg = fp.m_fg;
+    Blender::FileGlobal* fg = fp.m_fg;
     ftPrintf("Blender file version %i\n", fg->minversion);
 
     ftPrintf("Objects:\n");
     ftList& objects = fp.m_object;
-	for (Object* ob = (Object*)objects.first; ob; ob = (Object*)ob->id.next)
-	{
-		ftPrintf("     Name      : %s\n", ob->id.name + 2);
+    for (Object* ob = (Object*)objects.first; ob; ob = (Object*)ob->id.next)
+    {
+        ftPrintf("     Name      : %s\n", ob->id.name + 2);
         ftPrintf("     Location  : %.02f %.02f %.02f\n", ob->loc[0],  ob->loc[1],  ob->loc[2]);
         ftPrintf("     Rotation  : %.02f %.02f %.02f\n", ob->rot[0],  ob->rot[1],  ob->rot[2]);
         ftPrintf("     Scale     : %.02f %.02f %.02f\n", ob->size[0], ob->size[1], ob->size[2]);
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
     }
 
     ftPrintf("Mesh:\n");
-    ftList& mesh= fp.m_mesh;
+    ftList& mesh = fp.m_mesh;
     for (Mesh* me = (Mesh*)mesh.first; me; me = (Mesh*)me->id.next)
     {
         ftPrintf("     Name                : %s\n", me->id.name + 2);
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
                 Blender::MPoly& cp = me->mpoly[f];
                 for (int i = 0; i < cp.totloop; ++i)
                 {
-                    float *fp = &me->mvert[me->mloop[cp.loopstart + i].v].co[0];
+                    float* fp = &me->mvert[me->mloop[cp.loopstart + i].v].co[0];
                     ftPrintf("         Coordinate %.02f, %.02f, %.02f \n", (*fp++), (*fp++), (*fp++));
                 }
             }
