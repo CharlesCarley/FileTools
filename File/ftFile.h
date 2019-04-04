@@ -31,114 +31,115 @@ class ftBinTables;
 class ftFile
 {
 public:
-	enum FileMagic
-	{
-		FM_BIG_ENDIAN       = 'V',
-		FM_LITTLE_ENDIAN    = 'v',
-		FM_32_BIT           = '_',
-		FM_64_BIT           = '-',
+    enum FileMagic
+    {
+        FM_BIG_ENDIAN       = 'V',
+        FM_LITTLE_ENDIAN    = 'v',
+        FM_32_BIT           = '_',
+        FM_64_BIT           = '-',
 
-		// place custom rules here, note that the
-		// full header string must be <= 12 chars
-	};
+        // place custom rules here, note that the
+        // full header string must be <= 12 chars
+    };
 
     enum FileStatus
-	{
-		FS_LINK_FAILED = -7,
-		FS_INV_INSERT,
-		FS_BAD_ALLOC,
-		FS_INV_READ,
-		FS_INV_LENGTH,
-		FS_INV_HEADER_STR,
-		FS_FAILED,
-		FS_OK,
-	};
+    {
+        FS_LINK_FAILED = -7,
+        FS_INV_INSERT,
+        FS_BAD_ALLOC,
+        FS_INV_READ,
+        FS_INV_LENGTH,
+        FS_INV_HEADER_STR,
+        FS_FAILED,
+        FS_OK,
+    };
 
     enum ParseMode
-	{
-		PM_UNCOMPRESSED,
-		PM_COMPRESSED,
-		PM_READTOMEMORY,
+    {
+        PM_UNCOMPRESSED,
+        PM_COMPRESSED,
+        PM_READTOMEMORY,
 
-	};
+    };
 
-	enum FileHeader
-	{
-		FH_ENDIAN_SWAP  = (1 << 0),
-		FH_CHUNK_64     = (1 << 1),
-		FH_VAR_BITS     = (1 << 2),
-	};
+    enum FileHeader
+    {
+        FH_ENDIAN_SWAP  = (1 << 0),
+        FH_CHUNK_64     = (1 << 1),
+        FH_VAR_BITS     = (1 << 2),
+    };
 
     struct Chunk32
-	{
-		FBTuint32       m_code;
-		FBTuint32       m_len;
-		FBTuint32       m_old;
-		FBTuint32       m_typeid;
-		FBTuint32       m_nr;
-	};
+    {
+        FBTuint32       m_code;
+        FBTuint32       m_len;
+        FBTuint32       m_old;
+        FBTuint32       m_typeid;
+        FBTuint32       m_nr;
+    };
 
-	struct Chunk64
-	{
-		FBTuint32       m_code;
-		FBTuint32       m_len;
-		FBTuint64       m_old;
-		FBTuint32       m_typeid;
-		FBTuint32       m_nr;
-	};
+    struct Chunk64
+    {
+        FBTuint32       m_code;
+        FBTuint32       m_len;
+        FBTuint64       m_old;
+        FBTuint32       m_typeid;
+        FBTuint32       m_nr;
+    };
 
     struct Chunk
-	{
-		FBTuint32       m_code;
-		FBTuint32       m_len;
-		FBTsize         m_old;
-		FBTuint32       m_typeid;
-		FBTuint32       m_nr;
-	};
+    {
+        FBTuint32       m_code;
+        FBTuint32       m_len;
+        FBTsize         m_old;
+        FBTuint32       m_typeid;
+        FBTuint32       m_nr;
+    };
 
     struct MemoryChunk
-	{
-		enum Flag
-		{
-			BLK_MODIFIED = (1 << 0),
-		};
+    {
+        enum Flag
+        {
+            BLK_MODIFIED = (1 << 0),
+        };
 
-		MemoryChunk* m_next, *m_prev;
-		Chunk        m_chunk;
-		void*        m_block;
-		void*        m_newBlock;
-		FBTuint8     m_flag;
-		FBTtype      m_newTypeId;
-	};
+        MemoryChunk* m_next, *m_prev;
+        Chunk        m_chunk;
+        void*        m_block;
+        void*        m_newBlock;
+        FBTuint8     m_flag;
+        FBTtype      m_newTypeId;
+    };
 
 public:
 
 
-	ftFile(const char* uid);
-	virtual ~ftFile();
+    ftFile(const char* uid);
+    virtual ~ftFile();
 
     int parse(const char* path, int mode = PM_UNCOMPRESSED);
-	int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
+    int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
 
-	/// Saving in non native endian is not implemented yet.
-	int save(const char* path, const int mode = PM_UNCOMPRESSED, const ftEndian& endian = ftENDIAN_NATIVE);
+    /// Saving in non native endian is not implemented yet.
+    int save(const char* path, const int mode = PM_UNCOMPRESSED, const ftEndian& endian = ftENDIAN_NATIVE);
 
     const ftFixedString<12>&    getHeader(void)     const {return m_header;}
-	const int&                  getVersion(void)    const {return m_fileVersion;}
-	const char*                 getPath(void)       const {return m_curFile; }
+    const int&                  getVersion(void)    const {return m_fileVersion;}
+    const char*                 getPath(void)       const {return m_curFile; }
 
 
-	ftBinTables* getMemoryTable(void)  {
+    ftBinTables* getMemoryTable(void)
+    {
         if (!m_memory)
             initializeMemory();
         return m_memory;
     }
-	ftBinTables* getFileTable(void)    {return m_file;}
+    ftBinTables* getFileTable(void)    {return m_file;}
 
-	ftINLINE ftList& getChunks(void) {return m_chunks;}
-    virtual void setIgnoreList(FBTuint32 *stripList) {}
+    ftINLINE ftList& getChunks(void) {return m_chunks;}
+    virtual void setIgnoreList(FBTuint32* stripList) {}
 
-	bool _setuid(const char* uid);
+    bool _setuid(const char* uid);
 
 
 
@@ -147,11 +148,11 @@ public:
 
 
 
-    void generateTypeCastLog(const char *fname);
+    void generateTypeCastLog(const char* fname);
 
 protected:
 
-	virtual int         initializeTables(ftBinTables* tables) = 0;
+    virtual int         initializeTables(ftBinTables* tables) = 0;
     virtual int         initializeMemory(void);
 
     virtual void*       getFBT(void) = 0;
@@ -160,31 +161,31 @@ protected:
     virtual int         writeData(ftStream* stream) = 0;
 
     // lookup name first 7 of 12
-	const char*         m_uhid;
-	const char*         m_aluhid; //alternative header string
-	ftFixedString<12>   m_header;
+    const char*         m_uhid;
+    const char*         m_aluhid; //alternative header string
+    ftFixedString<12>   m_header;
 
     int m_version, m_fileVersion, m_fileHeader;
-	char* m_curFile;
+    char* m_curFile;
 
-	typedef ftHashTable<ftSizeHashKey, MemoryChunk*> ChunkMap;
-	ftList     m_chunks;
-	ChunkMap    m_map;
-	ftBinTables* m_memory, *m_file;
+    typedef ftHashTable<ftSizeHashKey, MemoryChunk*> ChunkMap;
+    ftList     m_chunks;
+    ChunkMap    m_map;
+    ftBinTables* m_memory, *m_file;
 
 
-	virtual bool skip(const FBTuint32& id) {return false;}
+    virtual bool skip(const FBTuint32& id) {return false;}
 
-	void* findPtr(const FBTsize& iptr);
-	MemoryChunk* findBlock(const FBTsize& iptr);
+    void* findPtr(const FBTsize& iptr);
+    MemoryChunk* findBlock(const FBTsize& iptr);
 private:
 
 
-	int parseHeader(ftStream* stream);
-	int parseStreamImpl(ftStream* stream);
+    int parseHeader(ftStream* stream);
+    int parseStreamImpl(ftStream* stream);
 
-	int compileOffsets(void);
-	int link(void);
+    int compileOffsets(void);
+    int link(void);
 };
 
 #endif//_ftFile_h_

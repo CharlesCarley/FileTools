@@ -34,18 +34,18 @@
 bool ftDebugger::isDebugger(void)
 {
 #if ftCOMPILER == ftCOMPILER_MSVC
-	return IsDebuggerPresent() != 0;
+    return IsDebuggerPresent() != 0;
 #else
-	return false;
+    return false;
 #endif
 }
 
 void ftDebugger::breakProcess(void)
 {
 #if ftCOMPILER == ftCOMPILER_MSVC
-	_asm int 3;
+    _asm int 3;
 #else
-	asm("int $3");
+    asm("int $3");
 #endif
 }
 
@@ -54,7 +54,7 @@ void ftDebugger::breakProcess(void)
 
 bool ftDebugger::isDebugger(void)
 {
-	return false;
+    return false;
 }
 
 void ftDebugger::breakProcess(void)
@@ -70,136 +70,136 @@ ftDebugger::Reporter ftDebugger::m_report = {0, 0};
 
 void ftDebugger::setReportHook(Reporter& hook)
 {
-	m_report.m_client = hook.m_client;
-	m_report.m_hook   = hook.m_hook;
+    m_report.m_client = hook.m_client;
+    m_report.m_hook   = hook.m_hook;
 }
 
 
 void ftDebugger::report(const char* fmt, ...)
 {
-	char ReportBuf[ftDEBUG_BUF_SIZE+1];
+    char ReportBuf[ftDEBUG_BUF_SIZE + 1];
 
-	va_list lst;
-	va_start(lst, fmt);
-	int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
-	va_end(lst);
+    va_list lst;
+    va_start(lst, fmt);
+    int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
+    va_end(lst);
 
-	if (size < 0)
-	{
-		ReportBuf[ftDEBUG_BUF_SIZE] = 0;
-		size = ftDEBUG_BUF_SIZE;
-	}
+    if (size < 0)
+    {
+        ReportBuf[ftDEBUG_BUF_SIZE] = 0;
+        size = ftDEBUG_BUF_SIZE;
+    }
 
-	if (size > 0)
-	{
-		ReportBuf[size] = 0;
+    if (size > 0)
+    {
+        ReportBuf[size] = 0;
 
-		if (m_report.m_hook)
-		{
+        if (m_report.m_hook)
+        {
 #if ftCOMPILER == ftCOMPILER_MSVC
-			if (IsDebuggerPresent())
-				OutputDebugString(ReportBuf);
+            if (IsDebuggerPresent())
+                OutputDebugString(ReportBuf);
 
 #endif
-			m_report.m_hook(m_report.m_client, ReportBuf);
-		}
-		else
-		{
+            m_report.m_hook(m_report.m_client, ReportBuf);
+        }
+        else
+        {
 
 #if ftCOMPILER == ftCOMPILER_MSVC
-			if (IsDebuggerPresent())
-				OutputDebugString(ReportBuf);
-			else
+            if (IsDebuggerPresent())
+                OutputDebugString(ReportBuf);
+            else
 #endif
-				fprintf(stderr, "%s", ReportBuf);
-		}
-	}
+                fprintf(stderr, "%s", ReportBuf);
+        }
+    }
 
 }
 
 
 void ftDebugger::reportIDE(const char* src, long line, const char* fmt, ...)
 {
-	static char ReportBuf[ftDEBUG_BUF_SIZE+1];
+    static char ReportBuf[ftDEBUG_BUF_SIZE + 1];
 
-	va_list lst;
-	va_start(lst, fmt);
+    va_list lst;
+    va_start(lst, fmt);
 
 
-	int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
-	va_end(lst);
+    int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
+    va_end(lst);
 
-	if (size < 0)
-	{
-		ReportBuf[ftDEBUG_BUF_SIZE] = 0;
-		size = ftDEBUG_BUF_SIZE;
-	}
+    if (size < 0)
+    {
+        ReportBuf[ftDEBUG_BUF_SIZE] = 0;
+        size = ftDEBUG_BUF_SIZE;
+    }
 
-	if (size > 0)
-	{
-		ReportBuf[size] = 0;
+    if (size > 0)
+    {
+        ReportBuf[size] = 0;
 #if ftCOMPILER == ftCOMPILER_MSVC
-		report("%s(%i): warning: %s", src, line, ReportBuf);
+        report("%s(%i): warning: %s", src, line, ReportBuf);
 #else
-		report("%s:%i: warning: %s", src, line, ReportBuf);
+        report("%s:%i: warning: %s", src, line, ReportBuf);
 #endif
-	}
+    }
 }
 
 
 void ftDebugger::errorIDE(const char* src, long line, const char* fmt, ...)
 {
-	static char ReportBuf[ftDEBUG_BUF_SIZE+1];
+    static char ReportBuf[ftDEBUG_BUF_SIZE + 1];
 
-	va_list lst;
-	va_start(lst, fmt);
+    va_list lst;
+    va_start(lst, fmt);
 
 
-	int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
-	va_end(lst);
+    int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
+    va_end(lst);
 
-	if (size < 0)
-	{
-		ReportBuf[ftDEBUG_BUF_SIZE] = 0;
-		size = ftDEBUG_BUF_SIZE;
-	}
+    if (size < 0)
+    {
+        ReportBuf[ftDEBUG_BUF_SIZE] = 0;
+        size = ftDEBUG_BUF_SIZE;
+    }
 
-	if (size > 0)
-	{
-		ReportBuf[size] = 0;
+    if (size > 0)
+    {
+        ReportBuf[size] = 0;
 #if ftCOMPILER == ftCOMPILER_MSVC
-		report("%s(%i): error: %s", src, line, ReportBuf);
+        report("%s(%i): error: %s", src, line, ReportBuf);
 #else
-		report("%s:%i: error: %s", src, line, ReportBuf);
+        report("%s:%i: error: %s", src, line, ReportBuf);
 #endif
-	}
+    }
 }
 
 ftPRIM_TYPE ftGetPrimType(FBTuint32 typeKey)
 {
-	static FBTuint32 charT    = ftCharHashKey("char").hash();
-	static FBTuint32 ucharT   = ftCharHashKey("uchar").hash();
-	static FBTuint32 shortT   = ftCharHashKey("short").hash();
-	static FBTuint32 ushortT  = ftCharHashKey("ushort").hash();
-	static FBTuint32 intT     = ftCharHashKey("int").hash();
-	static FBTuint32 longT    = ftCharHashKey("long").hash();
-	static FBTuint32 ulongT   = ftCharHashKey("ulong").hash();
-	static FBTuint32 floatT   = ftCharHashKey("float").hash();
-	static FBTuint32 doubleT  = ftCharHashKey("double").hash();
-	static FBTuint32 voidT    = ftCharHashKey("void").hash();
+    static FBTuint32 charT    = ftCharHashKey("char").hash();
+    static FBTuint32 ucharT   = ftCharHashKey("uchar").hash();
+    static FBTuint32 shortT   = ftCharHashKey("short").hash();
+    static FBTuint32 ushortT  = ftCharHashKey("ushort").hash();
+    static FBTuint32 intT     = ftCharHashKey("int").hash();
+    static FBTuint32 longT    = ftCharHashKey("long").hash();
+    static FBTuint32 ulongT   = ftCharHashKey("ulong").hash();
+    static FBTuint32 floatT   = ftCharHashKey("float").hash();
+    static FBTuint32 doubleT  = ftCharHashKey("double").hash();
+    static FBTuint32 voidT    = ftCharHashKey("void").hash();
 
-	if (typeKey == charT)	return ftPRIM_CHAR;
-	if (typeKey == ucharT)	return ftPRIM_UCHAR;
-	if (typeKey == shortT)	return ftPRIM_SHORT;
-	if (typeKey == ushortT)	return ftPRIM_USHORT;
-	if (typeKey == intT)	return ftPRIM_INT;
-	if (typeKey == longT)	return ftPRIM_LONG;
-	if (typeKey == ulongT)	return ftPRIM_ULONG;
-	if (typeKey == floatT)	return ftPRIM_FLOAT;
-	if (typeKey == doubleT)	return ftPRIM_DOUBLE;
-	if (typeKey == voidT)	return ftPRIM_VOID;
+    if (typeKey == charT)	return ftPRIM_CHAR;
+    if (typeKey == ucharT)	return ftPRIM_UCHAR;
+    if (typeKey == shortT)	return ftPRIM_SHORT;
+    if (typeKey == ushortT)	return ftPRIM_USHORT;
+    if (typeKey == intT)	return ftPRIM_INT;
+    if (typeKey == longT)	return ftPRIM_LONG;
+    if (typeKey == ulongT)	return ftPRIM_ULONG;
+    if (typeKey == floatT)	return ftPRIM_FLOAT;
+    if (typeKey == doubleT)	return ftPRIM_DOUBLE;
+    if (typeKey == voidT)	return ftPRIM_VOID;
 
-	return ftPRIM_UNKNOWN;
+    return ftPRIM_UNKNOWN;
 }
 
 

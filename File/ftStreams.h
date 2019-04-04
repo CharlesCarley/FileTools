@@ -27,34 +27,34 @@
 class ftStream
 {
 public:
-	enum StreamMode
-	{
-		SM_READ = 1,
-		SM_WRITE = 2,
-	};
+    enum StreamMode
+    {
+        SM_READ = 1,
+        SM_WRITE = 2,
+    };
 
 public:
-	ftStream() {}
-	virtual ~ftStream() {}
+    ftStream() {}
+    virtual ~ftStream() {}
 
-	virtual void open(const char* path, ftStream::StreamMode mode) {}
-	virtual void clear(void) {};
+    virtual void open(const char* path, ftStream::StreamMode mode) {}
+    virtual void clear(void) {};
 
 
-	virtual bool isOpen(void) const = 0;
-	virtual bool eof(void) const = 0;
+    virtual bool isOpen(void) const = 0;
+    virtual bool eof(void) const = 0;
 
-	virtual FBTsize  read(void* dest, FBTsize nr) const = 0;
-	virtual FBTsize  write(const void* src, FBTsize nr) = 0;
-	virtual FBTsize  writef(const char* fmt, ...) {return 0;};
+    virtual FBTsize  read(void* dest, FBTsize nr) const = 0;
+    virtual FBTsize  write(const void* src, FBTsize nr) = 0;
+    virtual FBTsize  writef(const char* fmt, ...) {return 0;};
 
-	virtual FBTsize  position(void) const = 0;
-	virtual FBTsize  size(void) const = 0;
+    virtual FBTsize  position(void) const = 0;
+    virtual FBTsize  size(void) const = 0;
 
-	virtual FBTsize seek(FBTint32 off, FBTint32 way) {return 0;}
+    virtual FBTsize seek(FBTint32 off, FBTint32 way) {return 0;}
 
 protected:
-	virtual void reserve(FBTsize nr) {}
+    virtual void reserve(FBTsize nr) {}
 };
 
 class           ftMemoryStream;
@@ -63,29 +63,29 @@ typedef void*   ftFileHandle;
 class ftFileStream : public ftStream
 {
 public:
-	ftFileStream();
-	~ftFileStream();
+    ftFileStream();
+    ~ftFileStream();
 
-	void open(const char* path, ftStream::StreamMode mode);
-	void close(void);
-	bool eof(void) const;
+    void open(const char* path, ftStream::StreamMode mode);
+    void close(void);
+    bool eof(void) const;
 
     FBTsize     read(void* dest, FBTsize nr) const;
-    void        write(ftMemoryStream &ms) const;
+    void        write(ftMemoryStream& ms) const;
     FBTsize     write(const void* src, FBTsize nr);
-	
+
     FBTsize     writef(const char* buf, ...);
-	FBTsize     position(void) const;
-	FBTsize     size(void)     const;
-	FBTsize     seek(FBTint32 off, FBTint32 way);
+    FBTsize     position(void) const;
+    FBTsize     size(void)     const;
+    FBTsize     seek(FBTint32 off, FBTint32 way);
 
 
     ftINLINE bool isOpen(void) const { return m_handle != 0; }
 
 protected:
-	ftFileHandle        m_handle;
-	int                 m_mode;
-	int					m_size;
+    ftFileHandle        m_handle;
+    int                 m_mode;
+    int					m_size;
 };
 
 #if ftUSE_GZ_FILE == 1
@@ -93,28 +93,28 @@ protected:
 class ftGzStream : public ftStream
 {
 public:
-	ftGzStream();
-	~ftGzStream();
+    ftGzStream();
+    ~ftGzStream();
 
-	void open(const char* path, ftStream::StreamMode mode);
-	void close(void);
+    void open(const char* path, ftStream::StreamMode mode);
+    void close(void);
 
-	bool isOpen(void)   const {return m_handle != 0;}
-	bool eof(void)      const;
+    bool isOpen(void)   const {return m_handle != 0;}
+    bool eof(void)      const;
 
-	FBTsize  read(void* dest, FBTsize nr) const;
-	FBTsize  write(const void* src, FBTsize nr);
-	FBTsize  writef(const char* buf, ...);
+    FBTsize  read(void* dest, FBTsize nr) const;
+    FBTsize  write(const void* src, FBTsize nr);
+    FBTsize  writef(const char* buf, ...);
 
 
-	FBTsize  position(void) const;
-	FBTsize size(void) const;
+    FBTsize  position(void) const;
+    FBTsize size(void) const;
 
-	// no size / seek
+    // no size / seek
 protected:
-	ftFixedString<272> m_file;
-	ftFileHandle       m_handle;
-	int                 m_mode;
+    ftFixedString<272> m_file;
+    ftFileHandle       m_handle;
+    int                 m_mode;
 };
 
 
@@ -124,42 +124,42 @@ protected:
 class ftMemoryStream : public ftStream
 {
 public:
-	ftMemoryStream();
-	~ftMemoryStream();
+    ftMemoryStream();
+    ~ftMemoryStream();
 
-	void clear(void);
+    void clear(void);
 
-	void open(ftStream::StreamMode mode);
-	void open(const char* path, ftStream::StreamMode mode);
-	void open(const ftFileStream& fs, ftStream::StreamMode mode);
-	void open(const void* buffer, FBTsize size, ftStream::StreamMode mode,bool compressed=false);
+    void open(ftStream::StreamMode mode);
+    void open(const char* path, ftStream::StreamMode mode);
+    void open(const ftFileStream& fs, ftStream::StreamMode mode);
+    void open(const void* buffer, FBTsize size, ftStream::StreamMode mode, bool compressed = false);
 
 
-	ftINLINE bool     isOpen(void)    const   {return m_buffer != 0;}
+    ftINLINE bool     isOpen(void)    const   {return m_buffer != 0;}
     ftINLINE bool     eof(void)       const   {return !m_buffer || m_pos >= m_size;}
     ftINLINE FBTsize  position(void)  const   {return m_pos;}
     ftINLINE FBTsize  size(void)      const   {return m_size;}
 
-	FBTsize  read(void* dest, FBTsize nr) const;
-	FBTsize  write(const void* src, FBTsize nr);
-	FBTsize  writef(const char* buf, ...);
+    FBTsize  read(void* dest, FBTsize nr) const;
+    FBTsize  write(const void* src, FBTsize nr);
+    FBTsize  writef(const char* buf, ...);
 #if ftUSE_GZ_FILE == 1
-	bool gzipInflate( char* inBuf, int inSize);
+    bool gzipInflate(char* inBuf, int inSize);
 #endif
-	void*            ptr(void)          {return m_buffer;}
-	const void*      ptr(void) const    {return m_buffer;}
+    void*            ptr(void)          {return m_buffer;}
+    const void*      ptr(void) const    {return m_buffer;}
 
-	FBTsize seek(FBTint32 off, FBTint32 way);
+    FBTsize seek(FBTint32 off, FBTint32 way);
 
 
-	void reserve(FBTsize nr);
+    void reserve(FBTsize nr);
 protected:
-	friend class ftFileStream;
+    friend class ftFileStream;
 
-	char*            m_buffer;
-	mutable FBTsize  m_pos;
-	FBTsize          m_size, m_capacity;
-	int              m_mode;
+    char*            m_buffer;
+    mutable FBTsize  m_pos;
+    FBTsize          m_size, m_capacity;
+    int              m_mode;
 };
 
 
