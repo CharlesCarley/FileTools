@@ -125,7 +125,7 @@ public:
 	ftKey64         m_val;		//key hash value, k[0]: type hash id, k[1]: member(field) base name hash id or 0(struct)
 	FBTint32        m_off;		//offset
 	FBTint32        m_len;
-	FBTint32        m_nr, m_dp; //nr: array index, dp: embeded depth
+	FBTint32        m_nr, m_dp; //nr: array index, dp: embedded depth
 	FBTint32        m_strcId;
 	FBTint32        m_flag;
 	Members         m_members;
@@ -185,7 +185,7 @@ public:
 	FBTuint32 m_strcNr;
 
 	// It's safe to assume that memory len is ftVOID and file len is FH_CHUNK_64 ? 8 : 4
-	// Othewise this library will not even compile (no more need for 'sizeof(ListBase) / 2')
+	// Otherwise this library will not even compile (no more need for 'sizeof(ListBase) / 2')
 	FBTuint8    m_ptr;
 	void*       m_otherBlock;
 	FBTsize     m_otherLen;

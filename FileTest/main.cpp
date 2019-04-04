@@ -22,16 +22,35 @@
 using namespace Blender;
 
 
+
+
+FBTuint32 SkipList[] = 
+{
+    ftCharHashKey("FileGlobal").hash(),
+    ftCharHashKey("Object").hash(),
+    ftCharHashKey("Mesh").hash(),
+    ftCharHashKey("MPoly").hash(),
+    ftCharHashKey("MFace").hash(),
+    ftCharHashKey("MVert").hash(),
+    ftCharHashKey("MLoop").hash(),
+    // ... others
+    0,
+};
+
+
+
 int main(int argc, char** argv)
 {
 	if (argc < 2)
 		return 1;
 
     ftBlend fp;
-	if (fp.parse(argv[argc-1], ftFile::PM_UNCOMPRESSED) != ftFile::FS_OK)
-	{
+    fp.setIgnoreList(SkipList);
+
+    if (fp.parse(argv[argc-1], ftFile::PM_UNCOMPRESSED) != ftFile::FS_OK)
 		return 1;
-	}
+
+    fp.generateTypeCastLog("log.html");
 
 	Blender::FileGlobal* fg = fp.m_fg;
     ftPrintf("Blender file version %i\n", fg->minversion);
@@ -55,17 +74,11 @@ int main(int argc, char** argv)
         ftPrintf("     Total Vertices      : %i\n", me->totvert);
         ftPrintf("     Total Faces         : %i\n", me->totface);
         ftPrintf("     Total Polygons      : %i\n", me->totpoly);
-
-
-
-
         if (me->mface)
         {
             for (int f = 0; f < me->totface; ++f)
             {
             }
-
-
         }
         else if (me->mpoly)
         {

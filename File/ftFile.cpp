@@ -195,9 +195,7 @@ int ftFile::parseHeader(ftStream* stream)
 	else if (ftENDIAN_IS_BIG)
 		m_fileHeader |= FH_ENDIAN_SWAP;
 
-
-	m_fileVersion = atoi(headerMagic);
-
+    m_fileVersion = atoi(headerMagic);
 	return FS_OK;
 }
 
@@ -577,7 +575,7 @@ int ftFile::link(void)
 			continue;
 		}
 
-        if (skip(m_memory->m_type[ms->m_key.k16[0]].m_typeId))
+        if (!skip(m_memory->m_type[ms->m_key.k16[0]].m_typeId))
 			continue;
 
 
@@ -606,7 +604,7 @@ int ftFile::link(void)
 		if (m_memory->m_type[cs->m_key.k16[0]].m_typeId == hk)
 			continue;
 
-		if (!cs->m_link || skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
+		if (!cs->m_link || !skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
 		{
 			ftFree(node->m_newBlock);
 			node->m_newBlock = 0;
@@ -996,3 +994,114 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 	ftMemcpy(dest, cpy, BlockSize);
 	return bytesRead;
 }
+
+
+
+
+void ftFile::generateTypeCastLog(const char *fname)
+{
+    ftBinTables* fp, *mp;
+    mp = getMemoryTable();
+    fp = getFileTable();
+
+    if (!mp)
+    {
+        ftPrintf("Missing memory table!\n");
+        return;
+    }
+
+    if (!fp)
+    {
+        ftPrintf("Missing file table!\n");
+        return;
+    }
+
+    ftBinTables::OffsM::Pointer md = mp->m_offs.ptr();
+    ftBinTables::OffsM::Pointer fd = fp->m_offs.ptr();
+    FBTsizeType i, s = mp->m_offs.size();
+   
+    
+    ftFileStream dest;
+    dest.open(fname, ftStream::SM_WRITE);
+    dest.writef("<html><head><title>Type cast report for %s</title></head><body><ul>", m_curFile);
+
+    for (i = 0; i < s; ++i)
+    {
+        ftStruct* strc = md[i];
+
+        ftStruct* a, *b;
+        a = strc;
+        b = strc->m_link;
+        if (!b)
+            continue;
+
+        if (!skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
+            continue;
+
+        char* cp0 = mp->m_type[a->m_key.k16[0]].m_name;
+        dest.writef("<li><a href=\"#%s\">%s</a> (%d)</li>\n", cp0, cp0, i);
+    }
+    dest.writef("</ul>\n");
+
+    for (i = 0; i < s; ++i)
+    {
+        ftStruct* strc = md[i];
+
+        ftStruct* a, *b, *c, *d;
+        a = strc;
+        b = strc->m_link;
+        if (!b)
+            continue;
+
+        if (!skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
+            continue;
+
+
+        const char* cp0 = mp->getStructType(a);//mp->m_type[a->m_key.k16[0]].m_name;
+        const char* cp1 = fp->getStructType(b);//fp->m_type[b->m_key.k16[0]].m_name;
+
+        dest.writef("<center><h2>%s (%d)</h2></center>\n", cp0, i);
+        dest.writef("<a id=\"%s\"/>\n", cp0);
+
+        dest.writef("<table><tr><td>File</td><td>(<b>%s</b>)</td><td><i>To</i></td><td>Memory</td><td>(<b>%s</b>)</td></tr></table>\n", cp1, cp0);
+        dest.writef("<table>\n");
+
+        ftStruct::Members::Pointer mbp = a->m_members.ptr();
+
+
+        int ml = 0, fl = 0;
+
+        for (FBTsizeType i = 0; i < a->m_members.size(); i++)
+        {
+            c = &mbp[i];
+            d = c->m_link;
+            //char* cpMN = mp->m_name[c->m_key.k16[1]].m_name;
+            const char* cpMN = mp->getStructName(c);
+
+            //cp0 = mp->m_type[mp->m_strc[c->m_strcId][0]].m_name;
+            cp0 = mp->getOwnerStructName(c);
+
+            if (!d)
+            {
+                ml += c->m_len;
+                dest.writef("<tr><td>%d</td><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)"
+                    "</td><td><i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>&nbsp;&nbsp;0&nbsp;&nbsp;"
+                    "</td><td></td><td>Not in file tables.</td></tr>\n", i, cp0, c->m_off, cpMN);
+                continue;
+            }
+
+
+            //char* cpFN = fp->m_name[d->m_key.k16[1]].m_name;
+            const char* cpFN = fp->getStructName(d);
+            dest.writef("<tr><td>%d</td><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)</td><td>"
+                "<i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>F(&nbsp;&nbsp;%s&nbsp;&nbsp;)"
+                "</td><td>+</td><td>%i</td></tr>\n", i, cp0, c->m_off, cpMN, cp1, d->m_off);
+            ml += c->m_len;
+        }
+
+
+        dest.writef("</table>\n");
+    }
+    dest.writef("</body></html>\n");
+}
+

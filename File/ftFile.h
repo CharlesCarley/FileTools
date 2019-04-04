@@ -145,6 +145,10 @@ public:
     void writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
     void writeBuffer(ftStream* stream, FBTsize len, void* writeData);
 
+
+
+    void generateTypeCastLog(const char *fname);
+
 protected:
 
 	virtual int         initializeTables(ftBinTables* tables) = 0;
@@ -173,7 +177,6 @@ protected:
 
 	void* findPtr(const FBTsize& iptr);
 	MemoryChunk* findBlock(const FBTsize& iptr);
-
 private:
 
 

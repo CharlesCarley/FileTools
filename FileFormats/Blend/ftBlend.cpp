@@ -164,7 +164,7 @@ bool ftBlend::skip(const FBTuint32& id)
 }
 
 
-void*   ftBlend::getFBT(void)
+void* ftBlend::getFBT(void)
 {
 	return (void*)bfBlenderFBT;
 }

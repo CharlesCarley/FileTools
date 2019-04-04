@@ -60,12 +60,12 @@ public:
 	FBTsizeType addName(const ftId& name);
 
 	MaxAllocSize        m_alloc;
-	ftStringPtrArray   m_name;
-	ftStringPtrArray   m_type;
+	ftStringPtrArray    m_name;
+	ftStringPtrArray    m_type;
 	IntPtrArray         m_tlen;
 	IntPtrArray         m_64ln;
 	TypeArray           m_strc;
-	ftStringPtrArray   m_undef;
+	ftStringPtrArray    m_undef;
 };
 
 
@@ -87,14 +87,12 @@ ftCompiler::~ftCompiler()
 
 void ftCompiler::makeName(ftVariable& v, bool forceArray)
 {
-
 	ftId newName;
 	int i = 0, j = 0;
-
 	if (v.m_isFptr)
 		newName.push_back('(');
 
-	if (v.m_ptrCount > 0)
+    if (v.m_ptrCount > 0)
 	{
 		for (i = 0; i < v.m_ptrCount; ++i)
 			newName.push_back('*');
@@ -115,12 +113,11 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
 		for (i = 0; i < v.m_numSlots; ++i)
 		{
 			newName.push_back('[');
-
 			ftId dest;
 			sprintf(dest.ptr(), "%i", v.m_arrays[i]);
-			//itoa(v.m_arrays[i], dest.ptr(), 10);
-			char* cp = dest.ptr();
 
+            //itoa(v.m_arrays[i], dest.ptr(), 10);
+			char* cp = dest.ptr();
 			for (j = 0; cp[j]; ++j)
 				newName.push_back(cp[j]);
 
@@ -168,10 +165,7 @@ int ftCompiler::parseFile(const ftPath& id)
 
 int ftCompiler::doParse(void)
 {
-
 	ftTokenID TOK = NULL_TOKEN;
-
-
 	while (ftValidToken(TOK))
 	{
 		TOK = ftLex();
@@ -331,8 +325,6 @@ void ftCompiler::writeFile(const ftId& id, ftStream* fp)
 
 	m_writeMode = 0;
 	writeStream(fp);
-
-
 	fp->writef("\n};\n");
 	fp->writef("int %sLen=sizeof(%sFBT);\n", id.c_str(), id.c_str());
 
@@ -366,13 +358,10 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
 void ftCompiler::writeStream(ftStream* fp)
 {
 	m_curBuf = -1;
-
-
 	int i;
 	writeBinPtr(fp, (void*)&ftIdNames::ftSDNA[0], 4);
 
-
-	writeBinPtr(fp, (void*)&ftIdNames::ftNAME[0], 4);
+    writeBinPtr(fp, (void*)&ftIdNames::ftNAME[0], 4);
 	i = m_build->m_name.size();
 #if ftFAKE_ENDIAN == 1
 	i = ftSwap32(i);
@@ -380,8 +369,7 @@ void ftCompiler::writeStream(ftStream* fp)
 	writeBinPtr(fp, &i, 4);
 	writeCharPtr(fp, m_build->m_name);
 
-
-	writeBinPtr(fp, (void*)&ftIdNames::ftTYPE[0], 4);
+    writeBinPtr(fp, (void*)&ftIdNames::ftTYPE[0], 4);
 	i = m_build->m_type.size();
 #if ftFAKE_ENDIAN == 1
 	i = ftSwap32(i);
@@ -402,22 +390,19 @@ void ftCompiler::writeStream(ftStream* fp)
 		writeBinPtr(fp, (void*)&pad[0], 2);
 	}
 
-	writeBinPtr(fp, (void*)&ftIdNames::ftSTRC[0], 4);
+    writeBinPtr(fp, (void*)&ftIdNames::ftSTRC[0], 4);
 	i = ft_struct_builders.size();
 #if ftFAKE_ENDIAN == 1
 	i = ftSwap32(i);
 #endif
 	writeBinPtr(fp, &i, 4);
 
-
-
 #if ftFAKE_ENDIAN == 1
 	for (i = 0; i < (int) m_build->m_strc.size(); i++)
 		m_build->m_strc.at(i) = ftSwap16( m_build->m_strc.at(i));
 #endif
 
-	writeBinPtr(fp,  m_build->m_strc.ptr(), m_build->m_alloc.m_strc);
-
+    writeBinPtr(fp,  m_build->m_strc.ptr(), m_build->m_alloc.m_strc);
 }
 
 
@@ -426,14 +411,12 @@ void ftCompiler::writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs)
 	char pad[4] = {'b', 'y', 't', 'e'};
 	FBTsize i = 0, s = ptrs.size();
 	int t = 0;
-
-
-	while (i < s)
+    
+    while (i < s)
 	{
 		ftId id = ptrs[i++];
 		id.push_back('\0');
 		writeBinPtr(fp, (void*)id.c_str(), id.size());
-
 		t += id.size();
 	}
 
@@ -449,8 +432,6 @@ void ftCompiler::writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs)
 
 		writeBinPtr(fp, (void*)id.c_str(), id.size());
 	}
-
-
 }
 
 
@@ -464,7 +445,7 @@ void ftCompiler::writeBinPtr(ftStream* fp, void* ptr, int len)
 			if ((m_curBuf % 24) == (23))
 				fp->writef("\n");
 
-			unsigned char cp = cb[i];
+            unsigned char cp = cb[i];
 			fp->writef("0x%02X,", cp);
 		}
 	}
@@ -484,7 +465,6 @@ ftBinTables* ftCompiler::write(void)
 
 	void* buffer = ftMalloc(ms.size() + 1);
 	ftMemcpy(buffer, ms.ptr(), ms.size());
-
 	return new ftBinTables(buffer, ms.size());
 }
 
@@ -498,8 +478,6 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 	path.split(split, '/', '\\');
 
 	// find split points
-
-
 	int i;
 	int last = 0;
 	for (i = path.size()-1; i > 0; --i)
@@ -511,9 +489,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 		}
 	}
 
-	
-	
-	for (i = 0; i < path.size(); ++i)
+    for (i = 0; i < path.size(); ++i)
 	{
 		if (i >= last)
 			break;
@@ -587,16 +563,9 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
 	fprintf(fp, "\treturn errors == 0 ? 0 : 1;\n}\n");
 
-
 #endif
-
 	fclose(fp);
-
 }
-
-
-
-
 
 ftBuildInfo::ftBuildInfo()
 {
@@ -616,8 +585,6 @@ void ftBuildInfo::reserve(void)
 	m_strc.reserve(ftMaxTable * ftMaxMember);
 }
 
-
-
 void ftBuildInfo::makeBuiltinTypes(void)
 {
 	addType("char",         sizeof(char));
@@ -636,8 +603,6 @@ void ftBuildInfo::makeBuiltinTypes(void)
 	addType("void",         0);
 }
 
-
-
 FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 {
 	FBTsize loc;
@@ -645,7 +610,6 @@ FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 	{
 		m_alloc.m_type += type.size() + 1;
 		m_alloc.m_tlen += sizeof(FBTtype);
-
 		loc = m_type.size();
 
 		m_type.push_back(type);
@@ -677,8 +641,6 @@ FBTsizeType ftBuildInfo::addName(const ftId& name)
 
 int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
 {
-
-
 	makeBuiltinTypes();
 
 	ftCompileStruct::Array::Iterator bit = struct_builders.iterator();
@@ -692,8 +654,7 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
 
 		m_alloc.m_strc += (sizeof(FBTtype) * 2);
 
-
-		ftVariables::Iterator it = bs.m_data.iterator();
+        ftVariables::Iterator it = bs.m_data.iterator();
 		while (it.hasMoreElements())
 		{
 			ftVariable& cvar = it.getNext();
@@ -714,7 +675,6 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
 
 int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 {
-
 	ftCompileStruct* strcs = struct_builders.ptr();
 	FBTsize tot = struct_builders.size(), i, e;
 
@@ -725,7 +685,6 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 	FBTsize nrel = 0, ct, len, fake64;
 
 	int status = LNK_OK;
-
 	ftStringPtrArray m_missingReport, m_zpdef;
 
 
@@ -734,19 +693,14 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 		ft_start = strcs[0].m_structId;
 
 	ftVariable* vptr = 0;
-
-
-
 	while (next != prev)
 	{
 		prev = next;
 		next = 0;
 
-
-		for (i = 0; i < tot; ++i)
+        for (i = 0; i < tot; ++i)
 		{
 			ftCompileStruct& cur = strcs[i];
-
 			if (tlens[cur.m_structId] != 0)
 			{
 				FBTsizeType pos;
@@ -761,7 +715,6 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 				len     = 0;
 				fake64  = 0;
 				bool hasPtr = false;
-
 				for (e = 0; e < nrel; ++e)
 				{
 					ftVariable& v = vptr[e];
@@ -779,7 +732,6 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
 							status |= LNK_ALIGNEMENTP;
 						}
-
 						if (fake64 % 8)
 						{
 							ftERROR( v.m_path.c_str(),
@@ -789,14 +741,11 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
 							status |= LNK_ALIGNEMENTP;
 						}
-
 						len += ftVOID * v.m_arraySize;
 						fake64 += 8 * v.m_arraySize;
-
 					}
 					else if (tlens[ct])
 					{
-
 						if (ct >= ft_start)
 						{
 							if (ftVOID8 && (len % 8))
@@ -837,19 +786,16 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 					{
 						next ++;
 						len = 0;
-
 						if (m_missingReport.find(cur.m_name) == ftNPOS)
 							m_missingReport.push_back(cur.m_name);
 
-						tln64[cur.m_structId] = 0;
+                        tln64[cur.m_structId] = 0;
 						tlens[cur.m_structId] = 0;
-
 						break;
 					}
 				}
 
-
-				tln64[cur.m_structId] = fake64;
+                tln64[cur.m_structId] = fake64;
 				tlens[cur.m_structId] = len;
 
 				if (len != 0)
@@ -875,7 +821,6 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 						         cur.m_name.c_str(), 4 - (len % 4)
 						        );
 						status |= LNK_ALIGNEMENT4;
-
 					}
 				}
 			}
