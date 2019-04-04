@@ -30,8 +30,10 @@
 #endif
 
 
-ftFileStream::ftFileStream()
-    : m_handle(0), m_mode(0), m_size(0)
+ftFileStream::ftFileStream() : 
+    m_handle(0), 
+    m_mode(0), 
+    m_size(0)
 {
 }
 
@@ -162,8 +164,9 @@ FBTsize ftFileStream::writef(const char* fmt, ...)
 #if ftUSE_GZ_FILE == 1
 
 
-ftGzStream::ftGzStream()
-    :    m_file(), m_handle(0), m_mode(0)
+ftGzStream::ftGzStream() :    
+    m_handle(0), 
+    m_mode(0)
 {
 }
 
@@ -176,35 +179,27 @@ ftGzStream::~ftGzStream()
 
 void ftGzStream::open(const char* p, ftStream::StreamMode mode)
 {
-    if (m_handle != 0 && m_file != p)
-        gzclose(m_handle);
+    if (m_handle != 0 && p != 0)
+        gzclose((gzFile)m_handle);
 
-    char fm[3] = {0, 0, 0};
+    char fm[3] = {};
     char* mp = &fm[0];
     if (mode & ftStream::SM_READ)
         *mp++ = 'r';
     else if (mode & ftStream::SM_WRITE)
         *mp++ = 'w';
     *mp++ = 'b';
-    fm[2] = 0;
-
-    m_file = p;
-    m_handle = gzopen(m_file.c_str(), fm);
+    m_handle = gzopen(p, fm);
 }
-
 
 void ftGzStream::close(void)
 {
     if (m_handle != 0)
     {
-        gzclose(m_handle);
+        gzclose((gzFile)m_handle);
         m_handle = 0;
     }
-
-    m_file.clear();
 }
-
-
 
 FBTsize ftGzStream::read(void* dest, FBTsize nr) const
 {
@@ -212,7 +207,7 @@ FBTsize ftGzStream::read(void* dest, FBTsize nr) const
     if (!dest || !m_handle)
         return -1;
 
-    return gzread(m_handle, dest, nr);
+    return gzread((gzFile)m_handle, dest, nr);
 }
 
 
@@ -220,7 +215,7 @@ FBTsize ftGzStream::write(const void* src, FBTsize nr)
 {
     if (m_mode == ftStream::SM_READ) return -1;
     if (!src || !m_handle) return -1;
-    return gzwrite(m_handle, src, nr);
+    return gzwrite((gzFile)m_handle, src, nr);
 }
 
 
@@ -228,12 +223,12 @@ bool ftGzStream::eof(void) const
 {
     if (!m_handle)
         return true;
-    return gzeof(m_handle) != 0;
+    return gzeof((gzFile)m_handle) != 0;
 }
 
 FBTsize ftGzStream::position(void) const
 {
-    return gztell(m_handle);
+    return gztell((gzFile)m_handle);
 }
 
 FBTsize ftGzStream::size(void) const

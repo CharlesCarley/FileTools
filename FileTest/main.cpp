@@ -22,23 +22,6 @@
 using namespace Blender;
 
 
-
-
-FBTuint32 SkipList[] =
-{
-    ftCharHashKey("FileGlobal").hash(),
-    ftCharHashKey("Object").hash(),
-    ftCharHashKey("Mesh").hash(),
-    ftCharHashKey("MPoly").hash(),
-    ftCharHashKey("MFace").hash(),
-    ftCharHashKey("MVert").hash(),
-    ftCharHashKey("MLoop").hash(),
-    // ... others
-    0,
-};
-
-
-
 int main(int argc, char** argv)
 {
     if (argc < 2)

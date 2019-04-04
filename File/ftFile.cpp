@@ -49,11 +49,8 @@ ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
 #define ftINVALID_INS     ftPrintf("Table insertion failed!\n");
 #define ftLINK_FAILED     ftPrintf("Linking failed!\n");
 
-
-struct ftChunk
-{
-    enum Size
-    {
+struct ftChunk {
+    enum Size {
         BlockSize   = sizeof(ftFile::Chunk),
         Block32     = sizeof(ftFile::Chunk32),
         Block64     = sizeof(ftFile::Chunk64),
@@ -63,19 +60,16 @@ struct ftChunk
 };
 
 
-ftFile::ftFile(const char* uid)
-    :   m_version(-1),
-        m_fileVersion(0),
-        m_fileHeader(0),
-        m_uhid(uid),
-        m_aluhid(0),
-        m_memory(0),
-        m_file(0),
-        m_curFile(0)
+ftFile::ftFile(const char* uid) :   
+    m_version(-1),
+    m_fileVersion(0),
+    m_fileHeader(0),
+    m_uhid(uid),
+    m_memory(0),
+    m_file(0),
+    m_curFile(0)
 {
 }
-
-
 
 ftFile::~ftFile()
 {
@@ -169,7 +163,7 @@ int ftFile::parseHeader(ftStream* stream)
     m_header.resize(12);
     stream->read(m_header.ptr(), 12);
 
-    if (!ftCharNEq(m_header.c_str(), m_uhid, 6) && !ftCharNEq(m_header.c_str(), m_aluhid, 7))
+    if (!ftCharNEq(m_header.c_str(), m_uhid, 6))
         return FS_INV_HEADER_STR;
 
     char* headerMagic = (m_header.ptr() + 7);
@@ -185,7 +179,6 @@ int ftFile::parseHeader(ftStream* stream)
     }
     else if (ftVOID8)
         m_fileHeader |= FH_VAR_BITS;
-
 
     if (*(headerMagic++) == FM_BIG_ENDIAN)
     {
@@ -227,7 +220,7 @@ int ftFile::parseStreamImpl(ftStream* stream)
     status = parseHeader(stream);
     if (status != FS_OK)
     {
-        ftPrintf("Failed to extract header!\n");
+        ftPrintf("Failed to extract file header!\n");
         return status;
     }
 

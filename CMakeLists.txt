@@ -20,12 +20,13 @@ project(FileTools)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 
 
-set(ftUSE_ZLIB 0)
-set(ftZLIB_INCLUDE "")
-set(ftZLIB_LIBRARY "")	
+set(ftUSE_ZLIB 1)
+set(ftZLIB_INCLUDE ${CMAKE_SOURCE_DIR}/File/zlib)
+set(ftZLIB_LIBRARY "zlib")	
 
 if (ftUSE_ZLIB)
     add_definitions(-DftUSE_GZ_FILE=1)
+    subdirs(File/zlib)
 endif()
 
 #add_definitions(-DFftUSE_COMPILER_CHECKS=0)
