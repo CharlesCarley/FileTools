@@ -45,12 +45,10 @@ int main(int argc, char** argv)
         return 1;
 
     ftBlend fp;
-    fp.setIgnoreList(SkipList);
-
     if (fp.parse(argv[argc - 1], ftFile::PM_UNCOMPRESSED) != ftFile::FS_OK)
         return 1;
 
-    fp.generateTypeCastLog("log.html");
+    //fp.generateTypeCastLog("log.html");
 
     Blender::FileGlobal* fg = fp.m_fg;
     ftPrintf("Blender file version %i\n", fg->minversion);
