@@ -112,8 +112,7 @@ public:
 
     // no size / seek
 protected:
-    ftFixedString<272> m_file;
-    ftFileHandle       m_handle;
+    ftFileHandle        m_handle;
     int                 m_mode;
 };
 

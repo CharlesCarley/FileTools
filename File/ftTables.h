@@ -57,7 +57,7 @@ ftINLINE ftFixedString<4> ftByteToString(FBTuint32 i)
 
 typedef struct ftName
 {
-    char*           m_name;     // note: memory is in the raw table.
+    char*           m_name;     // note: memory is in the main table.
     int             m_loc;
     FBTuint32       m_nameId;
     int             m_ptrCount;
@@ -68,7 +68,7 @@ typedef struct ftName
 
 typedef struct ftType
 {
-    char*           m_name;     // note: memory is in the raw table.
+    char*           m_name;     // note: memory is in the main table.
     FBTuint32       m_typeId;	// ftCharHashKey(typeName)
     FBTuint32       m_strcId;
 } ftType;
@@ -198,10 +198,6 @@ private:
     void putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys);
     void compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys);
     void compile(void);
-    bool sikp(const FBTuint32& type);
 
 };
-
-
-/** @}*/
 #endif//_ftTables_h_

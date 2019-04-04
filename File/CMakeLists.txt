@@ -43,4 +43,7 @@ if (ftUSE_ZLIB)
     include_directories(${ftZLIB_INCLUDE})
     link_libraries(${ftZLIB_LIBRARY})
 endif()
+
+
+
 add_library(ftFile ${File_SRC} ${File_HDR} ${ftScanner})

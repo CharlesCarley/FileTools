@@ -8423,6 +8423,5 @@ struct MaskLayer
     char restrictflag;
 };
 
-/** @}*/
 }
 #endif//_Blender_h_

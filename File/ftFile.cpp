@@ -575,7 +575,7 @@ int ftFile::link(void)
             continue;
         }
 
-        if (!skip(m_memory->m_type[ms->m_key.k16[0]].m_typeId))
+        if (skip(m_memory->m_type[ms->m_key.k16[0]].m_typeId))
             continue;
 
 
@@ -604,7 +604,7 @@ int ftFile::link(void)
         if (m_memory->m_type[cs->m_key.k16[0]].m_typeId == hk)
             continue;
 
-        if (!cs->m_link || !skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
+        if (!cs->m_link || skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
         {
             ftFree(node->m_newBlock);
             node->m_newBlock = 0;
@@ -1035,7 +1035,7 @@ void ftFile::generateTypeCastLog(const char* fname)
         if (!b)
             continue;
 
-        if (!skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
+        if (skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
             continue;
 
         char* cp0 = mp->m_type[a->m_key.k16[0]].m_name;
@@ -1053,7 +1053,7 @@ void ftFile::generateTypeCastLog(const char* fname)
         if (!b)
             continue;
 
-        if (!skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
+        if (skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
             continue;
 
 

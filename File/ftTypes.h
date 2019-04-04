@@ -168,8 +168,6 @@ template <typename T> ftINLINE T       ftClamp(const T& v, const T& a, const T& 
 
 
 #define ftNameOf(x) #x
-
-
 #define ftMalloc(size)             ::malloc(size)
 #define ftCalloc(size, len)        ::calloc(size, len)
 #define ftFree(ptr)                ::free(ptr)
@@ -548,12 +546,6 @@ public:
         }
     }
 
-    void sort(bool (*cmp)(const T& a, const T& b))
-    {
-        if (m_size > 1 && cmp)
-            _sort(cmp, 0, m_size - 1);
-    }
-
     ftINLINE T& operator[](FBTsizeType idx)               { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
     ftINLINE const T& operator[](FBTsizeType idx) const   { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
     ftINLINE T& at(FBTsizeType idx)                       { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
@@ -602,36 +594,6 @@ public:
     }
 
 protected:
-
-    void _sort(bool (*cmp)(const T& a, const T& b), int lo, int hi)
-    {
-        // btAlignedObjectArray.h
-
-        int i = lo, j = hi;
-        T x = m_data[(lo + hi) / 2];
-
-        //  partition
-        do
-        {
-            while (cmp(m_data[i], x))
-                i++;
-            while (cmp(x, m_data[j]))
-                j--;
-            if (i <= j)
-            {
-                swap(i, j);
-                i++; j--;
-            }
-        }
-        while (i <= j);
-
-        //  recursion
-        if (lo < j)
-            _sort(cmp, lo, j);
-        if (i < hi)
-            _sort(cmp, i, hi);
-    }
-
 
     void swap(FBTsizeType a, FBTsizeType b)
     {
@@ -759,7 +721,6 @@ public:
 
 
 
-//For handing invalid pointers
 class ftSizeHashKey
 {
 protected:
@@ -792,16 +753,15 @@ public:
     {
         if (m_hash != ftNPOS)
             return m_hash;
-
         m_hash = (FBThash)m_key;
         _ftTWHASH(m_hash);
         return m_hash;
     }
 
-    ftINLINE bool operator== (const ftSizeHashKey& v) const  { return hash() == v.hash();}
-    ftINLINE bool operator!= (const ftSizeHashKey& v) const  { return hash() != v.hash();}
-    ftINLINE bool operator== (const FBThash& v) const         { return hash() == v;}
-    ftINLINE bool operator!= (const FBThash& v) const         { return hash() != v;}
+    ftINLINE bool operator== (const ftSizeHashKey& v) const { return hash() == v.hash(); }
+    ftINLINE bool operator!= (const ftSizeHashKey& v) const { return hash() != v.hash(); }
+    ftINLINE bool operator== (const FBThash& v) const       { return hash() == v; }
+    ftINLINE bool operator!= (const FBThash& v) const       { return hash() != v; }
 };
 
 
@@ -833,12 +793,11 @@ public:
     }
 
 
-    ftINLINE bool operator== (const ftTHashKey& v) const  { return hash() == v.hash();}
-    ftINLINE bool operator!= (const ftTHashKey& v) const  { return hash() != v.hash();}
-    ftINLINE bool operator== (const FBThash& v) const      { return hash() == v;}
-    ftINLINE bool operator!= (const FBThash& v) const      { return hash() != v;}
+    ftINLINE bool operator== (const ftTHashKey& v) const    { return hash() == v.hash();}
+    ftINLINE bool operator!= (const ftTHashKey& v) const    { return hash() != v.hash();}
+    ftINLINE bool operator== (const FBThash& v) const       { return hash() == v;}
+    ftINLINE bool operator!= (const FBThash& v) const       { return hash() != v;}
 };
-
 typedef ftTHashKey<void> ftPointerHashKey;
 
 
@@ -847,7 +806,6 @@ struct ftHashEntry
 {
     Key    first;
     Value  second;
-
     ftHashEntry() {}
     ftHashEntry(const Key& k, const Value& v) : first(k), second(v) {}
 
@@ -969,7 +927,6 @@ public:
                 m_lastKey = ftNPOS;
                 m_lastPos = ftNPOS;
 
-
                 FBTsizeType i;
                 for (i = 0; i < m_capacity; ++i)
                 {
@@ -998,15 +955,14 @@ public:
         if (m_lastKey != hr)
         {
             FBTsizeType i = find(key);
-            if (i == ftNPOS) return (Value*)0;
-
+            if (i == ftNPOS) 
+                return (Value*)0;
 
             ftASSERT(i >= 0 && i < m_size);
 
             m_lastKey = hr;
             m_lastPos = i;
         }
-
         return &m_bptr[m_lastPos].second;
     }
 
@@ -1041,8 +997,6 @@ public:
         }
         return fh;
     }
-
-
 
     void erase(const Key& key) {remove(key);}
 
@@ -1157,7 +1111,6 @@ public:
             return;
 
         ftASSERT(m_bptr && m_iptr && m_nptr);
-
 
         FBTsizeType min_col = m_size, max_col = 0;
         FBTsizeType i, tot = 0, avg = 0;
@@ -1303,13 +1256,7 @@ private:
 #define ftCharNEq(a, b, n)  ((a && b) && !strncmp(a, b, n))
 #define ftCharEq(a, b)      ((a && b) && (*a == *b) && !strcmp(a, b))
 #define ftCharEqL(a, b, l)  ((a && b) && (*a == *b) && !memcmp(a, b, l))
-
-ftINLINE int ftStrLen(const char* cp)
-{
-    int i = 0;
-    while (cp[i]) cp[i++];
-    return i;
-}
+#define ftStrLen(a)         ::strlen(a) 
 
 
 // For operations on a fixed size character array
@@ -1318,10 +1265,7 @@ class ftFixedString
 {
 public:
     typedef char Pointer[L + 1];
-
-
 public:
-
     ftFixedString()
         : m_size(0), m_hash(ftNPOS)
     {
@@ -1535,7 +1479,4 @@ ftINLINE bool ftIsNumberType(FBTuint32 typeKey)
     return tp != ftPRIM_VOID && tp != ftPRIM_UNKNOWN;
 }
 
-
-
-/** @}*/
 #endif//_ftTypes_h_

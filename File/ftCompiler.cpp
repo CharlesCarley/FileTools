@@ -39,9 +39,6 @@ struct MaxAllocSize
     FBTuint32 m_offs;
 };
 
-
-
-
 class ftBuildInfo
 {
 public:
@@ -51,9 +48,7 @@ public:
     void    reserve(void);
     int     getLengths(ftCompileStruct::Array& struct_builders);
     int     getTLengths(ftCompileStruct::Array& struct_builders);
-
-
-    void makeBuiltinTypes(void);
+    void    makeBuiltinTypes(void);
 
     bool        hasType(const ftId& type);
     FBTsizeType addType(const ftId& type, const FBTuint32& len);

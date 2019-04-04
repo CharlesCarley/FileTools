@@ -22,7 +22,7 @@
 #ifndef _ftConfig_h_
 #define _ftConfig_h_
 
-#define ftDEBUG        1            // Traceback detail
+#define ftDEBUG             1       // Traceback detail
 #define ftMaxTable          5000    // Maximum number of elements in a table
 #define ftMaxID             64      // Maximum character array length
 #define ftMaxMember         256     // Maximum number of members in a struct or class.
