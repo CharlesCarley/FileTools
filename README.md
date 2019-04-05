@@ -7,7 +7,7 @@ All variables saved in the tables must be four-byte aligned.
 
 Pointer addresses at the time of saving are written to the file. Then during loading, the saved addresses will be used to relink the new data being read.
 
-Documentation efforts, refactoring and testing for consistency still a work in progress. 
+Documentation efforts, refactoring and testing for consistency is still a work in progress. 
 
 See the wiki for an introduction to the file format.
 * [Wiki](https://github.com/snailrose/FileTools/wiki)
