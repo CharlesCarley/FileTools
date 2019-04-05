@@ -793,7 +793,7 @@ bool ftFile::_setuid(const char* uid)
     return true;
 }
 
-int ftFile::save(const char* path, const int mode, const ftEndian& endian)
+int ftFile::save(const char* path, const int mode)
 {
     ftStream* fs;
 

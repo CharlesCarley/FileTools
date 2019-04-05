@@ -120,8 +120,7 @@ public:
     int parse(const char* path, int mode = PM_UNCOMPRESSED);
     int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
 
-    /// Saving in non native endian is not implemented yet.
-    int save(const char* path, const int mode = PM_UNCOMPRESSED, const ftEndian& endian = ftENDIAN_NATIVE);
+    int save(const char* path, const int mode = PM_UNCOMPRESSED);
 
     const ftFixedString<12>&    getHeader(void)     const {return m_header;}
     const int&                  getVersion(void)    const {return m_fileVersion;}
