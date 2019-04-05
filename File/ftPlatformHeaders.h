@@ -23,18 +23,18 @@
 #define _ftPlatformHeaders_h_
 
 #ifndef ftIN_SOURCE
-#error source include only!
+    #error source include only!
 #endif
 
 #if ftPLATFORM == ftPLATFORM_WIN32
-# if ftCOMPILER == ftCOMPILER_MSVC
-#   define _WIN32_WINNT 0x403
-# endif
-# ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN 1
-# endif
-# include <windows.h>
-# include <io.h>
+    #if ftCOMPILER == ftCOMPILER_MSVC
+        #define _WIN32_WINNT 0x403
+    #endif
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN 1
+    #endif
+    #include <windows.h>
+    #include <io.h>
 #else
 #endif
 
@@ -45,13 +45,13 @@
 #include <memory.h>
 
 #ifdef _MSC_VER
-#pragma warning(disable : 4996)
+    #pragma warning(disable : 4996)
 #endif
 
 #if ftCOMPILER == ftCOMPILER_MSVC
-# define ftp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, fmt, lst)
+    #define ftp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, fmt, lst)
 #else
-# define ftp_printf vsnprintf
+    #define ftp_printf vsnprintf
 #endif
 
 #endif//_ftPlatformHeaders_h_

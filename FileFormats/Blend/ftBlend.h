@@ -28,55 +28,55 @@
 class ftBlend : public ftFile
 {
 public:
-	ftBlend();
-	virtual ~ftBlend();
+    ftBlend();
+    virtual ~ftBlend();
 
 
-	ftList m_scene;
-	ftList m_library;
-	ftList m_object;
-	ftList m_mesh;
-	ftList m_curve;
-	ftList m_mball;
-	ftList m_mat;
-	ftList m_tex;
-	ftList m_image;
-	ftList m_latt;
-	ftList m_lamp;
-	ftList m_camera;
-	ftList m_ipo;
-	ftList m_key;
-	ftList m_world;
-	ftList m_screen;
-	ftList m_script;
-	ftList m_vfont;
-	ftList m_text;
-	ftList m_sound;
-	ftList m_group;
-	ftList m_armature;
-	ftList m_action;
-	ftList m_nodetree;
-	ftList m_brush;
-	ftList m_particle;
-	ftList m_wm;
-	ftList m_gpencil;
+    ftList m_scene;
+    ftList m_library;
+    ftList m_object;
+    ftList m_mesh;
+    ftList m_curve;
+    ftList m_mball;
+    ftList m_mat;
+    ftList m_tex;
+    ftList m_image;
+    ftList m_latt;
+    ftList m_lamp;
+    ftList m_camera;
+    ftList m_ipo;
+    ftList m_key;
+    ftList m_world;
+    ftList m_screen;
+    ftList m_script;
+    ftList m_vfont;
+    ftList m_text;
+    ftList m_sound;
+    ftList m_group;
+    ftList m_armature;
+    ftList m_action;
+    ftList m_nodetree;
+    ftList m_brush;
+    ftList m_particle;
+    ftList m_wm;
+    ftList m_gpencil;
 
-	Blender::FileGlobal* m_fg;
+    Blender::FileGlobal* m_fg;
 
-	int save(const char* path, const int mode = PM_UNCOMPRESSED);
-	
-	void setIgnoreList(FBTuint32 *stripList) {m_stripList = stripList;}
+    int save(const char* path, const int mode = PM_UNCOMPRESSED);
+
+    void setIgnoreList(FBTuint32* stripList) {m_stripList = stripList;}
 
 protected:
-	virtual int notifyData(void* p, const Chunk& id);
-	virtual int initializeTables(ftBinTables* tables);
-	virtual bool skip(const FBTuint32& id);
-	virtual int writeData(ftStream* stream);
+    virtual int notifyData(void* p, const Chunk& id);
+    virtual int initializeTables(ftBinTables* tables);
+    virtual bool skip(const FBTuint32& id);
+    virtual int writeData(ftStream* stream);
 
-	FBTuint32* m_stripList;
+    FBTuint32* m_stripList;
 
-	virtual void*   getFBT(void);
-	virtual FBTsize getFBTlength(void);
+    virtual void*   getFBT(void);
+    virtual FBTsize getFBTlength(void);
 };
 
 

@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     if (fp.parse(argv[argc - 1], ftFile::PM_COMPRESSED) != ftFile::FS_OK)
         return 1;
 
-   fp.generateTypeCastLog("log.html");
+    fp.generateTypeCastLog("log.html");
 
     Blender::FileGlobal* fg = fp.m_fg;
     ftPrintf("Blender file version %i\n", fg->minversion);

@@ -38,9 +38,9 @@ ftASSERTCOMP(ChunkLen32, sizeof(ftFile::Chunk32) == 20);
 ftASSERTCOMP(ChunkLen64, sizeof(ftFile::Chunk64) == 24);
 
 #if ftARCH == ftARCH_32
-ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
+    ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
 #else
-ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
+    ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
 #endif
 
 #define ftMALLOC_FAILED   ftPrintf("Failed to allocate memory!\n");
@@ -49,8 +49,10 @@ ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
 #define ftINVALID_INS     ftPrintf("Table insertion failed!\n");
 #define ftLINK_FAILED     ftPrintf("Linking failed!\n");
 
-struct ftChunk {
-    enum Size {
+struct ftChunk
+{
+    enum Size
+    {
         BlockSize   = sizeof(ftFile::Chunk),
         Block32     = sizeof(ftFile::Chunk32),
         Block64     = sizeof(ftFile::Chunk64),
@@ -60,7 +62,7 @@ struct ftChunk {
 };
 
 
-ftFile::ftFile(const char* uid) :   
+ftFile::ftFile(const char* uid) :
     m_version(-1),
     m_fileVersion(0),
     m_fileHeader(0),
@@ -1013,7 +1015,7 @@ void ftFile::generateTypeCastLog(const char* fname)
 
     ftBinTables::OffsM::Pointer md = mp->m_offs.ptr();
     ftBinTables::OffsM::Pointer fd = fp->m_offs.ptr();
-    FBTsizeType i, s = mp->m_offs.size(), c, c2=0;
+    FBTsizeType i, s = mp->m_offs.size(), c, c2 = 0;
 
 
     ftFileStream dest;
@@ -1045,9 +1047,9 @@ void ftFile::generateTypeCastLog(const char* fname)
         }
         char* cp0 = mp->m_type[a->m_key.k16[0]].m_name;
 
-        if (c2 %2 == 0)
+        if (c2 % 2 == 0)
             dest.writef("<td class=\"re\"><a href=\"#%s\">%s</a></td>\n", cp0, cp0);
-        else 
+        else
             dest.writef("<td class=\"ro\"><a href=\"#%s\">%s</a></td>\n", cp0, cp0);
     }
     dest.writef("</td></tr></table>\n");
@@ -1069,7 +1071,7 @@ void ftFile::generateTypeCastLog(const char* fname)
 
         const char* cp0 = mp->getStructType(a);
         const char* cp1 = fp->getStructType(b);
-        
+
         dest.writef("\t\t<a id=\"%s\"/>\n", cp0);
         dest.writef("\t\t<h4>%d. %s</h4>\n", i + 1, cp0);
 
@@ -1078,7 +1080,7 @@ void ftFile::generateTypeCastLog(const char* fname)
         int ml = 0, fl = 0;
 
         dest.writef("\t\t<table cellpadding=\"0\" "\
-            "cellspacing=\"0\" class=\"memtable\"><tr><td>\n");
+                    "cellspacing=\"0\" class=\"memtable\"><tr><td>\n");
 
         for (FBTsizeType i = 0; i < a->m_members.size(); i++)
         {
@@ -1089,12 +1091,12 @@ void ftFile::generateTypeCastLog(const char* fname)
 
             cp0 = mp->getOwnerStructName(c);
 
-            if (i%2 == 0)
+            if (i % 2 == 0)
                 dest.writef("<tr><td class =\"re\" height=\"%.02f\">%s</td>"\
-                    "<td class =\"re\" >%d</td></tr>", cur, cpMN, c->m_len);
+                            "<td class =\"re\" >%d</td></tr>", cur, cpMN, c->m_len);
             else
                 dest.writef("<tr><td class =\"ro\" height=\"%.02f\">%s</td>"\
-                    "<td class =\"ro\" >%d</td></tr>", cur, cpMN, c->m_len);
+                            "<td class =\"ro\" >%d</td></tr>", cur, cpMN, c->m_len);
 
 
             ml += c->m_len;

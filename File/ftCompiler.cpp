@@ -445,9 +445,7 @@ void ftCompiler::writeBinPtr(ftStream* fp, void* ptr, int len)
         }
     }
     else
-    {
         fp->write(ptr, len);
-    }
 }
 
 ftBinTables* ftCompiler::write(void)

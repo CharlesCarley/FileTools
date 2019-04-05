@@ -25,14 +25,14 @@
 
 
 #if ftUSE_GZ_FILE == 1
-#include "zlib.h"
-#include "zconf.h"
+    #include "zlib.h"
+    #include "zconf.h"
 #endif
 
 
-ftFileStream::ftFileStream() : 
-    m_handle(0), 
-    m_mode(0), 
+ftFileStream::ftFileStream() :
+    m_handle(0),
+    m_mode(0),
     m_size(0)
 {
 }
@@ -164,8 +164,8 @@ FBTsize ftFileStream::writef(const char* fmt, ...)
 #if ftUSE_GZ_FILE == 1
 
 
-ftGzStream::ftGzStream() :    
-    m_handle(0), 
+ftGzStream::ftGzStream() :
+    m_handle(0),
     m_mode(0)
 {
 }
@@ -369,9 +369,7 @@ bool ftMemoryStream::gzipInflate(char* inBuf, int inSize)
         int err = inflate(&strm, Z_SYNC_FLUSH);
         if (err == Z_STREAM_END) done = true;
         else if (err != Z_OK)
-        {
             break;
-        }
     }
 
     if (inflateEnd(&strm) != Z_OK)
@@ -387,9 +385,7 @@ bool ftMemoryStream::gzipInflate(char* inBuf, int inSize)
 ftMemoryStream::~ftMemoryStream()
 {
     if (m_buffer != 0)
-    {
         delete []m_buffer;
-    }
     m_buffer = 0;
     m_size = m_pos = 0;
     m_capacity = 0;

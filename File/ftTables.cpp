@@ -127,9 +127,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         return false;
     }
     else
-    {
         m_name = (Names)ftMalloc((nl * sizeof(ftName)) + 1);
-    }
 
 
 

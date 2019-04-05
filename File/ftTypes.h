@@ -23,7 +23,7 @@
 #define _ftTypes_h_
 
 #ifndef ftHAVE_CONFIG
-#include "ftConfig.h"
+    #include "ftConfig.h"
 #endif
 
 #include <string.h> //memcmp
@@ -34,17 +34,17 @@
 */
 
 #if (defined(DEBUG) || defined(_DEBUG)) && ftUSE_DEBUG_ASSERTS == 1
-# include <assert.h> // Keep this the only std include in headers
-# define ftDEBUG 1
-# define ftASSERT(x) assert(x)
+    #include <assert.h> // Keep this the only std include in headers
+    #define ftDEBUG 1
+    #define ftASSERT(x) assert(x)
 #else
-# define ftASSERT(x) ((void)0)
+    #define ftASSERT(x) ((void)0)
 #endif
 
 #ifdef ftUSE_COMPILER_CHECKS
-#define ftASSERTCOMP(x, n) typedef bool x[(n) ? 1 : -1];
+    #define ftASSERTCOMP(x, n) typedef bool x[(n) ? 1 : -1];
 #else
-#define ftASSERTCOMP(x, n)
+    #define ftASSERTCOMP(x, n)
 #endif
 
 
@@ -53,22 +53,22 @@
 #define ftPLATFORM_APPLE    3
 
 #if defined (_WIN32)
-# define ftPLATFORM ftPLATFORM_WIN32
+    #define ftPLATFORM ftPLATFORM_WIN32
 #elif defined(__APPLE__)
-# define ftPLATFORM ftPLATFORM_APPLE
+    #define ftPLATFORM ftPLATFORM_APPLE
 #else
-# define ftPLATFORM ftPLATFORM_LINUX
+    #define ftPLATFORM ftPLATFORM_LINUX
 #endif
 
 #define ftCOMPILER_MSVC    0
 #define ftCOMPILER_GNU     1
 
 #if defined(_MSC_VER)
-# define ftCOMPILER ftCOMPILER_MSVC
+    #define ftCOMPILER ftCOMPILER_MSVC
 #elif defined(__GNUC__)
-# define ftCOMPILER ftCOMPILER_GNU
+    #define ftCOMPILER ftCOMPILER_GNU
 #else
-# error unknown compiler
+    # error unknown compiler
 #endif
 
 #define ftENDIAN_LITTLE    0
@@ -77,17 +77,17 @@
 #if defined(__sgi)      ||  defined (__sparc)        || \
     defined (__sparc__) ||  defined (__PPC__)        || \
     defined (__ppc__)   ||  defined (__BIG_ENDIAN__)
-#define ftENDIAN ftENDIAN_BIG
+    #define ftENDIAN ftENDIAN_BIG
 #else
-#define ftENDIAN ftENDIAN_LITTLE
+    #define ftENDIAN ftENDIAN_LITTLE
 #endif
 
 #if ftENDIAN == ftENDIAN_BIG
-# define ftID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
-# define ftID2(c, d)   ( (c)<<8 | (d) )
+    #define ftID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
+    #define ftID2(c, d)   ( (c)<<8 | (d) )
 #else
-# define ftID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
-# define ftID2(c, d)   ( (d)<<8 | (c) )
+    #define ftID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
+    #define ftID2(c, d)   ( (d)<<8 | (c) )
 #endif
 
 #define ftARCH_32 0
@@ -97,22 +97,22 @@
     defined(__powerpc64__)  || defined(__alpha__)   || \
     defined(__ia64__)       || defined(__s390__)    || \
     defined(__s390x__)
-#define ftARCH ftARCH_64
+    #define ftARCH ftARCH_64
 #else
-#define ftARCH ftARCH_32
+    #define ftARCH ftARCH_32
 #endif
 
 
 #if ftPLATFORM == ftPLATFORM_WIN32
-# if defined(__MINGW32__) || \
-     defined(__CYGWIN__)  || \
-     (defined (_MSC_VER) && _MSC_VER < 1300)
-#  define ftINLINE inline
-# else
-#  define ftINLINE __forceinline
-# endif
+    #if defined(__MINGW32__) || \
+        defined(__CYGWIN__)  || \
+        (defined (_MSC_VER) && _MSC_VER < 1300)
+        #define ftINLINE inline
+    #else
+        #define ftINLINE __forceinline
+    #endif
 #else
-#  define ftINLINE    inline
+    #define ftINLINE    inline
 #endif
 
 // Integer types
@@ -130,21 +130,21 @@ typedef bool            FBTint1;
 
 
 #if ftCOMPILER == ftCOMPILER_GNU
-typedef long long          FBTint64;
-typedef unsigned long long FBTuint64;
+    typedef long long          FBTint64;
+    typedef unsigned long long FBTuint64;
 #else
-typedef __int64          FBTint64;
-typedef unsigned __int64 FBTuint64;
+    typedef __int64          FBTint64;
+    typedef unsigned __int64 FBTuint64;
 #endif
 
 // Arch dependent types
 
 #if ftARCH == ftARCH_64
-typedef FBTuint64   FBTuintPtr;
-typedef FBTint64    FBTintPtr;
+    typedef FBTuint64   FBTuintPtr;
+    typedef FBTint64    FBTintPtr;
 #else
-typedef FBTuint32   FBTuintPtr;
-typedef FBTint32    FBTintPtr;
+    typedef FBTuint32   FBTuintPtr;
+    typedef FBTint32    FBTintPtr;
 #endif
 
 typedef FBTuintPtr  FBTsize;
@@ -323,9 +323,9 @@ enum ftPointerLen
 
 
 #if ftARCH == ftARCH_64
-ftASSERTCOMP(ftVOID8_ASSERT, ftVOID8);
+    ftASSERTCOMP(ftVOID8_ASSERT, ftVOID8);
 #else
-ftASSERTCOMP(ftVOID4_ASSERT, ftVOID4);
+    ftASSERTCOMP(ftVOID4_ASSERT, ftVOID4);
 #endif
 
 
@@ -836,7 +836,7 @@ struct ftHashEntry
 
 
 #if _ftUTHASHTABLE_STAT == 1
-#include <typeinfo>
+    #include <typeinfo>
 #endif
 
 
@@ -955,7 +955,7 @@ public:
         if (m_lastKey != hr)
         {
             FBTsizeType i = find(key);
-            if (i == ftNPOS) 
+            if (i == ftNPOS)
                 return (Value*)0;
 
             ftASSERT(i >= 0 && i < m_size);
@@ -1207,9 +1207,7 @@ private:
 #if _ftUTHASHTABLE_FORCE_POW2
 
         if (!_ftUTHASHTABLE_IS_POW2(nr))
-        {
             _ftUTHASHTABLE_POW2(nr);
-        }
 
 #if _ftUTHASHTABLE_STAT_ALLOC == 1
         ftPrintf("Expanding tables: %i\n", nr);
@@ -1234,7 +1232,7 @@ private:
 
 
         FBTsizeType i, h;
-        for (i = 0; i < m_capacity; ++i) { m_iptr[i] = m_nptr[i] = ftNPOS; }
+        for (i = 0; i < m_capacity; ++i)  m_iptr[i] = m_nptr[i] = ftNPOS;
         for (i = 0; i < m_size; i++)     { h = _ftUTHASHTABLE_HASH(m_bptr[i].first); m_nptr[i] = m_iptr[h]; m_iptr[h] = i;}
     }
 
@@ -1256,7 +1254,7 @@ private:
 #define ftCharNEq(a, b, n)  ((a && b) && !strncmp(a, b, n))
 #define ftCharEq(a, b)      ((a && b) && (*a == *b) && !strcmp(a, b))
 #define ftCharEqL(a, b, l)  ((a && b) && (*a == *b) && !memcmp(a, b, l))
-#define ftStrLen(a)         ::strlen(a) 
+#define ftStrLen(a)         ::strlen(a)
 
 
 // For operations on a fixed size character array
