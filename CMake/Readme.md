@@ -33,8 +33,8 @@ add_library(LibName ${Source})
 
 #### macro(ADD_FT_VALIDATOR TARGET ARGN)
 Generates two output files
-* The same tables as above
-* A validation program that asserts the computed strucure sizes. If validation falils a compile error will be generated.
+1. The same tables as above.
+2. A validation program that asserts the computed strucure sizes. If validation falils a compile error will be generated.
 
 ```CMake
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/DirectoryContainingMakeFT)
