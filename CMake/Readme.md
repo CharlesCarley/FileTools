@@ -10,14 +10,14 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/DirectoryContainingMakeFT)
 include(MakeFT)
 
 
-set(API_FILES
+set(ApiFiles
    StructDecl1.h
    StructDecl2.h
    StructDecl3.h
    StructDecl4.h
 )
 
-add_ft(output_var ${API_FILES})
+add_ft(OutputVar ${ApiFiles})
 
 
 set(Source
@@ -25,8 +25,8 @@ set(Source
    Implementation.cpp   
 
 
-   ${output_var}
-   ${API_FILES}
+   ${OutputVar}
+   ${ApiFiles}
 )
 
 
