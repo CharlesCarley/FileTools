@@ -111,7 +111,6 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
             ftId dest;
             sprintf(dest.ptr(), "%i", v.m_arrays[i]);
 
-            //itoa(v.m_arrays[i], dest.ptr(), 10);
             char* cp = dest.ptr();
             for (j = 0; cp[j]; ++j)
                 newName.push_back(cp[j]);
@@ -316,12 +315,12 @@ void ftCompiler::writeFile(const ftId& id, ftStream* fp)
     if (!fp)
         return;
 
-    fp->writef("unsigned char %sFBT[]={\n", id.c_str());
+    fp->writef("unsigned char %sTable[]={\n", id.c_str());
 
     m_writeMode = 0;
     writeStream(fp);
     fp->writef("\n};\n");
-    fp->writef("int %sLen=sizeof(%sFBT);\n", id.c_str(), id.c_str());
+    fp->writef("int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
 
 }
 
@@ -336,13 +335,13 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
         return;
     }
 
-    fp.writef("unsigned char %sTables[]={\n", id.c_str());
+    fp.writef("unsigned char %sTable[]={\n", id.c_str());
 
     m_writeMode = 0;
     writeStream(&fp);
 
     fp.writef("\n};\n");
-    fp.writef("int %sLen=sizeof(%ssTables);\n", id.c_str(), id.c_str());
+    fp.writef("int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
 
 #if ftTYPE_LEN_VALIDATE == 1
     writeValidationProgram(path.c_str());
@@ -491,17 +490,12 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     }
     string += "Validator.cpp";
 
-
-
-    //ftPrintf("Writing validation for ==> %s\n", string.c_str());
-
     FILE* fp = fopen(string.c_str(), "wb");
     if (!fp)
     {
         ftPrintf("Failed to open validation file %s\n", string.c_str());
         return;
     }
-
 
     for (i = 0; i < (int)ft_includes.size(); ++i)
     {
@@ -521,10 +515,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
     fprintf(fp, "int main()\n{\n\tint errors=0;\n");
 
-
-
     ftCompileStruct::Array::Iterator it = ft_struct_builders.iterator();
-
     while (it.hasMoreElements())
     {
         ftCompileStruct& bs = it.getNext();
@@ -534,9 +525,6 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
         if (ft_skip.find(cur) != ftNPOS)
             continue;
-
-
-
 #if ftFAKE_ENDIAN == 1
         len = ftSwap16(len);
 #endif
@@ -559,6 +547,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 #endif
     fclose(fp);
 }
+
 
 ftBuildInfo::ftBuildInfo()
 {
@@ -858,6 +847,5 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
             }
         }
     }
-
     return status;
 }

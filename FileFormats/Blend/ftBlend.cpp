@@ -65,7 +65,7 @@ ftIdDB ftData[] =
 
 
 
-extern unsigned char bfBlenderFBT[];
+extern unsigned char bfBlenderTable[];
 extern int bfBlenderLen;
 
 
@@ -81,7 +81,7 @@ ftBlend::~ftBlend()
 
 int ftBlend::initializeTables(ftBinTables* tables)
 {
-    return tables->read(bfBlenderFBT, bfBlenderLen, false) ? FS_OK : FS_FAILED;
+    return tables->read(bfBlenderTable, bfBlenderLen, false) ? FS_OK : FS_FAILED;
 }
 
 int ftBlend::notifyData(void* p, const Chunk& id)
@@ -154,7 +154,7 @@ bool ftBlend::skip(const FBTuint32& id)
 
 void* ftBlend::getTables(void)
 {
-    return (void*)bfBlenderFBT;
+    return (void*)bfBlenderTable;
 }
 
 FBTsize ftBlend::getTableSize(void)
