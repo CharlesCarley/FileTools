@@ -436,7 +436,7 @@ void ftCompiler::writeBinPtr(ftStream* fp, void* ptr, int len)
         unsigned char* cb = (unsigned char*)ptr;
         for (int i = 0; i < len; ++i, ++m_curBuf)
         {
-            if ((m_curBuf % 24) == (23))
+            if ((m_curBuf % 18) == (17))
                 fp->writef("\n");
 
             unsigned char cp = cb[i];
