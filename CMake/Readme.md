@@ -1,8 +1,8 @@
-## CMake build utilities
+## CMake Build Utilities
 
 
 ### MakeFT
-can be used to add a build time target in order to call makeft on a group of source files.
+can be used to add a custom target that calls makeft on a group of source files.
 
 #### macro(ADD_FT TARGET ARGN)
 
