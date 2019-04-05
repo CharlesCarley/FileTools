@@ -49,6 +49,7 @@ static FBTuint32 skipList[] =
     ftCharHashKey("ThemeUI").hash(),
     ftCharHashKey("bTheme").hash(),
     ftCharHashKey("uiStyle").hash(),
+    ftCharHashKey("uiFont").hash(),
     ftCharHashKey("RenderData").hash(),
     0,
 };
