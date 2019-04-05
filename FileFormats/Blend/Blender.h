@@ -1,10 +1,6 @@
 #ifndef _Blender_h_
 #define _Blender_h_
 // Generated from a Blender(264) file.
-// actually there needed some manual work to be done
-// 1) some structs had to be moved because of references
-// 2) FBTuint64 --> FBTuint64
-#include "ftTypes.h"
 
 #ifdef near
     #undef near
@@ -19,10 +15,6 @@
 
 namespace Blender
 {
-    /** \addtogroup Blender
-    *  @{
-    */
-
     struct Link;
     struct LinkData;
     struct ListBase;
