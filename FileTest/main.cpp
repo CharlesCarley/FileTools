@@ -91,8 +91,11 @@ int main(int argc, char** argv)
         ftPrintf("     Total Polygons      : %i\n", me->totpoly);
         if (me->mface)
         {
-            for (int f = 0; f < me->totface; ++f)
+            for (int v = 0; v < me->totvert; ++v)
             {
+                float* fp = &me->mvert[v].co[0];
+                ftPrintf("         Coordinate %.02f, %.02f, %.02f \n",
+                    (fp[0]), (fp[1]), (fp[2]));
             }
         }
         else if (me->mpoly)
