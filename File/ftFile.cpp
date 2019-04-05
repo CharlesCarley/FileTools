@@ -1021,8 +1021,6 @@ void ftFile::generateTypeCastLog(const char* fname)
     dest.writef("%s", HEADER);
     dest.writef("<table cellpadding=\"0\" cellspacing=\"0\"><tr><td><h2>Structures</h2></td>\n");
 
-
-
     for (i = 0, c = 0; i < s; ++i)
     {
 
@@ -1052,7 +1050,7 @@ void ftFile::generateTypeCastLog(const char* fname)
         else 
             dest.writef("<td class=\"ro\"><a href=\"#%s\">%s</a></td>\n", cp0, cp0);
     }
-    dest.writef("</td></tr><table>\n");
+    dest.writef("</td></tr></table>\n");
 
 
     for (i = 0; i < s; ++i)
@@ -1072,49 +1070,37 @@ void ftFile::generateTypeCastLog(const char* fname)
         const char* cp0 = mp->getStructType(a);
         const char* cp1 = fp->getStructType(b);
         
-        dest.writef("<h2>%s (%d)</h2>\n", cp0, i);
-        dest.writef("<a id=\"%s\"/>\n", cp0);
+        dest.writef("\t\t<a id=\"%s\"/>\n", cp0);
+        dest.writef("\t\t<h4>%d. %s</h4>\n", i + 1, cp0);
 
         ftStruct::Members::Pointer mbp = a->m_members.ptr();
 
         int ml = 0, fl = 0;
 
-        dest.writef("<table cellpadding=\"0\" cellspacing=\"0\" class=\"memtable\" height=\"20\"><tr>\n");
+        dest.writef("\t\t<table cellpadding=\"0\" "\
+            "cellspacing=\"0\" class=\"memtable\"><tr><td>\n");
 
         for (FBTsizeType i = 0; i < a->m_members.size(); i++)
         {
             c = &mbp[i];
             d = c->m_link;
             const char* cpMN = mp->getStructName(c);
-            double cur = ((double)c->m_len / ((double)strc->m_len)) * 100.0;
-
-            if (i%2 == 0)
-                dest.writef("<td class =\"re\" width=\"%.02f%%\"/>", cur);
-            else
-                dest.writef("<td class =\"ro\" width=\"%.02f%%\"/>", cur);
+            double cur = (double)c->m_len * 14;
 
             cp0 = mp->getOwnerStructName(c);
 
-            if (!d)
-            {
-                ml += c->m_len;
-                //dest.writef("<tr><td>%d</td><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)"
-                //            "</td><td><i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>&nbsp;&nbsp;0&nbsp;&nbsp;"
-                //            "</td><td></td><td>Not in file tables.</td></tr>\n", i, cp0, c->m_off, cpMN);
-                continue;
-            }
+            if (i%2 == 0)
+                dest.writef("<tr><td class =\"re\" height=\"%.02f\">%s</td>"\
+                    "<td class =\"re\" >%d</td></tr>", cur, cpMN, c->m_len);
+            else
+                dest.writef("<tr><td class =\"ro\" height=\"%.02f\">%s</td>"\
+                    "<td class =\"ro\" >%d</td></tr>", cur, cpMN, c->m_len);
 
-            const char* cpFN = fp->getStructName(d);
-            //dest.writef("<tr><td>%d</td><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)</td><td>"
-            //            "<i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>F(&nbsp;&nbsp;%s&nbsp;&nbsp;)"
-            //            "</td><td>+</td><td>%i</td></tr>\n", i, cp0, c->m_off, cpMN, cp1, d->m_off);
+
             ml += c->m_len;
         }
-
-
-        dest.writef("</tr></table>\n");
+        dest.writef("</td></tr></table>\n");
     }
-
-    dest.writef("</body></html>\n");
+    dest.writef("\n</center></body></html>\n");
 }
 
