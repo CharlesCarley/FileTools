@@ -331,8 +331,8 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
 
     for (a = 0; a < nr; ++a)
     {
-        // Only calculate offsets on recursive structs
-        // This saves undeded buffers
+        // Only calculate offsets on recursive structures
+        // This saves unneeded buffers
         FBTtype* strc = m_strc[i];
 
         oof = cof;
