@@ -26,12 +26,6 @@
     #include "ftConfig.h"
 #endif
 
-#include <string.h> //memcmp
-
-
-/** \addtogroup FileTools
-*  @{
-*/
 
 #if (defined(DEBUG) || defined(_DEBUG)) && ftUSE_DEBUG_ASSERTS == 1
     #include <assert.h> // Keep this the only std include in headers

@@ -105,8 +105,8 @@ public:
     };
 
 
-    ftStruct()
-        :	m_key(),
+    ftStruct() :	
+          m_key(),
           m_val(),
           m_off(0),
           m_len(0),
@@ -118,12 +118,13 @@ public:
           m_link(0)
     {
     }
+
     ~ftStruct()    {}
 
 
-    ftKey32         m_key;		//k[0]: type, k[1]: name
-    ftKey64         m_val;		//key hash value, k[0]: type hash id, k[1]: member(field) base name hash id or 0(struct)
-    FBTint32        m_off;		//offset
+    ftKey32         m_key; // k[0]: type, k[1]: name
+    ftKey64         m_val; // key hash value, k[0]: type hash id, k[1]: member(field) base name hash id or 0(struct)
+    FBTint32        m_off; // offset
     FBTint32        m_len;
     FBTint32        m_nr, m_dp; //nr: array index, dp: embedded depth
     FBTint32        m_strcId;
