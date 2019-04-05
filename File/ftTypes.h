@@ -26,6 +26,8 @@
     #include "ftConfig.h"
 #endif
 
+#include "string.h"
+#include "memory.h"
 
 #if (defined(DEBUG) || defined(_DEBUG)) && ftUSE_DEBUG_ASSERTS == 1
     #include <assert.h> // Keep this the only std include in headers
@@ -1425,14 +1427,14 @@ public:
         if (m_hash != ftNPOS)
             return m_hash;
 
-        if (m_size == 0 || !m_buffer)
+        if (m_size == 0)
             return ftNPOS;
         ftCharHashKey chk(m_buffer);
         m_hash = chk.hash();
         return m_hash;
     }
 
-    ftINLINE bool operator == (const ftFixedString& str) const { return hash() == str.hash(); }
+    ftINLINE bool operator == (const ftFixedString& str) const { return this->hash() == str.hash(); }
     ftINLINE bool operator != (const ftFixedString& str) const { return !(this->operator ==(str));}
 
 protected:

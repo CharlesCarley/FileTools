@@ -104,7 +104,8 @@ int main(int argc, char** argv)
                 for (int i = 0; i < cp.totloop; ++i)
                 {
                     float* fp = &me->mvert[me->mloop[cp.loopstart + i].v].co[0];
-                    ftPrintf("         Coordinate %.02f, %.02f, %.02f \n", (*fp++), (*fp++), (*fp++));
+                    ftPrintf("         Coordinate %.02f, %.02f, %.02f \n",
+                             (fp[0]), (fp[1]), (fp[2]));
                 }
             }
         }
