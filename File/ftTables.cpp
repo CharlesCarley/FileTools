@@ -256,6 +256,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     else
         m_strc = (Strcs)ftMalloc(nl * ftMaxMember * sizeof(FBTtype) + 1);
 
+
     m_typeFinder.reserve(m_typeNr);
 
     i = 0;
@@ -407,11 +408,12 @@ void ftBinTables::compile(void)
 
         for (e = 0; e < memberCount; ++e, strc += 2)
         {
-            if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0) //strc[0]:member_type, strc[1]:member_name
+            if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
             {
                 ftStruct::Keys keys;
                 ftKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
                 keys.push_back(k);
+
                 compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth + 1, keys);
             }
             else
@@ -444,11 +446,6 @@ void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& c
     nof.m_keyChain   = keys;
     off->m_members.push_back(nof);
     cof += nof.m_len;
-
-#ifdef _DEBUG
-    //ftPrintf("%s %s\n", getStructType(off), getStructName(off));
-    //ftPrintf("\t%s %s nr:%d cof:%d depth:%d\n", getStructType(&nof), getStructName(&nof), nr, cof, depth);
-#endif
 }
 
 

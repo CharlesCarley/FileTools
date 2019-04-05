@@ -827,13 +827,20 @@ struct ftHashEntry
 
 
 #if _ftUTHASHTABLE_FORCE_POW2 == 1
-#define _ftUTHASHTABLE_POW2(x) \
-    --x; x |= x >> 16; x |= x >> 8; x |= x >> 4; \
-    x |= x >> 2; x |= x >> 1; ++x;
 
-#define _ftUTHASHTABLE_IS_POW2(x) (x && !((x-1) & x))
+#define _ftUTHASHTABLE_POW2(x) { \
+    --x;            \
+    x |= x >> 16;   \
+    x |= x >> 8;    \
+    x |= x >> 4;    \
+    x |= x >> 2;    \
+    x |= x >> 1;    \
+    ++x;}
+
+
+
+#define _ftUTHASHTABLE_IS_POW2(x) (!(x & (x-1)))
 #endif
-
 
 #if _ftUTHASHTABLE_STAT == 1
     #include <typeinfo>
@@ -1232,6 +1239,7 @@ private:
 
 
         FBTsizeType i, h;
+
         for (i = 0; i < m_capacity; ++i)  m_iptr[i] = m_nptr[i] = ftNPOS;
         for (i = 0; i < m_size; i++)     { h = _ftUTHASHTABLE_HASH(m_bptr[i].first); m_nptr[i] = m_iptr[h]; m_iptr[h] = i;}
     }
