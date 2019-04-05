@@ -75,8 +75,8 @@ protected:
 
     FBTuint32* m_stripList;
 
-    virtual void*   getFBT(void);
-    virtual FBTsize getFBTlength(void);
+    virtual void*   getTables(void);
+    virtual FBTsize getTableSize(void);
 };
 
 

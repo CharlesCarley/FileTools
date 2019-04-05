@@ -827,12 +827,12 @@ int ftFile::save(const char* path, const int mode, const ftEndian& endian)
     // write DNA1
     Chunk ch;
     ch.m_code   = DNA1;
-    ch.m_len    = getFBTlength();
+    ch.m_len    = getTableSize();
     ch.m_nr     = 1;
     ch.m_old    = 0;
     ch.m_typeid = 0;
     fs->write(&ch, ftChunk::BlockSize);
-    fs->write(getFBT(), ch.m_len);
+    fs->write(getTables(), ch.m_len);
 
 
     // write ENDB (End Byte | EOF )

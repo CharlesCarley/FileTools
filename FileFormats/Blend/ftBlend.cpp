@@ -152,12 +152,12 @@ bool ftBlend::skip(const FBTuint32& id)
 }
 
 
-void* ftBlend::getFBT(void)
+void* ftBlend::getTables(void)
 {
     return (void*)bfBlenderFBT;
 }
 
-FBTsize ftBlend::getFBTlength(void)
+FBTsize ftBlend::getTableSize(void)
 {
     return bfBlenderLen;
 }

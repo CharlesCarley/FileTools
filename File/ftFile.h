@@ -155,8 +155,8 @@ protected:
     virtual int         initializeTables(ftBinTables* tables) = 0;
     virtual int         initializeMemory(void);
 
-    virtual void*       getFBT(void) = 0;
-    virtual FBTsize     getFBTlength(void) = 0;
+    virtual void*       getTables(void) = 0;
+    virtual FBTsize     getTableSize(void) = 0;
     virtual int         notifyData(void* p, const Chunk& id) = 0;
     virtual int         writeData(ftStream* stream) = 0;
 

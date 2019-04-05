@@ -336,13 +336,13 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
         return;
     }
 
-    fp.writef("unsigned char %sFBT[]={\n", id.c_str());
+    fp.writef("unsigned char %sTables[]={\n", id.c_str());
 
     m_writeMode = 0;
     writeStream(&fp);
 
     fp.writef("\n};\n");
-    fp.writef("int %sLen=sizeof(%sFBT);\n", id.c_str(), id.c_str());
+    fp.writef("int %sLen=sizeof(%ssTables);\n", id.c_str(), id.c_str());
 
 #if ftTYPE_LEN_VALIDATE == 1
     writeValidationProgram(path.c_str());
