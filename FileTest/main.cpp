@@ -22,12 +22,45 @@
 using namespace Blender;
 
 
+// Unneeded structures 
+static FBTuint32 skipList[] =
+{
+    ftCharHashKey("Panel").hash(),
+    ftCharHashKey("ARegion").hash(),
+    ftCharHashKey("ScrArea").hash(),
+    ftCharHashKey("ScrVert").hash(),
+    ftCharHashKey("ScrEdge").hash(),
+    ftCharHashKey("bScreen").hash(),
+    ftCharHashKey("View3D").hash(),
+    ftCharHashKey("SpaceButs").hash(),
+    ftCharHashKey("SpaceOops").hash(),
+    ftCharHashKey("SpaceImage").hash(),
+    ftCharHashKey("SpaceIpo").hash(),
+    ftCharHashKey("SpaceAction").hash(),
+    ftCharHashKey("SpaceFile").hash(),
+    ftCharHashKey("SpaceSound").hash(),
+    ftCharHashKey("SpaceNla").hash(),
+    ftCharHashKey("SpaceTime").hash(),
+    ftCharHashKey("wmWindowManager").hash(),
+    ftCharHashKey("wmWindow").hash(),
+    ftCharHashKey("wmKeymap").hash(),
+    ftCharHashKey("wmKeyConfig").hash(),
+    ftCharHashKey("wmOperator").hash(),
+    ftCharHashKey("ThemeUI").hash(),
+    ftCharHashKey("bTheme").hash(),
+    ftCharHashKey("uiStyle").hash(),
+    ftCharHashKey("RenderData").hash(),
+    0,
+};
+
 int main(int argc, char** argv)
 {
     if (argc < 2)
         return 1;
 
     ftBlend fp;
+
+    fp.setIgnoreList(skipList);
     if (fp.parse(argv[argc - 1], ftFile::PM_COMPRESSED) != ftFile::FS_OK)
         return 1;
 
