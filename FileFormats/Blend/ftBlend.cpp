@@ -21,17 +21,24 @@
 #include "ftTables.h"
 #include "ftStreams.h"
 
+
+
+extern unsigned char    bfBlenderTable[];
+extern int              bfBlenderLen;
+
 const FBTuint32 GLOB = ftID('G', 'L', 'O', 'B');
+
 
 struct ftIdDB
 {
-    const FBTuint16     m_code;
-    ftList             ftBlend::* m_ptr;
+    const FBTuint16 m_code;
+    ftList ftBlend::* m_ptr;
 };
+
 
 ftIdDB ftData[] =
 {
-    { ftID2('S', 'C'), &ftBlend::m_scene},
+    { ftID2('S', 'C'), &ftBlend::m_scene },
     { ftID2('L', 'I'), &ftBlend::m_library },
     { ftID2('O', 'B'), &ftBlend::m_object },
     { ftID2('M', 'E'), &ftBlend::m_mesh },
@@ -61,13 +68,6 @@ ftIdDB ftData[] =
     { ftID2('W', 'M'), &ftBlend::m_wm },
     { 0, 0 }
 };
-
-
-
-
-extern unsigned char bfBlenderTable[];
-extern int bfBlenderLen;
-
 
 ftBlend::ftBlend() :
     ftFile("BLENDER"),
@@ -108,7 +108,6 @@ int ftBlend::notifyData(void* p, const Chunk& id)
     return FS_OK;
 }
 
-
 int ftBlend::writeData(ftStream* stream)
 {
     ftBinTables::OffsM::Pointer md = m_memory->m_offs.ptr();
@@ -131,7 +130,6 @@ int ftBlend::writeData(ftStream* stream)
         stream->write(&ch, sizeof(Chunk));
         stream->write(wd, ch.m_len);
     }
-
     return FS_OK;
 }
 
@@ -141,7 +139,6 @@ bool ftBlend::skip(const FBTuint32& id)
 {
     if (!m_stripList)
         return false;
-
     int i = 0;
     while (m_stripList[i] != 0)
     {
@@ -150,7 +147,6 @@ bool ftBlend::skip(const FBTuint32& id)
     }
     return false;
 }
-
 
 void* ftBlend::getTables(void)
 {

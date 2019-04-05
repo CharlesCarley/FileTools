@@ -2,6 +2,15 @@
 #define _Blender_h_
 // Generated from a Blender(264) file.
 
+#if defined(__x86_64__)     || defined(_M_X64)      || \
+    defined(__powerpc64__)  || defined(__alpha__)   || \
+    defined(__ia64__)       || defined(__s390__)    || \
+    defined(__s390x__)
+#define FBTuint64 unsigned long long
+#else
+#define FBTuint64 unsigned int
+#endif
+
 #ifdef near
     #undef near
 #endif
@@ -515,8 +524,6 @@ namespace Blender
     struct MaskSpline;
     struct MaskLayerShape;
     struct MaskLayer;
-
-
 
     struct Link
     {

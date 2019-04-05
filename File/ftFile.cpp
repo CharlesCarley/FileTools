@@ -1027,8 +1027,6 @@ void ftFile::generateTypeCastLog(const char* fname)
     {
 
         ftStruct* strc = md[i];
-
-
         ftStruct* a, *b;
         a = strc;
         b = strc->m_link;
@@ -1037,8 +1035,6 @@ void ftFile::generateTypeCastLog(const char* fname)
 
         if (skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
             continue;
-
-
 
         if (c++ % 4 == 0)
         {

@@ -65,11 +65,11 @@ public:
 
 
 
-ftCompiler::ftCompiler()
-    :	m_build(new ftBuildInfo()),
-      ft_start(0),
-      m_curBuf(0),
-      m_writeMode(0)
+ftCompiler::ftCompiler() :
+    m_build(new ftBuildInfo()),
+    ft_start(0),
+    m_curBuf(0),
+    m_writeMode(0)
 {
 }
 
@@ -107,8 +107,9 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
     {
         for (i = 0; i < v.m_numSlots; ++i)
         {
-            newName.push_back('[');
             ftId dest;
+
+            newName.push_back('[');
             sprintf(dest.ptr(), "%i", v.m_arrays[i]);
 
             char* cp = dest.ptr();
@@ -121,7 +122,6 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
 
     v.m_name = newName;
 }
-
 
 int ftCompiler::parseBuffer(const ftId& name, const char* ms)
 {
@@ -160,6 +160,7 @@ int ftCompiler::parseFile(const ftPath& id)
 int ftCompiler::doParse(void)
 {
     ftTokenID TOK = NULL_TOKEN;
+
     while (ftValidToken(TOK))
     {
         TOK = ftLex();
@@ -172,11 +173,9 @@ int ftCompiler::doParse(void)
                 ft_namespaces.push_back(tp.m_buf);
         }
 
-
         if (TOK == STRUCT)
         {
             ftToken tp;
-
             do
             {
                 TOK = ftLex(tp);
@@ -188,8 +187,8 @@ int ftCompiler::doParse(void)
                     bs.m_path = tp.m_src;
                     bs.m_line = tp.m_line;
 
-
                     TOK = ftLex(tp);
+
                     if (TOK == LBRACKET)
                     {
                         do
@@ -207,6 +206,7 @@ int ftCompiler::doParse(void)
                                 ftId typeId = tp.m_buf;
 
                                 // Scan names till ';'
+
                                 ftVariable cur;
                                 cur.m_type          = typeId;
                                 cur.m_path          = tp.m_src;
@@ -218,7 +218,6 @@ int ftCompiler::doParse(void)
 
                                 do
                                 {
-
                                     TOK = ftLex(tp);
 
                                     switch (TOK)
@@ -575,7 +574,7 @@ void ftBuildInfo::makeBuiltinTypes(void)
     addType("ushort",       sizeof(short));
     addType("int",          sizeof(int));
     addType("long",         sizeof(long));
-    addType("FBTuint64", sizeof(FBTuint64));
+    addType("FBTuint64",    sizeof(FBTintPtr));
     addType("ulong",        sizeof(long));
     addType("float",        sizeof(float));
     addType("double",       sizeof(double));

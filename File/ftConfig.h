@@ -28,6 +28,14 @@
 #define ftMaxMember         256     // Maximum number of members in a struct or class.
 #define ftDefaultAlloc      2048    // Table default allocation size
 #define ftTYPE_LEN_VALIDATE 1       // Write a validation file (use MakeFBT.cmake->ADD_ftVALIDATOR to add a self validating build)
+
+
+// ft is only set up for two dimensional arrays
+// changing this may compile fine, but the supporting 
+// code will not work as expected
 #define ftARRAY_SLOTS       2       // Maximum dimensional array, EG; (int m_member[..][..] -> [ftARRAY_SLOTS])
+
+
+
 
 #endif//_ftConfig_h_
