@@ -28,7 +28,7 @@ set(BlendSRC
 )
 
 
-add_ft(bfBlender Blender.h)
+#add_ft(bfBlender Blender.h)
 
 
 list(APPEND BlendSRC ${bfBlender}) #use manually generated 32bit DNA file from Blender.h
