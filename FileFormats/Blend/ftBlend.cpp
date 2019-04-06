@@ -140,12 +140,9 @@ bool ftBlend::skip(const FBTuint32& id)
 {
     if (!m_stripList)
         return false;
-    int f = 0, l = m_stripListLen - 1, m, i=0;
-
+    int f = 0, l = m_stripListLen - 1, m;
     while (f <= l)
     {
-        ++i;
-
         m = (f + l) / 2;
         if (m_stripList[m] == id)
             return true;
@@ -156,8 +153,6 @@ bool ftBlend::skip(const FBTuint32& id)
     }
     return false;
 }
-
-
 
 void ftBlend::setIgnoreList(FBTuint32* stripList) 
 { 
@@ -173,7 +168,7 @@ void ftBlend::setIgnoreList(FBTuint32* stripList)
         k = i;
         for (j = i + 1; j < m_stripListLen; ++j)
         {
-            if (stripList[j] < stripList[k])
+            if (m_stripList[j] < m_stripList[k])
                 k = j;
         }
         if (k != i)
