@@ -71,7 +71,8 @@ ftIdDB ftData[] =
 
 ftBlend::ftBlend() :
     ftFile("BLENDER"),
-    m_stripList(0)
+    m_stripList(0),
+    m_stripListLen(0)
 {
 }
 
@@ -139,14 +140,47 @@ bool ftBlend::skip(const FBTuint32& id)
 {
     if (!m_stripList)
         return false;
-    int i = 0;
-    while (m_stripList[i] != 0)
+    int f = 0, l = m_stripListLen - 1, m, i=0;
+
+    while (f <= l)
     {
-        if (m_stripList[i++] == id)
+        ++i;
+
+        m = (f + l) / 2;
+        if (m_stripList[m] == id)
             return true;
+        else if (m_stripList[m] > id)
+            l = m - 1;
+        else 
+            f = m + 1;
     }
     return false;
 }
+
+
+
+void ftBlend::setIgnoreList(FBTuint32* stripList) 
+{ 
+    m_stripList = stripList; 
+    if (!m_stripList)
+        return;
+    int i = 0, j, k;
+    while (m_stripList[i++] != 0);
+
+    m_stripListLen = i;
+    for (i = 0; i < m_stripListLen - 1; i++)
+    {
+        k = i;
+        for (j = i + 1; j < m_stripListLen; ++j)
+        {
+            if (stripList[j] < stripList[k])
+                k = j;
+        }
+        if (k != i)
+            ftSwap(m_stripList[i], m_stripList[k]);
+    }
+}
+
 
 void* ftBlend::getTables(void)
 {
