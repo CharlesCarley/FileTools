@@ -15,7 +15,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 #------------------------------------------------------------------------------
-include_directories(${CMAKE_SOURCE_DIR}/File ${CMAKE_SOURCE_DIR}/FileFormats/Blend)
+include_directories(${FileTools_SOURCE_DIR}/File ${FileTools_SOURCE_DIR}/FileFormats/Blend)
 link_libraries(ftFile Blend)
 
 

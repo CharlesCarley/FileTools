@@ -17,14 +17,14 @@
 #------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.4)
 project(FileTools)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
+list(APPEND CMAKE_MODULE_PATH ${FileTools_SOURCE_DIR}/CMake)
 
 
 set(ftUSE_ZLIB 1)
-set(ftZLIB_INCLUDE ${CMAKE_SOURCE_DIR}/File/zlib)
+set(ftZLIB_INCLUDE ${FileTools_SOURCE_DIR}/File/zlib)
 set(ftZLIB_LIBRARY "zlib")	
 
-if (ftUSE_ZLIB)
+if (ftUSE_ZLIB )
     add_definitions(-DftUSE_GZ_FILE=1)
     subdirs(File/zlib)
 endif()

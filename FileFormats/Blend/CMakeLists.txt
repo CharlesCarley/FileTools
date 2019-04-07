@@ -16,7 +16,7 @@
 # 3. This notice may not be removed or altered from any source distribution.
 #------------------------------------------------------------------------------
 include(MakeFT)
-include_directories(${CMAKE_SOURCE_DIR}/File)
+include_directories(${FileTools_SOURCE_DIR}/File)
 
 
 set(BlendSRC
