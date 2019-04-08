@@ -686,7 +686,7 @@ public:
         m_hash = (FBThash)_ftINITIAL_FNV;
         for (int i = 0; m_key[i]; i++)
         {
-            m_hash = m_hash ^ (m_key[i]);   // xor  the low 8 bits
+            m_hash = m_hash ^ (m_key[i]);       // xor  the low 8 bits
             m_hash = m_hash * _ftMULTIPLE_FNV;  // multiply by the magic number
         }
         return m_hash;
@@ -952,9 +952,7 @@ public:
         if (!m_bptr || m_size == 0)
             return (Value*)0;
 
-
         FBThash hr = key.hash();
-
         if (m_lastKey != hr)
         {
             FBTsizeType i = find(key);

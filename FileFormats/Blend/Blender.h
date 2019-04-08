@@ -2,13 +2,8 @@
 #define _Blender_h_
 // Generated from a Blender(264) file.
 
-#if defined(__x86_64__)     || defined(_M_X64)      || \
-    defined(__powerpc64__)  || defined(__alpha__)   || \
-    defined(__ia64__)       || defined(__s390__)    || \
-    defined(__s390x__)
-#define FBTuint64 unsigned long long
-#else
-#define FBTuint64 unsigned int
+#ifndef uint64_t
+#define uint64_t unsigned long long
 #endif
 
 #ifdef near
@@ -5555,8 +5550,8 @@ namespace Blender
         void* derivedDeform;
         void* derivedFinal;
         int* pad;
-        FBTuint64 lastDataMask;
-        FBTuint64 customdata_mask;
+        uint64_t lastDataMask;
+        uint64_t customdata_mask;
         int state;
         int init_state;
         ListBase gpulamp;
@@ -6119,8 +6114,8 @@ namespace Blender
         bGPdata* gpd;
         PhysicsSettings physics_settings;
         MovieClip* clip;
-        FBTuint64 customdata_mask;
-        FBTuint64 customdata_mask_modal;
+        uint64_t  customdata_mask;
+        uint64_t  customdata_mask_modal;
         ColorManagedViewSettings view_settings;
         ColorManagedDisplaySettings display_settings;
         ColorManagedColorspaceSettings sequencer_colorspace_settings;

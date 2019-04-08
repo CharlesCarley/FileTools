@@ -574,8 +574,9 @@ void ftBuildInfo::makeBuiltinTypes(void)
     addType("ushort",       sizeof(short));
     addType("int",          sizeof(int));
     addType("long",         sizeof(long));
-    addType("FBTuint64",    sizeof(FBTintPtr));
     addType("ulong",        sizeof(long));
+    addType("int64_t",      sizeof(FBTint64));
+    addType("uint64_t",     sizeof(FBTuint64));
     addType("float",        sizeof(float));
     addType("double",       sizeof(double));
 #ifdef ftUSE_SCALAR
