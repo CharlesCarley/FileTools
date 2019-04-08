@@ -136,7 +136,7 @@ public:
     ftBinTables* getFileTable(void)    {return m_file;}
 
     ftINLINE ftList& getChunks(void) {return m_chunks;}
-    virtual void setIgnoreList(FBTuint32* stripList) {}
+    virtual void setFilterList(FBTuint32* filter, bool inclusive=false) {}
 
     bool _setuid(const char* uid);
 

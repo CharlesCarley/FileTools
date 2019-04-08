@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 
     ftBlend fp;
 
-    fp.setIgnoreList(skipList);
+    fp.setFilterList(skipList, false);
     if (fp.parse(argv[argc - 1], ftFile::PM_COMPRESSED) != ftFile::FS_OK)
         return 1;
 

@@ -71,8 +71,9 @@ ftIdDB ftData[] =
 
 ftBlend::ftBlend() :
     ftFile("BLENDER"),
-    m_stripList(0),
-    m_stripListLen(0)
+    m_filterList(0),
+    m_filterListLen(0),
+    m_inclusive(false)
 {
 }
 
@@ -138,41 +139,43 @@ int ftBlend::writeData(ftStream* stream)
 
 bool ftBlend::skip(const FBTuint32& id)
 {
-    if (!m_stripList)
+    if (!m_filterList)
         return false;
-    int f = 0, l = m_stripListLen - 1, m;
+    int f = 0, l = m_filterListLen - 1, m;
     while (f <= l)
     {
         m = (f + l) / 2;
-        if (m_stripList[m] == id)
-            return true;
-        else if (m_stripList[m] > id)
+        if (m_filterList[m] == id)
+            return !m_inclusive;
+        else if (m_filterList[m] > id)
             l = m - 1;
         else 
             f = m + 1;
     }
-    return false;
+    return m_inclusive;
 }
 
-void ftBlend::setIgnoreList(FBTuint32* stripList) 
+void ftBlend::setFilterList(FBTuint32* filter, bool inclusive)
 { 
-    m_stripList = stripList; 
-    if (!m_stripList)
+    m_filterList = filter; 
+    if (!m_filterList)
         return;
-    int i = 0, j, k;
-    while (m_stripList[i++] != 0);
 
-    m_stripListLen = i;
-    for (i = 0; i < m_stripListLen - 1; i++)
+    m_inclusive = inclusive;
+    int i = 0, j, k;
+    while (m_filterList[i++] != 0);
+
+    m_filterListLen = i;
+    for (i = 0; i < m_filterListLen - 1; i++)
     {
         k = i;
-        for (j = i + 1; j < m_stripListLen; ++j)
+        for (j = i + 1; j < m_filterListLen; ++j)
         {
-            if (m_stripList[j] < m_stripList[k])
+            if (m_filterList[j] < m_filterList[k])
                 k = j;
         }
         if (k != i)
-            ftSwap(m_stripList[i], m_stripList[k]);
+            ftSwap(m_filterList[i], m_filterList[k]);
     }
 }
 
