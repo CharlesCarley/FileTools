@@ -166,10 +166,10 @@ void ftBlend::setFilterList(FBTuint32* filter, bool inclusive)
     while (m_filterList[i++] != 0);
 
     m_filterListLen = i;
-    for (i = 0; i < m_filterListLen - 1; i++)
+    for (i = 0; i < m_filterListLen - 2; i++)
     {
         k = i;
-        for (j = i + 1; j < m_filterListLen; ++j)
+        for (j = i + 1; j < m_filterListLen-1; ++j)
         {
             if (m_filterList[j] < m_filterList[k])
                 k = j;

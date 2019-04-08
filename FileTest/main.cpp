@@ -25,32 +25,16 @@ using namespace Blender;
 // Unneeded structures 
 static FBTuint32 skipList[] =
 {
-    ftCharHashKey("Panel").hash(),
-    ftCharHashKey("ARegion").hash(),
-    ftCharHashKey("ScrArea").hash(),
-    ftCharHashKey("ScrVert").hash(),
-    ftCharHashKey("ScrEdge").hash(),
-    ftCharHashKey("bScreen").hash(),
-    ftCharHashKey("View3D").hash(),
-    ftCharHashKey("SpaceButs").hash(),
-    ftCharHashKey("SpaceOops").hash(),
-    ftCharHashKey("SpaceImage").hash(),
-    ftCharHashKey("SpaceIpo").hash(),
-    ftCharHashKey("SpaceAction").hash(),
-    ftCharHashKey("SpaceFile").hash(),
-    ftCharHashKey("SpaceSound").hash(),
-    ftCharHashKey("SpaceNla").hash(),
-    ftCharHashKey("SpaceTime").hash(),
-    ftCharHashKey("wmWindowManager").hash(),
-    ftCharHashKey("wmWindow").hash(),
-    ftCharHashKey("wmKeymap").hash(),
-    ftCharHashKey("wmKeyConfig").hash(),
-    ftCharHashKey("wmOperator").hash(),
-    ftCharHashKey("ThemeUI").hash(),
-    ftCharHashKey("bTheme").hash(),
-    ftCharHashKey("uiStyle").hash(),
-    ftCharHashKey("uiFont").hash(),
-    ftCharHashKey("RenderData").hash(),
+    ftCharHashKey("FileGlobal").hash(),
+    ftCharHashKey("Object").hash(),
+    ftCharHashKey("Camera").hash(),
+    ftCharHashKey("Lamp").hash(),
+    ftCharHashKey("Scene").hash(),
+    ftCharHashKey("Mesh").hash(),
+    ftCharHashKey("MVert").hash(),
+    ftCharHashKey("MFace").hash(),
+    ftCharHashKey("MPoly").hash(),
+    ftCharHashKey("MLoop").hash(),
     0,
 };
 
@@ -61,7 +45,7 @@ int main(int argc, char** argv)
 
     ftBlend fp;
 
-    fp.setFilterList(skipList, false);
+    fp.setFilterList(skipList, true);
     if (fp.parse(argv[argc - 1], ftFile::PM_COMPRESSED) != ftFile::FS_OK)
         return 1;
 
