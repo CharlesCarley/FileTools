@@ -37,5 +37,9 @@ endif()
 subdirs(File Compiler)
 subdirs(FileFormats/Blend)
 subdirs(FileFormats/Example)
-subdirs(FileTest)
-subdirs(Example)
+
+if (NOT ftNO_EXAMPLES)
+    subdirs(FileTest)
+    subdirs(Example)
+endif()
+

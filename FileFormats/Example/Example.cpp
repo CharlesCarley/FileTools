@@ -34,7 +34,6 @@ namespace ExampleCodes
 Example::Example() :
     ftFile("Example")
 {
-
     m_info.major    = FileVersionMajor;
     m_info.minor    = FileVersionMinor;
     m_info.build    = FileVersionBuild;
@@ -55,7 +54,6 @@ Example::~Example()
 
 extern unsigned char ExampleTablesTable[];
 extern int ExampleTablesLen;
-
 
 void* Example::getTables(void)
 {
@@ -79,6 +77,5 @@ int Example::dataRead(void* p, const Chunk& id)
 int Example::writeData(ftStream* stream)
 {
     writeStruct(stream, "FileInfo", ExampleCodes::INFO, sizeof(FileInfo), &m_info);
-
     return FS_OK;
 }
