@@ -580,7 +580,9 @@ void ftBuildInfo::makeBuiltinTypes(void)
     addType("float",        sizeof(float));
     addType("double",       sizeof(double));
 #ifdef ftUSE_SCALAR
-    addType(ftSCALAR,     sizeof(scalar_t));
+    addType(ftSCALAR,      sizeof(scalar_t));
+#else
+    addType("scalar_t",    sizeof(float));
 #endif
     addType("void",         0);
 }
