@@ -20,6 +20,8 @@ project(FileTools)
 list(APPEND CMAKE_MODULE_PATH ${FileTools_SOURCE_DIR}/CMake)
 
 
+set(ftINCLUDE ${FileTools_SOURCE_DIR}/File)
+
 set(ftUSE_ZLIB 1)
 set(ftZLIB_INCLUDE ${FileTools_SOURCE_DIR}/File/zlib)
 set(ftZLIB_LIBRARY "zlib")	
@@ -32,7 +34,8 @@ endif()
 #add_definitions(-DFftUSE_COMPILER_CHECKS=0)
 #add_definitions(-DftUSE_DEBUG_ASSERTS=0)
 
-
 subdirs(File Compiler)
 subdirs(FileFormats/Blend)
+subdirs(FileFormats/Example)
 subdirs(FileTest)
+subdirs(Example)

@@ -151,13 +151,14 @@ public:
 
 protected:
 
-    virtual int         initializeTables(ftBinTables* tables) = 0;
-    virtual int         initializeMemory(void);
-
+    int initializeTables(ftBinTables* tables);
+    
     virtual void*       getTables(void) = 0;
     virtual FBTsize     getTableSize(void) = 0;
     virtual int         notifyData(void* p, const Chunk& id) = 0;
     virtual int         writeData(ftStream* stream) = 0;
+
+    virtual int         initializeMemory(void);
 
     // lookup name first 7 of 12
     const char*         m_uhid;

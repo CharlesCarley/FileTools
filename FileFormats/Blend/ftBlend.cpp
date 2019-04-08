@@ -81,11 +81,6 @@ ftBlend::~ftBlend()
 {
 }
 
-int ftBlend::initializeTables(ftBinTables* tables)
-{
-    return tables->read(bfBlenderTable, bfBlenderLen, false) ? FS_OK : FS_FAILED;
-}
-
 int ftBlend::notifyData(void* p, const Chunk& id)
 {
     if (id.m_code == GLOB)

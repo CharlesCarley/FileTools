@@ -158,6 +158,17 @@ int ftFile::parse(const void* memory, FBTsize sizeInBytes, int mode)
     return parseStreamImpl(&ms);
 }
 
+int ftFile::initializeTables(ftBinTables* tables)
+{
+    void *tableData = getTables();
+    FBTsize tableSize = getTableSize();
+
+
+    if (tableData != 0 && tableSize > 0 && tableSize != ftNPOS)
+        return tables->read(tableData, tableSize, false) ? FS_OK : FS_FAILED;
+    return FS_FAILED;
+}
+
 
 
 int ftFile::parseHeader(ftStream* stream)
