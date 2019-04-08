@@ -37,6 +37,7 @@ ftFileStream::ftFileStream() :
 {
 }
 
+
 ftFileStream::~ftFileStream()
 {
     close();
