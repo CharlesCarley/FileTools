@@ -18,6 +18,7 @@ void readFileVersion(void)
 {
     Example e;
     e.load(TestFile);
+    e.generateTypeCastLog("log.html");
 
     ftPrintf("Version = %i\n", e.getInfo().major);
 }

@@ -38,9 +38,6 @@ public:
         FM_LITTLE_ENDIAN    = 'v',
         FM_32_BIT           = '_',
         FM_64_BIT           = '-',
-
-        // place custom rules here, note that the
-        // full header string must be <= 12 chars
     };
 
     enum FileStatus
@@ -111,76 +108,60 @@ public:
         FBTtype      m_newTypeId;
     };
 
+    typedef ftHashTable<ftSizeHashKey, MemoryChunk*> ChunkMap;
+
 public:
-
-
     ftFile(const char* uid);
     virtual ~ftFile();
 
 
     int load(const char* path, int mode = PM_UNCOMPRESSED);
     int load(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
-
     int save(const char* path, const int mode = PM_UNCOMPRESSED);
 
-    const ftFixedString<12>&    getHeader(void)     const {return m_header;}
-    const int&                  getVersion(void)    const {return m_fileVersion;}
-    const char*                 getPath(void)       const {return m_curFile; }
 
+    ftBinTables* getMemoryTable(void);
 
-    ftBinTables* getMemoryTable(void)
-    {
-        if (!m_memory)
-            initializeMemory();
-        return m_memory;
-    }
-    ftBinTables* getFileTable(void)    {return m_file;}
+    ftINLINE const ftFixedString<12>&   getHeader(void)     const   {return m_header;}
+    ftINLINE const int&                 getVersion(void)    const   {return m_fileVersion;}
+    ftINLINE const char*                getPath(void)       const   {return m_curFile; }
+    ftINLINE ftBinTables*               getFileTable(void)          {return m_file;}
+    ftINLINE ftList&                    getChunks(void)             {return m_chunks;}
 
-    ftINLINE ftList& getChunks(void) {return m_chunks;}
     virtual void setFilterList(FBTuint32* filter, bool inclusive=false) {}
-
-    bool _setuid(const char* uid);
-
-
-
 
     void writeStruct(ftStream* stream, const char *id, FBTuint32 code, FBTsize len, void* writeData);
     void writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
     void writeBuffer(ftStream* stream, FBTsize len, void* writeData);
 
-
-
     void generateTypeCastLog(const char* fname);
 
 protected:
-
     int initializeTables(ftBinTables* tables);
-    
+    int initializeMemory(void);
+
+    virtual bool skip(const FBTuint32& id) { return false; }
+
     virtual void*       getTables(void) = 0;
     virtual FBTsize     getTableSize(void) = 0;
     virtual int         dataRead(void* p, const Chunk& id) = 0;
     virtual int         writeData(ftStream* stream) = 0;
 
-    virtual int         initializeMemory(void);
 
-    // lookup name first 7 of 12
+    int                 m_version, m_fileVersion;
+    int                 m_hederFlags;
     const char*         m_uhid;
     ftFixedString<12>   m_header;
+    char*               m_curFile;
+    ftList              m_chunks;
+    ChunkMap            m_map;
+    ftBinTables*        m_memory;
+    ftBinTables*        m_file;
 
-    int m_version, m_fileVersion, m_fileHeader;
-    char* m_curFile;
-
-    typedef ftHashTable<ftSizeHashKey, MemoryChunk*> ChunkMap;
-    ftList     m_chunks;
-    ChunkMap    m_map;
-    ftBinTables* m_memory, *m_file;
-
-    virtual bool skip(const FBTuint32& id) {return false;}
+private:
 
     void* findPtr(const FBTsize& iptr);
     MemoryChunk* findBlock(const FBTsize& iptr);
-private:
-
 
     int parseHeader(ftStream* stream);
     int parseStreamImpl(ftStream* stream);

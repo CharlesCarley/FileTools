@@ -65,7 +65,7 @@ struct ftChunk
 ftFile::ftFile(const char* uid) :
     m_version(-1),
     m_fileVersion(0),
-    m_fileHeader(0),
+    m_hederFlags(0),
     m_uhid(uid),
     m_memory(0),
     m_file(0),
@@ -157,6 +157,13 @@ int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
     return parseStreamImpl(&ms);
 }
 
+ftBinTables* ftFile::getMemoryTable(void)
+{
+    if (!m_memory)
+        initializeMemory();
+    return m_memory;
+}
+
 int ftFile::initializeTables(ftBinTables* tables)
 {
     void *tableData = getTables();
@@ -180,25 +187,25 @@ int ftFile::parseHeader(ftStream* stream)
 
     char* headerMagic = (m_header.ptr() + 7);
 
-    m_fileHeader = 0;
+    m_hederFlags = 0;
     m_fileVersion = 0;
 
     if (*(headerMagic++) == FM_64_BIT)
     {
-        m_fileHeader |= FH_CHUNK_64;
+        m_hederFlags |= FH_CHUNK_64;
         if (ftVOID4)
-            m_fileHeader |= FH_VAR_BITS;
+            m_hederFlags |= FH_VAR_BITS;
     }
     else if (ftVOID8)
-        m_fileHeader |= FH_VAR_BITS;
+        m_hederFlags |= FH_VAR_BITS;
 
     if (*(headerMagic++) == FM_BIG_ENDIAN)
     {
         if (ftENDIAN_IS_LITTLE)
-            m_fileHeader |= FH_ENDIAN_SWAP;
+            m_hederFlags |= FH_ENDIAN_SWAP;
     }
     else if (ftENDIAN_IS_BIG)
-        m_fileHeader |= FH_ENDIAN_SWAP;
+        m_hederFlags |= FH_ENDIAN_SWAP;
 
     m_fileVersion = atoi(headerMagic);
     return FS_OK;
@@ -258,7 +265,7 @@ int ftFile::parseStreamImpl(ftStream* stream)
 
     do
     {
-        if ((status = ftChunk::read(&chunk, stream, m_fileHeader)) <= 0)
+        if ((status = ftChunk::read(&chunk, stream, m_hederFlags)) <= 0)
         {
             ftINVALID_READ;
             return FS_INV_READ;
@@ -293,10 +300,10 @@ int ftFile::parseStreamImpl(ftStream* stream)
         if (chunk.m_code == DNA1)
         {
             m_file = new ftBinTables(curPtr, chunk.m_len);
-            m_file->m_ptr = m_fileHeader & FH_CHUNK_64 ? 8 : 4;
+            m_file->m_ptr = m_hederFlags & FH_CHUNK_64 ? 8 : 4;
 
 
-            if (!m_file->read((m_fileHeader & FH_ENDIAN_SWAP) != 0))
+            if (!m_file->read((m_hederFlags & FH_ENDIAN_SWAP) != 0))
             {
                 ftPrintf("Failed to initialize tables\n");
                 return FS_INV_READ;
@@ -549,7 +556,7 @@ int ftFile::link(void)
     char* dst, *src;
     FBTsize* dstPtr, *srcPtr;
 
-    bool endianSwap = (m_fileHeader & FH_ENDIAN_SWAP) != 0;
+    bool endianSwap = (m_hederFlags & FH_ENDIAN_SWAP) != 0;
 
     static const FBThash hk = ftCharHashKey("Link").hash();
 
@@ -793,14 +800,6 @@ int ftFile::compileOffsets(void)
     lnk.m_mp = m_memory;
     lnk.m_fp = m_file;
     return lnk.link();
-}
-
-bool ftFile::_setuid(const char* uid)
-{
-    if (!uid || strlen(uid) != 7) return false;
-
-    m_uhid = uid;
-    return true;
 }
 
 int ftFile::save(const char* path, const int mode)
