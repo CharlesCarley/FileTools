@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     ftBlend fp;
 
     fp.setFilterList(skipList, true);
-    if (fp.parse(argv[argc - 1], ftFile::PM_COMPRESSED) != ftFile::FS_OK)
+    if (fp.load(argv[argc - 1], ftFile::PM_COMPRESSED) != ftFile::FS_OK)
         return 1;
 
     fp.generateTypeCastLog("log.html");

@@ -81,7 +81,7 @@ ftBlend::~ftBlend()
 {
 }
 
-int ftBlend::notifyData(void* p, const Chunk& id)
+int ftBlend::dataRead(void* p, const Chunk& id)
 {
     if (id.m_code == GLOB)
     {

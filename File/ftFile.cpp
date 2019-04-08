@@ -97,8 +97,7 @@ ftFile::~ftFile()
 }
 
 
-
-int ftFile::parse(const char* path, int mode)
+int ftFile::load(const char* path, int mode)
 {
     ftStream* stream = 0;
 
@@ -144,7 +143,7 @@ int ftFile::parse(const char* path, int mode)
 
 
 
-int ftFile::parse(const void* memory, FBTsize sizeInBytes, int mode)
+int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
 {
     ftMemoryStream ms;
     ms.open(memory, sizeInBytes, ftStream::SM_READ, mode == PM_COMPRESSED);
@@ -755,7 +754,7 @@ int ftFile::link(void)
             }
         }
 
-        notifyData(node->m_newBlock, node->m_chunk);
+        dataRead(node->m_newBlock, node->m_chunk);
     }
 
     for (node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
@@ -858,6 +857,24 @@ int ftFile::save(const char* path, const int mode)
     return FS_OK;
 
 }
+
+
+
+void ftFile::writeStruct(ftStream* stream, const char *id, FBTuint32 code, FBTsize len, void* writeData)
+{
+    ftASSERT(id);
+    getMemoryTable();
+
+    FBTtype ft = m_memory->findTypeId(id);
+    if (ft == -1)
+    {
+        ftPrintf("writeStruct: %s - not found", id);
+        return;
+    }
+
+    writeStruct(stream, ft, code, len, writeData);
+}
+
 
 void ftFile::writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData)
 {

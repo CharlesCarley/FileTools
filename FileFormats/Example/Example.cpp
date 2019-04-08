@@ -18,12 +18,33 @@
 -------------------------------------------------------------------------------
 */
 #include "Example.h"
+#include "ftTables.h"
+#include "ftStreams.h"
 
+#define ftIN_SOURCE
+#include "ftPlatformHeaders.h"
+
+
+namespace ExampleCodes
+{
+    const FBTuint32 INFO = ftID('I', 'N', 'F', 'O');
+}
 
 
 Example::Example() :
     ftFile("Example")
 {
+
+    m_info.major    = FileVersionMajor;
+    m_info.minor    = FileVersionMinor;
+    m_info.build    = FileVersionBuild;
+
+    m_info.revision = FileVersionRevision;
+
+    ftp_sprintf(m_info.versionString, 32, "%i%i%i", 
+        m_info.major, m_info.minor, m_info.build);
+
+    m_version = atoi(m_info.versionString);
 }
 
 
@@ -32,23 +53,32 @@ Example::~Example()
 {
 }
 
+extern unsigned char ExampleTablesTable[];
+extern int ExampleTablesLen;
+
 
 void* Example::getTables(void)
 {
-    return 0;
+    return ExampleTablesTable;
 }
 
 FBTsize Example::getTableSize(void)
 {
-    return 0;
+    return ExampleTablesLen;
 }
 
-int Example::notifyData(void* p, const Chunk& id)
+int Example::dataRead(void* p, const Chunk& id)
 {
+    ftASSERT(p);
+    if (id.m_code == ExampleCodes::INFO)
+        m_info = *((FileInfo*)p);
+
     return 0;
 }
 
 int Example::writeData(ftStream* stream)
 {
-    return 0;
+    writeStruct(stream, "FileInfo", ExampleCodes::INFO, sizeof(FileInfo), &m_info);
+
+    return FS_OK;
 }

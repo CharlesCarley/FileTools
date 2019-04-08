@@ -68,8 +68,7 @@ public:
     void setFilterList(FBTuint32* filter, bool inclusive = false);
 
 protected:
-    virtual int notifyData(void* p, const Chunk& id);
-    virtual int initializeTables(ftBinTables* tables);
+    virtual int dataRead(void* p, const Chunk& id);
     virtual bool skip(const FBTuint32& id);
     virtual int writeData(ftStream* stream);
 

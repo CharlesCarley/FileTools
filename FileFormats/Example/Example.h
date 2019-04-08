@@ -21,23 +21,25 @@
 #define _Example_h_
 
 #include "ftFile.h"
+#include "API/FileInfo.h"
 
 
 
 class Example : public ftFile
 {
+private:
+    FileInfo m_info;
+
 public:
     Example();
     virtual ~Example();
-
-
-
+    inline FileInfo& getInfo(void) { return m_info; }
 
 protected:
 
     virtual void*       getTables(void);
     virtual FBTsize     getTableSize(void);
-    virtual int         notifyData(void* p, const Chunk& id);
+    virtual int         dataRead(void* p, const Chunk& id);
     virtual int         writeData(ftStream* stream);
 
 

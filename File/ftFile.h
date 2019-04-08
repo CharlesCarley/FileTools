@@ -25,6 +25,7 @@
 #include "ftTypes.h"
 
 class ftStream;
+class ftMemoryStream;
 class ftBinTables;
 
 
@@ -61,7 +62,6 @@ public:
         PM_READTOMEMORY,
 
     };
-
     enum FileHeader
     {
         FH_ENDIAN_SWAP  = (1 << 0),
@@ -117,8 +117,9 @@ public:
     ftFile(const char* uid);
     virtual ~ftFile();
 
-    int parse(const char* path, int mode = PM_UNCOMPRESSED);
-    int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
+
+    int load(const char* path, int mode = PM_UNCOMPRESSED);
+    int load(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
 
     int save(const char* path, const int mode = PM_UNCOMPRESSED);
 
@@ -142,6 +143,8 @@ public:
 
 
 
+
+    void writeStruct(ftStream* stream, const char *id, FBTuint32 code, FBTsize len, void* writeData);
     void writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
     void writeBuffer(ftStream* stream, FBTsize len, void* writeData);
 
@@ -155,7 +158,7 @@ protected:
     
     virtual void*       getTables(void) = 0;
     virtual FBTsize     getTableSize(void) = 0;
-    virtual int         notifyData(void* p, const Chunk& id) = 0;
+    virtual int         dataRead(void* p, const Chunk& id) = 0;
     virtual int         writeData(ftStream* stream) = 0;
 
     virtual int         initializeMemory(void);
@@ -171,7 +174,6 @@ protected:
     ftList     m_chunks;
     ChunkMap    m_map;
     ftBinTables* m_memory, *m_file;
-
 
     virtual bool skip(const FBTuint32& id) {return false;}
 
