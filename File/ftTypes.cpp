@@ -64,7 +64,7 @@ void ftDebugger::breakProcess(void)
 #endif//ftDEBUG
 
 
-#define ftDEBUG_BUF_SIZE (1024)
+#define ftDEBUG_BUF_SIZE (256)
 ftDebugger::Reporter ftDebugger::m_report = {0, 0};
 
 
