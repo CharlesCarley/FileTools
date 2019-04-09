@@ -3,7 +3,7 @@ File tools is a file format based off the blender .blend file. The .blend basica
 
 Files are 32/64 bit safe and saved in native byte order. If the byte order varies between the file version and the loading platform. The bytes will be swapped to native endian. 
 
-All structure variables saved in the tables must be four-byte aligned.
+All structure members saved in the tables must be four-byte aligned.
 
 Pointer addresses at the time of saving are written to the file. Then during loading, the saved addresses will be used to relink the new data being read.
 
