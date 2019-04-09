@@ -130,8 +130,6 @@ public:
     Members         m_members;
     ftStruct*       m_link;		//file/memory table struct link
     Keys            m_keyChain; //parent key hash chain(0: type hash, 1: name hash), size() == m_dp
-
-    FBTsizeType     getUnlinkedMemberCount();
 };
 
 

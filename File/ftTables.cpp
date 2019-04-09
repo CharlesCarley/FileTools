@@ -21,16 +21,6 @@
 #include "ftTables.h"
 #include "ftPlatformHeaders.h"
 
-
-FBTsizeType ftStruct::getUnlinkedMemberCount()
-{
-    FBTsizeType count = 0;
-    for (FBTsizeType i = 0; i < m_members.size(); i++)
-        if (!m_members[i].m_link) count++;
-    return count;
-}
-
-
 ftBinTables::ftBinTables()
     :   m_name(0),
         m_type(0),
