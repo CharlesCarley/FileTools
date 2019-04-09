@@ -23,8 +23,10 @@
 
 struct Data1;
 
-#ifndef int64_t
-    #define int64_t __int64
+#if defined(__GNUC__)
+    typedef long long int64_t;
+#else
+    typedef __int64 int64_t;
 #endif
 
 
