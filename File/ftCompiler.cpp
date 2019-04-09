@@ -564,8 +564,8 @@ void ftBuildInfo::makeBuiltinTypes(void)
     addType("double",       sizeof(double));
     addType("int64_t",      sizeof(FBTint64));
     addType("uint64_t",     sizeof(FBTuint64));
-#ifdef ftUSE_SCALAR
-    addType(ftSCALAR,       sizeof(scalar_t));
+#ifdef ftSCALAR_DOUBLE
+    addType("scalar_t",     sizeof(double));
 #else
     addType("scalar_t",     sizeof(float));
 #endif

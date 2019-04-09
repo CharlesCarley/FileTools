@@ -33,6 +33,8 @@ endif()
 
 #add_definitions(-DFftUSE_COMPILER_CHECKS=0)
 #add_definitions(-DftUSE_DEBUG_ASSERTS=0)
+add_definitions("-DftSCALAR_DOUBLE")
+
 
 subdirs(File Compiler)
 subdirs(FileFormats/Blend)

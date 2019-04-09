@@ -704,7 +704,7 @@ char *yytext;
 #endif
 
 // Scalar types are defined as [a-z]"Scalar"
-#ifdef FBT_SCALAR_DOUBLE
+#ifdef ftSCALAR_DOUBLE
 #define scalar_t double
 #else
 #define scalar_t float

@@ -19,12 +19,6 @@
 */
 #include "ftCompiler.h"
 
-#ifdef ftUSE_SCALAR
-    #ifndef ftSCALAR
-        #  error ftUSE_SCALAR defined without defining a type ftSCALAR="name"
-    #endif
-#endif
-
 int main(int argc, char** argv)
 {
     if (argc < 4)

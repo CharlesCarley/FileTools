@@ -19,4 +19,5 @@ set(FILE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../File)
 
 include_directories(. ${FILE_SRC_DIR})
 link_libraries(ftFile)
+
 add_executable(makeft  makeft.cpp)
