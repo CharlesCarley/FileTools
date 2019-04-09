@@ -17,38 +17,21 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _Example_h_
-#define _Example_h_
-
-#include "ftFile.h"
-#include "API/FileInfo.h"
-#include "API/HomeType.h"
+#ifndef _HomeType_h_
+#define _HomeType_h_
 
 
 
-class Example : public ftFile
+
+typedef struct HomeType
 {
-public:
-    typedef ftArray<HomeType> DataArray;
+    char type[36];
+    short num_rooms;
+    short num_gurages;
+    int   sq_ft;
+    float price;
+}HomeType;
 
 
+#endif//_HomeType_h_
 
-private:
-    FileInfo  m_info;
-    DataArray m_data;
-
-public:
-    Example();
-    virtual ~Example();
-    inline FileInfo&    getInfo(void) { return m_info; }
-    inline DataArray&   getData(void) { return m_data; }
-
-protected:
-    virtual void*       getTables(void);
-    virtual FBTsize     getTableSize(void);
-    virtual int         dataRead(void* p, const Chunk& id);
-    virtual int         writeData(ftStream* stream);
-};
-
-
-#endif//_Example_h_

@@ -2,6 +2,7 @@ include(MakeFT)
 
 set(ApiFiles
     API/FileInfo.h
+    API/HomeType.h
 )
 
 add_ft(ExampleTables ${ApiFiles})

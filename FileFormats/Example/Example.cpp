@@ -28,6 +28,7 @@
 namespace ExampleCodes
 {
     const FBTuint32 INFO = ftID('I', 'N', 'F', 'O');
+    const FBTuint32 HMTP = ftID('H', 'M', 'T', 'P');
 }
 
 
@@ -70,6 +71,8 @@ int Example::dataRead(void* p, const Chunk& id)
     ftASSERT(p);
     if (id.m_code == ExampleCodes::INFO)
         m_info = *((FileInfo*)p);
+    else  if (id.m_code == ExampleCodes::HMTP)
+        m_data.push_back(*((HomeType*)p));
 
     return 0;
 }
@@ -77,5 +80,17 @@ int Example::dataRead(void* p, const Chunk& id)
 int Example::writeData(ftStream* stream)
 {
     writeStruct(stream, "FileInfo", ExampleCodes::INFO, sizeof(FileInfo), &m_info);
+
+
+    if (!m_data.empty())
+    {
+        DataArray::Iterator it = m_data.iterator();
+        while (it.hasMoreElements())
+        {
+            HomeType& ht = it.getNext();
+            writeStruct(stream, "HomeType", ExampleCodes::HMTP, sizeof(HomeType), &ht);
+        }
+    }
+
     return FS_OK;
 }
