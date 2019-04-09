@@ -812,7 +812,10 @@ int ftFile::save(const char* path, const int mode)
 void ftFile::writeStruct(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData)
 {
     ftASSERT(id);
-    getMemoryTable();
+
+    if (m_memory == 0)
+        getMemoryTable();
+
 
     FBTtype ft = m_memory->findTypeId(id);
     if (ft == -1)
@@ -838,6 +841,9 @@ void ftFile::writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsiz
 
 void ftFile::writeBuffer(ftStream* stream, FBTsize len, void* writeData)
 {
+    if (m_memory == 0)
+        getMemoryTable();
+
     Chunk ch;
     ch.m_code   = DATA;
     ch.m_len    = len;
@@ -1031,10 +1037,8 @@ void ftFile::generateTypeCastLog(const char* fname)
         b = strc->m_link;
         if (!b)
             continue;
-
         if (skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
             continue;
-
 
         const char* cp0 = mp->getStructType(a);
         const char* cp1 = fp->getStructType(b);
@@ -1057,15 +1061,12 @@ void ftFile::generateTypeCastLog(const char* fname)
             double cur = (double)c->m_len * 14;
 
             cp0 = mp->getOwnerStructName(c);
-
             if (i % 2 == 0)
                 dest.writef("<tr><td class =\"re\" height=\"%.02f\">%s</td>"\
                             "<td class =\"re\" >%d</td></tr>", cur, cpMN, c->m_len);
             else
                 dest.writef("<tr><td class =\"ro\" height=\"%.02f\">%s</td>"\
                             "<td class =\"ro\" >%d</td></tr>", cur, cpMN, c->m_len);
-
-
             ml += c->m_len;
         }
         dest.writef("</td></tr></table>\n");
