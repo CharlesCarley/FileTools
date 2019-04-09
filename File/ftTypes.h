@@ -145,6 +145,12 @@ typedef bool            FBTint1;
 
 typedef FBTuintPtr  FBTsize;
 
+// Scalar types are defined as [a-z]"Scalar"
+#ifdef FBT_SCALAR_DOUBLE
+#define scalar_t double
+#else
+#define scalar_t float
+#endif
 
 // Type for arrays & tables (Always unsigned & 32bit)
 typedef FBTuint32       FBTsizeType;
@@ -1454,7 +1460,10 @@ enum ftPRIM_TYPE
     ftPRIM_ULONG,		// 6
     ftPRIM_FLOAT,		// 7
     ftPRIM_DOUBLE,	    // 8
-    ftPRIM_VOID,		// 9
+    ftPRIM_INT64_T,     // 9
+    ftPRIM_UINT64_T,    // 10
+    ftPRIM_SCALAR_T,    // 11
+    ftPRIM_VOID,		// 13
     ftPRIM_UNKNOWN	    // 10
 };
 

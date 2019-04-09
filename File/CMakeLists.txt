@@ -33,6 +33,7 @@ set(File_HDR
     ftConfig.h
     ftStreams.h
     ftPlatformHeaders.h
+    #ftScanner.l
 )
 
 # only for updating scanner 
@@ -46,4 +47,4 @@ endif()
 
 
 
-add_library(ftFile ${File_SRC} ${File_HDR} ${ftScanner})
+add_library(ftFile ${File_SRC} ${File_HDR}  ${ftScanner})

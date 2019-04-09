@@ -17,41 +17,22 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _ftPlatformHeaders_h_
-#define _ftPlatformHeaders_h_
+#ifndef _Data1_h_
+#define _Data1_h_
 
-#ifndef ftIN_SOURCE
-    #error source include only!
-#endif
 
-#if ftPLATFORM == ftPLATFORM_WIN32
-    #if ftCOMPILER == ftCOMPILER_MSVC
-        #define _WIN32_WINNT 0x403
-    #endif
-    #ifndef WIN32_LEAN_AND_MEAN
-        #define WIN32_LEAN_AND_MEAN 1
-    #endif
-    #include <windows.h>
-    #include <io.h>
-#else
-#endif
+typedef struct Data1
+{
+    int var1;
+    int var2;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <memory.h>
+    int var3;
+    int var5;
 
-#ifdef _MSC_VER
-    #pragma warning(disable : 4996)
-#endif
+    float arr1[2][2];
 
-#if ftCOMPILER == ftCOMPILER_MSVC
-    #define ftp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, fmt, lst)
-    #define ftp_sprintf _snprintf_s
-#else
-    #define ftp_printf vsnprintf
-    #define ftp_sprintf snprintf
-#endif
+}Data1;
 
-#endif//_ftPlatformHeaders_h_
+
+#endif//_Data1_h_
+

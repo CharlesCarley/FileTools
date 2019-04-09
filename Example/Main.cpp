@@ -5,42 +5,36 @@
 #include "ftTables.h"
 #include "ftTypes.h"
 
-
-
 #define TestFile "test.ex"
-#define PricePerSquareFoot 1.75
-
-
-
 
 void writeFile(int version)
 {
     Example e;
     e.getInfo().major = version;
 
-    HomeType ht;
-    strcpy(ht.type, "Condo");
-    ht.sq_ft = 1456;
-    ht.num_rooms = 3;
-    ht.num_gurages = 1;
-    ht.price = (float)ht.sq_ft / (float)PricePerSquareFoot;
-    e.getData().push_back(ht);
 
-    strcpy(ht.type, "Town home");
-    ht.sq_ft = 1598;
-    ht.num_rooms = 2;
-    ht.num_gurages = 2;
-    ht.price = (float)ht.sq_ft / (float)PricePerSquareFoot;
-    e.getData().push_back(ht);
+    Data1 *d1 = new Data1();
+    d1->arr1[0][0] = 1;
+    d1->arr1[0][1] = 0;
+    d1->arr1[1][0] = 0;
+    d1->arr1[1][1] = 1;
 
-    strcpy(ht.type, "Two story");
-    ht.sq_ft = 900;
-    ht.num_rooms = 2;
-    ht.num_gurages = 0;
-    ht.price = (float)ht.sq_ft / (float)PricePerSquareFoot;
-    e.getData().push_back(ht);
+    d1->var1 = 1;
+    d1->var2 = 2;
+    d1->var3 = 4;
+    d1->var5 = 1;
+
+    e.getData1().push_back(d1);
+
+    Data2 d2;
+
+    d2.ptr = d1;
+    d2.val1 = (int64_t)d2.ptr;
+    e.getData2().push_back(d2);
 
     e.save(TestFile);
+
+    delete d1;
 }
 
 
@@ -50,16 +44,24 @@ void readFile(void)
     e.load(TestFile);
     e.generateTypeCastLog("log.html");
 
-    Example::DataArray::Iterator it = e.getData().iterator();
-    while (it.hasMoreElements())
-    {
-        HomeType &ht = it.getNext();
 
-        printf("-----------------\n");
-        printf("Type             :%s\n", ht.type);
-        printf("Square feet      :%i\n", ht.sq_ft);
-        printf("Number of Rooms  :%i\n", ht.num_rooms);
-        printf("Price            :%f\n", ht.price);
+    Example::Data2Array::Iterator d2a = e.getData2().iterator();
+    while (d2a.hasMoreElements())
+    {
+        Data2 dt = d2a.getNext();
+
+        if (dt.ptr)
+        {
+            Data1 *dp = dt.ptr;
+            printf("------------ Data1* :%p -------------\n", dp);
+            printf("{{%f, %f}, {%f, %f}}", 
+                dp->arr1[0][0],
+                dp->arr1[0][1],
+                dp->arr1[1][0],
+                dp->arr1[1][1]
+                );
+        }
+
     }
 
 }

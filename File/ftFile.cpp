@@ -1,8 +1,6 @@
 /*
 -------------------------------------------------------------------------------
-    Copyright (c) 2010 Charlie C & Erwin Coumans.
-
- This software is provided 'as-is', without any express or implied
+  This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
 
@@ -470,7 +468,7 @@ void castValue(FBTsize* srcPtr, FBTsize* dstPtr, ftPRIM_TYPE srctp, ftPRIM_TYPE 
 #define GET_V(value, current, type, cast, ptr, match) \
     if (current == type) \
     { \
-        value = (*(cast*)ptr); \
+        value = (FBTint64)(cast)(*(cast*)ptr); \
         ptr += sizeof(cast); \
         if (++match >= 2) continue; \
     }
@@ -482,26 +480,32 @@ void castValue(FBTsize* srcPtr, FBTsize* dstPtr, ftPRIM_TYPE srctp, ftPRIM_TYPE 
         ptr += sizeof(cast); \
         if (++match >= 2) continue; \
     }
-    double value = 0.0;
+    FBTint64 value = 0;
 
     FBTsizeType i;
     for (i = 0; i < len; i++)
     {
         int match = 0;
-        GET_V(value, srctp, ftPRIM_CHAR,    char,            srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_CHAR,    char,            dstPtr, match);
-        GET_V(value, srctp, ftPRIM_SHORT,   short,           srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_SHORT,   short,           dstPtr, match);
-        GET_V(value, srctp, ftPRIM_USHORT,  unsigned short,  srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_USHORT,  unsigned short,  dstPtr, match);
-        GET_V(value, srctp, ftPRIM_INT,     int,             srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_INT,     int,             dstPtr, match);
-        GET_V(value, srctp, ftPRIM_LONG,    int,             srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_LONG,    int,             dstPtr, match);
-        GET_V(value, srctp, ftPRIM_FLOAT,   float,           srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_FLOAT,   float,           dstPtr, match);
-        GET_V(value, srctp, ftPRIM_DOUBLE,  double,          srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_DOUBLE,  double,          dstPtr, match);
+        GET_V(value, srctp, ftPRIM_CHAR,     char,            srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_CHAR,     char,            dstPtr, match);
+        GET_V(value, srctp, ftPRIM_SHORT,    short,           srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_SHORT,    short,           dstPtr, match);
+        GET_V(value, srctp, ftPRIM_USHORT,   unsigned short,  srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_USHORT,   unsigned short,  dstPtr, match);
+        GET_V(value, srctp, ftPRIM_INT,      int,             srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_INT,      int,             dstPtr, match);
+        GET_V(value, srctp, ftPRIM_LONG,     int,             srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_LONG,     int,             dstPtr, match);
+        GET_V(value, srctp, ftPRIM_FLOAT,    float,           srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_FLOAT,    float,           dstPtr, match);
+        GET_V(value, srctp, ftPRIM_DOUBLE,   double,          srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_DOUBLE,   double,          dstPtr, match);
+        GET_V(value, srctp, ftPRIM_INT64_T,  FBTint64,        srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_INT64_T,  FBTint64,        dstPtr, match);
+        GET_V(value, srctp, ftPRIM_UINT64_T, FBTuint64,       srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_UINT64_T, FBTuint64,       dstPtr, match);
+        GET_V(value, srctp, ftPRIM_SCALAR_T, scalar_t,        srcPtr, match);
+        SET_V(value, dsttp, ftPRIM_SCALAR_T, scalar_t,        dstPtr, match);
     }
 #undef GET_V
 #undef SET_V
@@ -749,7 +753,6 @@ int ftFile::compileOffsets(void)
     lnk.m_fp = m_file;
     return lnk.link();
 }
-
 
 int ftFile::save(const char* path, const int mode)
 {

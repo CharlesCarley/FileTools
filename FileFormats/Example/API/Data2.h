@@ -17,21 +17,24 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _HomeType_h_
-#define _HomeType_h_
+#ifndef _Data2_h_
+#define _Data2_h_
 
 
+struct Data1;
+
+#ifndef int64_t
+#define int64_t __int64
+#endif
 
 
-typedef struct HomeType
+typedef struct Data2
 {
-    char type[36];
-    short num_rooms;
-    short num_gurages;
-    int   sq_ft;
-    float price;
-}HomeType;
 
+    Data1*  ptr;
+    int64_t val1;
 
-#endif//_HomeType_h_
+}Data2;
+
+#endif//_Data1_h_
 

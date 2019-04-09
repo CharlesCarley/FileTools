@@ -1,8 +1,6 @@
 /*
 -------------------------------------------------------------------------------
-    Copyright (c) 2010 Charlie C & Erwin Coumans.
-
- This software is provided 'as-is', without any express or implied
+  This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
 
@@ -37,7 +35,6 @@ int main(int argc, char** argv)
     }
 
     ftCompiler tables;
-
     for (int i = 3; i < argc; ++i)
     {
         if (tables.parseFile(argv[i]) < 0)
@@ -47,7 +44,6 @@ int main(int argc, char** argv)
     int code;
     if ((code = tables.buildTypes()) != LNK_OK)
         return code;
-
 
     tables.writeFile(argv[1], argv[2]);
     return 0;

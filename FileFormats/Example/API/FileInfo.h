@@ -35,4 +35,10 @@ typedef struct FileInfo
     char versionString[32];
 }FileInfo;
 
+
+typedef struct Link
+{
+    void *data;
+}Link;
+
 #endif//_FileInfo_h_

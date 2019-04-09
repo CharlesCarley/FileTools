@@ -34,7 +34,7 @@
 #define scalar_t float
 #endif
 
-typedef enum fbtTokenID {
+typedef enum ftTokenID {
 
     COMMA       = ',',
     POINTER     = '*',
@@ -54,6 +54,7 @@ typedef enum fbtTokenID {
     LONG,
     FLOAT,
     DOUBLE,
+    INT64,
     SCALAR,
     VOID,
     FUNCTION_POINTER_BEG,
@@ -66,13 +67,13 @@ typedef enum fbtTokenID {
     UNION, 
 
     NULL_TOKEN,
-}fbtTokenID;
+}ftTokenID;
 
-#define FBT_TOK_IS_TYPE(x) (x >= IDENTIFIER && x <= VOID)
+#define ftTOK_IS_TYPE(x) (x >= IDENTIFIER && x <= VOID)
 #define ECHO 
 
 int line = 1;
-fbtFixedString<270> __source;
+ftFixedString<270> __source;
 
 
 
@@ -103,9 +104,9 @@ PRE         "#"{L}[^\n\r]+
 FBTsize         m_lastConstant;
 
 
-struct fbtToken
+struct ftToken
 {
-    fbtTokenID  m_cur;
+    ftTokenID  m_cur;
     char*       m_buf;
     FBTsize     m_constantSize;
     FBTsize     m_line;
@@ -154,6 +155,8 @@ struct fbtToken
 <ISTRC>"uint"               { return INT; }
 <ISTRC>"long" |        
 <ISTRC>"ulong"              { return LONG;      }
+<ISTRC>"int64_t" |
+<ISTRC>"uint64_t"           { return INT64;     }
 <ISTRC>"float"              { return FLOAT;     }
 <ISTRC>"double"             { return DOUBLE;    }
 <ISTRC>[a-z]+"Scalar"       { return SCALAR;    }
@@ -233,14 +236,14 @@ struct fbtToken
 
 %%
 
-fbtTokenID fbtLex()
+ftTokenID ftLex()
 {
-    return (fbtTokenID)fbtlex();
+    return (ftTokenID)ftlex();
 }
 
-fbtTokenID fbtLex(fbtToken &tok)
+ftTokenID ftLex(ftToken &tok)
 {
-    tok.m_cur           = fbtLex();
+    tok.m_cur           = ftLex();
     tok.m_buf           = yytext;
     tok.m_constantSize  = m_lastConstant;
     tok.m_line          = line;
@@ -249,47 +252,47 @@ fbtTokenID fbtLex(fbtToken &tok)
     return tok.m_cur;
 }
 
-void *fbtCurFile = 0;
-yy_buffer_state *fbtCurBuf = 0;
+void *ftCurFile = 0;
+yy_buffer_state *ftCurBuf = 0;
 
-void* fbtInitParse(const char *ifile)
+void* ftInitParse(const char *ifile)
 {
     line    = 1;
     BEGIN   OSTRC;
     __source = ifile;
 
 
-    fbtCurFile = (void*)fopen(ifile, "rb");
-    if (!fbtCurFile)
+    ftCurFile = (void*)fopen(ifile, "rb");
+    if (!ftCurFile)
     {
-        fbtPrintf("File '%s' loading failed!\n", ifile);
+        ftPrintf("File '%s' loading failed!\n", ifile);
         return 0;
     }
 
-    yyin = (FILE*)fbtCurFile;
-    return fbtCurFile;
+    yyin = (FILE*)ftCurFile;
+    return ftCurFile;
 }
 
 
-void* fbtInitParse(const char *name, const char *buf)
+void* ftInitParse(const char *name, const char *buf)
 {
     line    = 1;
     BEGIN   OSTRC;
     __source = name;
 
-    fbtCurBuf = fbt_scan_string(buf);
-    return fbtCurBuf;
+    ftCurBuf = ft_scan_string(buf);
+    return ftCurBuf;
 }
 
-void fbtFreeParse(void *p)
+void ftFreeParse(void *p)
 {   
-    if (p == fbtCurBuf)
+    if (p == ftCurBuf)
     {
-        fbt_delete_buffer(fbtCurBuf);
+        ft_delete_buffer(ftCurBuf);
         return;
     }
 
 
-    if (p == fbtCurFile)
-        fclose((FILE*)fbtCurFile);
+    if (p == ftCurFile)
+        fclose((FILE*)ftCurFile);
 }

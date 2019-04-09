@@ -1,8 +1,6 @@
 /*
 -------------------------------------------------------------------------------
-    Copyright (c) 2010 Charlie C & Erwin Coumans.
-
- This software is provided 'as-is', without any express or implied
+  This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
 
@@ -514,16 +512,19 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         fprintf(fp, "\t");
         fprintf(fp, "if (sizeof(%s) != %i)\n\t{\n\t\terrors ++;\n", cur.c_str(), len);
         fprintf(fp, "#ifdef _MSC_VER\n");
-        fprintf(fp, "\t\tfprintf(stderr, \"%%s(%%i): error : Validation failed with ( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
+        fprintf(fp, "\t\tfprintf(stderr, \"%%s(%%i): error : Validation failed with "\
+            "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
         fprintf(fp, "#else\n");
-        fprintf(fp, "\t\tfprintf(stderr, \"%%s:%%i: error : Validation failed with ( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
+        fprintf(fp, "\t\tfprintf(stderr, \"%%s:%%i: error : Validation failed with "\
+            "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
         fprintf(fp, "#endif\n");
         fprintf(fp, "\t}\n");
         fprintf(fp, "\n");
     }
 
     fprintf(fp, "\t");
-    fprintf(fp, "if (errors > 0)fprintf(stderr, \"%%s(%%i): error : there are %%i misaligned types.\\n\", __FILE__, __LINE__, errors);\n");
+    fprintf(fp, "if (errors > 0)fprintf(stderr, \"%%s(%%i): error : "\
+        "there are %%i misaligned types.\\n\", __FILE__, __LINE__, errors);\n");
 
     fprintf(fp, "\treturn errors == 0 ? 0 : 1;\n}\n");
 
@@ -559,14 +560,14 @@ void ftBuildInfo::makeBuiltinTypes(void)
     addType("int",          sizeof(int));
     addType("long",         sizeof(long));
     addType("ulong",        sizeof(long));
-    addType("int64_t",      sizeof(FBTint64));
-    addType("uint64_t",     sizeof(FBTuint64));
     addType("float",        sizeof(float));
     addType("double",       sizeof(double));
+    addType("int64_t",      sizeof(FBTint64));
+    addType("uint64_t",     sizeof(FBTuint64));
 #ifdef ftUSE_SCALAR
-    addType(ftSCALAR,      sizeof(scalar_t));
+    addType(ftSCALAR,       sizeof(scalar_t));
 #else
-    addType("scalar_t",    sizeof(float));
+    addType("scalar_t",     sizeof(float));
 #endif
     addType("void",         0);
 }

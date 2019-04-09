@@ -28,7 +28,8 @@
 namespace ExampleCodes
 {
     const FBTuint32 INFO = ftID('I', 'N', 'F', 'O');
-    const FBTuint32 HMTP = ftID('H', 'M', 'T', 'P');
+    const FBTuint32 DAT1 = ftID('D', 'A', 'T', '1');
+    const FBTuint32 DAT2 = ftID('D', 'A', 'T', '2');
 }
 
 
@@ -53,43 +54,49 @@ Example::~Example()
 {
 }
 
-extern unsigned char ExampleTablesTable[];
-extern int ExampleTablesLen;
 
 void* Example::getTables(void)
 {
+    extern unsigned char ExampleTablesTable[];
     return ExampleTablesTable;
 }
 
 FBTsize Example::getTableSize(void)
 {
+    extern int ExampleTablesLen;
     return ExampleTablesLen;
 }
+
 
 int Example::dataRead(void* p, const Chunk& id)
 {
     ftASSERT(p);
     if (id.m_code == ExampleCodes::INFO)
         m_info = *((FileInfo*)p);
-    else  if (id.m_code == ExampleCodes::HMTP)
-        m_data.push_back(*((HomeType*)p));
-
+    else if (id.m_code == ExampleCodes::DAT1)
+        m_data.push_back((Data1*)p);
+    else if (id.m_code == ExampleCodes::DAT2)
+        m_data2.push_back(*(Data2*)p);
     return 0;
 }
 
 int Example::writeData(ftStream* stream)
 {
     writeStruct(stream, "FileInfo", ExampleCodes::INFO, sizeof(FileInfo), &m_info);
-
-
-    if (!m_data.empty())
+ 
+    Data1Array::Iterator d1 = m_data.iterator();
+    while (d1.hasMoreElements())
     {
-        DataArray::Iterator it = m_data.iterator();
-        while (it.hasMoreElements())
-        {
-            HomeType& ht = it.getNext();
-            writeStruct(stream, "HomeType", ExampleCodes::HMTP, sizeof(HomeType), &ht);
-        }
+        Data1 *d1v = d1.getNext();
+        writeStruct(stream, "Data1", ExampleCodes::DAT1, sizeof(Data1), &d1v);
+        writeBuffer(stream, sizeof(Data1), d1v);
+    }
+
+    Data2Array::Iterator d2 = m_data2.iterator();
+    while (d2.hasMoreElements())
+    {
+        Data2 &d2v = d2.getNext();
+        writeStruct(stream, "Data2", ExampleCodes::DAT2, sizeof(Data2), &d2v);
     }
 
     return FS_OK;

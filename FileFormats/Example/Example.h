@@ -22,26 +22,28 @@
 
 #include "ftFile.h"
 #include "API/FileInfo.h"
-#include "API/HomeType.h"
+#include "API/Data1.h"
+#include "API/Data2.h"
 
 
 
 class Example : public ftFile
 {
 public:
-    typedef ftArray<HomeType> DataArray;
-
-
+    typedef ftArray<Data1*> Data1Array;
+    typedef ftArray<Data2>  Data2Array;
 
 private:
     FileInfo  m_info;
-    DataArray m_data;
+    Data1Array m_data;
+    Data2Array m_data2;
 
 public:
     Example();
     virtual ~Example();
-    inline FileInfo&    getInfo(void) { return m_info; }
-    inline DataArray&   getData(void) { return m_data; }
+    inline FileInfo&     getInfo(void)  { return m_info; }
+    inline Data1Array&   getData1(void) { return m_data; }
+    inline Data2Array&   getData2(void) { return m_data2; }
 
 protected:
     virtual void*       getTables(void);
