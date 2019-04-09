@@ -2,7 +2,7 @@
 
 
 ### MakeFT
-can be used to add a custom target that calls makeft on a group of source files.
+can be used to add a custom build target.
 
 #### macro(ADD_FT TARGET ARGN)
 
@@ -57,3 +57,6 @@ set(Source
 )
 add_library(LibName ${Source})
 ```
+
+
+
