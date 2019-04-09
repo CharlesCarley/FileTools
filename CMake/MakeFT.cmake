@@ -54,7 +54,7 @@ macro(ADD_FT TARGET)
     ft_base_src(BASE_FILES ${ARGN})
 
     get_filename_component(TARNAME ${TARGET} NAME)
-    set(OUTFILE ${CMAKE_CURRENT_SOURCE_DIR}/${TARNAME}.cpp)
+    set(OUTFILE ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}.cpp)
 
 
     add_custom_command(
@@ -82,8 +82,8 @@ macro(ADD_FT_VALIDATOR TARGET)
     ft_base_src(BASE_FILES ${ARGN})
 
     get_filename_component(TARNAME ${TARGET} NAME)
-    set(OUTFILE  ${CMAKE_CURRENT_SOURCE_DIR}/${TARNAME}.cpp)
-    set(OUTFILEV ${CMAKE_CURRENT_SOURCE_DIR}/${TARNAME}Validator.cpp)
+    set(OUTFILE  ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}.cpp)
+    set(OUTFILEV ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}Validator.cpp)
 
 
     add_custom_command(
