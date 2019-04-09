@@ -513,10 +513,10 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         fprintf(fp, "if (sizeof(%s) != %i)\n\t{\n\t\terrors ++;\n", cur.c_str(), len);
         fprintf(fp, "#ifdef _MSC_VER\n");
         fprintf(fp, "\t\tfprintf(stderr, \"%%s(%%i): error : Validation failed with "\
-            "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
+                "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
         fprintf(fp, "#else\n");
         fprintf(fp, "\t\tfprintf(stderr, \"%%s:%%i: error : Validation failed with "\
-            "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
+                "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
         fprintf(fp, "#endif\n");
         fprintf(fp, "\t}\n");
         fprintf(fp, "\n");
@@ -524,7 +524,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
     fprintf(fp, "\t");
     fprintf(fp, "if (errors > 0)fprintf(stderr, \"%%s(%%i): error : "\
-        "there are %%i misaligned types.\\n\", __FILE__, __LINE__, errors);\n");
+            "there are %%i misaligned types.\\n\", __FILE__, __LINE__, errors);\n");
 
     fprintf(fp, "\treturn errors == 0 ? 0 : 1;\n}\n");
 

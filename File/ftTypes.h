@@ -147,9 +147,9 @@ typedef FBTuintPtr  FBTsize;
 
 // Scalar types are defined as [a-z]"Scalar"
 #ifdef FBT_SCALAR_DOUBLE
-#define scalar_t double
+    #define scalar_t double
 #else
-#define scalar_t float
+    #define scalar_t float
 #endif
 
 // Type for arrays & tables (Always unsigned & 32bit)

@@ -29,7 +29,7 @@
 
 
 // ft is only set up for two dimensional arrays
-// changing this may compile fine, but the supporting 
+// changing this may compile fine, but the supporting
 // code may not work as expected
 #define ftARRAY_SLOTS       2       // Maximum dimensional array, EG; (int m_member[..][..] -> [ftARRAY_SLOTS])
 

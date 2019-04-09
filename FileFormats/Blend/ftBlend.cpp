@@ -144,15 +144,15 @@ bool ftBlend::skip(const FBTuint32& id)
             return !m_inclusive;
         else if (m_filterList[m] > id)
             l = m - 1;
-        else 
+        else
             f = m + 1;
     }
     return m_inclusive;
 }
 
 void ftBlend::setFilterList(FBTuint32* filter, bool inclusive)
-{ 
-    m_filterList = filter; 
+{
+    m_filterList = filter;
     if (!m_filterList)
         return;
 
@@ -164,7 +164,7 @@ void ftBlend::setFilterList(FBTuint32* filter, bool inclusive)
     for (i = 0; i < m_filterListLen - 2; i++)
     {
         k = i;
-        for (j = i + 1; j < m_filterListLen-1; ++j)
+        for (j = i + 1; j < m_filterListLen - 1; ++j)
         {
             if (m_filterList[j] < m_filterList[k])
                 k = j;

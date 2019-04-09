@@ -133,7 +133,7 @@ public:
 private:
 
     int doParse(void);
-    
+
     void writeBinPtr(ftStream* fp, void* ptr, int len);
     void writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs);
     void writeValidationProgram(const ftPath& path);

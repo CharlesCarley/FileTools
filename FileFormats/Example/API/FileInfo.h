@@ -33,12 +33,12 @@ typedef struct FileInfo
     short build;
     short revision;
     char versionString[32];
-}FileInfo;
+} FileInfo;
 
 
 typedef struct Link
 {
-    void *data;
-}Link;
+    void* data;
+} Link;
 
 #endif//_FileInfo_h_

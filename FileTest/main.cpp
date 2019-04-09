@@ -22,7 +22,7 @@
 using namespace Blender;
 
 
-// Unneeded structures 
+// Unneeded structures
 static FBTuint32 skipList[] =
 {
     ftCharHashKey("FileGlobal").hash(),
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
             {
                 float* fp = &me->mvert[v].co[0];
                 ftPrintf("         Coordinate %.02f, %.02f, %.02f \n",
-                    (fp[0]), (fp[1]), (fp[2]));
+                         (fp[0]), (fp[1]), (fp[2]));
             }
         }
         else if (me->mpoly)

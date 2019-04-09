@@ -24,7 +24,7 @@
 struct Data1;
 
 #ifndef int64_t
-#define int64_t __int64
+    #define int64_t __int64
 #endif
 
 
@@ -34,7 +34,7 @@ typedef struct Data2
     Data1*  ptr;
     int64_t val1;
 
-}Data2;
+} Data2;
 
 #endif//_Data1_h_
 

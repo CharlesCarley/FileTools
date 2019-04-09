@@ -13,7 +13,7 @@ void writeFile(int version)
     e.getInfo().major = version;
 
 
-    Data1 *d1 = new Data1();
+    Data1* d1 = new Data1();
     d1->arr1[0][0] = 1;
     d1->arr1[0][1] = 0;
     d1->arr1[1][0] = 0;
@@ -52,14 +52,14 @@ void readFile(void)
 
         if (dt.ptr)
         {
-            Data1 *dp = dt.ptr;
+            Data1* dp = dt.ptr;
             printf("------------ Data1* :%p -------------\n", dp);
-            printf("{{%f, %f}, {%f, %f}}", 
-                dp->arr1[0][0],
-                dp->arr1[0][1],
-                dp->arr1[1][0],
-                dp->arr1[1][1]
-                );
+            printf("{{%f, %f}, {%f, %f}}",
+                   dp->arr1[0][0],
+                   dp->arr1[0][1],
+                   dp->arr1[1][0],
+                   dp->arr1[1][1]
+                  );
         }
 
     }

@@ -3,7 +3,7 @@
 // Generated from a Blender(264) file.
 
 #ifndef uint64_t
-#define uint64_t unsigned long long
+    #define uint64_t unsigned long long
 #endif
 
 #ifdef near

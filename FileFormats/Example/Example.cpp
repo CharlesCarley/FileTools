@@ -42,8 +42,8 @@ Example::Example() :
 
     m_info.revision = FileVersionRevision;
 
-    ftp_sprintf(m_info.versionString, 32, "%i%i%i", 
-        m_info.major, m_info.minor, m_info.build);
+    ftp_sprintf(m_info.versionString, 32, "%i%i%i",
+                m_info.major, m_info.minor, m_info.build);
 
     m_version = atoi(m_info.versionString);
 }
@@ -83,11 +83,11 @@ int Example::dataRead(void* p, const Chunk& id)
 int Example::writeData(ftStream* stream)
 {
     writeStruct(stream, "FileInfo", ExampleCodes::INFO, sizeof(FileInfo), &m_info);
- 
+
     Data1Array::Iterator d1 = m_data.iterator();
     while (d1.hasMoreElements())
     {
-        Data1 *d1v = d1.getNext();
+        Data1* d1v = d1.getNext();
         writeStruct(stream, "Data1", ExampleCodes::DAT1, sizeof(Data1), &d1v);
         writeBuffer(stream, sizeof(Data1), d1v);
     }
@@ -95,7 +95,7 @@ int Example::writeData(ftStream* stream)
     Data2Array::Iterator d2 = m_data2.iterator();
     while (d2.hasMoreElements())
     {
-        Data2 &d2v = d2.getNext();
+        Data2& d2v = d2.getNext();
         writeStruct(stream, "Data2", ExampleCodes::DAT2, sizeof(Data2), &d2v);
     }
 

@@ -126,9 +126,9 @@ public:
     ftINLINE ftBinTables*               getFileTable(void)          {return m_file;}
     ftINLINE ftList&                    getChunks(void)             {return m_chunks;}
 
-    virtual void setFilterList(FBTuint32* filter, bool inclusive=false) {}
+    virtual void setFilterList(FBTuint32* filter, bool inclusive = false) {}
 
-    void writeStruct(ftStream* stream, const char *id, FBTuint32 code, FBTsize len, void* writeData);
+    void writeStruct(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
     void writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
     void writeBuffer(ftStream* stream, FBTsize len, void* writeData);
 

@@ -31,7 +31,7 @@ typedef struct Data1
 
     float arr1[2][2];
 
-}Data1;
+} Data1;
 
 
 #endif//_Data1_h_
