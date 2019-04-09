@@ -54,7 +54,7 @@ void readFile(void)
         {
             Data1* dp = dt.ptr;
             printf("------------ Data1* :%p -------------\n", dp);
-            printf("{{%f, %f}, {%f, %f}}",
+            printf("{{%f, %f}, {%f, %f}}\n",
                    dp->arr1[0][0],
                    dp->arr1[0][1],
                    dp->arr1[1][0],
