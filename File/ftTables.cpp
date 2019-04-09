@@ -29,7 +29,6 @@ FBTsizeType ftStruct::getUnlinkedMemberCount()
     FBTsizeType count = 0;
     for (FBTsizeType i = 0; i < m_members.size(); i++)
         if (!m_members[i].m_link) count++;
-
     return count;
 }
 
@@ -92,8 +91,6 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     FBTtype* tp = 0;
 
     char* cp = (char*)ptr;
-
-
     if (!ftCharNEq(cp, ftIdNames::ftSDNA, 4))
     {
         ftPrintf("Bin table is missing the start id!\n");
@@ -101,8 +98,6 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     }
 
     cp += 4;
-
-
     if (!ftCharNEq(cp, ftIdNames::ftNAME, 4))
     {
         ftPrintf("Bin table is missing the name id!\n");
@@ -361,9 +356,6 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
     }
 }
 
-
-
-
 void ftBinTables::compile(void)
 {
     m_offs.reserve(ftMaxTable);
@@ -425,7 +417,6 @@ void ftBinTables::compile(void)
             off->m_flag |= ftStruct::MISALIGNED;
             ftPrintf("Build ==> invalid offset %s:%i:%i:%i\n", m_type[off->m_key.k16[0]].m_name, i, cof, off->m_len);
         }
-
     }
 }
 
@@ -459,9 +450,6 @@ FBTtype ftBinTables::findTypeId(const ftCharHashKey& cp)
 
 const char* ftBinTables::getStructType(const ftStruct* strc)
 {
-
-    //return strc ? m_type[strc->m_key.k16[0]].m_name : "";
-
     FBTuint32 k = strc ? strc->m_key.k16[0] : (FBTuint32) - 1;
     return (k >= m_typeNr) ? "" : m_type[k].m_name;
 }
@@ -474,7 +462,6 @@ const char* ftBinTables::getStructName(const ftStruct* strc)
 
 const char* ftBinTables::getOwnerStructName(const ftStruct* strc)
 {
-    //cp0 = mp->m_type[mp->m_strc[c->m_strcId][0]].m_name;
     FBTuint32 k = strc ? strc->m_strcId : (FBTuint32) - 1;
     return (k >= m_strcNr || *m_strc[k] >= m_typeNr) ? "" : m_type[*m_strc[k]].m_name;
 }

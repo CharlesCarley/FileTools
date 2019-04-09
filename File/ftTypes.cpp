@@ -25,11 +25,6 @@
 #define ftIN_SOURCE
 #include "ftPlatformHeaders.h"
 
-
-// ----------------------------------------------------------------------------
-// Debug Utilities
-
-
 #ifdef ftDEBUG
 bool ftDebugger::isDebugger(void)
 {
@@ -67,13 +62,11 @@ void ftDebugger::breakProcess(void)
 #define ftDEBUG_BUF_SIZE (256)
 ftDebugger::Reporter ftDebugger::m_report = {0, 0};
 
-
 void ftDebugger::setReportHook(Reporter& hook)
 {
     m_report.m_client = hook.m_client;
     m_report.m_hook   = hook.m_hook;
 }
-
 
 void ftDebugger::report(const char* fmt, ...)
 {
@@ -114,9 +107,7 @@ void ftDebugger::report(const char* fmt, ...)
                 fprintf(stderr, "%s", ReportBuf);
         }
     }
-
 }
-
 
 void ftDebugger::reportIDE(const char* src, long line, const char* fmt, ...)
 {
@@ -124,7 +115,6 @@ void ftDebugger::reportIDE(const char* src, long line, const char* fmt, ...)
 
     va_list lst;
     va_start(lst, fmt);
-
 
     int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
     va_end(lst);
@@ -153,8 +143,6 @@ void ftDebugger::errorIDE(const char* src, long line, const char* fmt, ...)
 
     va_list lst;
     va_start(lst, fmt);
-
-
     int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
     va_end(lst);
 
@@ -198,9 +186,5 @@ ftPRIM_TYPE ftGetPrimType(FBTuint32 typeKey)
     if (typeKey == floatT)	return ftPRIM_FLOAT;
     if (typeKey == doubleT)	return ftPRIM_DOUBLE;
     if (typeKey == voidT)	return ftPRIM_VOID;
-
     return ftPRIM_UNKNOWN;
 }
-
-
-

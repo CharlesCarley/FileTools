@@ -37,7 +37,6 @@ ftFileStream::ftFileStream() :
 {
 }
 
-
 ftFileStream::~ftFileStream()
 {
     close();
@@ -67,7 +66,6 @@ void ftFileStream::open(const char* p, ftStream::StreamMode mode)
     }
 }
 
-
 void ftFileStream::close(void)
 {
     if (m_handle != 0)
@@ -76,7 +74,6 @@ void ftFileStream::close(void)
         m_handle = 0;
     }
 }
-
 
 bool ftFileStream::eof(void) const
 {
@@ -90,7 +87,6 @@ FBTsize ftFileStream::position(void) const
     return ftell((FILE*)m_handle);
 }
 
-
 FBTsize ftFileStream::size(void) const
 {
     return m_size;
@@ -100,10 +96,8 @@ FBTsize ftFileStream::seek(FBTint32 off, FBTint32 way)
 {
     if (!m_handle)
         return 0;
-
     return fseek((FILE*)m_handle, off, way);
 }
-
 
 FBTsize ftFileStream::read(void* dest, FBTsize nr) const
 {
@@ -115,8 +109,6 @@ FBTsize ftFileStream::read(void* dest, FBTsize nr) const
 
     return fread(dest, 1, nr, (FILE*)m_handle);
 }
-
-
 
 FBTsize ftFileStream::write(const void* src, FBTsize nr)
 {
@@ -145,11 +137,11 @@ void ftFileStream::write(ftMemoryStream& ms) const
 
 FBTsize ftFileStream::writef(const char* fmt, ...)
 {
-    static char tmp[1024];
+    static char tmp[512];
 
     va_list lst;
     va_start(lst, fmt);
-    int size = ftp_printf(tmp, 1024, fmt, lst);
+    int size = ftp_printf(tmp, 512, fmt, lst);
     va_end(lst);
 
     if (size > 0)
@@ -158,12 +150,10 @@ FBTsize ftFileStream::writef(const char* fmt, ...)
         return write(tmp, size);
     }
     return -1;
-
 }
 
 
 #if ftUSE_GZ_FILE == 1
-
 
 ftGzStream::ftGzStream() :
     m_handle(0),
@@ -171,12 +161,10 @@ ftGzStream::ftGzStream() :
 {
 }
 
-
 ftGzStream::~ftGzStream()
 {
     close();
 }
-
 
 void ftGzStream::open(const char* p, ftStream::StreamMode mode)
 {
@@ -240,11 +228,11 @@ FBTsize ftGzStream::size(void) const
 
 FBTsize ftGzStream::writef(const char* fmt, ...)
 {
-    static char tmp[1024];
+    static char tmp[512];
 
     va_list lst;
     va_start(lst, fmt);
-    int size = ftp_printf(tmp, 1024, fmt, lst);
+    int size = ftp_printf(tmp, 512, fmt, lst);
     va_end(lst);
 
     if (size > 0)
@@ -253,19 +241,13 @@ FBTsize ftGzStream::writef(const char* fmt, ...)
         return write(tmp, size);
     }
     return -1;
-
 }
-
 #endif
 
-
-
-
-ftMemoryStream::ftMemoryStream()
-    :   m_buffer(0), m_pos(0), m_size(0), m_capacity(0), m_mode(0)
+ftMemoryStream::ftMemoryStream() :
+    m_buffer(0), m_pos(0), m_size(0), m_capacity(0), m_mode(0)
 {
 }
-
 
 void ftMemoryStream::open(ftStream::StreamMode mode)
 {
@@ -276,11 +258,9 @@ void ftMemoryStream::open(const char* path, ftStream::StreamMode mode)
 {
     ftFileStream fs;
     fs.open(path, ftStream::SM_READ);
-
     if (fs.isOpen())
         open(fs, mode);
 }
-
 
 void ftMemoryStream::open(const ftFileStream& fs, ftStream::StreamMode mode)
 {
@@ -291,21 +271,17 @@ void ftMemoryStream::open(const ftFileStream& fs, ftStream::StreamMode mode)
     }
 }
 
-
 void ftMemoryStream::open(const void* buffer, FBTsize size, ftStream::StreamMode mode, bool compressed)
 {
     if (buffer && size > 0 && size != ftNPOS)
     {
         m_mode = mode;
         m_pos  = 0;
-
-
         if (!compressed)
         {
             m_size = size;
             reserve(m_size);
             ftMemcpy(m_buffer, buffer, m_size);
-
         }
         else
         {
@@ -313,7 +289,6 @@ void ftMemoryStream::open(const void* buffer, FBTsize size, ftStream::StreamMode
             bool result = gzipInflate((char*)buffer, size);
 #endif
         }
-
     }
 }
 
@@ -324,8 +299,8 @@ bool ftMemoryStream::gzipInflate(char* inBuf, int inSize)
 {
     if (inSize == 0)
     {
-        m_buffer = inBuf ;
-        return true ;
+        m_buffer = inBuf;
+        return true;
     }
 
     if (m_buffer)
@@ -392,15 +367,12 @@ ftMemoryStream::~ftMemoryStream()
     m_capacity = 0;
 }
 
-
-
 void ftMemoryStream::clear(void)
 {
     m_size = m_pos = 0;
     if (m_buffer)
         m_buffer[0] = 0;
 }
-
 
 FBTsize ftMemoryStream::seek(FBTint32 off, FBTint32 way)
 {
@@ -412,8 +384,6 @@ FBTsize ftMemoryStream::seek(FBTint32 off, FBTint32 way)
         m_pos = m_size;
     return m_pos;
 }
-
-
 
 FBTsize ftMemoryStream::read(void* dest, FBTsize nr) const
 {
@@ -429,8 +399,6 @@ FBTsize ftMemoryStream::read(void* dest, FBTsize nr) const
     m_pos += nr;
     return nr;
 }
-
-
 
 FBTsize ftMemoryStream::write(const void* src, FBTsize nr)
 {
@@ -452,27 +420,23 @@ FBTsize ftMemoryStream::write(const void* src, FBTsize nr)
     return nr;
 }
 
-
-
 FBTsize ftMemoryStream::writef(const char* fmt, ...)
 {
-    static char tmp[1024];
+    static char tmp[512];
 
     va_list lst;
     va_start(lst, fmt);
-    int size = ftp_printf(tmp, 1024, fmt, lst);
+    int size = ftp_printf(tmp, 512, fmt, lst);
     va_end(lst);
-
 
     if (size > 0)
     {
         tmp[size] = 0;
         return write(tmp, size);
     }
-
     return -1;
-
 }
+
 void ftMemoryStream::reserve(FBTsize nr)
 {
     if (m_capacity < nr)

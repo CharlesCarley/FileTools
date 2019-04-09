@@ -32,6 +32,8 @@ typedef void*                       ftParser;
 typedef ftArray<ftId>               ftStringPtrArray;
 typedef ftArray<ftPath>             ftPathArray;
 
+class ftBuildInfo;
+
 
 class ftVariable
 {
@@ -99,7 +101,6 @@ public:
 
 enum ftLinkerIssues
 {
-
     LNK_OK              = 0,
     LNK_ASSERT          = (1 << 0),
     LNK_ALIGNEMENT2     = (1 << 1),
@@ -134,20 +135,17 @@ public:
 private:
 
     int doParse(void);
-    class ftBuildInfo* m_build;
-
+    
     void writeBinPtr(ftStream* fp, void* ptr, int len);
     void writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs);
-
     void writeValidationProgram(const ftPath& path);
-
-
     void makeName(ftVariable&, bool);
 
-    FBTsize             ft_start;
-    ftPathArray         ft_includes;
-    ftStringPtrArray    ft_namespaces, ft_skip;
-    ftCompileStruct::Array ft_struct_builders;
+    ftBuildInfo*            m_build;
+    FBTsize                 ft_start;
+    ftPathArray             ft_includes;
+    ftStringPtrArray        ft_namespaces, ft_skip;
+    ftCompileStruct::Array  ft_struct_builders;
     int m_curBuf, m_writeMode;
 };
 

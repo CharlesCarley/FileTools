@@ -26,7 +26,7 @@
 #define ftMaxTable          5000    // Maximum number of elements in a table
 #define ftMaxID             64      // Maximum character array length
 #define ftMaxMember         256     // Maximum number of members in a struct or class.
-#define ftDefaultAlloc      2048    // Table default allocation size
+#define ftDefaultAlloc      1024    // Table default allocation size
 #define ftTYPE_LEN_VALIDATE 1       // Write a validation file (use MakeFBT.cmake->ADD_FT_VALIDATOR to add a self validating build)
 
 
