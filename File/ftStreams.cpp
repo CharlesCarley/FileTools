@@ -137,11 +137,11 @@ void ftFileStream::write(ftMemoryStream& ms) const
 
 FBTsize ftFileStream::writef(const char* fmt, ...)
 {
-    static char tmp[512];
+    static char tmp[1024];
 
     va_list lst;
     va_start(lst, fmt);
-    int size = ftp_printf(tmp, 512, fmt, lst);
+    int size = ftp_printf(tmp, 1024, fmt, lst);
     va_end(lst);
 
     if (size > 0)
@@ -228,11 +228,11 @@ FBTsize ftGzStream::size(void) const
 
 FBTsize ftGzStream::writef(const char* fmt, ...)
 {
-    static char tmp[512];
+    static char tmp[1024];
 
     va_list lst;
     va_start(lst, fmt);
-    int size = ftp_printf(tmp, 512, fmt, lst);
+    int size = ftp_printf(tmp, 1024, fmt, lst);
     va_end(lst);
 
     if (size > 0)
