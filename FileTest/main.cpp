@@ -44,11 +44,10 @@ int main(int argc, char** argv)
         return 1;
 
     ftBlend fp;
-
     fp.setFilterList(skipList, true);
     if (fp.load(argv[argc - 1], ftFile::PM_COMPRESSED) != ftFile::FS_OK)
         return 1;
-
+#if 0
     fp.generateTypeCastLog("log.html");
 
     Blender::FileGlobal* fg = fp.m_fg;
@@ -98,6 +97,6 @@ int main(int argc, char** argv)
         }
         ftPrintf("\n");
     }
-
+#endif
     return 0;
 }
