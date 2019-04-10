@@ -129,7 +129,7 @@ public:
     FBTint32        m_flag;
     Members         m_members;
     ftStruct*       m_link;		//file/memory table struct link
-    //Keys            m_keyChain; //parent key hash chain(0: type hash, 1: name hash), size() == m_dp
+    Keys            m_keyChain; //parent key hash chain(0: type hash, 1: name hash), size() == m_dp
 };
 
 
@@ -192,8 +192,8 @@ private:
 
     TypeFinder m_typeFinder;
 
-    void putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth);
-    void compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, FBTuint32 depth);
+    void putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys);
+    void compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys);
     void compile(void);
 
 };

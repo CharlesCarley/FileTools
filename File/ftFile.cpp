@@ -377,7 +377,6 @@ ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer,
     FBTsizeType i, s = strc->m_members.size();
 
     FBTuint32 k1 = member->m_val.k32[0];
-
     for (i = 0; i < s; i++)
     {
         ftStruct* strc2 = &md[i];
@@ -385,9 +384,9 @@ ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer,
         {
             if (strc2->m_val.k32[1] == member->m_val.k32[1])
             {
-              /*  if (!strc2->m_keyChain.equal(member->m_keyChain))
+                if (!strc2->m_keyChain.equal(member->m_keyChain))
                     continue;
-*/
+
                 FBTuint32 k2 = strc2->m_val.k32[0];
                 if (k1 == k2)
                     return strc2;
@@ -412,7 +411,8 @@ ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer,
 int ftLinkCompiler::link(void)
 {
     ftBinTables::OffsM::Pointer md = m_mp->m_offs.ptr();
-    
+    ftBinTables::OffsM::Pointer fd = m_fp->m_offs.ptr();
+
     FBTsizeType i, i2;
     ftStruct::Members::Pointer p2;
     for (i = 0; i < m_mp->m_offs.size(); ++i)

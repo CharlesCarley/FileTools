@@ -299,7 +299,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 }
 
 
-void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, FBTuint32 depth)
+void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys)
 {
     FBTuint32 e, l, a, oof, ol;
     FBTuint16 f = m_strc[0][0];
@@ -327,15 +327,15 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
         {
             if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
             {
-                //ftKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
-                //keys.push_back(k);
+                ftKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
+                keys.push_back(k);
 
-                compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth + 1);
+                compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth + 1, keys);
 
-                //keys.pop_back();
+                keys.pop_back();
             }
             else
-                putMember(strc, off, a, cof, depth);
+                putMember(strc, off, a, cof, depth, keys);
         }
 
         if ((cof - oof) != ol)
@@ -357,7 +357,7 @@ void ftBinTables::compile(void)
     FBTuint32 i, cof = 0, depth;
     FBTuint16 f = m_strc[0][0], e, memberCount;
 
-    //ftStruct::Keys emptyKeys;
+    ftStruct::Keys emptyKeys;
     for (i = 0; i < m_strcNr; i++)
     {
         FBTtype* strc = m_strc[i];
@@ -384,20 +384,20 @@ void ftBinTables::compile(void)
         memberCount = strc[1];
 
         strc += 2;
-        off->m_members.reserve(memberCount);
+        off->m_members.reserve(ftMaxMember);
 
         for (e = 0; e < memberCount; ++e, strc += 2)
         {
             if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
             {
-                //ftStruct::Keys keys;
-                //ftKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
-                //keys.push_back(k);
+                ftStruct::Keys keys;
+                ftKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
+                keys.push_back(k);
 
-                compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth + 1);
+                compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth + 1, keys);
             }
             else
-                putMember(strc, off, 0, cof, 0);
+                putMember(strc, off, 0, cof, 0, emptyKeys);
         }
 
         if (cof != off->m_len)
@@ -408,7 +408,7 @@ void ftBinTables::compile(void)
     }
 }
 
-void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth)
+void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys)
 {
     ftStruct nof;
     nof.m_key.k16[0] = cp[0];
@@ -422,6 +422,7 @@ void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& c
     nof.m_link       = 0;
     nof.m_flag       = ftStruct::CAN_LINK;
     nof.m_len        = (m_name[cp[1]].m_ptrCount ? m_ptr : m_tlen[cp[0]]) * m_name[cp[1]].m_arraySize;
+    nof.m_keyChain   = keys;
     off->m_members.push_back(nof);
     cof += nof.m_len;
 }
