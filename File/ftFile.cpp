@@ -1008,11 +1008,11 @@ void ftFile::generateTypeCastLog(const char *fname)
         if (!b)
             continue;
 
-        if (!skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
+        if (skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
             continue;
 
         char* cp0 = mp->m_type[a->m_key.k16[0]].m_name;
-        dest.writef("<li><a href=\"#%s\">%s</a> (%d)</li>\n", cp0, cp0, i);
+        dest.writef("<li><a href=\"#%s\">%s</a> (%d)</li>\n", cp0, cp0, i+1);
     }
     dest.writef("</ul>\n");
 
@@ -1026,53 +1026,42 @@ void ftFile::generateTypeCastLog(const char *fname)
         if (!b)
             continue;
 
-        if (!skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
+        if (skip(m_memory->m_type[a->m_key.k16[0]].m_typeId))
             continue;
 
+        const char* cp0 = mp->getStructType(a);
+        const char* cp1 = fp->getStructType(b);
 
-        const char* cp0 = mp->getStructType(a);//mp->m_type[a->m_key.k16[0]].m_name;
-        const char* cp1 = fp->getStructType(b);//fp->m_type[b->m_key.k16[0]].m_name;
-
-        dest.writef("<center><h2>%s (%d)</h2></center>\n", cp0, i);
         dest.writef("<a id=\"%s\"/>\n", cp0);
-
-        dest.writef("<table><tr><td>File</td><td>(<b>%s</b>)</td><td><i>To</i></td><td>Memory</td><td>(<b>%s</b>)</td></tr></table>\n", cp1, cp0);
+        dest.writef("<h2>%s (%d)</h2>\n", cp0, i+1);
+        dest.writef("<table><tr><td>File</td><td>(<b>%s</b>)</td><td><i>=></i></td><td>Memory</td><td>(<b>%s</b>)</td></tr></table>\n", cp1, cp0);
         dest.writef("<table>\n");
 
         ftStruct::Members::Pointer mbp = a->m_members.ptr();
-
-
         int ml = 0, fl = 0;
-
         for (FBTsizeType i = 0; i < a->m_members.size(); i++)
         {
             c = &mbp[i];
             d = c->m_link;
-            //char* cpMN = mp->m_name[c->m_key.k16[1]].m_name;
-            const char* cpMN = mp->getStructName(c);
 
-            //cp0 = mp->m_type[mp->m_strc[c->m_strcId][0]].m_name;
+            const char* cpMN = mp->getStructName(c);
             cp0 = mp->getOwnerStructName(c);
 
             if (!d)
             {
                 ml += c->m_len;
-                dest.writef("<tr><td>%d</td><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)"
+                dest.writef("<tr><td>((&nbsp;&nbsp;%s&nbsp;&nbsp;*))M)</td><td>+</td><td>%i"
                     "</td><td><i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>&nbsp;&nbsp;0&nbsp;&nbsp;"
-                    "</td><td></td><td>Not in file tables.</td></tr>\n", i, cp0, c->m_off, cpMN);
+                    "</td><td></td><td>Not in file tables.</td></tr>\n", cp0, c->m_off, cpMN);
                 continue;
             }
 
-
-            //char* cpFN = fp->m_name[d->m_key.k16[1]].m_name;
             const char* cpFN = fp->getStructName(d);
-            dest.writef("<tr><td>%d</td><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)</td><td>"
-                "<i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>F(&nbsp;&nbsp;%s&nbsp;&nbsp;)"
-                "</td><td>+</td><td>%i</td></tr>\n", i, cp0, c->m_off, cpMN, cp1, d->m_off);
+            dest.writef("<tr><td>((&nbsp;&nbsp;%s&nbsp;&nbsp;*)M)</td><td>+</td><td>%i</td><td>"
+                "<i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>((&nbsp;&nbsp;%s&nbsp;&nbsp;*)F)"
+                "</td><td>+</td><td>%i</td></tr>\n", cp0, c->m_off, cpMN, cp1, d->m_off);
             ml += c->m_len;
         }
-
-
         dest.writef("</table>\n");
     }
     dest.writef("</body></html>\n");
