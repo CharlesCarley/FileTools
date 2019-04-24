@@ -209,7 +209,7 @@ int ftFile::parseHeader(ftStream* stream)
 
 int ftFile::initializeMemory(void)
 {
-    int status = FS_FAILED;
+    int status = m_memory == 0 ? FS_FAILED : FS_OK;
     if (!m_memory)
     {
         m_memory = new ftBinTables();
