@@ -99,6 +99,27 @@ int ftFile::load(const char* path, int mode)
 {
     ftStream* stream = 0;
 
+    if (mode == PM_COMPRESSED)
+    {
+        ftFileStream fs;
+        fs.open(path, ftStream::SM_READ);
+
+        if (fs.isOpen())
+        {
+            // Test the file for magic numbers ID1, ID2
+            // https://www.ietf.org/rfc/rfc1952.txt ( 2.3.1.)
+            unsigned char magic[3];
+            fs.read(magic, 2);
+            magic[2] = 0;
+
+            if (magic[0] != 0x1F && magic[1] != 0x8B)
+            {
+                // Assuming it's an uncompressed .blend, or any unknown type of file. 
+                mode = PM_UNCOMPRESSED;
+            } // or something else masquerading as a gz file.
+        }
+    }
+
     if (mode == PM_UNCOMPRESSED || mode == PM_COMPRESSED)
     {
 #if ftUSE_GZ_FILE == 1
