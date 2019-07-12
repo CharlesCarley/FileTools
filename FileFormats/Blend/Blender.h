@@ -2,9 +2,7 @@
 #define _Blender_h_
 // Generated from a Blender(264) file.
 
-#ifndef uint64_t
-    #define uint64_t unsigned long long
-#endif
+typedef unsigned long long uint64_t;
 
 #ifdef near
     #undef near
