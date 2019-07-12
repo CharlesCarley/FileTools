@@ -1,8 +1,11 @@
 #ifndef _Blender_h_
 #define _Blender_h_
 // Generated from a Blender(264) file.
-
+#ifdef _WIN32
 typedef unsigned long long uint64_t;
+#else
+#include <stdint.h>
+#endif
 
 #ifdef near
     #undef near
