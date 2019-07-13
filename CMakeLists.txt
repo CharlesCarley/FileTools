@@ -22,19 +22,27 @@ list(APPEND CMAKE_MODULE_PATH ${FileTools_SOURCE_DIR}/CMake)
 
 set(ftINCLUDE ${FileTools_SOURCE_DIR}/File)
 
-set(ftUSE_ZLIB 1)
-set(ftZLIB_INCLUDE ${FileTools_SOURCE_DIR}/File/zlib)
-set(ftZLIB_LIBRARY "zlib")	
 
-if (ftUSE_ZLIB )
-    add_definitions(-DftUSE_GZ_FILE=1)
-    subdirs(File/zlib)
+if (NOT ftUSE_OWN_ZLIB)
+    set(ftUSE_ZLIB 1)
+    set(ftZLIB_INCLUDE ${FileTools_SOURCE_DIR}/File/zlib)
+    set(ftZLIB_LIBRARY zlib)	
+
+    if (ftUSE_ZLIB )
+        add_definitions(-DftUSE_GZ_FILE=1)
+        subdirs(File/zlib)
+    endif()
+else()
+    if (ftUSE_ZLIB )
+        add_definitions(-DftUSE_GZ_FILE=1)
+    endif()
 endif()
+
+
 
 #add_definitions(-DFftUSE_COMPILER_CHECKS=0)
 #add_definitions(-DftUSE_DEBUG_ASSERTS=0)
 add_definitions("-DftSCALAR_DOUBLE")
-
 
 subdirs(File Compiler)
 subdirs(FileFormats/Blend)

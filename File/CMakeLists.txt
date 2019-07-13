@@ -48,3 +48,6 @@ endif()
 
 
 add_library(ftFile ${File_SRC} ${File_HDR}  ${ftScanner})
+if (ftUSE_FOLDERS)
+    set_target_properties(ftFile PROPERTIES FOLDER "${ft_FOLDER}")
+endif()

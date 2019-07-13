@@ -21,3 +21,7 @@ include_directories(. ${FILE_SRC_DIR})
 link_libraries(ftFile)
 
 add_executable(makeft  makeft.cpp)
+
+if (ftUSE_FOLDERS)
+    set_target_properties(makeft PROPERTIES FOLDER "${ft_FOLDER}")
+endif()
