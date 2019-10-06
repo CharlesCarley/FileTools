@@ -10,7 +10,7 @@ Pointer addresses at the time of saving are written to the file. Then during loa
 
 Documentation efforts, refactoring, and testing for consistency is still a work in progress.
 
-See the wiki for an introduction to the file format.
+## Introduction
 
 * [Table-structure](Table-structure.md)
 * [makeft](makeft.md)
