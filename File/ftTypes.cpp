@@ -36,7 +36,6 @@ bool ftDebugger::isDebugger(void)
 void ftDebugger::breakProcess(void)
 {
 #if ftCOMPILER == ftCOMPILER_MSVC
-    _asm int 3;
 #else
     asm("int $3");
 #endif
