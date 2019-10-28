@@ -22,6 +22,6 @@ link_libraries(ftFile)
 
 add_executable(makeft  makeft.cpp)
 
-if (ftUSE_FOLDERS)
+if (ft_FOLDER)
     set_target_properties(makeft PROPERTIES FOLDER "${ft_FOLDER}")
 endif()
