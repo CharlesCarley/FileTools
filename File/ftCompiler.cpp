@@ -438,7 +438,8 @@ ftBinTables* ftCompiler::write(void)
     writeStream(&ms);
 
     void* buffer = ftMalloc(ms.size() + 1);
-    ftMemcpy(buffer, ms.ptr(), ms.size());
+    if (buffer != 0)
+        ftMemcpy(buffer, ms.ptr(), ms.size());
     return new ftBinTables(buffer, ms.size());
 }
 
@@ -654,10 +655,10 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
     FBTtype ft_start = 0;
     if (strcs)
-        ft_start = strcs[0].m_structId;
+        ft_start = (FBTtype)strcs[0].m_structId;
 
     ftVariable* vptr = 0;
-    while (next != prev)
+    while (next != prev && strcs)
     {
         prev = next;
         next = 0;

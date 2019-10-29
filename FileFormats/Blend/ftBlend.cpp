@@ -23,8 +23,8 @@
 
 
 
-extern unsigned char    bfBlenderTable[];
-extern int              bfBlenderLen;
+extern unsigned char bfBlenderTable[];
+extern int bfBlenderLen;
 
 const FBTuint32 GLOB = ftID('G', 'L', 'O', 'B');
 
@@ -129,8 +129,6 @@ int ftBlend::writeData(ftStream* stream)
     }
     return FS_OK;
 }
-
-
 
 bool ftBlend::skip(const FBTuint32& id)
 {
