@@ -72,10 +72,8 @@ typedef enum ftTokenID {
 #define ftTOK_IS_TYPE(x) (x >= IDENTIFIER && x <= VOID)
 #define ECHO 
 
-int line = 1;
-ftFixedString<270> __source;
-
-
+int                 gs_line = 1;
+ftFixedString<270>  gs_src;
 
 %}
 %option noyywrap
@@ -101,7 +99,7 @@ PRE         "#"{L}[^\n\r]+
 
 
 %{
-FBTsize         m_lastConstant;
+FBTsize         gs_lastConstant;
 
 
 struct ftToken
@@ -114,15 +112,14 @@ struct ftToken
 };
 
 
-
 %}
 
 
 %%
 
-<OSTRC>"\n"                 { line ++; }
-<OSTRC>"\r\n"               { line ++; }
-<OSTRC>"\r"                 { line ++; }
+<OSTRC>"\n"                 { gs_line ++; }
+<OSTRC>"\r\n"               { gs_line ++; }
+<OSTRC>"\r"                 { gs_line ++; }
 <OSTRC>{FWDCLS}*            { }
 <OSTRC>{FWDSTC}*            { }
 <OSTRC>"namespace"          { BEGIN INSP;  return (NAMESPACE); }
@@ -177,59 +174,60 @@ struct ftToken
 <ISTRC>";"                  { return TERM;          }
 <ISTRC>{L}({L}|{D})*        { return IDENTIFIER;    }
 <ISTRC>{TYPETERM}*          { BEGIN OSTRC; return RBRACKET; }
-<ISTRC>{D}+{IS}?            { m_lastConstant = atoi(yytext); return(CONSTANT); }
-<ISTRC>"\n"                 { line ++; }
-<ISTRC>"\r\n"               { line ++; }
-<ISTRC>"\r"                 { line ++; }
+<ISTRC>{D}+{IS}?            { gs_lastConstant = atoi(yytext); return(CONSTANT); }
+<ISTRC>"\n"                 { gs_line ++; }
+<ISTRC>"\r\n"               { gs_line ++; }
+<ISTRC>"\r"                 { gs_line ++; }
 <ISTRC>[ \t\v\f]            { }
 
 
-<ICMT>"\n"                  { line ++; }
-<ICMT>"\r\n"                { line ++; }
-<ICMT>"\r"                  { line ++; }
+<ICMT>"\n"                  { gs_line ++; }
+<ICMT>"\r\n"                { gs_line ++; }
+<ICMT>"\r"                  { gs_line ++; }
 <ICMT>"*/"                  { BEGIN ISTRC; }
 <ICMT>[.]+                  { }
 
-<GCMT>"\n"                  { line ++; }
-<GCMT>"\r\n"                { line ++; }
-<GCMT>"\r"                  { line ++; }
+<GCMT>"\n"                  { gs_line ++; }
+<GCMT>"\r\n"                { gs_line ++; }
+<GCMT>"\r"                  { gs_line ++; }
 <GCMT>"*/"                  { BEGIN OSTRC; }
 <GCMT>[.]+                  { }
 
-<PSCMT>"\n"                 { line ++; }
-<PSCMT>"\r\n"               { line ++; }
-<PSCMT>"\r"                 { line ++; }
+<PSCMT>"\n"                 { gs_line ++; }
+<PSCMT>"\r\n"               { gs_line ++; }
+<PSCMT>"\r"                 { gs_line ++; }
 <PSCMT>"*/"                 { BEGIN PRIVSEC; }
 <PSCMT>[.]+                 { }
 
 
 <PRIVSEC>"/*"               { BEGIN PSCMT; }
 <PRIVSEC>"//"[^\n\r]+       { }
-<PRIVSEC>"\n"               { line ++; }
-<PRIVSEC>"\r\n"             { line ++; }
-<PRIVSEC>"\r"               { line ++; }
+<PRIVSEC>"\n"               { gs_line ++; }
+<PRIVSEC>"\r\n"             { gs_line ++; }
+<PRIVSEC>"\r"               { gs_line ++; }
 <PRIVSEC>"public:"          { BEGIN ISTRC; }
 <PRIVSEC>"private:"         { BEGIN ISTRC; }
 <PRIVSEC>"protected:"       { BEGIN ISTRC; }
+<PRIVSEC>{TYPETERM}*        { BEGIN OSTRC; return RBRACKET; }
 <PRIVSEC>[.]+               { }
 
 
-<SSTRC>"\n"                 { line ++;      }
-<SSTRC>"\r\n"               { line ++;      }
-<SSTRC>"\r"                 { line ++;      }
+<SSTRC>"\n"                 { gs_line ++;      }
+<SSTRC>"\r\n"               { gs_line ++;      }
+<SSTRC>"\r"                 { gs_line ++;      }
 <SSTRC>"}"                  { BEGIN OSTRC;  }
 <SSTRC>[.]+                 { }
 
 
-<IGENUM>"\n"                { line ++;      }
-<IGENUM>"\r\n"              { line ++;      }
-<IGENUM>"\r"                { line ++;      }
+<IGENUM>"\n"                { gs_line ++;      }
+<IGENUM>"\r\n"              { gs_line ++;      }
+<IGENUM>"\r"                { gs_line ++;      }
 <IGENUM>{TYPETERM}*         { BEGIN OSTRC;  }
 <IGENUM>[.]+                { }
 
-<ISENUM>"\n"                { line ++;      }
-<ISENUM>"\r\n"              { line ++;      }
-<ISENUM>"\r"                { line ++;      }
+<ISENUM>"\n"                { gs_line ++;      }
+<ISENUM>"\r\n"              { gs_line ++;      }
+<ISENUM>"\r"                { gs_line ++;      }
 <ISENUM>{TYPETERM}*         { BEGIN ISTRC;  }
 <ISENUM>[.]+                { }
 
@@ -245,54 +243,54 @@ ftTokenID ftLex(ftToken &tok)
 {
     tok.m_cur           = ftLex();
     tok.m_buf           = yytext;
-    tok.m_constantSize  = m_lastConstant;
-    tok.m_line          = line;
-    tok.m_src           = (char*)__source.c_str();
-    m_lastConstant      = -1;
+    tok.m_constantSize  = gs_lastConstant;
+    tok.m_line          = gs_line;
+    tok.m_src           = (char*)gs_src.c_str();
+    gs_lastConstant      = -1;
     return tok.m_cur;
 }
 
-void *ftCurFile = 0;
-yy_buffer_state *ftCurBuf = 0;
+void *gsCurFile = 0;
+yy_buffer_state *gsCurBuf = 0;
+
 
 void* ftInitParse(const char *ifile)
 {
-    line    = 1;
+    gs_line  = 1;
     BEGIN   OSTRC;
-    __source = ifile;
+    gs_src = ifile;
 
 
-    ftCurFile = (void*)fopen(ifile, "rb");
-    if (!ftCurFile)
+    gsCurFile = (void*)fopen(ifile, "rb");
+    if (!gsCurFile)
     {
         ftPrintf("File '%s' loading failed!\n", ifile);
         return 0;
     }
 
-    yyin = (FILE*)ftCurFile;
-    return ftCurFile;
+    yyin = (FILE*)gsCurFile;
+    return gsCurFile;
 }
 
 
 void* ftInitParse(const char *name, const char *buf)
 {
-    line    = 1;
+    gs_line    = 1;
     BEGIN   OSTRC;
-    __source = name;
+    gs_src = name;
 
-    ftCurBuf = ft_scan_string(buf);
-    return ftCurBuf;
+    gsCurBuf = ft_scan_string(buf);
+    return gsCurBuf;
 }
+
 
 void ftFreeParse(void *p)
 {   
-    if (p == ftCurBuf)
+    if (p == gsCurBuf)
     {
-        ft_delete_buffer(ftCurBuf);
+        ft_delete_buffer(gsCurBuf);
         return;
     }
-
-
-    if (p == ftCurFile)
-        fclose((FILE*)ftCurFile);
+    if (p == gsCurFile)
+        fclose((FILE*)gsCurFile);
 }
