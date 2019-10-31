@@ -18,170 +18,59 @@
 -------------------------------------------------------------------------------
 */
 #include "ftTypes.h"
-
-
-#define ftIN_SOURCE
+#define FT_IN_SOURCE_FILE
 #include "ftPlatformHeaders.h"
 
-#ifdef ftDEBUG
-bool ftDebugger::isDebugger(void)
+static const FBTuint32 charT   = ftCharHashKey("char").hash();
+static const FBTuint32 ucharT  = ftCharHashKey("uchar").hash();
+static const FBTuint32 shortT  = ftCharHashKey("short").hash();
+static const FBTuint32 ushortT = ftCharHashKey("ushort").hash();
+static const FBTuint32 intT    = ftCharHashKey("int").hash();
+static const FBTuint32 longT   = ftCharHashKey("long").hash();
+static const FBTuint32 ulongT  = ftCharHashKey("ulong").hash();
+static const FBTuint32 floatT  = ftCharHashKey("float").hash();
+static const FBTuint32 doubleT = ftCharHashKey("double").hash();
+static const FBTuint32 voidT   = ftCharHashKey("void").hash();
+
+
+ftAtomic ftGetPrimType(FBTuint32 typeKey)
 {
-#if ftCOMPILER == ftCOMPILER_MSVC
-    return IsDebuggerPresent() != 0;
-#else
-    return false;
-#endif
-}
-
-void ftDebugger::breakProcess(void)
-{
-#if ftCOMPILER == ftCOMPILER_MSVC
-#else
-    asm("int $3");
-#endif
-}
-
-#else//ftDEBUG
-
-
-bool ftDebugger::isDebugger(void)
-{
-    return false;
-}
-
-void ftDebugger::breakProcess(void)
-{
-}
-
-#endif//ftDEBUG
-
-
-#define ftDEBUG_BUF_SIZE (256)
-ftDebugger::Reporter ftDebugger::m_report = {0, 0};
-
-void ftDebugger::setReportHook(Reporter& hook)
-{
-    m_report.m_client = hook.m_client;
-    m_report.m_hook   = hook.m_hook;
-}
-
-void ftDebugger::report(const char* fmt, ...)
-{
-    char ReportBuf[ftDEBUG_BUF_SIZE + 1];
-
-    va_list lst;
-    va_start(lst, fmt);
-    int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
-    va_end(lst);
-
-    if (size < 0)
-    {
-        ReportBuf[ftDEBUG_BUF_SIZE] = 0;
-        size = ftDEBUG_BUF_SIZE;
-    }
-
-    if (size > 0)
-    {
-        ReportBuf[size] = 0;
-
-        if (m_report.m_hook)
-        {
-#if ftCOMPILER == ftCOMPILER_MSVC
-            if (IsDebuggerPresent())
-                OutputDebugString(ReportBuf);
-
-#endif
-            m_report.m_hook(m_report.m_client, ReportBuf);
-        }
-        else
-        {
-
-#if ftCOMPILER == ftCOMPILER_MSVC
-            if (IsDebuggerPresent())
-                OutputDebugString(ReportBuf);
-            else
-#endif
-                fprintf(stderr, "%s", ReportBuf);
-        }
-    }
-}
-
-void ftDebugger::reportIDE(const char* src, long line, const char* fmt, ...)
-{
-    static char ReportBuf[ftDEBUG_BUF_SIZE + 1];
-
-    va_list lst;
-    va_start(lst, fmt);
-
-    int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
-    va_end(lst);
-
-    if (size < 0)
-    {
-        ReportBuf[ftDEBUG_BUF_SIZE] = 0;
-        size = ftDEBUG_BUF_SIZE;
-    }
-
-    if (size > 0)
-    {
-        ReportBuf[size] = 0;
-#if ftCOMPILER == ftCOMPILER_MSVC
-        report("%s(%i): warning: %s", src, line, ReportBuf);
-#else
-        report("%s:%i: warning: %s", src, line, ReportBuf);
-#endif
-    }
+    if (typeKey == charT)	return FT_ATOMIC_CHAR;
+    if (typeKey == ucharT)	return FT_ATOMIC_UCHAR;
+    if (typeKey == shortT)	return FT_ATOMIC_SHORT;
+    if (typeKey == ushortT)	return FT_ATOMIC_USHORT;
+    if (typeKey == intT)	return FT_ATOMIC_INT;
+    if (typeKey == longT)	return FT_ATOMIC_LONG;
+    if (typeKey == ulongT)	return FT_ATOMIC_ULONG;
+    if (typeKey == floatT)	return FT_ATOMIC_FLOAT;
+    if (typeKey == doubleT)	return FT_ATOMIC_DOUBLE;
+    if (typeKey == voidT)	return FT_ATOMIC_VOID;
+    return FT_ATOMIC_UNKNOWN;
 }
 
 
-void ftDebugger::errorIDE(const char* src, long line, const char* fmt, ...)
+
+ftAtomic ftGetPrimType(const char* typeName)
 {
-    static char ReportBuf[ftDEBUG_BUF_SIZE + 1];
-
-    va_list lst;
-    va_start(lst, fmt);
-    int size = ftp_printf(ReportBuf, ftDEBUG_BUF_SIZE, fmt, lst);
-    va_end(lst);
-
-    if (size < 0)
-    {
-        ReportBuf[ftDEBUG_BUF_SIZE] = 0;
-        size = ftDEBUG_BUF_SIZE;
-    }
-
-    if (size > 0)
-    {
-        ReportBuf[size] = 0;
-#if ftCOMPILER == ftCOMPILER_MSVC
-        report("%s(%i): error: %s", src, line, ReportBuf);
-#else
-        report("%s:%i: error: %s", src, line, ReportBuf);
-#endif
-    }
+    if (!typeName)
+        return ftAtomic::FT_ATOMIC_UNKNOWN;
+    return ftGetPrimType(ftCharHashKey(typeName).hash());
 }
 
-ftPRIM_TYPE ftGetPrimType(FBTuint32 typeKey)
+bool ftIsIntType(FBTuint32 typeKey)
 {
-    static FBTuint32 charT    = ftCharHashKey("char").hash();
-    static FBTuint32 ucharT   = ftCharHashKey("uchar").hash();
-    static FBTuint32 shortT   = ftCharHashKey("short").hash();
-    static FBTuint32 ushortT  = ftCharHashKey("ushort").hash();
-    static FBTuint32 intT     = ftCharHashKey("int").hash();
-    static FBTuint32 longT    = ftCharHashKey("long").hash();
-    static FBTuint32 ulongT   = ftCharHashKey("ulong").hash();
-    static FBTuint32 floatT   = ftCharHashKey("float").hash();
-    static FBTuint32 doubleT  = ftCharHashKey("double").hash();
-    static FBTuint32 voidT    = ftCharHashKey("void").hash();
+    ftAtomic tp = ftGetPrimType(typeKey);
+    return tp < FT_ATOMIC_FLOAT;
+}
 
-    if (typeKey == charT)	return ftPRIM_CHAR;
-    if (typeKey == ucharT)	return ftPRIM_UCHAR;
-    if (typeKey == shortT)	return ftPRIM_SHORT;
-    if (typeKey == ushortT)	return ftPRIM_USHORT;
-    if (typeKey == intT)	return ftPRIM_INT;
-    if (typeKey == longT)	return ftPRIM_LONG;
-    if (typeKey == ulongT)	return ftPRIM_ULONG;
-    if (typeKey == floatT)	return ftPRIM_FLOAT;
-    if (typeKey == doubleT)	return ftPRIM_DOUBLE;
-    if (typeKey == voidT)	return ftPRIM_VOID;
-    return ftPRIM_UNKNOWN;
+bool ftIsFloatType(FBTuint32 typeKey)
+{
+    ftAtomic tp = ftGetPrimType(typeKey);
+    return tp == FT_ATOMIC_FLOAT || tp == FT_ATOMIC_DOUBLE;
+}
+
+bool ftIsNumberType(FBTuint32 typeKey)
+{
+    ftAtomic tp = ftGetPrimType(typeKey);
+    return tp != FT_ATOMIC_VOID && tp != FT_ATOMIC_UNKNOWN;
 }

@@ -17,7 +17,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define ftIN_SOURCE
+#define FT_IN_SOURCE_FILE
 #include "ftStreams.h"
 #include "ftPlatformHeaders.h"
 
@@ -279,7 +279,7 @@ void ftMemoryStream::open(const void* buffer, FBTsize size, ftStream::StreamMode
         {
             m_size = size;
             reserve(m_size);
-            ftMemcpy(m_buffer, buffer, m_size);
+            ::memcpy(m_buffer, buffer, m_size);
         }
         else
         {
@@ -393,7 +393,7 @@ FBTsize ftMemoryStream::read(void* dest, FBTsize nr) const
 
     char* cp = (char*)dest;
     char* op = (char*)&m_buffer[m_pos];
-    ftMemcpy(cp, op, nr);
+    ::memcpy(cp, op, nr);
     m_pos += nr;
     return nr;
 }
@@ -411,7 +411,7 @@ FBTsize ftMemoryStream::write(const void* src, FBTsize nr)
         reserve(m_pos + (nr > 65535 ? nr : nr + 65535));
 
     char* cp = &m_buffer[m_pos];
-    ftMemcpy(cp, (char*)src, nr);
+    ::memcpy(cp, (char*)src, nr);
 
     m_pos   += nr;
     m_size  += nr;
@@ -442,7 +442,7 @@ void ftMemoryStream::reserve(FBTsize nr)
         char* buf = new char[nr + 1];
         if (m_buffer != 0)
         {
-            ftMemcpy(buf, m_buffer, m_size);
+            ::memcpy(buf, m_buffer, m_size);
             delete [] m_buffer;
         }
 

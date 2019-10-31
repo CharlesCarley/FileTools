@@ -36,7 +36,7 @@ namespace ftIdNames
 }
 
 
-ftINLINE ftFixedString<4> ftByteToString(FBTuint32 i)
+FT_INLINE ftFixedString<4> ftByteToString(FBTuint32 i)
 {
     union
     {
@@ -61,7 +61,7 @@ typedef struct ftName
     int             m_ptrCount;
     int             m_numSlots, m_isFptr;
     int             m_arraySize;
-    int             m_slots[ftARRAY_SLOTS];
+    int             m_slots[FT_ARR_DIM_MAX];
 } ftName;
 
 typedef struct ftType
@@ -136,10 +136,10 @@ public:
 class ftBinTables
 {
 public:
-    typedef ftName*    Names;  // < ftMaxTable
-    typedef ftType*    Types;  // < ftMaxTable
-    typedef FBTtype*   TypeL;  // < ftMaxTable
-    typedef FBTtype**  Strcs;  // < ftMaxTable * ftMaxMember;
+    typedef ftName*    Names;  // < FT_MAX_TABLE
+    typedef ftType*    Types;  // < FT_MAX_TABLE
+    typedef FBTtype*   TypeL;  // < FT_MAX_TABLE
+    typedef FBTtype**  Strcs;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
 
 
     // Base name trim (*[0-9]) for partial type, name matching

@@ -17,7 +17,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define ftIN_SOURCE
+#define FT_IN_SOURCE_FILE
 #include "ftTables.h"
 #include "ftPlatformHeaders.h"
 
@@ -51,12 +51,12 @@ ftBinTables::ftBinTables(void* ptr, const FBTsize& len)
 
 ftBinTables::~ftBinTables()
 {
-    ftFree(m_name);
-    ftFree(m_type);
-    ftFree(m_tlen);
-    ftFree(m_strc);
+    ::free(m_name);
+    ::free(m_type);
+    ::free(m_tlen);
+    ::free(m_strc);
     if (m_otherBlock)
-        ftFree(m_otherBlock);
+        ::free(m_otherBlock);
 
 
     OffsM::Iterator it = m_offs.iterator();
@@ -81,14 +81,14 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     char* cp = (char*)ptr;
     if (!ftCharNEq(cp, ftIdNames::ftSDNA, 4))
     {
-        ftPrintf("Bin table is missing the start id!\n");
+        printf("Bin table is missing the start id!\n");
         return false;
     }
 
     cp += 4;
     if (!ftCharNEq(cp, ftIdNames::ftNAME, 4))
     {
-        ftPrintf("Bin table is missing the name id!\n");
+        printf("Bin table is missing the name id!\n");
         return false;
     }
 
@@ -104,18 +104,18 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     if (swap) nl = ftSwap32(nl);
 
 
-    if (nl > ftMaxTable)
+    if (nl > FT_MAX_TABLE)
     {
-        ftPrintf("Max name table size exceeded!\n");
+        printf("Max name table size exceeded!\n");
         return false;
     }
     else
-        m_name = (Names)ftMalloc((nl * sizeof(ftName)) + 1);
+        m_name = (Names)::malloc((nl * sizeof(ftName)) + 1);
 
 
 
     i = 0;
-    while (i < nl && i < ftMaxTable)
+    while (i < nl && i < FT_MAX_TABLE)
     {
         ftName name = {cp, (int)i, ftCharHashKey(cp).hash(), 0, 0, 0, 1};
 
@@ -160,7 +160,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (!ftCharNEq(cp, ftIdNames::ftTYPE, 4))
     {
-        ftPrintf("Bin table is missing the type id!\n");
+        printf("Bin table is missing the type id!\n");
         return false;
     }
 
@@ -172,15 +172,15 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (swap) nl = ftSwap32(nl);
 
-    if (nl > ftMaxTable)
+    if (nl > FT_MAX_TABLE)
     {
-        ftPrintf("Max name table size exceeded!\n");
+        printf("Max name table size exceeded!\n");
         return false;
     }
     else
     {
-        m_type = (Types)ftMalloc((nl * sizeof(ftType) + 1));
-        m_tlen = (TypeL)ftMalloc((nl * sizeof(FBTtype) + 1));
+        m_type = (Types)::malloc((nl * sizeof(ftType) + 1));
+        m_tlen = (TypeL)::malloc((nl * sizeof(FBTtype) + 1));
     }
 
     i = 0;
@@ -198,7 +198,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     while (opad--) cp++;
     if (!ftCharNEq(cp, ftIdNames::ftTLEN, 4))
     {
-        ftPrintf("Bin table is missing the tlen id!\n");
+        printf("Bin table is missing the tlen id!\n");
         return false;
     }
 
@@ -219,7 +219,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (!ftCharNEq(cp, ftIdNames::ftSTRC, 4))
     {
-        ftPrintf("Bin table is missing the tlen id!\n");
+        printf("Bin table is missing the tlen id!\n");
         return false;
     }
 
@@ -231,13 +231,13 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (swap) nl = ftSwap32(nl);
 
-    if (nl > ftMaxTable)
+    if (nl > FT_MAX_TABLE)
     {
-        ftPrintf("Max name table size exceeded!\n");
+        printf("Max name table size exceeded!\n");
         return false;
     }
     else
-        m_strc = (Strcs)ftMalloc(nl * ftMaxMember * sizeof(FBTtype) + 1);
+        m_strc = (Strcs)::malloc(nl * FT_MAX_MEMBERS * sizeof(FBTtype) + 1);
 
 
     m_typeFinder.reserve(m_typeNr);
@@ -255,7 +255,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
             m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
             k = tp[1];
-            ftASSERT(k < ftMaxMember);
+            ftASSERT(k < FT_MAX_MEMBERS);
 
             j = 0;
             tp += 2;
@@ -270,7 +270,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         }
         else
         {
-            ftASSERT(tp[1] < ftMaxMember);
+            ftASSERT(tp[1] < FT_MAX_MEMBERS);
             m_type[tp[0]].m_strcId = m_strcNr - 1;
             m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
@@ -281,10 +281,10 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (m_strcNr == 0)
     {
-        ftFree(m_name);
-        ftFree(m_type);
-        ftFree(m_tlen);
-        ftFree(m_strc);
+        ::free(m_name);
+        ::free(m_type);
+        ::free(m_tlen);
+        ::free(m_strc);
 
         m_name = 0;
         m_type = 0;
@@ -306,7 +306,7 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
 
     if (i > m_strcNr)
     {
-        ftPrintf("Missing recursive type\n");
+        printf("Missing recursive type\n");
         return;
     }
 
@@ -339,18 +339,18 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
         }
 
         if ((cof - oof) != ol)
-            ftPrintf("Build ==> invalid offset (%i)(%i:%i)\n", a, (cof - oof), ol);
+            printf("Build ==> invalid offset (%i)(%i:%i)\n", a, (cof - oof), ol);
 
     }
 }
 
 void ftBinTables::compile(void)
 {
-    m_offs.reserve(ftMaxTable);
+    m_offs.reserve(FT_MAX_TABLE);
 
     if (!m_strc || m_strcNr <= 0)
     {
-        ftPrintf("Build ==> No structures.");
+        printf("Build ==> No structures.");
         return;
     }
 
@@ -384,7 +384,7 @@ void ftBinTables::compile(void)
         memberCount = strc[1];
 
         strc += 2;
-        off->m_members.reserve(ftMaxMember);
+        off->m_members.reserve(FT_MAX_MEMBERS);
 
         for (e = 0; e < memberCount; ++e, strc += 2)
         {
@@ -403,7 +403,7 @@ void ftBinTables::compile(void)
         if (cof != off->m_len)
         {
             off->m_flag |= ftStruct::MISALIGNED;
-            ftPrintf("Build ==> invalid offset %s:%i:%i:%i\n", m_type[off->m_key.k16[0]].m_name, i, cof, off->m_len);
+            printf("Build ==> invalid offset %s:%i:%i:%i\n", m_type[off->m_key.k16[0]].m_name, i, cof, off->m_len);
         }
     }
 }

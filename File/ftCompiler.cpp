@@ -65,7 +65,7 @@ public:
 
 ftCompiler::ftCompiler() :
     m_build(new ftBuildInfo()),
-    ft_start(0),
+    m_start(0),
     m_curBuf(0),
     m_writeMode(0)
 {
@@ -123,11 +123,11 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
 int ftCompiler::parseBuffer(const ftId& name, const char* ms)
 {
     ftParser parser = ftInitParse(name.c_str(), ms);
-    ft_includes.push_back(name.c_str());
+    m_includes.push_back(name.c_str());
 
     if (!parser)
     {
-        ftPrintf("Error : Parser initialization failed!\n");
+        printf("Error : Parser initialization failed!\n");
         return -1;
     }
 
@@ -139,11 +139,11 @@ int ftCompiler::parseBuffer(const ftId& name, const char* ms)
 int ftCompiler::parseFile(const ftPath& id)
 {
     ftParser parser = ftInitParse(id.c_str());
-    ft_includes.push_back(id);
+    m_includes.push_back(id);
 
     if (!parser)
     {
-        ftPrintf("Error : Parser initialization failed!\n");
+        printf("Error : Parser initialization failed!\n");
         return -1;
     }
 
@@ -165,7 +165,7 @@ int ftCompiler::doParse(void)
             ftToken tp;
             TOK = ftLex(tp);
             if (TOK == IDENTIFIER)
-                ft_namespaces.push_back(tp.m_buf);
+                m_namespaces.push_back(tp.m_buf);
         }
 
         if (TOK == STRUCT)
@@ -222,10 +222,10 @@ int ftCompiler::doParse(void)
                                         forceArray = true;
                                         break;
                                     case CONSTANT:
-                                        if (cur.m_numSlots + 1 > ftARRAY_SLOTS)
+                                        if (cur.m_numSlots + 1 > FT_ARR_DIM_MAX)
                                         {
-                                            ftPrintf("Maximum number of array slots exceeded!\n");
-                                            ftPrintf("define ftARRAY_SLOTS to expand.\nCurrent = [] * %i\n", ftARRAY_SLOTS);
+                                            printf("Maximum number of array slots exceeded!\n");
+                                            printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FT_ARR_DIM_MAX);
                                             return -1;
                                         }
 
@@ -270,7 +270,7 @@ int ftCompiler::doParse(void)
                                         break;
                                     default:
                                         {
-                                            ftPrintf("%s(%i): error : Unknown character parsed! %s\n", tp.m_src, tp.m_line, tp.m_buf);
+                                            printf("%s(%i): error : Unknown character parsed! %s\n", tp.m_src, tp.m_line, tp.m_buf);
                                             return -1;
                                         }
                                         break;
@@ -281,13 +281,13 @@ int ftCompiler::doParse(void)
                             }
                             else
                             {
-                                ftPrintf("%s(%i): error : unknown token parsed %s\n", tp.m_src, tp.m_line, tp.m_buf);
+                                printf("%s(%i): error : unknown token parsed %s\n", tp.m_src, tp.m_line, tp.m_buf);
                                 return -1;
                             }
                         }
                         while ((TOK != RBRACKET) && ftValidToken(TOK));
 
-                        ft_struct_builders.push_back(bs);
+                        m_builders.push_back(bs);
                     }
                 }
             }
@@ -299,7 +299,7 @@ int ftCompiler::doParse(void)
 
 int ftCompiler::buildTypes(void)
 {
-    return m_build->getLengths(ft_struct_builders);
+    return m_build->getLengths(m_builders);
 }
 
 void ftCompiler::writeFile(const ftId& id, ftStream* fp)
@@ -320,7 +320,7 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
     fp.open(path.c_str(), ftStream::SM_WRITE);
     if (!fp.isOpen())
     {
-        ftPrintf("Failed to open data file: %s\n", path.c_str());
+        printf("Failed to open data file: %s\n", path.c_str());
         return;
     }
 
@@ -332,7 +332,7 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
     fp.writef("\n};\n");
     fp.writef("int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
 
-#if ftTYPE_LEN_VALIDATE == 1
+#if FT_TYLE_LEN_VALIDATE == 1
     writeValidationProgram(path.c_str());
 #endif
 }
@@ -371,7 +371,7 @@ void ftCompiler::writeStream(ftStream* fp)
     }
 
     writeBinPtr(fp, (void*)&ftIdNames::ftSTRC[0], 4);
-    i = ft_struct_builders.size();
+    i = m_builders.size();
 #if ftFAKE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
@@ -437,16 +437,16 @@ ftBinTables* ftCompiler::write(void)
 
     writeStream(&ms);
 
-    void* buffer = ftMalloc(ms.size() + 1);
+    void* buffer = ::malloc(ms.size() + 1);
     if (buffer != 0)
-        ftMemcpy(buffer, ms.ptr(), ms.size());
+        ::memcpy(buffer, ms.ptr(), ms.size());
     return new ftBinTables(buffer, ms.size());
 }
 
 
 void ftCompiler::writeValidationProgram(const ftPath& path)
 {
-#if ftTYPE_LEN_VALIDATE == 1
+#if FT_TYLE_LEN_VALIDATE == 1
 
     ftPath string;
     ftPathArray split;
@@ -475,29 +475,29 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     FILE* fp = fopen(string.c_str(), "wb");
     if (!fp)
     {
-        ftPrintf("Failed to open validation file %s\n", string.c_str());
+        printf("Failed to open validation file %s\n", string.c_str());
         return;
     }
 
-    for (i = 0; i < (int)ft_includes.size(); ++i)
+    for (i = 0; i < (int)m_includes.size(); ++i)
     {
         split.clear(true);
-        ft_includes[i].split(split, '/', '\\');
+        m_includes[i].split(split, '/', '\\');
 
-        fprintf(fp, "#include \"%s\"\n", ft_includes[i].c_str());
+        fprintf(fp, "#include \"%s\"\n", m_includes[i].c_str());
     }
 
     fprintf(fp, "#include <stdlib.h>\n");
     fprintf(fp, "#include <stdio.h>\n\n");
-    if (!ft_namespaces.empty())
+    if (!m_namespaces.empty())
     {
-        for (i = 0; i < (int)ft_namespaces.size(); ++i)
-            fprintf(fp, "using namespace %s;\n\n\n", ft_namespaces[i].c_str());
+        for (i = 0; i < (int)m_namespaces.size(); ++i)
+            fprintf(fp, "using namespace %s;\n\n\n", m_namespaces[i].c_str());
     }
 
     fprintf(fp, "int main()\n{\n\tint errors=0;\n");
 
-    ftCompileStruct::Array::Iterator it = ft_struct_builders.iterator();
+    ftCompileStruct::Array::Iterator it = m_builders.iterator();
     while (it.hasMoreElements())
     {
         ftCompileStruct& bs = it.getNext();
@@ -505,7 +505,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         ftId& cur = m_build->m_type.at(bs.m_structId);
         FBTtype len = m_build->m_tlen.at(bs.m_structId);
 
-        if (ft_skip.find(cur) != ftNPOS)
+        if (m_skip.find(cur) != ftNPOS)
             continue;
 #if ftFAKE_ENDIAN == 1
         len = ftSwap16(len);
@@ -546,10 +546,10 @@ ftBuildInfo::ftBuildInfo()
 
 void ftBuildInfo::reserve(void)
 {
-    m_name.reserve(ftMaxTable);
-    m_type.reserve(ftMaxTable);
-    m_tlen.reserve(ftMaxTable);
-    m_strc.reserve(ftMaxTable * ftMaxMember);
+    m_name.reserve(FT_MAX_TABLE);
+    m_type.reserve(FT_MAX_TABLE);
+    m_tlen.reserve(FT_MAX_TABLE);
+    m_strc.reserve(FT_MAX_TABLE * FT_MAX_MEMBERS);
 }
 
 void ftBuildInfo::makeBuiltinTypes(void)
@@ -690,7 +690,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                         hasPtr = true;
                         if (len % ftVOID)
                         {
-                            ftERROR(v.m_path.c_str(),
+                            printf(v.m_path.c_str(),
                                     v.m_line, "align %i: %s %s add %i bytes\n", ftVOID,
                                     v.m_type.c_str(), v.m_name.c_str(), ftVOID - (len % ftVOID)
                                    );
@@ -699,7 +699,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                         }
                         if (fake64 % 8)
                         {
-                            ftERROR(v.m_path.c_str(),
+                            printf(v.m_path.c_str(),
                                     v.m_line, "align %i: %s %s add %i bytes\n", 8,
                                     v.m_type.c_str(), v.m_name.c_str(), 8 - (fake64 % 8)
                                    );
@@ -715,7 +715,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                         {
                             if (ftVOID8 && (len % 8))
                             {
-                                ftERROR(v.m_path.c_str(),
+                                printf(v.m_path.c_str(),
                                         v.m_line, "align: %i alignment error add %i bytes\n",
                                         8,
                                         8 - (len % 8)
@@ -726,7 +726,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
                         if (tlens[ct] > 3 && (len % 4))
                         {
-                            ftERROR(cur.m_path.c_str(),
+                            printf(cur.m_path.c_str(),
                                     v.m_line,
                                     "align %i: in %s::%s add %i bytes\n",
                                     4,
@@ -736,7 +736,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                         }
                         else if (tlens[ct] == 2 && (len % 2))
                         {
-                            ftERROR(cur.m_path.c_str(),
+                            printf(cur.m_path.c_str(),
                                     v.m_line, "align %i: in %s::%s add %i bytes\n",
                                     2,
                                     cur.m_name.c_str(), v.m_name.c_str(), 2 - (len % 2)
@@ -769,7 +769,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                     {
                         if (fake64 % 8)
                         {
-                            ftERROR(cur.m_path.c_str(),
+                            printf(cur.m_path.c_str(),
                                     cur.m_line,
                                     "64Bit alignment, in %s add %i bytes\n",
                                     cur.m_name.c_str(), 8 - (fake64 % 8)
@@ -780,7 +780,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
                     if (len % 4)
                     {
-                        ftERROR(cur.m_path.c_str(),
+                        printf(cur.m_path.c_str(),
                                 cur.m_line,
                                 "align 4: in %s add %i bytes\n",
                                 cur.m_name.c_str(), 4 - (len % 4)
@@ -801,11 +801,11 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
         while (it.hasMoreElements())
         {
             ftId& id = it.getNext();
-            ftPrintf("Link error: undefined reference to type '%s'\n", id.c_str());
+            printf("Link error: undefined reference to type '%s'\n", id.c_str());
         }
     }
 
-    if (ftDEBUG >= 3)
+    if (FT_DEBUG >= 3)
     {
         ftCompileStruct::Array::Iterator bit = struct_builders.iterator();
 
@@ -813,14 +813,14 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
         {
             ftCompileStruct& bs = bit.getNext();
 
-            ftTRACE(bs.m_path.c_str(), bs.m_line, "typeid (%s):%i\n", bs.m_name.c_str(), bs.m_structId);
-            if (ftDEBUG > 0 && !bs.m_data.empty())
+            printf(bs.m_path.c_str(), bs.m_line, "typeid (%s):%i\n", bs.m_name.c_str(), bs.m_structId);
+            if (FT_DEBUG > 0 && !bs.m_data.empty())
             {
                 ftVariables::Iterator it = bs.m_data.iterator();
                 while (it.hasMoreElements())
                 {
                     ftVariable& cvar = it.getNext();
-                    ftTRACE(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n",
+                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n",
                             cvar.m_typeId, cvar.m_nameId,
                             (cvar.m_ptrCount > 0 ? ftVOID : tlens[cvar.m_typeId]) * cvar.m_arraySize,
                             cvar.m_type.c_str(),

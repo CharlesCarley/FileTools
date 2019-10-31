@@ -20,7 +20,7 @@
 #ifndef _ftPlatformHeaders_h_
 #define _ftPlatformHeaders_h_
 
-#ifndef ftIN_SOURCE
+#ifndef FT_IN_SOURCE_FILE
     #error source include only!
 #endif
 

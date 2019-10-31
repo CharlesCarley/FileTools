@@ -20,20 +20,17 @@
 #ifndef _ftConfig_h_
 #define _ftConfig_h_
 
-#define ftDEBUG             1       // Traceback detail
-#define ftMaxTable          5000    // Maximum number of elements in a table
-#define ftMaxID             64      // Maximum character array length
-#define ftMaxMember         256     // Maximum number of members in a struct or class.
-#define ftDefaultAlloc      1024    // Table default allocation size
-#define ftTYPE_LEN_VALIDATE 1       // Write a validation file (use MakeFBT.cmake->ADD_FT_VALIDATOR to add a self validating build)
+#define FT_DEBUG 1              // Detail
+#define FT_MAX_TABLE 5000       // Maximum number of elements in a table
+#define FT_MAX_ID 64            // Maximum character array length
+#define FT_MAX_MEMBERS 256      // Maximum number of members in a struct or class.
+#define FT_DEF_ALLOC 1024       // Table default allocation size
+#define FT_TYLE_LEN_VALIDATE 1  // Write a validation file (use MakeFBT.cmake->ADD_FT_VALIDATOR to add a self validating build)
 
-
-// ft is only set up for two dimensional arrays
+// FileTools is only set up for two dimensional arrays
 // changing this may compile fine, but the supporting
 // code may not work as expected
-#define ftARRAY_SLOTS       2       // Maximum dimensional array, EG; (int m_member[..][..] -> [ftARRAY_SLOTS])
-
-
+#define FT_ARR_DIM_MAX 2  // Maximum dimensional array, EG; (int m_member[..][..] -> [FT_ARR_DIM_MAX])
 
 
 #endif//_ftConfig_h_

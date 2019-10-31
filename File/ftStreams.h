@@ -78,7 +78,7 @@ public:
     FBTsize     seek(FBTint32 off, FBTint32 way);
 
 
-    ftINLINE bool isOpen(void) const { return m_handle != 0; }
+    FT_INLINE bool isOpen(void) const { return m_handle != 0; }
 
 protected:
     ftFileHandle        m_handle;
@@ -132,10 +132,10 @@ public:
     void open(const void* buffer, FBTsize size, ftStream::StreamMode mode, bool compressed = false);
 
 
-    ftINLINE bool     isOpen(void)    const   {return m_buffer != 0;}
-    ftINLINE bool     eof(void)       const   {return !m_buffer || m_pos >= m_size;}
-    ftINLINE FBTsize  position(void)  const   {return m_pos;}
-    ftINLINE FBTsize  size(void)      const   {return m_size;}
+    FT_INLINE bool     isOpen(void)    const   {return m_buffer != 0;}
+    FT_INLINE bool     eof(void)       const   {return !m_buffer || m_pos >= m_size;}
+    FT_INLINE FBTsize  position(void)  const   {return m_pos;}
+    FT_INLINE FBTsize  size(void)      const   {return m_size;}
 
     FBTsize  read(void* dest, FBTsize nr) const;
     FBTsize  write(const void* src, FBTsize nr);

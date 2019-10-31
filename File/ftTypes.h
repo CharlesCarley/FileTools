@@ -23,207 +23,188 @@
 #define _ftTypes_h_
 
 #ifndef ftHAVE_CONFIG
-    #include "ftConfig.h"
+#include "ftConfig.h"
 #endif
 
-#include "string.h"
 #include "memory.h"
+#include "string.h"
 
 #if (defined(DEBUG) || defined(_DEBUG)) && ftUSE_DEBUG_ASSERTS == 1
-    #include <assert.h> // Keep this the only std include in headers
-    #define ftDEBUG 1
-    #define ftASSERT(x) assert(x)
+#include <assert.h>  // Keep this the only std include in headers
+#define FT_DEBUG 1
+#define ftASSERT(x) assert(x)
 #else
-    #define ftASSERT(x) ((void)0)
+#define ftASSERT(x) ((void)0)
 #endif
 
 #ifdef ftUSE_COMPILER_CHECKS
-    #define ftASSERTCOMP(x, n) typedef bool x[(n) ? 1 : -1];
+#define ftASSERTCOMP(x, n) typedef bool x[(n) ? 1 : -1];
 #else
-    #define ftASSERTCOMP(x, n)
+#define ftASSERTCOMP(x, n)
 #endif
 
 
-#define ftPLATFORM_WIN32    0
-#define ftPLATFORM_LINUX    2
-#define ftPLATFORM_APPLE    3
+#define ftPLATFORM_WIN32 0
+#define ftPLATFORM_LINUX 2
+#define ftPLATFORM_APPLE 3
 
-#if defined (_WIN32)
-    #define ftPLATFORM ftPLATFORM_WIN32
+#if defined(_WIN32)
+#define ftPLATFORM ftPLATFORM_WIN32
 #elif defined(__APPLE__)
-    #define ftPLATFORM ftPLATFORM_APPLE
+#define ftPLATFORM ftPLATFORM_APPLE
 #else
-    #define ftPLATFORM ftPLATFORM_LINUX
+#define ftPLATFORM ftPLATFORM_LINUX
 #endif
 
-#define ftCOMPILER_MSVC    0
-#define ftCOMPILER_GNU     1
+#define ftCOMPILER_MSVC 0
+#define ftCOMPILER_GNU 1
 
 #if defined(_MSC_VER)
-    #define ftCOMPILER ftCOMPILER_MSVC
+#define ftCOMPILER ftCOMPILER_MSVC
 #elif defined(__GNUC__)
-    #define ftCOMPILER ftCOMPILER_GNU
+#define ftCOMPILER ftCOMPILER_GNU
 #else
-    # error unknown compiler
+#error unknown compiler
 #endif
 
-#define ftENDIAN_LITTLE    0
-#define ftENDIAN_BIG       1
+#define ftENDIAN_LITTLE 0
+#define ftENDIAN_BIG 1
 
-#if defined(__sgi)      ||  defined (__sparc)        || \
-    defined (__sparc__) ||  defined (__PPC__)        || \
-    defined (__ppc__)   ||  defined (__BIG_ENDIAN__)
-    #define ftENDIAN ftENDIAN_BIG
+#if defined(__sgi) || defined(__sparc) ||     \
+    defined(__sparc__) || defined(__PPC__) || \
+    defined(__ppc__) || defined(__BIG_ENDIAN__)
+#define ftENDIAN ftENDIAN_BIG
 #else
-    #define ftENDIAN ftENDIAN_LITTLE
+#define ftENDIAN ftENDIAN_LITTLE
 #endif
 
 #if ftENDIAN == ftENDIAN_BIG
-    #define ftID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
-    #define ftID2(c, d)   ( (c)<<8 | (d) )
+#define ftID(a, b, c, d) ((int)(a) << 24 | (int)(b) << 16 | (c) << 8 | (d))
+#define ftID2(c, d) ((c) << 8 | (d))
 #else
-    #define ftID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
-    #define ftID2(c, d)   ( (d)<<8 | (c) )
+#define ftID(a, b, c, d) ((int)(d) << 24 | (int)(c) << 16 | (b) << 8 | (a))
+#define ftID2(c, d) ((d) << 8 | (c))
 #endif
 
 #define ftARCH_32 0
 #define ftARCH_64 1
 
-#if defined(__x86_64__)     || defined(_M_X64)      || \
-    defined(__powerpc64__)  || defined(__alpha__)   || \
-    defined(__ia64__)       || defined(__s390__)    || \
+#if defined(__x86_64__) || defined(_M_X64) ||       \
+    defined(__powerpc64__) || defined(__alpha__) || \
+    defined(__ia64__) || defined(__s390__) ||       \
     defined(__s390x__)
-    #define ftARCH ftARCH_64
+#define ftARCH ftARCH_64
 #else
-    #define ftARCH ftARCH_32
+#define ftARCH ftARCH_32
 #endif
 
 
 #if ftPLATFORM == ftPLATFORM_WIN32
-    #if defined(__MINGW32__) || \
-        defined(__CYGWIN__)  || \
-        (defined (_MSC_VER) && _MSC_VER < 1300)
-        #define ftINLINE inline
-    #else
-        #define ftINLINE __forceinline
-    #endif
+#if defined(__MINGW32__) || \
+    defined(__CYGWIN__) ||  \
+    (defined(_MSC_VER) && _MSC_VER < 1300)
+#define FT_INLINE inline
 #else
-    #define ftINLINE    inline
+#define FT_INLINE __forceinline
+#endif
+#else
+#define FT_INLINE inline
 #endif
 
 // Integer types
-typedef long            FBTlong;
-typedef unsigned long   FBTulong;
-typedef int             FBTint32;
-typedef unsigned int    FBTuint32;
-typedef short           FBTint16;
-typedef unsigned short  FBTuint16;
-typedef signed char     FBTint8;
-typedef unsigned char   FBTuint8;
-typedef unsigned char   FBTubyte;
-typedef signed char     FBTbyte;
-typedef bool            FBTint1;
+typedef long           FBTlong;
+typedef unsigned long  FBTulong;
+typedef int            FBTint32;
+typedef unsigned int   FBTuint32;
+typedef short          FBTint16;
+typedef unsigned short FBTuint16;
+typedef signed char    FBTint8;
+typedef unsigned char  FBTuint8;
+typedef unsigned char  FBTubyte;
+typedef signed char    FBTbyte;
+typedef bool           FBTint1;
 
 
 #if ftCOMPILER == ftCOMPILER_GNU
-    typedef long long          FBTint64;
-    typedef unsigned long long FBTuint64;
+typedef long long          FBTint64;
+typedef unsigned long long FBTuint64;
 #else
-    typedef __int64          FBTint64;
-    typedef unsigned __int64 FBTuint64;
+typedef __int64          FBTint64;
+typedef unsigned __int64 FBTuint64;
 #endif
 
 // Arch dependent types
 
 #if ftARCH == ftARCH_64
-    typedef FBTuint64   FBTuintPtr;
-    typedef FBTint64    FBTintPtr;
+typedef FBTuint64 FBTuintPtr;
+typedef FBTint64  FBTintPtr;
 #else
-    typedef FBTuint32   FBTuintPtr;
-    typedef FBTint32    FBTintPtr;
+typedef FBTuint32        FBTuintPtr;
+typedef FBTint32         FBTintPtr;
 #endif
 
-typedef FBTuintPtr  FBTsize;
+typedef FBTuintPtr FBTsize;
 
 // Scalar types are defined as [a-z]"Scalar"
 #ifdef ftSCALAR_DOUBLE
-    #define scalar_t double
+#define scalar_t double
 #else
-    #define scalar_t float
+#define scalar_t float
 #endif
 
 // Type for arrays & tables (Always unsigned & 32bit)
-typedef FBTuint32       FBTsizeType;
-const   FBTuint32       ftNPOS = (FBTuint32) - 1;
-typedef FBTuint32       FBThash;
-typedef FBTuint16       FBTtype;
+typedef FBTuint32 FBTsizeType;
+const FBTuint32   ftNPOS = (FBTuint32)-1;
+typedef FBTuint32 FBThash;
+typedef FBTuint16 FBTtype;
 
+ftASSERTCOMP(FBTsizeType_NPOS_VALIDATE, ftNPOS == ((FBTuint32)-1));
 
-ftASSERTCOMP(FBTsizeType_NPOS_VALIDATE, ftNPOS == ((FBTuint32) - 1));
 
 #define _ftCACHE_LIMIT 999
 
-template <typename T> ftINLINE void    ftSwap(T& a, T& b)                              { T t(a); a = b; b = t; }
-template <typename T> ftINLINE T       ftMax(const T& a, const T& b)                   { return a < b ? b : a; }
-template <typename T> ftINLINE T       ftMin(const T& a, const T& b)                   { return a < b ? a : b; }
-template <typename T> ftINLINE T       ftClamp(const T& v, const T& a, const T& b)     { return v < a ? a : v > b ? b : v; }
-
-
-#define ftNameOf(x) #x
-#define ftMalloc(size)             ::malloc(size)
-#define ftCalloc(size, len)        ::calloc(size, len)
-#define ftFree(ptr)                ::free(ptr)
-#define ftMemset                   ::memset
-#define ftMemcpy                   ::memcpy
-#define ftMemmove                  ::memmove
-#define ftMemcmp                   ::memcmp
-
-
-
-class ftDebugger
+template <typename T>
+FT_INLINE void ftSwap(T& a, T& b)
 {
-public:
-    typedef void (*ReportHook)(FBTuintPtr client, const char* buffer);
+    T t(a);
+    a = b;
+    b = t;
+}
 
-    struct Reporter
-    {
-        FBTuintPtr m_client;
-        ReportHook m_hook;
-    };
 
-    static bool isDebugger(void);
-    static void reportIDE(const char* src, long line, const char* msg, ...);
-    static void errorIDE(const char* src, long line, const char* msg, ...);
-    static void report(const char* msg, ...);
-    static void breakProcess(void);
+template <typename T>
+FT_INLINE T ftMax(const T& a, const T& b)
+{
+    return a < b ? b : a;
+}
+template <typename T>
+FT_INLINE T ftMin(const T& a, const T& b)
+{
+    return a < b ? a : b;
+}
+template <typename T>
+FT_INLINE T ftClamp(const T& v, const T& a, const T& b)
+{
+    return v < a ? a : v > b ? b : v;
+}
 
-    static void setReportHook(Reporter& hook);
 
-private:
-    static Reporter m_report;
-
-};
-
-#define ftPrintf ftDebugger::report
-#define ftTRACE  ftDebugger::reportIDE
-#define ftERROR  ftDebugger::errorIDE
 
 typedef enum ftEndian
 {
-    ftENDIAN_IS_BIG       = 0,
-    ftENDIAN_IS_LITTLE    = 1,
+    ftENDIAN_IS_BIG    = 0,
+    ftENDIAN_IS_LITTLE = 1,
     ftENDIAN_NATIVE,
 } ftEndian;
 
-typedef union ftEndianTest
-{
+typedef union ftEndianTest {
     FBTbyte  bo[4];
     FBTint32 test;
 } ftEndianTest;
 
 
 
-ftINLINE ftEndian ftGetEndian(void)
+FT_INLINE ftEndian ftGetEndian(void)
 {
     ftEndianTest e;
     e.test = ftENDIAN_IS_LITTLE;
@@ -231,39 +212,39 @@ ftINLINE ftEndian ftGetEndian(void)
 }
 
 
-ftINLINE bool ftIsEndian(const ftEndian& endian)
+FT_INLINE bool ftIsEndian(const ftEndian& endian)
 {
     ftEndianTest e;
     e.test = endian;
     return static_cast<ftEndian>(e.bo[0]) == endian;
 }
 
-ftINLINE FBTuint16 ftSwap16(FBTuint16 in)
+FT_INLINE FBTuint16 ftSwap16(FBTuint16 in)
 {
     return static_cast<FBTuint16>(((in & 0xFF00) >> 8) | ((in & 0x00FF) << 8));
 }
 
-ftINLINE FBTuint32 ftSwap32(const FBTuint32& in)
+FT_INLINE FBTuint32 ftSwap32(const FBTuint32& in)
 {
-    return (((in & 0xFF000000) >> 24) | ((in & 0x00FF0000) >> 8) | ((in & 0x0000FF00) << 8)  | ((in & 0x000000FF) << 24));
+    return (((in & 0xFF000000) >> 24) | ((in & 0x00FF0000) >> 8) | ((in & 0x0000FF00) << 8) | ((in & 0x000000FF) << 24));
 }
 
-ftINLINE FBTint16 ftSwap16(FBTint16 in)
+FT_INLINE FBTint16 ftSwap16(FBTint16 in)
 {
     return ftSwap16(static_cast<FBTuint16>(in));
 }
 
-ftINLINE FBTint32 ftSwap32(const FBTint32& in)
+FT_INLINE FBTint32 ftSwap32(const FBTint32& in)
 {
     return ftSwap32(static_cast<FBTuint32>(in));
 }
 
 
-ftINLINE FBTuint64 ftSwap64(const FBTuint64& in)
+FT_INLINE FBTuint64 ftSwap64(const FBTuint64& in)
 {
-    FBTuint64 r = 0;
+    FBTuint64       r   = 0;
     const FBTubyte* src = reinterpret_cast<const FBTubyte*>(&in);
-    FBTubyte* dst = reinterpret_cast<FBTubyte*>(&r);
+    FBTubyte*       dst = reinterpret_cast<FBTubyte*>(&r);
 
     dst[0] = src[7];
     dst[1] = src[6];
@@ -277,7 +258,7 @@ ftINLINE FBTuint64 ftSwap64(const FBTuint64& in)
 }
 
 
-ftINLINE void ftSwap16(FBTuint16* sp, FBTsize len)
+FT_INLINE void ftSwap16(FBTuint16* sp, FBTsize len)
 {
     FBTsizeType i;
     for (i = 0; i < len; ++i)
@@ -287,7 +268,7 @@ ftINLINE void ftSwap16(FBTuint16* sp, FBTsize len)
     }
 }
 
-ftINLINE void ftSwap32(FBTuint32* ip, FBTsize len)
+FT_INLINE void ftSwap32(FBTuint32* ip, FBTsize len)
 {
     FBTsizeType i;
     for (i = 0; i < len; ++i)
@@ -298,7 +279,7 @@ ftINLINE void ftSwap32(FBTuint32* ip, FBTsize len)
 }
 
 
-ftINLINE void ftSwap64(FBTuint64* dp, FBTsize len)
+FT_INLINE void ftSwap64(FBTuint64* dp, FBTsize len)
 {
     FBTsizeType i;
     for (i = 0; i < len; ++i)
@@ -309,7 +290,7 @@ ftINLINE void ftSwap64(FBTuint64* dp, FBTsize len)
 }
 
 
-ftINLINE FBTint64 ftSwap64(const FBTint64& in)
+FT_INLINE FBTint64 ftSwap64(const FBTint64& in)
 {
     return ftSwap64(static_cast<FBTuint64>(in));
 }
@@ -325,34 +306,41 @@ enum ftPointerLen
 
 
 #if ftARCH == ftARCH_64
-    ftASSERTCOMP(ftVOID8_ASSERT, ftVOID8);
+ftASSERTCOMP(ftVOID8_ASSERT, ftVOID8);
 #else
-    ftASSERTCOMP(ftVOID4_ASSERT, ftVOID4);
+ftASSERTCOMP(ftVOID4_ASSERT, ftVOID4);
 #endif
-
 
 
 
 class ftList
 {
 public:
-
     struct Link
     {
-        Link*   next;
-        Link*   prev;
+        Link* next;
+        Link* prev;
     };
 
 
-    Link*   first;
-    Link*   last;
+    Link* first;
+    Link* last;
 
 public:
+    ftList() :
+        first(0),
+        last(0)
+    {
+    }
+    ~ftList()
+    {
+        clear();
+    }
 
-    ftList() : first(0), last(0) {}
-    ~ftList() { clear(); }
-
-    void clear(void) { first = last = 0; }
+    void clear(void)
+    {
+        first = last = 0;
+    }
 
     void push_back(void* v)
     {
@@ -373,85 +361,132 @@ public:
 
 
 
-
-
 template <typename T>
 class ftArrayIterator
 {
 public:
-    typedef typename T::Pointer             Iterator;
-    typedef typename T::ReferenceType       ValueType;
-    typedef typename T::ConstReferenceType  ConstValueType;
+    typedef typename T::Pointer            Iterator;
+    typedef typename T::ReferenceType      ValueType;
+    typedef typename T::ConstReferenceType ConstValueType;
 
 protected:
-
-    mutable Iterator        m_iterator;
-    mutable FBTsizeType     m_cur;
-    mutable FBTsizeType     m_capacity;
+    mutable Iterator    m_iterator;
+    mutable FBTsizeType m_cur;
+    mutable FBTsizeType m_capacity;
 
 public:
+    ftArrayIterator() :
+        m_iterator(0),
+        m_cur(0),
+        m_capacity(0)
+    {
+    }
+    ftArrayIterator(Iterator begin, FBTsizeType size) :
+        m_iterator(begin),
+        m_cur(0),
+        m_capacity(size)
+    {
+    }
+    ftArrayIterator(T& v) :
+        m_iterator(v.ptr()),
+        m_cur(0),
+        m_capacity(v.size())
+    {
+    }
 
+    ~ftArrayIterator()
+    {
+    }
 
-    ftArrayIterator() : m_iterator(0), m_cur(0), m_capacity(0) {}
-    ftArrayIterator(Iterator begin, FBTsizeType size) : m_iterator(begin), m_cur(0), m_capacity(size) {}
-    ftArrayIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { }
-
-    ~ftArrayIterator() {}
-
-    ftINLINE bool           hasMoreElements(void) const { return m_iterator && m_cur < m_capacity; }
-    ftINLINE ValueType      getNext(void)               { ftASSERT(hasMoreElements()); return m_iterator[m_cur++];  }
-    ftINLINE ConstValueType getNext(void) const         { ftASSERT(hasMoreElements()); return m_iterator[m_cur++];  }
-    ftINLINE void           next(void) const            { ftASSERT(hasMoreElements()); ++m_cur; }
-    ftINLINE ValueType      peekNext(void)              { ftASSERT(hasMoreElements()); return m_iterator[m_cur]; }
-    ftINLINE ConstValueType peekNext(void) const        { ftASSERT(hasMoreElements()); return m_iterator[m_cur]; }
-
+    FT_INLINE bool hasMoreElements(void) const
+    {
+        return m_iterator && m_cur < m_capacity;
+    }
+    FT_INLINE ValueType getNext(void)
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur++];
+    }
+    FT_INLINE ConstValueType getNext(void) const
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur++];
+    }
+    FT_INLINE void next(void) const
+    {
+        ftASSERT(hasMoreElements());
+        ++m_cur;
+    }
+    FT_INLINE ValueType peekNext(void)
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur];
+    }
+    FT_INLINE ConstValueType peekNext(void) const
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur];
+    }
 };
 
 template <typename T>
 class ftArray
 {
 public:
-    typedef T*           Pointer;
-    typedef const T*     ConstPointer;
+    typedef T*       Pointer;
+    typedef const T* ConstPointer;
 
-    typedef T            ValueType;
-    typedef const T      ConstValueType;
+    typedef T       ValueType;
+    typedef const T ConstValueType;
 
-    typedef T&           ReferenceType;
-    typedef const T&     ConstReferenceType;
+    typedef T&       ReferenceType;
+    typedef const T& ConstReferenceType;
 
     typedef ftArrayIterator<ftArray<T> >       Iterator;
     typedef const ftArrayIterator<ftArray<T> > ConstIterator;
 
 public:
-    ftArray() : m_size(0), m_capacity(0), m_data(0), m_cache(0)  {}
+    ftArray() :
+        m_size(0),
+        m_capacity(0),
+        m_data(0),
+        m_cache(0)
+    {
+    }
 
-    ftArray(const ftArray<T>& o)
-        : m_size(o.size()), m_capacity(0), m_data(0), m_cache(0)
+    ftArray(const ftArray<T>& o) :
+        m_size(o.size()),
+        m_capacity(0),
+        m_data(0),
+        m_cache(0)
     {
         reserve(m_size);
         copy(m_data, o.m_data, m_size);
     }
 
-    ~ftArray() { clear(); }
+    ~ftArray()
+    {
+        clear();
+    }
 
     void clear(bool useCache = false)
     {
         if (!useCache)
         {
             if (m_data)
-                delete []m_data;
-            m_data = 0;
+                delete[] m_data;
+            m_data     = 0;
             m_capacity = 0;
-            m_size = 0;
-            m_cache = 0;
+            m_size     = 0;
+            m_cache    = 0;
         }
         else
         {
             ++m_cache;
             if (m_cache > _ftCACHE_LIMIT)
                 clear(false);
-            else m_size = 0;
+            else
+                m_size = 0;
         }
     }
 
@@ -465,7 +500,7 @@ public:
         return ftNPOS;
     }
 
-    ftINLINE void push_back(const T& v)
+    FT_INLINE void push_back(const T& v)
     {
         if (m_size == m_capacity)
             reserve(m_size == 0 ? 8 : m_size * 2);
@@ -474,7 +509,7 @@ public:
         m_size++;
     }
 
-    ftINLINE void pop_back(void)
+    FT_INLINE void pop_back(void)
     {
         m_size--;
         m_data[m_size].~T();
@@ -527,46 +562,92 @@ public:
                 reserve(nr);
             for (FBTsizeType i = m_size; i < nr; i++)
                 m_data[i] = fill;
-
         }
         m_size = nr;
     }
 
     void reserve(FBTsizeType nr)
     {
-
         if (m_capacity < nr)
         {
             T* p = new T[nr];
             if (m_data != 0)
             {
                 copy(p, m_data, m_size);
-                delete []m_data;
+                delete[] m_data;
             }
-            m_data = p;
+            m_data     = p;
             m_capacity = nr;
         }
     }
 
-    ftINLINE T& operator[](FBTsizeType idx)               { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-    ftINLINE const T& operator[](FBTsizeType idx) const   { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-    ftINLINE T& at(FBTsizeType idx)                       { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-    ftINLINE const T& at(FBTsizeType idx) const           { ftASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-    ftINLINE T& front(void)                               { ftASSERT(m_size > 0); return m_data[0]; }
-    ftINLINE T& back(void)                                { ftASSERT(m_size > 0); return m_data[m_size - 1]; }
+    FT_INLINE T& operator[](FBTsizeType idx)
+    {
+        ftASSERT(idx >= 0 && idx < m_capacity);
+        return m_data[idx];
+    }
+    FT_INLINE const T& operator[](FBTsizeType idx) const
+    {
+        ftASSERT(idx >= 0 && idx < m_capacity);
+        return m_data[idx];
+    }
+    FT_INLINE T& at(FBTsizeType idx)
+    {
+        ftASSERT(idx >= 0 && idx < m_capacity);
+        return m_data[idx];
+    }
+    FT_INLINE const T& at(FBTsizeType idx) const
+    {
+        ftASSERT(idx >= 0 && idx < m_capacity);
+        return m_data[idx];
+    }
+    FT_INLINE T& front(void)
+    {
+        ftASSERT(m_size > 0);
+        return m_data[0];
+    }
+    FT_INLINE T& back(void)
+    {
+        ftASSERT(m_size > 0);
+        return m_data[m_size - 1];
+    }
 
-    ftINLINE ConstPointer ptr(void) const             { return m_data; }
-    ftINLINE Pointer      ptr(void)                   { return m_data; }
-    ftINLINE bool         valid(void) const           { return m_data != 0;}
+    FT_INLINE ConstPointer ptr(void) const
+    {
+        return m_data;
+    }
+    FT_INLINE Pointer ptr(void)
+    {
+        return m_data;
+    }
+    FT_INLINE bool valid(void) const
+    {
+        return m_data != 0;
+    }
 
-    ftINLINE FBTsizeType capacity(void) const         { return m_capacity; }
-    ftINLINE FBTsizeType size(void) const             { return m_size; }
-    ftINLINE bool empty(void) const                   { return m_size == 0;}
+    FT_INLINE FBTsizeType capacity(void) const
+    {
+        return m_capacity;
+    }
+    FT_INLINE FBTsizeType size(void) const
+    {
+        return m_size;
+    }
+    FT_INLINE bool empty(void) const
+    {
+        return m_size == 0;
+    }
 
-    ftINLINE Iterator       iterator(void)       { return m_data && m_size > 0 ? Iterator(m_data, m_size) : Iterator(); }
-    ftINLINE ConstIterator  iterator(void) const { return m_data && m_size > 0 ? ConstIterator(m_data, m_size) : ConstIterator(); }
+    FT_INLINE Iterator iterator(void)
+    {
+        return m_data && m_size > 0 ? Iterator(m_data, m_size) : Iterator();
+    }
+    FT_INLINE ConstIterator iterator(void) const
+    {
+        return m_data && m_size > 0 ? ConstIterator(m_data, m_size) : ConstIterator();
+    }
 
-    ftArray<T>& operator= (const ftArray<T>& rhs)
+    ftArray<T>& operator=(const ftArray<T>& rhs)
     {
         if (this != &rhs)
         {
@@ -582,17 +663,20 @@ public:
         return *this;
     }
 
-    ftINLINE void copy(Pointer dst, ConstPointer src, FBTsizeType size)
+    FT_INLINE void copy(Pointer dst, ConstPointer src, FBTsizeType size)
     {
         ftASSERT(size <= m_size);
-        for (FBTsizeType i = 0; i < size; i++) dst[i] = src[i];
+        for (FBTsizeType i = 0; i < size; i++)
+            dst[i] = src[i];
     }
 
-    ftINLINE bool equal(const ftArray<T>& rhs)
+    FT_INLINE bool equal(const ftArray<T>& rhs)
     {
-        if (rhs.size() != size()) return false;
-        if (empty()) return true;
-        return ftMemcmp(m_data, rhs.m_data, sizeof(T) * m_size) == 0;
+        if (rhs.size() != size())
+            return false;
+        if (empty())
+            return true;
+        return ::memcmp(m_data, rhs.m_data, sizeof(T) * m_size) == 0;
     }
 
 protected:
@@ -600,14 +684,14 @@ protected:
     void swap(FBTsizeType a, FBTsizeType b)
     {
         ValueType t = m_data[a];
-        m_data[a] = m_data[b];
-        m_data[b] = t;
+        m_data[a]   = m_data[b];
+        m_data[b]   = t;
     }
 
-    FBTsizeType     m_size;
-    FBTsizeType     m_capacity;
-    Pointer         m_data;
-    int             m_cache;
+    FBTsizeType m_size;
+    FBTsizeType m_capacity;
+    Pointer     m_data;
+    int         m_cache;
 };
 
 
@@ -616,77 +700,152 @@ template <typename T>
 class ftHashTableIterator
 {
 public:
+    typedef typename T::Pointer     Iterator;
+    typedef typename T::Entry&      Pair;
+    typedef typename T::ConstEntry& ConstPair;
 
-    typedef typename T::Pointer        Iterator;
-    typedef typename T::Entry&          Pair;
-    typedef typename T::ConstEntry&     ConstPair;
-
-    typedef typename T::ReferenceKeyType         KeyType;
-    typedef typename T::ReferenceValueType       ValueType;
-    typedef typename T::ConstReferenceKeyType    ConstKeyType;
-    typedef typename T::ConstReferenceValueType  ConstValueType;
+    typedef typename T::ReferenceKeyType        KeyType;
+    typedef typename T::ReferenceValueType      ValueType;
+    typedef typename T::ConstReferenceKeyType   ConstKeyType;
+    typedef typename T::ConstReferenceValueType ConstValueType;
 
 protected:
-
-    mutable Iterator m_iterator;
-    mutable FBTsizeType   m_cur;
-    const FBTsizeType     m_capacity;
+    mutable Iterator    m_iterator;
+    mutable FBTsizeType m_cur;
+    const FBTsizeType   m_capacity;
 
 
 public:
-    ftHashTableIterator() : m_iterator(0), m_cur(0), m_capacity(0)  {}
-    ftHashTableIterator(Iterator begin, FBTsizeType size) : m_iterator(begin), m_cur(0), m_capacity(size) { }
-    ftHashTableIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) {}
+    ftHashTableIterator() :
+        m_iterator(0),
+        m_cur(0),
+        m_capacity(0)
+    {
+    }
+    ftHashTableIterator(Iterator begin, FBTsizeType size) :
+        m_iterator(begin),
+        m_cur(0),
+        m_capacity(size)
+    {
+    }
+    ftHashTableIterator(T& v) :
+        m_iterator(v.ptr()),
+        m_cur(0),
+        m_capacity(v.size())
+    {
+    }
 
-    ~ftHashTableIterator() {}
+    ~ftHashTableIterator()
+    {
+    }
 
-    ftINLINE bool      hasMoreElements(void) const  { return (m_iterator && m_cur < m_capacity); }
-    ftINLINE Pair      getNext(void)                { ftASSERT(hasMoreElements()); return m_iterator[m_cur++];}
-    ftINLINE ConstPair getNext(void) const          { ftASSERT(hasMoreElements()); return m_iterator[m_cur++];}
-    ftINLINE void      next(void) const             { ftASSERT(hasMoreElements()); ++m_cur; }
+    FT_INLINE bool hasMoreElements(void) const
+    {
+        return (m_iterator && m_cur < m_capacity);
+    }
+    FT_INLINE Pair getNext(void)
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur++];
+    }
+    FT_INLINE ConstPair getNext(void) const
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur++];
+    }
+    FT_INLINE void next(void) const
+    {
+        ftASSERT(hasMoreElements());
+        ++m_cur;
+    }
 
 
-    ftINLINE Pair      peekNext(void)               { ftASSERT(hasMoreElements()); return m_iterator[m_cur]; }
-    ftINLINE KeyType   peekNextKey(void)            { ftASSERT(hasMoreElements()); return m_iterator[m_cur].first;}
-    ftINLINE ValueType peekNextValue(void)          { ftASSERT(hasMoreElements()); return m_iterator[m_cur].second; }
+    FT_INLINE Pair peekNext(void)
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur];
+    }
+    FT_INLINE KeyType peekNextKey(void)
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur].first;
+    }
+    FT_INLINE ValueType peekNextValue(void)
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur].second;
+    }
 
-    ftINLINE ConstPair      peekNext(void)  const     { ftASSERT(hasMoreElements()); return m_iterator[m_cur]; }
-    ftINLINE ConstKeyType   peekNextKey(void) const   { ftASSERT(hasMoreElements()); return m_iterator[m_cur].first;}
-    ftINLINE ConstValueType peekNextValue(void) const { ftASSERT(hasMoreElements()); return m_iterator[m_cur].second; }
+    FT_INLINE ConstPair peekNext(void) const
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur];
+    }
+    FT_INLINE ConstKeyType peekNextKey(void) const
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur].first;
+    }
+    FT_INLINE ConstValueType peekNextValue(void) const
+    {
+        ftASSERT(hasMoreElements());
+        return m_iterator[m_cur].second;
+    }
 };
 
 
 
 // magic numbers from http://www.isthe.com/chongo/tech/comp/fnv/
-#define _ftINITIAL_FNV  0x9E3779B1
+#define _ftINITIAL_FNV 0x9E3779B1
 #define _ftINITIAL_FNV2 0x9E3779B9
 #define _ftMULTIPLE_FNV 0x1000193
-#define _ftTWHASH(key)         \
-        key += ~(key << 15);    \
-        key ^=  (key >> 10);    \
-        key +=  (key << 3);     \
-        key ^=  (key >> 6);     \
-        key += ~(key << 11);    \
-        key ^=  (key >> 16);
+#define _ftTWHASH(key)   \
+    key += ~(key << 15); \
+    key ^= (key >> 10);  \
+    key += (key << 3);   \
+    key ^= (key >> 6);   \
+    key += ~(key << 11); \
+    key ^= (key >> 16);
 
 
 class ftCharHashKey
 {
 protected:
-    char* m_key;
+    char*           m_key;
     mutable FBThash m_hash;
 
 public:
-    ftCharHashKey() : m_key(0), m_hash(ftNPOS) {}
-    ftCharHashKey(char* k) : m_key(k), m_hash(ftNPOS) {hash();}
-    ftCharHashKey(const char* k) : m_key(const_cast<char*>(k)), m_hash(ftNPOS) {}
-    ftCharHashKey(const ftCharHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) { if (m_hash == ftNPOS) hash(); }
+    ftCharHashKey() :
+        m_key(0),
+        m_hash(ftNPOS)
+    {
+    }
+    ftCharHashKey(char* k) :
+        m_key(k),
+        m_hash(ftNPOS)
+    {
+        hash();
+    }
+    ftCharHashKey(const char* k) :
+        m_key(const_cast<char*>(k)),
+        m_hash(ftNPOS)
+    {
+    }
+    ftCharHashKey(const ftCharHashKey& k) :
+        m_key(k.m_key),
+        m_hash(k.m_hash)
+    {
+        if (m_hash == ftNPOS)
+            hash();
+    }
 
 
     FBThash hash(void) const
     {
-        if (!m_key) return ftNPOS;
-        if (m_hash != ftNPOS) return m_hash;
+        if (!m_key)
+            return ftNPOS;
+        if (m_hash != ftNPOS)
+            return m_hash;
 
         // Fowler / Noll / Vo (FNV) Hash
         m_hash = (FBThash)_ftINITIAL_FNV;
@@ -698,27 +857,64 @@ public:
         return m_hash;
     }
 
-    ftINLINE bool operator== (const ftCharHashKey& v) const    {return hash() == v.hash();}
-    ftINLINE bool operator!= (const ftCharHashKey& v) const    {return hash() != v.hash();}
-    ftINLINE bool operator== (const FBThash& v) const           {return hash() == v;}
-    ftINLINE bool operator!= (const FBThash& v) const           {return hash() != v;}
+    FT_INLINE bool operator==(const ftCharHashKey& v) const
+    {
+        return hash() == v.hash();
+    }
+    FT_INLINE bool operator!=(const ftCharHashKey& v) const
+    {
+        return hash() != v.hash();
+    }
+    FT_INLINE bool operator==(const FBThash& v) const
+    {
+        return hash() == v;
+    }
+    FT_INLINE bool operator!=(const FBThash& v) const
+    {
+        return hash() != v;
+    }
 };
 
 class ftIntHashKey
 {
 protected:
     FBTint32 m_key;
+
 public:
-    ftIntHashKey() : m_key(0) {}
-    ftIntHashKey(FBTint32 k) : m_key(k) {}
-    ftIntHashKey(const ftIntHashKey& k) : m_key(k.m_key) { }
+    ftIntHashKey() :
+        m_key(0)
+    {
+    }
+    ftIntHashKey(FBTint32 k) :
+        m_key(k)
+    {
+    }
+    ftIntHashKey(const ftIntHashKey& k) :
+        m_key(k.m_key)
+    {
+    }
 
-    ftINLINE FBThash hash(void) const  { return static_cast<FBThash>(m_key) * _ftINITIAL_FNV; }
+    FT_INLINE FBThash hash(void) const
+    {
+        return static_cast<FBThash>(m_key) * _ftINITIAL_FNV;
+    }
 
-    ftINLINE bool operator== (const ftIntHashKey& v) const {return hash() == v.hash();}
-    ftINLINE bool operator!= (const ftIntHashKey& v) const {return hash() != v.hash();}
-    ftINLINE bool operator== (const FBThash& v) const       {return hash() == v;}
-    ftINLINE bool operator!= (const FBThash& v) const       {return hash() != v;}
+    FT_INLINE bool operator==(const ftIntHashKey& v) const
+    {
+        return hash() == v.hash();
+    }
+    FT_INLINE bool operator!=(const ftIntHashKey& v) const
+    {
+        return hash() != v.hash();
+    }
+    FT_INLINE bool operator==(const FBThash& v) const
+    {
+        return hash() == v;
+    }
+    FT_INLINE bool operator!=(const FBThash& v) const
+    {
+        return hash() != v;
+    }
 };
 
 
@@ -726,32 +922,34 @@ public:
 class ftSizeHashKey
 {
 protected:
-
-    FBTsize m_key;
+    FBTsize         m_key;
     mutable FBThash m_hash;
 
 public:
-    ftSizeHashKey()
-        : m_hash(ftNPOS), m_key(0)
+    ftSizeHashKey() :
+        m_hash(ftNPOS),
+        m_key(0)
     {
     }
 
 
-    ftSizeHashKey(const FBTsize& k)
-        :   m_hash(ftNPOS), m_key(k)
-    {
-        hash();
-    }
-
-
-    ftSizeHashKey(const ftSizeHashKey& k)
-        :   m_hash(ftNPOS), m_key(k.m_key)
+    ftSizeHashKey(const FBTsize& k) :
+        m_hash(ftNPOS),
+        m_key(k)
     {
         hash();
     }
 
 
-    ftINLINE FBThash hash(void) const
+    ftSizeHashKey(const ftSizeHashKey& k) :
+        m_hash(ftNPOS),
+        m_key(k.m_key)
+    {
+        hash();
+    }
+
+
+    FT_INLINE FBThash hash(void) const
     {
         if (m_hash != ftNPOS)
             return m_hash;
@@ -760,30 +958,64 @@ public:
         return m_hash;
     }
 
-    ftINLINE bool operator== (const ftSizeHashKey& v) const { return hash() == v.hash(); }
-    ftINLINE bool operator!= (const ftSizeHashKey& v) const { return hash() != v.hash(); }
-    ftINLINE bool operator== (const FBThash& v) const       { return hash() == v; }
-    ftINLINE bool operator!= (const FBThash& v) const       { return hash() != v; }
+    FT_INLINE bool operator==(const ftSizeHashKey& v) const
+    {
+        return hash() == v.hash();
+    }
+    FT_INLINE bool operator!=(const ftSizeHashKey& v) const
+    {
+        return hash() != v.hash();
+    }
+    FT_INLINE bool operator==(const FBThash& v) const
+    {
+        return hash() == v;
+    }
+    FT_INLINE bool operator!=(const FBThash& v) const
+    {
+        return hash() != v;
+    }
 };
 
 
-template<typename T>
+template <typename T>
 class ftTHashKey
 {
 protected:
-    T* m_key;
+    T*              m_key;
     mutable FBThash m_hash;
 
 public:
-    ftTHashKey() : m_key(0), m_hash(ftNPOS) { hash(); }
-    ftTHashKey(T* k) : m_key(k), m_hash(ftNPOS) { hash(); }
-    ftTHashKey(const ftTHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) { if (m_hash == ftNPOS) hash(); }
+    ftTHashKey() :
+        m_key(0),
+        m_hash(ftNPOS)
+    {
+        hash();
+    }
+    ftTHashKey(T* k) :
+        m_key(k),
+        m_hash(ftNPOS)
+    {
+        hash();
+    }
+    ftTHashKey(const ftTHashKey& k) :
+        m_key(k.m_key),
+        m_hash(k.m_hash)
+    {
+        if (m_hash == ftNPOS)
+            hash();
+    }
 
-    ftINLINE T*          key(void)       {return m_key;}
-    ftINLINE const T*    key(void) const {return m_key;}
+    FT_INLINE T* key(void)
+    {
+        return m_key;
+    }
+    FT_INLINE const T* key(void) const
+    {
+        return m_key;
+    }
 
 
-    ftINLINE FBThash hash(void) const
+    FT_INLINE FBThash hash(void) const
     {
         if (m_hash != ftNPOS)
             return m_hash;
@@ -795,116 +1027,153 @@ public:
     }
 
 
-    ftINLINE bool operator== (const ftTHashKey& v) const    { return hash() == v.hash();}
-    ftINLINE bool operator!= (const ftTHashKey& v) const    { return hash() != v.hash();}
-    ftINLINE bool operator== (const FBThash& v) const       { return hash() == v;}
-    ftINLINE bool operator!= (const FBThash& v) const       { return hash() != v;}
+    FT_INLINE bool operator==(const ftTHashKey& v) const
+    {
+        return hash() == v.hash();
+    }
+    FT_INLINE bool operator!=(const ftTHashKey& v) const
+    {
+        return hash() != v.hash();
+    }
+    FT_INLINE bool operator==(const FBThash& v) const
+    {
+        return hash() == v;
+    }
+    FT_INLINE bool operator!=(const FBThash& v) const
+    {
+        return hash() != v;
+    }
 };
 typedef ftTHashKey<void> ftPointerHashKey;
 
 
-template<typename Key, typename Value>
+template <typename Key, typename Value>
 struct ftHashEntry
 {
-    Key    first;
-    Value  second;
-    ftHashEntry() {}
-    ftHashEntry(const Key& k, const Value& v) : first(k), second(v) {}
+    Key   first;
+    Value second;
+    ftHashEntry()
+    {
+    }
+    ftHashEntry(const Key& k, const Value& v) :
+        first(k),
+        second(v)
+    {
+    }
 
-    ftINLINE bool operator==(const ftHashEntry& rhs) const
+    FT_INLINE bool operator==(const ftHashEntry& rhs) const
     {
         return first == rhs.first && second == rhs.second;
     }
 };
 
-#define _ftUTHASHTABLE_HASH(key)      ((key.hash() & (m_capacity - 1)))
-#define _ftUTHASHTABLE_HKHASH(key)    ((hk & (m_capacity - 1)))
-#define _ftUTHASHTABLE_FORCE_POW2     1
-#define _ftUTHASHTABLE_INIT           32
-#define _ftUTHASHTABLE_EXPANSE  (m_size * 2)
+#define _ftUTHASHTABLE_HASH(key) ((key.hash() & (m_capacity - 1)))
+#define _ftUTHASHTABLE_HKHASH(key) ((hk & (m_capacity - 1)))
+#define _ftUTHASHTABLE_FORCE_POW2 1
+#define _ftUTHASHTABLE_INIT 32
+#define _ftUTHASHTABLE_EXPANSE (m_size * 2)
 
 
-#define _ftUTHASHTABLE_STAT       ftHASHTABLE_STAT
+#define _ftUTHASHTABLE_STAT ftHASHTABLE_STAT
 #define _ftUTHASHTABLE_STAT_ALLOC 0
 
 
 #if _ftUTHASHTABLE_FORCE_POW2 == 1
 
-#define _ftUTHASHTABLE_POW2(x) { \
-    --x;            \
-    x |= x >> 16;   \
-    x |= x >> 8;    \
-    x |= x >> 4;    \
-    x |= x >> 2;    \
-    x |= x >> 1;    \
-    ++x;}
+#define _ftUTHASHTABLE_POW2(x) \
+    {                          \
+        --x;                   \
+        x |= x >> 16;          \
+        x |= x >> 8;           \
+        x |= x >> 4;           \
+        x |= x >> 2;           \
+        x |= x >> 1;           \
+        ++x;                   \
+    }
 
 
 
-#define _ftUTHASHTABLE_IS_POW2(x) (!(x & (x-1)))
+#define _ftUTHASHTABLE_IS_POW2(x) (!(x & (x - 1)))
 #endif
 
 #if _ftUTHASHTABLE_STAT == 1
-    #include <typeinfo>
+#include <typeinfo>
 #endif
 
 
 
-template < typename Key, typename Value >
+template <typename Key, typename Value>
 class ftHashTable
 {
 public:
-    typedef ftHashEntry<Key, Value>        Entry;
-    typedef const ftHashEntry<Key, Value>  ConstEntry;
+    typedef ftHashEntry<Key, Value>       Entry;
+    typedef const ftHashEntry<Key, Value> ConstEntry;
 
-    typedef Entry*  EntryArray;
+    typedef Entry*       EntryArray;
     typedef FBTsizeType* IndexArray;
 
 
-    typedef Key            KeyType;
-    typedef Value          ValueType;
+    typedef Key   KeyType;
+    typedef Value ValueType;
 
-    typedef const Key      ConstKeyType;
-    typedef const Value    ConstValueType;
+    typedef const Key   ConstKeyType;
+    typedef const Value ConstValueType;
 
-    typedef Value&          ReferenceValueType;
-    typedef const Value&    ConstReferenceValueType;
+    typedef Value&       ReferenceValueType;
+    typedef const Value& ConstReferenceValueType;
 
-    typedef Key&            ReferenceKeyType;
-    typedef const Key&      ConstReferenceKeyType;
+    typedef Key&       ReferenceKeyType;
+    typedef const Key& ConstReferenceKeyType;
 
-    typedef EntryArray Pointer;
+    typedef EntryArray   Pointer;
     typedef const Entry* ConstPointer;
 
 
-    typedef ftHashTableIterator<ftHashTable<Key, Value> > Iterator;
+    typedef ftHashTableIterator<ftHashTable<Key, Value> >       Iterator;
     typedef const ftHashTableIterator<ftHashTable<Key, Value> > ConstIterator;
 
 
 public:
-
-    ftHashTable()
-        :    m_size(0), m_capacity(0), m_lastPos(ftNPOS),
-             m_iptr(0), m_nptr(0), m_bptr(0), m_cache(0)
+    ftHashTable() :
+        m_size(0),
+        m_capacity(0),
+        m_lastPos(ftNPOS),
+        m_iptr(0),
+        m_nptr(0),
+        m_bptr(0),
+        m_cache(0)
     {
     }
 
-    ftHashTable(FBTsizeType capacity)
-        :    m_size(0), m_capacity(0), m_lastPos(ftNPOS),
-             m_iptr(0), m_nptr(0), m_bptr(0), m_cache(0)
+    ftHashTable(FBTsizeType capacity) :
+        m_size(0),
+        m_capacity(0),
+        m_lastPos(ftNPOS),
+        m_iptr(0),
+        m_nptr(0),
+        m_bptr(0),
+        m_cache(0)
     {
     }
 
-    ftHashTable(const ftHashTable& rhs)
-        :    m_size(0), m_capacity(0), m_lastPos(ftNPOS),
-             m_iptr(0), m_nptr(0), m_bptr(0), m_cache(0)
+    ftHashTable(const ftHashTable& rhs) :
+        m_size(0),
+        m_capacity(0),
+        m_lastPos(ftNPOS),
+        m_iptr(0),
+        m_nptr(0),
+        m_bptr(0),
+        m_cache(0)
     {
         doCopy(rhs);
     }
 
-    ~ftHashTable() { clear(); }
+    ~ftHashTable()
+    {
+        clear();
+    }
 
-    ftHashTable<Key, Value>& operator = (const ftHashTable<Key, Value>& rhs)
+    ftHashTable<Key, Value>& operator=(const ftHashTable<Key, Value>& rhs)
     {
         if (this != &rhs)
             doCopy(rhs);
@@ -916,14 +1185,16 @@ public:
         if (!useCache)
         {
             m_size = m_capacity = 0;
-            m_lastKey = ftNPOS;
-            m_lastPos = ftNPOS;
-            m_cache = 0;
+            m_lastKey           = ftNPOS;
+            m_lastPos           = ftNPOS;
+            m_cache             = 0;
 
-            delete [] m_bptr;
-            delete [] m_iptr;
-            delete [] m_nptr;
-            m_bptr = 0; m_iptr = 0; m_nptr = 0;
+            delete[] m_bptr;
+            delete[] m_iptr;
+            delete[] m_nptr;
+            m_bptr = 0;
+            m_iptr = 0;
+            m_nptr = 0;
         }
         else
         {
@@ -932,7 +1203,7 @@ public:
                 clear(false);
             else
             {
-                m_size = 0;
+                m_size    = 0;
                 m_lastKey = ftNPOS;
                 m_lastPos = ftNPOS;
 
@@ -944,14 +1215,37 @@ public:
                 }
             }
         }
-
     }
-    Value&              at(FBTsizeType i)                    { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-    Value&              operator [](FBTsizeType i)           { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-    const Value&        at(FBTsizeType i)const               { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-    const Value&        operator [](FBTsizeType i) const     { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-    Key&                keyAt(FBTsizeType i)                 { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
-    const Key&          keyAt(FBTsizeType i)const            { ftASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
+    Value& at(FBTsizeType i)
+    {
+        ftASSERT(m_bptr && i >= 0 && i < m_size);
+        return m_bptr[i].second;
+    }
+    Value& operator[](FBTsizeType i)
+    {
+        ftASSERT(m_bptr && i >= 0 && i < m_size);
+        return m_bptr[i].second;
+    }
+    const Value& at(FBTsizeType i) const
+    {
+        ftASSERT(m_bptr && i >= 0 && i < m_size);
+        return m_bptr[i].second;
+    }
+    const Value& operator[](FBTsizeType i) const
+    {
+        ftASSERT(m_bptr && i >= 0 && i < m_size);
+        return m_bptr[i].second;
+    }
+    Key& keyAt(FBTsizeType i)
+    {
+        ftASSERT(m_bptr && i >= 0 && i < m_size);
+        return m_bptr[i].first;
+    }
+    const Key& keyAt(FBTsizeType i) const
+    {
+        ftASSERT(m_bptr && i >= 0 && i < m_size);
+        return m_bptr[i].first;
+    }
 
     Value* get(const Key& key) const
     {
@@ -974,8 +1268,14 @@ public:
     }
 
 
-    Value*         operator [](const Key& key)       { return get(key); }
-    const Value*   operator [](const Key& key) const { return get(key); }
+    Value* operator[](const Key& key)
+    {
+        return get(key);
+    }
+    const Value* operator[](const Key& key) const
+    {
+        return get(key);
+    }
 
     FBTsizeType find(const Key& key) const
     {
@@ -1000,16 +1300,19 @@ public:
             m_lastKey = hk;
             m_lastPos = fh;
 
-            ftASSERT(fh >= 0  && fh < m_size);
+            ftASSERT(fh >= 0 && fh < m_size);
         }
         return fh;
     }
 
-    void erase(const Key& key) {remove(key);}
+    void erase(const Key& key)
+    {
+        remove(key);
+    }
 
     void remove(const Key& key)
     {
-        FBThash hash, lhash;
+        FBThash     hash, lhash;
         FBTsizeType index, pindex, findex;
 
         findex = find(key);
@@ -1027,7 +1330,7 @@ public:
         while (index != findex)
         {
             pindex = index;
-            index = m_nptr[index];
+            index  = m_nptr[index];
         }
 
         if (pindex != ftNPOS)
@@ -1046,13 +1349,13 @@ public:
             return;
         }
 
-        lhash = _ftUTHASHTABLE_HASH(m_bptr[lindex].first);
+        lhash  = _ftUTHASHTABLE_HASH(m_bptr[lindex].first);
         index  = m_iptr[lhash];
         pindex = ftNPOS;
         while (index != lindex)
         {
             pindex = index;
-            index = m_nptr[index];
+            index  = m_nptr[index];
         }
 
         if (pindex != ftNPOS)
@@ -1065,7 +1368,7 @@ public:
 
         m_bptr[findex] = m_bptr[lindex];
         m_nptr[findex] = m_iptr[lhash];
-        m_iptr[lhash] = findex;
+        m_iptr[lhash]  = findex;
 
         --m_size;
         m_bptr[m_size].~Entry();
@@ -1085,23 +1388,47 @@ public:
         ftASSERT(m_bptr && m_iptr && m_nptr);
         m_bptr[m_size] = Entry(key, val);
         m_nptr[m_size] = m_iptr[hr];
-        m_iptr[hr] = m_size;
+        m_iptr[hr]     = m_size;
         ++m_size;
         return true;
     }
 
-    ftINLINE Pointer ptr(void)                { return m_bptr; }
-    ftINLINE ConstPointer ptr(void) const     { return m_bptr; }
-    ftINLINE bool valid(void) const           { return m_bptr != 0;}
+    FT_INLINE Pointer ptr(void)
+    {
+        return m_bptr;
+    }
+    FT_INLINE ConstPointer ptr(void) const
+    {
+        return m_bptr;
+    }
+    FT_INLINE bool valid(void) const
+    {
+        return m_bptr != 0;
+    }
 
 
-    ftINLINE FBTsizeType size(void) const         { return m_size; }
-    ftINLINE FBTsizeType capacity(void) const     { return capacity; }
-    ftINLINE bool empty(void) const               { return m_size == 0; }
+    FT_INLINE FBTsizeType size(void) const
+    {
+        return m_size;
+    }
+    FT_INLINE FBTsizeType capacity(void) const
+    {
+        return capacity;
+    }
+    FT_INLINE bool empty(void) const
+    {
+        return m_size == 0;
+    }
 
 
-    Iterator        iterator(void)       { return m_bptr && m_size > 0 ? Iterator(m_bptr, m_size) : Iterator(); }
-    ConstIterator   iterator(void) const { return m_bptr && m_size > 0 ? ConstIterator(m_bptr, m_size) : ConstIterator(); }
+    Iterator iterator(void)
+    {
+        return m_bptr && m_size > 0 ? Iterator(m_bptr, m_size) : Iterator();
+    }
+    ConstIterator iterator(void) const
+    {
+        return m_bptr && m_size > 0 ? ConstIterator(m_bptr, m_size) : ConstIterator();
+    }
 
 
     void reserve(FBTsizeType nr)
@@ -1146,28 +1473,27 @@ public:
         }
 
 #if _ftUTHASHTABLE_FORCE_POW2 == 1
-        ftPrintf("Results using forced power of 2 expansion.\n\n");
+        printf("Results using forced power of 2 expansion.\n\n");
 #else
-        ftPrintf("Results using unaltered expansion.\n\n");
+        printf("Results using unaltered expansion.\n\n");
 #endif
-        ftPrintf("\tTotal number of collisions %i for a table of size %i.\n\t\tusing (%s)\n", tot, m_size, typeid(Key).name());
-        ftPrintf("\tThe minimum number of collisions per key: %i\n", min_col);
-        ftPrintf("\tThe maximum number of collisions per key: %i\n", max_col);
+        printf("\tTotal number of collisions %i for a table of size %i.\n\t\tusing (%s)\n", tot, m_size, typeid(Key).name());
+        printf("\tThe minimum number of collisions per key: %i\n", min_col);
+        printf("\tThe maximum number of collisions per key: %i\n", max_col);
 
         int favr = (int)(100.f * ((float)avg / (float)m_size));
-        ftPrintf("\tThe average number of key collisions: %i\n\n", favr);
+        printf("\tThe average number of key collisions: %i\n\n", favr);
 
         if (tot == 0)
-            ftPrintf("\nCongratulations lookup is 100%% linear!\n\n");
-        else if (favr >  35)
-            ftPrintf("\nImprove your hash function!\n\n");
+            printf("\nCongratulations lookup is 100%% linear!\n\n");
+        else if (favr > 35)
+            printf("\nImprove your hash function!\n\n");
     }
 #endif
 
 
 
 private:
-
     void doCopy(const ftHashTable<Key, Value>& rhs)
     {
         if (rhs.valid() && !rhs.empty())
@@ -1179,7 +1505,8 @@ private:
             m_capacity = rhs.m_capacity;
 
             b = m_size > 0 ? m_size - 1 : 0;
-            for (i = b; i < m_capacity; ++i) m_nptr[i] = m_iptr[i] = ftNPOS;
+            for (i = b; i < m_capacity; ++i)
+                m_nptr[i] = m_iptr[i] = ftNPOS;
 
             for (i = 0; i < m_size; ++i)
             {
@@ -1188,22 +1515,22 @@ private:
                 m_nptr[i] = rhs.m_nptr[i];
             }
         }
-
     }
 
-    template<typename ArrayType>
+    template <typename ArrayType>
     void reserveType(ArrayType** old, FBTsizeType nr, bool cpy = false)
     {
         FBTsizeType i;
-        ArrayType* nar = new ArrayType[nr];
+        ArrayType*  nar = new ArrayType[nr];
         if ((*old) != 0)
         {
             if (cpy)
             {
                 const ArrayType* oar = (*old);
-                for (i = 0; i < m_size; i++) nar[i] = oar[i];
+                for (i = 0; i < m_size; i++)
+                    nar[i] = oar[i];
             }
-            delete [](*old);
+            delete[](*old);
         }
         (*old) = nar;
     }
@@ -1217,7 +1544,7 @@ private:
             _ftUTHASHTABLE_POW2(nr);
 
 #if _ftUTHASHTABLE_STAT_ALLOC == 1
-        ftPrintf("Expanding tables: %i\n", nr);
+        printf("Expanding tables: %i\n", nr);
 #endif
         ftASSERT(_ftUTHASHTABLE_IS_POW2(nr));
 
@@ -1225,7 +1552,7 @@ private:
 #else
 
 #if _ftUTHASHTABLE_STAT_ALLOC == 1
-        ftPrintf("Expanding tables: %i\n", nr);
+        printf("Expanding tables: %i\n", nr);
 #endif
 
 #endif
@@ -1240,29 +1567,34 @@ private:
 
         FBTsizeType i, h;
 
-        for (i = 0; i < m_capacity; ++i)  m_iptr[i] = m_nptr[i] = ftNPOS;
-        for (i = 0; i < m_size; i++)     { h = _ftUTHASHTABLE_HASH(m_bptr[i].first); m_nptr[i] = m_iptr[h]; m_iptr[h] = i;}
+        for (i = 0; i < m_capacity; ++i)
+            m_iptr[i] = m_nptr[i] = ftNPOS;
+        for (i = 0; i < m_size; i++)
+        {
+            h         = _ftUTHASHTABLE_HASH(m_bptr[i].first);
+            m_nptr[i] = m_iptr[h];
+            m_iptr[h] = i;
+        }
     }
 
 
 
-    FBTsizeType m_size, m_capacity;
+    FBTsizeType         m_size, m_capacity;
     mutable FBTsizeType m_lastPos;
     mutable FBTsizeType m_lastKey;
 
-    IndexArray m_iptr;
-    IndexArray m_nptr;
-    EntryArray m_bptr;
+    IndexArray  m_iptr;
+    IndexArray  m_nptr;
+    EntryArray  m_bptr;
     FBTsizeType m_cache;
 };
 
 
 
-
-#define ftCharNEq(a, b, n)  ((a && b) && !strncmp(a, b, n))
-#define ftCharEq(a, b)      ((a && b) && (*a == *b) && !strcmp(a, b))
-#define ftCharEqL(a, b, l)  ((a && b) && (*a == *b) && !memcmp(a, b, l))
-#define ftStrLen(a)         ::strlen(a)
+#define ftCharNEq(a, b, n) ((a && b) && !strncmp(a, b, n))
+#define ftCharEq(a, b) ((a && b) && (*a == *b) && !strcmp(a, b))
+#define ftCharEqL(a, b, l) ((a && b) && (*a == *b) && !memcmp(a, b, l))
+#define ftStrLen(a) ::strlen(a)
 
 
 // For operations on a fixed size character array
@@ -1271,52 +1603,58 @@ class ftFixedString
 {
 public:
     typedef char Pointer[L + 1];
+
 public:
-    ftFixedString()
-        : m_size(0), m_hash(ftNPOS)
+    ftFixedString() :
+        m_size(0),
+        m_hash(ftNPOS)
     {
         m_buffer[m_size] = 0;
     }
 
-    ftFixedString(const ftFixedString& rhs)
-        :   m_size(0), m_hash(ftNPOS)
+    ftFixedString(const ftFixedString& rhs) :
+        m_size(0),
+        m_hash(ftNPOS)
     {
         if (rhs.size())
         {
-            FBTuint16 i, os = rhs.size();
+            FBTuint16   i, os = rhs.size();
             const char* cp = rhs.c_str();
 
-            for (i = 0; i < L && i < os; ++i, ++m_size) m_buffer[i] = cp[i];
+            for (i = 0; i < L && i < os; ++i, ++m_size)
+                m_buffer[i] = cp[i];
         }
         m_buffer[m_size] = 0;
     }
 
 
-    ftFixedString(const char* rhs)
-        :   m_size(0), m_hash(ftNPOS)
+    ftFixedString(const char* rhs) :
+        m_size(0),
+        m_hash(ftNPOS)
     {
         if (rhs)
         {
             FBTuint16 i;
-            for (i = 0; i < L && rhs[i]; ++i, ++m_size) m_buffer[i] = rhs[i];
+            for (i = 0; i < L && rhs[i]; ++i, ++m_size)
+                m_buffer[i] = rhs[i];
         }
         m_buffer[m_size] = 0;
     }
 
 
 
-    ftINLINE void push_back(char ch)
+    FT_INLINE void push_back(char ch)
     {
         if (m_size >= L)
             return;
         m_buffer[m_size++] = ch;
-        m_buffer[m_size] = 0;
+        m_buffer[m_size]   = 0;
     }
 
     void append(const char* str)
     {
         int len = ftStrLen(str);
-        int a = 0;
+        int a   = 0;
         while (a < len)
             push_back(str[a++]);
     }
@@ -1325,13 +1663,13 @@ public:
     void append(const ftFixedString& str)
     {
         int len = str.m_size;
-        int a = 0;
+        int a   = 0;
         while (a < len)
             push_back(str.m_buffer[a++]);
     }
 
 
-    ftFixedString operator +(const ftFixedString& rhs)
+    ftFixedString operator+(const ftFixedString& rhs)
     {
         ftFixedString lhs = *this;
         lhs.append(rhs);
@@ -1339,20 +1677,20 @@ public:
     }
 
 
-    ftFixedString operator +=(const ftFixedString& rhs)
+    ftFixedString operator+=(const ftFixedString& rhs)
     {
         append(rhs);
         return *this;
     }
 
-    ftFixedString operator +(const char* str)
+    ftFixedString operator+(const char* str)
     {
         ftFixedString lhs = *this;
         lhs.append(str);
         return lhs;
     }
 
-    ftFixedString operator +=(const char* str)
+    ftFixedString operator+=(const char* str)
     {
         append(str);
         return *this;
@@ -1367,7 +1705,8 @@ public:
             if (m_buffer[i] == c || m_buffer[i] == e)
             {
                 ftFixedString<L> cpy;
-                for (t = p; t < i; ++t) cpy.push_back(m_buffer[t]);
+                for (t = p; t < i; ++t)
+                    cpy.push_back(m_buffer[t]);
                 dest.push_back(cpy);
                 p = i + 1;
             }
@@ -1376,7 +1715,8 @@ public:
         if (p != i)
         {
             ftFixedString<L> cpy;
-            for (t = p; t < i; ++t) cpy.push_back(m_buffer[t]);
+            for (t = p; t < i; ++t)
+                cpy.push_back(m_buffer[t]);
             dest.push_back(cpy);
         }
     }
@@ -1387,18 +1727,20 @@ public:
         if (ns <= L)
         {
             if (ns < m_size)
-                for (FBTuint16 i = ns; i < m_size; i++) m_buffer[i] = 0;
+                for (FBTuint16 i = ns; i < m_size; i++)
+                    m_buffer[i] = 0;
             else
-                for (FBTuint16 i = m_size; i < ns; i++) m_buffer[i] = 0;
-            m_size = ns;
+                for (FBTuint16 i = m_size; i < ns; i++)
+                    m_buffer[i] = 0;
+            m_size           = ns;
             m_buffer[m_size] = 0;
         }
     }
 
 
 
-    template<const FBTuint16 OL>
-    ftFixedString<L>& operator = (const ftFixedString<OL>& o)
+    template <const FBTuint16 OL>
+    ftFixedString<L>& operator=(const ftFixedString<OL>& o)
     {
         if (o.m_size > 0)
         {
@@ -1407,22 +1749,53 @@ public:
                 FBTuint16 i;
                 m_size = 0;
                 m_hash = o.m_hash;
-                for (i = 0; (i < L && i < OL) && i < o.m_size; ++i, ++m_size) m_buffer[i] = o.m_buffer[i];
+                for (i = 0; (i < L && i < OL) && i < o.m_size; ++i, ++m_size)
+                    m_buffer[i] = o.m_buffer[i];
                 m_buffer[m_size] = 0;
             }
         }
         return *this;
     }
 
-    ftINLINE const char* c_str(void) const                 { return m_buffer; }
-    ftINLINE char* ptr(void)                               { return m_buffer; }
-    ftINLINE const char* ptr(void) const                   { return m_buffer; }
-    ftINLINE const char operator [](FBTuint16 i) const     { ftASSERT(i < L); return m_buffer[i]; }
-    ftINLINE const char at(FBTuint16 i) const              { ftASSERT(i < L); return m_buffer[i]; }
-    ftINLINE void clear(void)                              { m_buffer[0] = 0; m_size = 0; }
-    ftINLINE int empty(void) const                         { return m_size == 0; }
-    ftINLINE int size(void) const                          { return m_size; }
-    ftINLINE int capacity(void) const                      { return L; }
+    FT_INLINE const char* c_str(void) const
+    {
+        return m_buffer;
+    }
+    FT_INLINE char* ptr(void)
+    {
+        return m_buffer;
+    }
+    FT_INLINE const char* ptr(void) const
+    {
+        return m_buffer;
+    }
+    FT_INLINE const char operator[](FBTuint16 i) const
+    {
+        ftASSERT(i < L);
+        return m_buffer[i];
+    }
+    FT_INLINE const char at(FBTuint16 i) const
+    {
+        ftASSERT(i < L);
+        return m_buffer[i];
+    }
+    FT_INLINE void clear(void)
+    {
+        m_buffer[0] = 0;
+        m_size      = 0;
+    }
+    FT_INLINE int empty(void) const
+    {
+        return m_size == 0;
+    }
+    FT_INLINE int size(void) const
+    {
+        return m_size;
+    }
+    FT_INLINE int capacity(void) const
+    {
+        return L;
+    }
 
 
 
@@ -1438,54 +1811,48 @@ public:
         return m_hash;
     }
 
-    ftINLINE bool operator == (const ftFixedString& str) const { return this->hash() == str.hash(); }
-    ftINLINE bool operator != (const ftFixedString& str) const { return !(this->operator ==(str));}
+    FT_INLINE bool operator==(const ftFixedString& str) const
+    {
+        return this->hash() == str.hash();
+    }
+    FT_INLINE bool operator!=(const ftFixedString& str) const
+    {
+        return !(this->operator==(str));
+    }
 
 protected:
-
-    Pointer             m_buffer;
-    FBTuint16           m_size;
-    mutable FBThash     m_hash;
+    Pointer         m_buffer;
+    FBTuint16       m_size;
+    mutable FBThash m_hash;
 };
 
 
-enum ftPRIM_TYPE
+
+
+
+enum ftAtomic
 {
-    ftPRIM_CHAR,		// 0
-    ftPRIM_UCHAR,		// 1
-    ftPRIM_SHORT,		// 2
-    ftPRIM_USHORT,	    // 3
-    ftPRIM_INT,		    // 4
-    ftPRIM_LONG,		// 5
-    ftPRIM_ULONG,		// 6
-    ftPRIM_FLOAT,		// 7
-    ftPRIM_DOUBLE,	    // 8
-    ftPRIM_INT64_T,     // 9
-    ftPRIM_UINT64_T,    // 10
-    ftPRIM_SCALAR_T,    // 11
-    ftPRIM_VOID,		// 13
-    ftPRIM_UNKNOWN	    // 10
+    FT_ATOMIC_CHAR,      // 0
+    FT_ATOMIC_UCHAR,     // 1
+    FT_ATOMIC_SHORT,     // 2
+    FT_ATOMIC_USHORT,    // 3
+    FT_ATOMIC_INT,       // 4
+    FT_ATOMIC_LONG,      // 5
+    FT_ATOMIC_ULONG,     // 6
+    FT_ATOMIC_FLOAT,     // 7
+    FT_ATOMIC_DOUBLE,    // 8
+    FT_ATOMIC_INT64_T,   // 9
+    FT_ATOMIC_UINT64_T,  // 10
+    FT_ATOMIC_SCALAR_T,  // 11
+    FT_ATOMIC_VOID,      // 13
+    FT_ATOMIC_UNKNOWN    // 10
 };
 
-ftPRIM_TYPE ftGetPrimType(FBTuint32 typeKey);
-ftINLINE ftPRIM_TYPE ftGetPrimType(const char* typeName)
-{
-    return ftGetPrimType(ftCharHashKey(typeName).hash());
-}
-ftINLINE bool ftIsIntType(FBTuint32 typeKey)
-{
-    ftPRIM_TYPE tp = ftGetPrimType(typeKey);
-    return tp < ftPRIM_FLOAT;
-}
-ftINLINE bool ftIsFloatType(FBTuint32 typeKey)
-{
-    ftPRIM_TYPE tp = ftGetPrimType(typeKey);
-    return tp == ftPRIM_FLOAT || tp == ftPRIM_DOUBLE;
-}
-ftINLINE bool ftIsNumberType(FBTuint32 typeKey)
-{
-    ftPRIM_TYPE tp = ftGetPrimType(typeKey);
-    return tp != ftPRIM_VOID && tp != ftPRIM_UNKNOWN;
-}
+extern ftAtomic ftGetPrimType(FBTuint32 typeKey);
+extern ftAtomic ftGetPrimType(const char* typeName);
+extern bool     ftIsIntType(FBTuint32 typeKey);
+bool            ftIsFloatType(FBTuint32 typeKey);
+extern bool     ftIsNumberType(FBTuint32 typeKey);
 
-#endif//_ftTypes_h_
+
+#endif  //_ftTypes_h_

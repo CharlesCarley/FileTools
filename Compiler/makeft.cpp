@@ -18,13 +18,16 @@
 -------------------------------------------------------------------------------
 */
 #include "ftCompiler.h"
+#include <stdio.h>
+
+
 
 int main(int argc, char** argv)
 {
     if (argc < 4)
     {
-        ftPrintf("Usage:\n");
-        ftPrintf("\t makeft FileId <out-file> <in-file>[0] ... <in-file>[n]\n");
+        printf("Usage:\n");
+        printf("\t makeft FileId <out-file> <in-file>[0] ... <in-file>[n]\n");
         return 1;
     }
 

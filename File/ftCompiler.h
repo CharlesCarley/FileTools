@@ -23,9 +23,11 @@
 #include "ftTypes.h"
 #include "ftTables.h"
 
+
+
 typedef ftFixedString<272>          ftPath;
-typedef ftFixedString<ftMaxID>      ftId;
-typedef int                         ftArraySlots[ftARRAY_SLOTS];
+typedef ftFixedString<FT_MAX_ID>      ftId;
+typedef int                         ftArraySlots[FT_ARR_DIM_MAX];
 typedef void*                       ftParser;
 typedef ftArray<ftId>               ftStringPtrArray;
 typedef ftArray<ftPath>             ftPathArray;
@@ -36,37 +38,38 @@ class ftBuildInfo;
 class ftVariable
 {
 public:
-    ftVariable()
-        :   m_type(),
-            m_name(),
-            m_typeId(-1),
-            m_nameId(-1),
-            m_ptrCount(0),
-            m_numSlots(0),
-            m_isFptr(0),
-            m_lstat(0),
-            m_undefined(0),
-            m_isDependentType(false),
-            m_arraySize(1),
-            m_path(),
-            m_line(-1)
+    ftVariable() :
+        m_type(),
+        m_name(),
+        m_typeId(-1),
+        m_nameId(-1),
+        m_ptrCount(0),
+        m_numSlots(0),
+        m_isFptr(0),
+        m_lstat(0),
+        m_undefined(0),
+        m_isDependentType(false),
+        m_arraySize(1),
+        m_path(),
+        m_line(-1),
+        m_arrays()
     {
     }
 
-    ftId            m_type;
-    ftId            m_name;
-    int             m_typeId;
-    int             m_nameId;
-    int             m_ptrCount;
-    int             m_numSlots;
-    int             m_isFptr;
-    int             m_lstat;
-    int             m_undefined;
-    bool            m_isDependentType;
-    ftArraySlots    m_arrays;
-    FBTsize         m_arraySize;
-    ftPath          m_path;
-    FBTsize         m_line;
+    ftId         m_type;
+    ftId         m_name;
+    int          m_typeId;
+    int          m_nameId;
+    int          m_ptrCount;
+    int          m_numSlots;
+    int          m_isFptr;
+    int          m_lstat;
+    int          m_undefined;
+    bool         m_isDependentType;
+    ftArraySlots m_arrays;
+    FBTsize      m_arraySize;
+    ftPath       m_path;
+    FBTsize      m_line;
 };
 
 typedef ftArray<ftVariable> ftVariables;
@@ -79,21 +82,19 @@ public:
     typedef ftArray<ftCompileStruct> Array;
 
 public:
-
-    ftCompileStruct()
-        :   m_structId(ftNPOS),
-            m_line(-1),
-            m_nrDependentTypes(0)
+    ftCompileStruct() :
+        m_structId(ftNPOS),
+        m_line(-1),
+        m_nrDependentTypes(0)
     {
     }
 
-    FBTsize         m_structId;
-    ftId            m_name;
-    ftVariables     m_data;
-    FBTsize         m_nrDependentTypes;
-
-    ftPath          m_path;
-    FBTsize         m_line;
+    FBTsize     m_structId;
+    ftId        m_name;
+    ftVariables m_data;
+    FBTsize     m_nrDependentTypes;
+    ftPath      m_path;
+    FBTsize     m_line;
 };
 
 
@@ -115,13 +116,11 @@ enum ftLinkerIssues
 class ftCompiler
 {
 public:
-
     ftCompiler();
     ~ftCompiler();
 
     int parseFile(const ftPath& id);
     int parseBuffer(const ftId& name, const char* ms);
-
     int buildTypes(void);
 
     void writeFile(const ftId& id, class ftStream* fp);
@@ -132,19 +131,19 @@ public:
 
 private:
 
-    int doParse(void);
+    int  doParse(void);
 
     void writeBinPtr(ftStream* fp, void* ptr, int len);
     void writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs);
     void writeValidationProgram(const ftPath& path);
     void makeName(ftVariable&, bool);
 
-    ftBuildInfo*            m_build;
-    FBTsize                 ft_start;
-    ftPathArray             ft_includes;
-    ftStringPtrArray        ft_namespaces, ft_skip;
-    ftCompileStruct::Array  ft_struct_builders;
-    int m_curBuf, m_writeMode;
+    ftBuildInfo*           m_build;
+    FBTsize                m_start;
+    ftPathArray            m_includes;
+    ftStringPtrArray       m_namespaces, m_skip;
+    ftCompileStruct::Array m_builders;
+    int                    m_curBuf, m_writeMode;
 };
 
 #endif//_ftBuilder_h_

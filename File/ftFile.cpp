@@ -17,12 +17,12 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define ftIN_SOURCE
+#define FT_IN_SOURCE_FILE
 
 #include "ftFile.h"
+#include "ftPlatformHeaders.h"
 #include "ftStreams.h"
 #include "ftTables.h"
-#include "ftPlatformHeaders.h"
 
 // Common Identifiers
 const FBTuint32 ENDB = ftID('E', 'N', 'D', 'B');
@@ -36,16 +36,18 @@ ftASSERTCOMP(ChunkLen32, sizeof(ftFile::Chunk32) == 20);
 ftASSERTCOMP(ChunkLen64, sizeof(ftFile::Chunk64) == 24);
 
 #if ftARCH == ftARCH_32
-    ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
+ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
 #else
-    ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
+ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
 #endif
 
-#define ftMALLOC_FAILED   ftPrintf("Failed to allocate memory!\n");
-#define ftINVALID_READ    ftPrintf("Invalid read!\n");
-#define ftINVALID_LEN     ftPrintf("Invalid block length!\n");
-#define ftINVALID_INS     ftPrintf("Table insertion failed!\n");
-#define ftLINK_FAILED     ftPrintf("Linking failed!\n");
+#define ftMALLOC_FAILED printf("Failed to allocate memory!\n");
+#define ftINVALID_READ printf("Invalid read!\n");
+#define ftINVALID_LEN printf("Invalid block length!\n");
+#define ftINVALID_INS printf("Table insertion failed!\n");
+#define ftLINK_FAILED printf("Linking failed!\n");
+
+
 
 struct ftChunk
 {
@@ -58,6 +60,7 @@ struct ftChunk
     static int read(ftFile::Chunk* dest, ftStream* stream, int flags);
     static int write(ftFile::Chunk* src, ftStream* stream);
 };
+
 
 
 ftFile::ftFile(const char* uid) :
@@ -74,20 +77,20 @@ ftFile::ftFile(const char* uid) :
 ftFile::~ftFile()
 {
     if (m_curFile)
-        ftFree(m_curFile);
+        ::free(m_curFile);
     m_curFile = 0;
 
-    MemoryChunk* node = (MemoryChunk*)m_chunks.first, *tnd;
+    MemoryChunk *node = (MemoryChunk*)m_chunks.first, *tnd;
     while (node)
     {
         if (node->m_block)
-            ftFree(node->m_block);
+            ::free(node->m_block);
         if (node->m_newBlock)
-            ftFree(node->m_newBlock);
+            ::free(node->m_newBlock);
 
         tnd  = node;
         node = node->m_next;
-        ftFree(tnd);
+        ::free(tnd);
     }
 
     delete m_file;
@@ -114,9 +117,9 @@ int ftFile::load(const char* path, int mode)
 
             if (magic[0] != 0x1F && magic[1] != 0x8B)
             {
-                // Assuming it's an uncompressed .blend, or any unknown type of file. 
+                // Assuming it's an uncompressed .blend, or any unknown type of file.
                 mode = PM_UNCOMPRESSED;
-            } // or something else masquerading as a gz file.
+            }  // or something else masquerading as a gz file.
         }
     }
 
@@ -139,19 +142,19 @@ int ftFile::load(const char* path, int mode)
 
     if (!stream->isOpen())
     {
-        ftPrintf("File '%s' loading failed\n", path);
+        printf("File '%s' loading failed\n", path);
         return FS_FAILED;
     }
 
     if (m_curFile)
-        ftFree(m_curFile);
+        ::free(m_curFile);
 
 
     FBTsize pl = strlen(path);
-    m_curFile = (char*)ftMalloc(pl + 1);
+    m_curFile  = (char*)::malloc(pl + 1);
     if (m_curFile)
     {
-        ftMemcpy(m_curFile, path, pl);
+        ::memcpy(m_curFile, path, pl);
         m_curFile[pl] = 0;
     }
 
@@ -169,7 +172,7 @@ int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
 
     if (!ms.isOpen())
     {
-        ftPrintf("Memory %p(%i) loading failed\n", memory, sizeInBytes);
+        printf("Memory %p(%i) loading failed\n", memory, sizeInBytes);
         return FS_FAILED;
     }
 
@@ -185,7 +188,7 @@ ftBinTables* ftFile::getMemoryTable(void)
 
 int ftFile::initializeTables(ftBinTables* tables)
 {
-    void* tableData = getTables();
+    void*   tableData = getTables();
     FBTsize tableSize = getTableSize();
 
     if (tableData != 0 && tableSize > 0 && tableSize != ftNPOS)
@@ -203,7 +206,7 @@ int ftFile::parseHeader(ftStream* stream)
 
     char* headerMagic = (m_header.ptr() + 7);
 
-    m_hederFlags = 0;
+    m_hederFlags  = 0;
     m_fileVersion = 0;
 
     if (*(headerMagic++) == FM_64_BIT)
@@ -238,7 +241,7 @@ int ftFile::initializeMemory(void)
         status = initializeTables(m_memory);
         if (status != FS_OK)
         {
-            ftPrintf("Failed to initialize builtin tables\n");
+            printf("Failed to initialize builtin tables\n");
             return status;
         }
     }
@@ -251,7 +254,7 @@ int ftFile::parseStreamImpl(ftStream* stream)
     status = parseHeader(stream);
     if (status != FS_OK)
     {
-        ftPrintf("Failed to extract file header!\n");
+        printf("Failed to extract file header!\n");
         return status;
     }
 
@@ -265,7 +268,7 @@ int ftFile::parseStreamImpl(ftStream* stream)
         m_file = 0;
     }
 
-    m_map.reserve(ftDefaultAlloc);
+    m_map.reserve(FT_DEF_ALLOC);
 
     Chunk chunk;
     do
@@ -287,7 +290,7 @@ int ftFile::parseStreamImpl(ftStream* stream)
         if (chunk.m_code == ENDB)
             break;
 
-        void* curPtr = ftMalloc(chunk.m_len);
+        void* curPtr = ::malloc(chunk.m_len);
         if (!curPtr)
         {
             ftMALLOC_FAILED;
@@ -302,12 +305,12 @@ int ftFile::parseStreamImpl(ftStream* stream)
 
         if (chunk.m_code == DNA1)
         {
-            m_file = new ftBinTables(curPtr, chunk.m_len);
+            m_file        = new ftBinTables(curPtr, chunk.m_len);
             m_file->m_ptr = m_hederFlags & FH_CHUNK_64 ? 8 : 4;
 
             if (!m_file->read((m_hederFlags & FH_ENDIAN_SWAP) != 0))
             {
-                ftPrintf("Failed to initialize tables\n");
+                printf("Failed to initialize tables\n");
                 return FS_INV_READ;
             }
 
@@ -325,8 +328,8 @@ int ftFile::parseStreamImpl(ftStream* stream)
             FBTsizeType pos;
             if ((pos = m_map.find(chunk.m_old)) != ftNPOS)
             {
-                ftFree(curPtr);
-                curPtr = 0;
+                ::free(curPtr);
+                curPtr     = 0;
                 int result = ftMemcmp(&m_map.at(pos)->m_chunk, &chunk, ftChunk::BlockSize);
                 if (result != 0)
                 {
@@ -337,19 +340,19 @@ int ftFile::parseStreamImpl(ftStream* stream)
 #else
             if (m_map.find(chunk.m_old) != ftNPOS)
             {
-                ftFree(curPtr);
+                ::free(curPtr);
                 curPtr = 0;
             }
 #endif
             else
             {
-                MemoryChunk* bin = static_cast<MemoryChunk*>(ftMalloc(sizeof(MemoryChunk)));
+                MemoryChunk* bin = static_cast<MemoryChunk*>(::malloc(sizeof(MemoryChunk)));
                 if (!bin)
                 {
                     ftMALLOC_FAILED;
                     return FS_BAD_ALLOC;
                 }
-                ftMemset(bin, 0, sizeof(MemoryChunk));
+                ::memset(bin, 0, sizeof(MemoryChunk));
                 bin->m_block = curPtr;
 
                 Chunk* cp    = &bin->m_chunk;
@@ -367,8 +370,7 @@ int ftFile::parseStreamImpl(ftStream* stream)
                 }
             }
         }
-    }
-    while (!stream->eof());
+    } while (!stream->eof());
     return status;
 }
 
@@ -387,7 +389,7 @@ public:
 ftStruct* ftLinkCompiler::find(const ftCharHashKey& kvp)
 {
     FBTtype i;
-    if ((i = m_fp->findTypeId(kvp)) != ((FBTtype) - 1))
+    if ((i = m_fp->findTypeId(kvp)) != ((FBTtype)-1))
         return m_fp->m_offs.at(i);
     return 0;
 }
@@ -395,13 +397,13 @@ ftStruct* ftLinkCompiler::find(const ftCharHashKey& kvp)
 ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer, bool& needCast)
 {
     ftStruct::Members::Pointer md = strc->m_members.ptr();
-    FBTsizeType i, s = strc->m_members.size();
+    FBTsizeType                i, s = strc->m_members.size();
 
     FBTuint32 k1 = member->m_val.k32[0];
     for (i = 0; i < s; i++)
     {
         ftStruct* strc2 = &md[i];
-        if (strc2->m_nr == member->m_nr && strc2->m_dp ==  member->m_dp)
+        if (strc2->m_nr == member->m_nr && strc2->m_dp == member->m_dp)
         {
             if (strc2->m_val.k32[1] == member->m_val.k32[1])
             {
@@ -434,12 +436,12 @@ int ftLinkCompiler::link(void)
     ftBinTables::OffsM::Pointer md = m_mp->m_offs.ptr();
     ftBinTables::OffsM::Pointer fd = m_fp->m_offs.ptr();
 
-    FBTsizeType i, i2;
+    FBTsizeType                i, i2;
     ftStruct::Members::Pointer p2;
     for (i = 0; i < m_mp->m_offs.size(); ++i)
     {
         ftStruct* strc = md[i];
-        strc->m_link = find(m_mp->m_type[strc->m_key.k16[0]].m_name);
+        strc->m_link   = find(m_mp->m_type[strc->m_key.k16[0]].m_name);
 
         if (strc->m_link)
             strc->m_link->m_link = strc;
@@ -456,7 +458,7 @@ int ftLinkCompiler::link(void)
                 ftASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
 
                 bool isPointer = m_mp->m_name[member->m_key.k16[1]].m_ptrCount > 0;
-                bool needCast = false;
+                bool needCast  = false;
                 member->m_link = find(strc->m_link, member, isPointer, needCast);
                 if (member->m_link)
                 {
@@ -473,76 +475,121 @@ int ftLinkCompiler::link(void)
     return ftFile::FS_OK;
 }
 
-void copyValues(FBTbyte* srcPtr, FBTbyte* dstPtr, FBTsize srcElmSize, FBTsize dstElmSize, FBTsize len)
+template <typename T>
+FBTint64 ftGetCastValue(FBTsize*& soruce)
 {
-    FBTsize i;
-    for (i = 0; i < len; i++)
+    FBTint64 value = (FBTint64)(T)(*(T*)soruce);
+    soruce += sizeof(T);
+    return value;
+}
+
+template <typename T>
+void ftSetCastValue(FBTsize*& destination, const FBTint64& value)
+{
+    *(T*)(destination) = (T)(value);
+    destination += sizeof(T);
+}
+
+
+
+
+void ftSetCastValue(FBTsize*& destination, ftAtomic destinationType, const FBTint64& value)
+{
+    switch (destinationType)
     {
-        ftMemcpy(srcPtr, dstPtr, srcElmSize);
-        srcPtr += srcElmSize;
-        dstElmSize += dstElmSize;
+    case FT_ATOMIC_CHAR:
+        ftSetCastValue<char>(destination, value);
+        break;
+    case FT_ATOMIC_SHORT:
+        ftSetCastValue<short>(destination, value);
+        break;
+    case FT_ATOMIC_USHORT:
+        ftSetCastValue<unsigned short>(destination, value);
+        break;
+    case FT_ATOMIC_INT:
+        ftSetCastValue<int>(destination, value);
+        break;
+    case FT_ATOMIC_LONG:
+        ftSetCastValue<long>(destination, value);
+        break;
+    case FT_ATOMIC_FLOAT:
+        ftSetCastValue<float>(destination, value);
+        break;
+    case FT_ATOMIC_DOUBLE:
+        ftSetCastValue<double>(destination, value);
+        break;
+    case FT_ATOMIC_INT64_T:
+        ftSetCastValue<FBTint64>(destination, value);
+        break;
+    case FT_ATOMIC_UINT64_T:
+        ftSetCastValue<FBTuint64>(destination, value);
+        break;
+    case FT_ATOMIC_SCALAR_T:
+        ftSetCastValue<scalar_t>(destination, value);
+        break;
     }
 }
 
-void castValue(FBTsize* srcPtr, FBTsize* dstPtr, ftPRIM_TYPE srctp, ftPRIM_TYPE dsttp, FBTsize len)
+void ftCastValue(FBTsize* source, FBTsize* destination, ftAtomic sourceType, ftAtomic destinationType, FBTsize length)
 {
-#define GET_V(value, current, type, cast, ptr, match) \
-    if (current == type) \
-    { \
-        value = (FBTint64)(cast)(*(cast*)ptr); \
-        ptr += sizeof(cast); \
-        if (++match >= 2) continue; \
-    }
-
-#define SET_V(value, current, type, cast, ptr, match) \
-    if (current == type) \
-    { \
-        (*(cast*)ptr) = (cast)value; \
-        ptr += sizeof(cast); \
-        if (++match >= 2) continue; \
-    }
     FBTint64 value = 0;
+    FBTsize  i     = 0;
 
-    FBTsizeType i;
-    for (i = 0; i < len; i++)
+    while (i < length)
     {
-        int match = 0;
-        GET_V(value, srctp, ftPRIM_CHAR,     char,            srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_CHAR,     char,            dstPtr, match);
-        GET_V(value, srctp, ftPRIM_SHORT,    short,           srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_SHORT,    short,           dstPtr, match);
-        GET_V(value, srctp, ftPRIM_USHORT,   unsigned short,  srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_USHORT,   unsigned short,  dstPtr, match);
-        GET_V(value, srctp, ftPRIM_INT,      int,             srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_INT,      int,             dstPtr, match);
-        GET_V(value, srctp, ftPRIM_LONG,     int,             srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_LONG,     int,             dstPtr, match);
-        GET_V(value, srctp, ftPRIM_FLOAT,    float,           srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_FLOAT,    float,           dstPtr, match);
-        GET_V(value, srctp, ftPRIM_DOUBLE,   double,          srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_DOUBLE,   double,          dstPtr, match);
-        GET_V(value, srctp, ftPRIM_INT64_T,  FBTint64,        srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_INT64_T,  FBTint64,        dstPtr, match);
-        GET_V(value, srctp, ftPRIM_UINT64_T, FBTuint64,       srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_UINT64_T, FBTuint64,       dstPtr, match);
-        GET_V(value, srctp, ftPRIM_SCALAR_T, scalar_t,        srcPtr, match);
-        SET_V(value, dsttp, ftPRIM_SCALAR_T, scalar_t,        dstPtr, match);
+        switch (sourceType)
+        {
+        case FT_ATOMIC_CHAR:
+            value = ftGetCastValue<char>(source);
+            break;
+        case FT_ATOMIC_SHORT:
+            value = ftGetCastValue<short>(source);
+            break;
+        case FT_ATOMIC_USHORT:
+            value = ftGetCastValue<unsigned short>(source);
+            break;
+        case FT_ATOMIC_INT:
+            value = ftGetCastValue<int>(source);
+            break;
+        case FT_ATOMIC_LONG:
+            value = ftGetCastValue<long>(source);
+            break;
+        case FT_ATOMIC_FLOAT:
+            value = ftGetCastValue<float>(source);
+            break;
+        case FT_ATOMIC_DOUBLE:
+            value = ftGetCastValue<double>(source);
+            break;
+        case FT_ATOMIC_INT64_T:
+            value = ftGetCastValue<FBTint64>(source);
+            break;
+        case FT_ATOMIC_UINT64_T:
+            value = ftGetCastValue<FBTuint64>(source);
+            break;
+        case FT_ATOMIC_SCALAR_T:
+            value = ftGetCastValue<scalar_t>(source);
+            break;
+        default:
+            value = 0;
+            break;
+        }
+        ftSetCastValue(destination, destinationType, value);
+        ++i;
     }
-#undef GET_V
-#undef SET_V
 }
+
 
 
 int ftFile::link(void)
 {
     ftBinTables::OffsM::Pointer md = m_memory->m_offs.ptr();
     ftBinTables::OffsM::Pointer fd = m_file->m_offs.ptr();
-    FBTsizeType s2, i2, a2, n;
-    ftStruct::Members::Pointer p2;
-    FBTsize mlen, malen, total, pi;
+    FBTsizeType                 s2, i2, a2, n;
+    ftStruct::Members::Pointer  p2;
+    FBTsize                     mlen, malen, total, pi;
 
-    char* dst, *src;
-    FBTsize* dstPtr, *srcPtr;
+    char *   dst, *src;
+    FBTsize *dstPtr, *srcPtr;
 
     bool endianSwap = (m_hederFlags & FH_ENDIAN_SWAP) != 0;
 
@@ -554,7 +601,7 @@ int ftFile::link(void)
         if (node->m_chunk.m_typeid > m_file->m_strcNr || !(fd[node->m_chunk.m_typeid]->m_link))
             continue;
 
-        ftStruct* fs, *ms;
+        ftStruct *fs, *ms;
         fs = fd[node->m_chunk.m_typeid];
         ms = fs->m_link;
 
@@ -562,31 +609,32 @@ int ftFile::link(void)
 
         if (m_memory->m_type[ms->m_key.k16[0]].m_typeId == hk)
         {
-            FBTsize totSize = node->m_chunk.m_len;
-            node->m_newBlock = ftMalloc(totSize);
+            FBTsize totSize  = node->m_chunk.m_len;
+            node->m_newBlock = ::malloc(totSize);
             if (!node->m_newBlock)
             {
                 ftMALLOC_FAILED;
                 return FS_BAD_ALLOC;
             }
 
-            ftMemcpy(node->m_newBlock, node->m_block, totSize);
+            ::memcpy(node->m_newBlock, node->m_block, totSize);
             continue;
         }
 
         if (skip(m_memory->m_type[ms->m_key.k16[0]].m_typeId))
             continue;
 
-        FBTsize totSize = (node->m_chunk.m_nr * ms->m_len);
+        FBTsize totSize     = (node->m_chunk.m_nr * ms->m_len);
         node->m_chunk.m_len = totSize;
 
-        node->m_newBlock = ftMalloc(totSize);
+        node->m_newBlock = ::malloc(totSize);
         if (!node->m_newBlock)
         {
             ftMALLOC_FAILED;
             return FS_BAD_ALLOC;
         }
-        ftMemset(node->m_newBlock, 0, totSize);
+
+        ::memset(node->m_newBlock, 0, totSize);
     }
 
     FBTuint8 mps = m_memory->m_ptr, fps = m_file->m_ptr;
@@ -601,7 +649,7 @@ int ftFile::link(void)
 
         if (!cs->m_link || skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
         {
-            ftFree(node->m_newBlock);
+            ::free(node->m_newBlock);
             node->m_newBlock = 0;
             continue;
         }
@@ -630,7 +678,7 @@ int ftFile::link(void)
                 {
                     if ((*srcPtr))
                     {
-                        if (nameD.m_ptrCount  > 1)
+                        if (nameD.m_ptrCount > 1)
                         {
                             MemoryChunk* bin = findBlock((FBTsize)(*srcPtr));
                             if (bin)
@@ -639,30 +687,30 @@ int ftFile::link(void)
                                     (*dstPtr) = (FBTsize)bin->m_newBlock;
                                 else
                                 {
-                                    total = bin->m_chunk.m_len / fps;
-                                    FBTsize* nptr = (FBTsize*)ftMalloc(total * mps);
-                                    ftMemset(nptr, 0, total * mps);
+                                    total         = bin->m_chunk.m_len / fps;
+                                    FBTsize* nptr = (FBTsize*)::malloc(total * mps);
+                                    ::memset(nptr, 0, total * mps);
 
                                     // always use 32 bit, then offset + 2 for 64 bit
                                     // (Old pointers are sorted in this manor)
                                     FBTuint32* optr = (FBTuint32*)bin->m_block;
 
                                     for (pi = 0; pi < total; pi++, optr += (fps == 4 ? 1 : 2))
-                                        nptr[pi] = (FBTsize)findPtr((FBTsize) * optr);
+                                        nptr[pi] = (FBTsize)findPtr((FBTsize)*optr);
 
                                     (*dstPtr) = (FBTsize)(nptr);
 
                                     bin->m_chunk.m_len = total * mps;
                                     bin->m_flag |= MemoryChunk::BLK_MODIFIED;
 
-                                    ftFree(bin->m_newBlock);
+                                    ::free(bin->m_newBlock);
                                     bin->m_newBlock = nptr;
                                 }
                             }
                         }
                         else
                         {
-                            malen = nameD.m_arraySize > nameS.m_arraySize ? nameS.m_arraySize : nameD.m_arraySize;
+                            malen         = nameD.m_arraySize > nameS.m_arraySize ? nameS.m_arraySize : nameD.m_arraySize;
                             FBTsize* dptr = (FBTsize*)dstPtr;
 
                             // always use 32 bit, then offset + 2 for 64 bit
@@ -670,7 +718,7 @@ int ftFile::link(void)
                             FBTuint32* sptr = (FBTuint32*)srcPtr;
 
                             for (a2 = 0; a2 < malen; ++a2, sptr += (fps == 4 ? 1 : 2))
-                                dptr[a2] = (FBTsize)findPtr((FBTsize) * sptr);
+                                dptr[a2] = (FBTsize)findPtr((FBTsize)*sptr);
                         }
                     }
                 }
@@ -682,17 +730,17 @@ int ftFile::link(void)
                     bool needCast = (dstStrc->m_flag & ftStruct::NEED_CAST) != 0;
                     bool needSwap = endianSwap && srcElmSize > 1;
 
-                    if (!needCast && !needSwap && srcStrc->m_val.k32[0] == dstStrc->m_val.k32[0]) //same type
+                    if (!needCast && !needSwap && srcStrc->m_val.k32[0] == dstStrc->m_val.k32[0])  //same type
                     {
                         mlen = ftMin(srcStrc->m_len, dstStrc->m_len);
-                        ftMemcpy(dstPtr, srcPtr, mlen);
+                        ::memcpy(dstPtr, srcPtr, mlen);
                         continue;
                     }
 
                     FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
                     FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
 
-                    ftPRIM_TYPE stp = ftPRIM_UNKNOWN, dtp  = ftPRIM_UNKNOWN;
+                    ftAtomic stp = FT_ATOMIC_UNKNOWN, dtp = FT_ATOMIC_UNKNOWN;
 
                     if (needCast || needSwap)
                     {
@@ -705,7 +753,9 @@ int ftFile::link(void)
                     FBTsize alen = ftMin(nameS.m_arraySize, nameD.m_arraySize);
                     FBTsize elen = ftMin(srcElmSize, dstElmSize);
 
-                    FBTbyte tmpBuf[8] = {0, };
+                    FBTbyte tmpBuf[8] = {
+                        0,
+                    };
                     FBTsize i;
                     for (i = 0; i < alen; i++)
                     {
@@ -713,22 +763,22 @@ int ftFile::link(void)
                         if (needSwap)
                         {
                             tmp = tmpBuf;
-                            ftMemcpy(tmpBuf, srcBPtr, srcElmSize);
+                            ::memcpy(tmpBuf, srcBPtr, srcElmSize);
 
-                            if (stp == ftPRIM_SHORT || stp == ftPRIM_USHORT)
+                            if (stp == FT_ATOMIC_SHORT || stp == FT_ATOMIC_USHORT)
                                 ftSwap16((FBTuint16*)tmpBuf, 1);
-                            else if (stp >= ftPRIM_INT && stp <= ftPRIM_FLOAT)
+                            else if (stp >= FT_ATOMIC_INT && stp <= FT_ATOMIC_FLOAT)
                                 ftSwap32((FBTuint32*)tmpBuf, 1);
-                            else if (stp == ftPRIM_DOUBLE)
+                            else if (stp == FT_ATOMIC_DOUBLE)
                                 ftSwap64((FBTuint64*)tmpBuf, 1);
                             else
-                                ftMemset(tmpBuf, 0, sizeof(tmpBuf)); //unknown type
+                                ::memset(tmpBuf, 0, sizeof(tmpBuf));  //unknown type
                         }
 
                         if (needCast)
-                            castValue((FBTsize*)tmp, (FBTsize*)dstBPtr, stp, dtp, 1);
+                            ftCastValue((FBTsize*)tmp, (FBTsize*)dstBPtr, stp, dtp, 1);
                         else
-                            ftMemcpy(dstBPtr, tmp, elen);
+                            ::memcpy(dstBPtr, tmp, elen);
 
                         dstBPtr += dstElmSize;
                         srcBPtr += srcElmSize;
@@ -743,7 +793,7 @@ int ftFile::link(void)
     {
         if (node->m_block)
         {
-            ftFree(node->m_block);
+            ::free(node->m_block);
             node->m_block = 0;
         }
     }
@@ -798,10 +848,10 @@ int ftFile::save(const char* path, const int mode)
     char version[33];
     sprintf(version, "%i", m_version);
 
-    strncpy(&header[0], m_uhid, 7); // 7 first bytes of header
-    header[7] = cp;                 // 8th byte = pointer size
-    header[8] = ce;                 // 9th byte = endian
-    strncpy(&header[9], version, 3);// last 3 bytes v or 3 version char
+    strncpy(&header[0], m_uhid, 7);   // 7 first bytes of header
+    header[7] = cp;                   // 8th byte = pointer size
+    header[8] = ce;                   // 9th byte = endian
+    strncpy(&header[9], version, 3);  // last 3 bytes v or 3 version char
     fs->write(header, 12);
 
     serializeData(fs);
@@ -832,16 +882,13 @@ int ftFile::save(const char* path, const int mode)
 
 void ftFile::serialize(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData)
 {
-    ftASSERT(id);
-
     if (m_memory == 0)
         getMemoryTable();
-
 
     FBTtype ft = m_memory->findTypeId(id);
     if (ft == -1)
     {
-        ftPrintf("writeStruct: %s - not found", id);
+        printf("writeStruct: %s - not found", id);
         return;
     }
     serialize(stream, ft, code, len, writeData);
@@ -885,7 +932,7 @@ int ftChunk::write(ftFile::Chunk* src, ftStream* stream)
 
 int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 {
-    int bytesRead = 0;
+    int  bytesRead  = 0;
     bool bitsVary   = (flags & ftFile::FH_VAR_BITS) != 0;
     bool swapEndian = (flags & ftFile::FH_ENDIAN_SWAP) != 0;
 
@@ -906,17 +953,16 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
 
             c64.m_code = src.m_code;
             c64.m_len  = src.m_len;
-            union
-            {
-                FBTuint64   m_ptr;
-                FBTuint32   m_doublePtr[2];
+            union {
+                FBTuint64 m_ptr;
+                FBTuint32 m_doublePtr[2];
             } ptr;
             ptr.m_doublePtr[0] = src.m_old;
             ptr.m_doublePtr[1] = 0;
 
-            c64.m_old     = ptr.m_ptr;
-            c64.m_typeid  = src.m_typeid;
-            c64.m_nr      = src.m_nr;
+            c64.m_old    = ptr.m_ptr;
+            c64.m_typeid = src.m_typeid;
+            c64.m_nr     = src.m_nr;
         }
         else
         {
@@ -949,18 +995,17 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
             }
             c32.m_code = src.m_code;
             c32.m_len  = src.m_len;
-            union
-            {
-                FBTuint64   m_ptr;
-                FBTuint32   m_doublePtr[2];
+            union {
+                FBTuint64 m_ptr;
+                FBTuint32 m_doublePtr[2];
             } ptr;
             ptr.m_doublePtr[0] = 0;
             ptr.m_doublePtr[1] = 0;
-            ptr.m_ptr = src.m_old;
+            ptr.m_ptr          = src.m_old;
 
-            c32.m_old       = ptr.m_doublePtr[0] != 0 ? ptr.m_doublePtr[0] : ptr.m_doublePtr[1];
-            c32.m_typeid    = src.m_typeid;
-            c32.m_nr        = src.m_nr;
+            c32.m_old    = ptr.m_doublePtr[0] != 0 ? ptr.m_doublePtr[0] : ptr.m_doublePtr[1];
+            c32.m_typeid = src.m_typeid;
+            c32.m_nr     = src.m_nr;
         }
         else
         {
@@ -987,32 +1032,32 @@ int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
         return ftFile::FS_INV_LENGTH;
     }
 
-    ftMemcpy(dest, cpy, BlockSize);
+    ::memcpy(dest, cpy, BlockSize);
     return bytesRead;
 }
 
 
-void ftFile::generateTypeCastLog(const char *fname)
+void ftFile::generateTypeCastLog(const char* fname)
 {
-    ftBinTables* fp, *mp;
+    ftBinTables *fp, *mp;
     mp = getMemoryTable();
     fp = getFileTable();
 
     if (!mp)
     {
-        ftPrintf("Missing memory table!\n");
+        printf("Missing memory table!\n");
         return;
     }
 
     if (!fp)
     {
-        ftPrintf("Missing file table!\n");
+        printf("Missing file table!\n");
         return;
     }
 
     ftBinTables::OffsM::Pointer md = mp->m_offs.ptr();
     ftBinTables::OffsM::Pointer fd = fp->m_offs.ptr();
-    FBTsizeType i, s = mp->m_offs.size();
+    FBTsizeType                 i, s = mp->m_offs.size();
 
 
     ftFileStream dest;
@@ -1023,7 +1068,7 @@ void ftFile::generateTypeCastLog(const char *fname)
     {
         ftStruct* strc = md[i];
 
-        ftStruct* a, *b;
+        ftStruct *a, *b;
         a = strc;
         b = strc->m_link;
         if (!b)
@@ -1033,7 +1078,7 @@ void ftFile::generateTypeCastLog(const char *fname)
             continue;
 
         char* cp0 = mp->m_type[a->m_key.k16[0]].m_name;
-        dest.writef("<li><a href=\"#%s\">%s</a> (%d)</li>\n", cp0, cp0, i+1);
+        dest.writef("<li><a href=\"#%s\">%s</a> (%d)</li>\n", cp0, cp0, i + 1);
     }
     dest.writef("</ul>\n");
 
@@ -1041,7 +1086,7 @@ void ftFile::generateTypeCastLog(const char *fname)
     {
         ftStruct* strc = md[i];
 
-        ftStruct* a, *b, *c, *d;
+        ftStruct *a, *b, *c, *d;
         a = strc;
         b = strc->m_link;
         if (!b)
@@ -1054,33 +1099,43 @@ void ftFile::generateTypeCastLog(const char *fname)
         const char* cp1 = fp->getStructType(b);
 
         dest.writef("<a id=\"%s\"/>\n", cp0);
-        dest.writef("<h2>%s (%d)</h2>\n", cp0, i+1);
+        dest.writef("<h2>%s (%d)</h2>\n", cp0, i + 1);
         dest.writef("<table><tr><td>File</td><td>(<b>%s</b>)</td><td><i>=></i></td><td>Memory</td><td>(<b>%s</b>)</td></tr></table>\n", cp1, cp0);
         dest.writef("<table>\n");
 
         ftStruct::Members::Pointer mbp = a->m_members.ptr();
-        int ml = 0, fl = 0;
+        int                        ml = 0, fl = 0;
         for (FBTsizeType i = 0; i < a->m_members.size(); i++)
         {
             c = &mbp[i];
             d = c->m_link;
 
             const char* cpMN = mp->getStructName(c);
-            cp0 = mp->getOwnerStructName(c);
+            cp0              = mp->getOwnerStructName(c);
 
             if (!d)
             {
                 ml += c->m_len;
-                dest.writef("<tr><td>((&nbsp;&nbsp;%s&nbsp;&nbsp;*))M)</td><td>+</td><td>%i"
+                dest.writef(
+                    "<tr><td>((&nbsp;&nbsp;%s&nbsp;&nbsp;*))M)</td><td>+</td><td>%i"
                     "</td><td><i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>&nbsp;&nbsp;0&nbsp;&nbsp;"
-                    "</td><td></td><td>Not in file tables.</td></tr>\n", cp0, c->m_off, cpMN);
+                    "</td><td></td><td>Not in file tables.</td></tr>\n",
+                    cp0,
+                    c->m_off,
+                    cpMN);
                 continue;
             }
 
             const char* cpFN = fp->getStructName(d);
-            dest.writef("<tr><td>((&nbsp;&nbsp;%s&nbsp;&nbsp;*)M)</td><td>+</td><td>%i</td><td>"
+            dest.writef(
+                "<tr><td>((&nbsp;&nbsp;%s&nbsp;&nbsp;*)M)</td><td>+</td><td>%i</td><td>"
                 "<i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>((&nbsp;&nbsp;%s&nbsp;&nbsp;*)F)"
-                "</td><td>+</td><td>%i</td></tr>\n", cp0, c->m_off, cpMN, cp1, d->m_off);
+                "</td><td>+</td><td>%i</td></tr>\n",
+                cp0,
+                c->m_off,
+                cpMN,
+                cp1,
+                d->m_off);
             ml += c->m_len;
         }
         dest.writef("</table>\n");
