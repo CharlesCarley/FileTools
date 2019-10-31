@@ -804,7 +804,7 @@ int ftFile::save(const char* path, const int mode)
     strncpy(&header[9], version, 3);// last 3 bytes v or 3 version char
     fs->write(header, 12);
 
-    writeData(fs);
+    serializeData(fs);
 
     // write DNA1
     Chunk ch;
@@ -830,7 +830,7 @@ int ftFile::save(const char* path, const int mode)
 
 
 
-void ftFile::writeStruct(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData)
+void ftFile::serialize(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData)
 {
     ftASSERT(id);
 
@@ -844,11 +844,11 @@ void ftFile::writeStruct(ftStream* stream, const char* id, FBTuint32 code, FBTsi
         ftPrintf("writeStruct: %s - not found", id);
         return;
     }
-    writeStruct(stream, ft, code, len, writeData);
+    serialize(stream, ft, code, len, writeData);
 }
 
 
-void ftFile::writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData)
+void ftFile::serialize(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData)
 {
     Chunk ch;
     ch.m_code   = code;
@@ -860,7 +860,7 @@ void ftFile::writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsiz
     ftChunk::write(&ch, stream);
 }
 
-void ftFile::writeBuffer(ftStream* stream, FBTsize len, void* writeData)
+void ftFile::serialize(ftStream* stream, FBTsize len, void* writeData)
 {
     if (m_memory == 0)
         getMemoryTable();

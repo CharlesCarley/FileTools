@@ -23,14 +23,11 @@
 #include "ftFile.h"
 #include "Blender.h"
 
-
-
 class ftBlend : public ftFile
 {
 public:
     ftBlend();
     virtual ~ftBlend();
-
 
     ftList m_scene;
     ftList m_library;
@@ -68,9 +65,10 @@ public:
     void setFilterList(FBTuint32* filter, bool inclusive = false);
 
 protected:
-    virtual int dataRead(void* p, const Chunk& id);
     virtual bool skip(const FBTuint32& id);
-    virtual int writeData(ftStream* stream);
+
+    virtual int dataRead(void* p, const Chunk& id);
+    virtual int serializeData(ftStream* stream);
 
     FBTuint32*      m_filterList;
     FBTint32        m_filterListLen;

@@ -117,20 +117,38 @@ public:
     int load(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
     int save(const char* path, const int mode = PM_UNCOMPRESSED);
 
-
     ftBinTables* getMemoryTable(void);
 
-    ftINLINE const ftFixedString<12>&   getHeader(void)     const   {return m_header;}
-    ftINLINE const int&                 getVersion(void)    const   {return m_fileVersion;}
-    ftINLINE const char*                getPath(void)       const   {return m_curFile; }
-    ftINLINE ftBinTables*               getFileTable(void)          {return m_file;}
-    ftINLINE ftList&                    getChunks(void)             {return m_chunks;}
+    inline const ftFixedString<12>& getHeader(void) const
+    {
+        return m_header;
+    }
+
+    inline const int& getVersion(void) const
+    {
+        return m_fileVersion;
+    }
+
+    inline const char* getPath(void) const
+    {
+        return m_curFile;
+    }
+
+    inline ftBinTables* getFileTable(void)
+    {
+        return m_file;
+    }
+
+    inline ftList& getChunks(void)
+    {
+        return m_chunks;
+    }
 
     virtual void setFilterList(FBTuint32* filter, bool inclusive = false) {}
 
-    void writeStruct(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
-    void writeStruct(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
-    void writeBuffer(ftStream* stream, FBTsize len, void* writeData);
+    void serialize(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
+    void serialize(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
+    void serialize(ftStream* stream, FBTsize len, void* writeData);
 
     void generateTypeCastLog(const char* fname);
 
@@ -140,10 +158,10 @@ protected:
 
     virtual bool skip(const FBTuint32& id) { return false; }
 
-    virtual void*       getTables(void) = 0;
-    virtual FBTsize     getTableSize(void) = 0;
-    virtual int         dataRead(void* p, const Chunk& id) = 0;
-    virtual int         writeData(ftStream* stream) = 0;
+    virtual void*   getTables(void)                    = 0;
+    virtual FBTsize getTableSize(void)                 = 0;
+    virtual int     dataRead(void* p, const Chunk& id) = 0;
+    virtual int     serializeData(ftStream* stream)    = 0;
 
 
     int                 m_version, m_fileVersion;
@@ -158,7 +176,7 @@ protected:
 
 private:
 
-    void* findPtr(const FBTsize& iptr);
+    void*        findPtr(const FBTsize& iptr);
     MemoryChunk* findBlock(const FBTsize& iptr);
 
     int parseHeader(ftStream* stream);
