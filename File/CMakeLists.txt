@@ -19,8 +19,9 @@
 
 set(File_SRC
     ftFile.cpp
-    ftTables.cpp    
+    ftTables.cpp
     ftTypes.cpp
+    ftScanner.cpp
     ftStreams.cpp
     ftCompiler.cpp
 )
@@ -31,6 +32,7 @@ set(File_HDR
     ftCompiler.h
     ftTypes.h
     ftConfig.h
+    ftScanner.h
     ftStreams.h
     ftPlatformHeaders.h
     #ftScanner.l

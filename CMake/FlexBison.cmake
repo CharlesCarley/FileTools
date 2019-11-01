@@ -95,7 +95,7 @@ macro(ADD_FLEX OUT DEPS FLEX_SRC PREFIX)
 
     add_custom_command(
         OUTPUT  ${FSO}
-        COMMAND ${FLEX_EXECUTABLE} -L -P${PREFIX} -o${FSO} ${FSA}
+        COMMAND ${FLEX_EXECUTABLE}  -f -d -L -P${PREFIX} -o${FSO} ${FSA}
         DEPENDS ${FSA} ${ABS_DEPS}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "${FLEX_EXECUTABLE}  > ${FSA}"

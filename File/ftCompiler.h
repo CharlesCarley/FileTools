@@ -1,5 +1,11 @@
 /*
 -------------------------------------------------------------------------------
+
+    Copyright (c) Charles Carley.
+
+    Contributor(s): none yet.
+
+-------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -33,6 +39,10 @@ typedef ftArray<ftId>               ftStringPtrArray;
 typedef ftArray<ftPath>             ftPathArray;
 
 class ftBuildInfo;
+class ftScanner;
+class ftToken;
+
+
 
 
 class ftVariable
@@ -120,7 +130,7 @@ public:
     ~ftCompiler();
 
     int parseFile(const ftPath& id);
-    int parseBuffer(const ftId& name, const char* ms);
+    int parseBuffer(const ftId& name, const char* ms, int len);
     int buildTypes(void);
 
     void writeFile(const ftId& id, class ftStream* fp);
@@ -131,19 +141,23 @@ public:
 
 private:
 
-    int  doParse(void);
+    int doParse(void);
+    int lex(ftToken &cur);
 
     void writeBinPtr(ftStream* fp, void* ptr, int len);
     void writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs);
     void writeValidationProgram(const ftPath& path);
     void makeName(ftVariable&, bool);
 
+    char*                  m_buffer;
+    FBTsize                m_pos;
     ftBuildInfo*           m_build;
     FBTsize                m_start;
     ftPathArray            m_includes;
     ftStringPtrArray       m_namespaces, m_skip;
     ftCompileStruct::Array m_builders;
     int                    m_curBuf, m_writeMode;
+    ftScanner*             m_scanner;
 };
 
 #endif//_ftBuilder_h_

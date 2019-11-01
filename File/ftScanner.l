@@ -264,7 +264,7 @@ void* ftInitParse(const char *ifile)
     gsCurFile = (void*)fopen(ifile, "rb");
     if (!gsCurFile)
     {
-        ftPrintf("File '%s' loading failed!\n", ifile);
+        printf("File '%s' loading failed!\n", ifile);
         return 0;
     }
 

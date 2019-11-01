@@ -1,5 +1,11 @@
 /*
 -------------------------------------------------------------------------------
+
+    Copyright (c) Charles Carley.
+
+    Contributor(s): none yet.
+
+-------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -21,31 +27,31 @@
 #include "ftTables.h"
 #include "ftPlatformHeaders.h"
 
-ftBinTables::ftBinTables()
-    :   m_name(0),
-        m_type(0),
-        m_tlen(0),
-        m_strc(0),
-        m_nameNr(0),
-        m_typeNr(0),
-        m_strcNr(0),
-        m_ptr(ftVOID),
-        m_otherBlock(0),
-        m_otherLen(0)
+ftBinTables::ftBinTables() :
+    m_name(0),
+    m_type(0),
+    m_tlen(0),
+    m_strc(0),
+    m_nameNr(0),
+    m_typeNr(0),
+    m_strcNr(0),
+    m_ptr(ftVOID),
+    m_otherBlock(0),
+    m_otherLen(0)
 {
 }
 
-ftBinTables::ftBinTables(void* ptr, const FBTsize& len)
-    :   m_name(0),
-        m_type(0),
-        m_tlen(0),
-        m_strc(0),
-        m_nameNr(0),
-        m_typeNr(0),
-        m_strcNr(0),
-        m_ptr(ftVOID),
-        m_otherBlock(ptr),
-        m_otherLen(len)
+ftBinTables::ftBinTables(void* ptr, const FBTsize& len) :
+    m_name(0),
+    m_type(0),
+    m_tlen(0),
+    m_strc(0),
+    m_nameNr(0),
+    m_typeNr(0),
+    m_strcNr(0),
+    m_ptr(ftVOID),
+    m_otherBlock(ptr),
+    m_otherLen(len)
 {
 }
 
@@ -75,8 +81,8 @@ bool ftBinTables::read(bool swap)
 
 bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 {
-    FBTuint32* ip = 0, i, j, k, nl;
-    FBTtype* tp = 0;
+    FBTuint32 *ip = 0, i, j, k, nl;
+    FBTtype*   tp = 0;
 
     char* cp = (char*)ptr;
     if (!ftCharNEq(cp, ftIdNames::ftSDNA, 4))
@@ -93,15 +99,14 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     }
 
     cp += 4;
-
-
     FBTintPtr opad;
 
     ip = (FBTuint32*)cp;
     nl = *ip++;
     cp = (char*)ip;
 
-    if (swap) nl = ftSwap32(nl);
+    if (swap)
+        nl = ftSwap32(nl);
 
 
     if (nl > FT_MAX_TABLE)
@@ -127,23 +132,34 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
             switch (*cp)
             {
             default:
-                {
-                    bn.push_back(*cp);
-                    ++cp; break;
-                }
+            {
+                bn.push_back(*cp);
+                ++cp;
+                break;
+            }
             case ')':
             case ']':
                 ++cp;
                 break;
-            case '(':   {++cp; name.m_isFptr = 1; break;    }
-            case '*':   {++cp; name.m_ptrCount ++; break;   }
-            case '[':
-                {
-                    while ((*++cp) != ']')
-                        name.m_slots[name.m_numSlots] = (name.m_slots[name.m_numSlots] * 10) + ((*cp) - '0');
-                    name.m_arraySize *= name.m_slots[name.m_numSlots++];
-                }
+            case '(':
+            {
+                ++cp;
+                name.m_isFptr = 1;
                 break;
+            }
+            case '*':
+            {
+                ++cp;
+                name.m_ptrCount++;
+                break;
+            }
+            case '[':
+            {
+                while ((*++cp) != ']')
+                    name.m_slots[name.m_numSlots] = (name.m_slots[name.m_numSlots] * 10) + ((*cp) - '0');
+                name.m_arraySize *= name.m_slots[name.m_numSlots++];
+            }
+            break;
             }
         }
         ++cp;
@@ -155,7 +171,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     opad = (FBTintPtr)cp;
     opad = ((opad + 3) & ~3) - opad;
-    while (opad--) cp++;
+    while (opad--)
+        cp++;
 
 
     if (!ftCharNEq(cp, ftIdNames::ftTYPE, 4))
@@ -170,7 +187,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     nl = *ip++;
     cp = (char*)ip;
 
-    if (swap) nl = ftSwap32(nl);
+    if (swap)
+        nl = ftSwap32(nl);
 
     if (nl > FT_MAX_TABLE)
     {
@@ -186,16 +204,18 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     i = 0;
     while (i < nl)
     {
-        ftType typeData = {cp, ftCharHashKey(cp).hash(), ftNPOS};
+        ftType typeData    = {cp, ftCharHashKey(cp).hash(), ftNPOS};
         m_type[m_typeNr++] = typeData;
-        while (*cp) ++cp;
+        while (*cp)
+            ++cp;
         ++cp;
         ++i;
     }
 
     opad = (FBTintPtr)cp;
     opad = ((opad + 3) & ~3) - opad;
-    while (opad--) cp++;
+    while (opad--)
+        cp++;
     if (!ftCharNEq(cp, ftIdNames::ftTLEN, 4))
     {
         printf("Bin table is missing the tlen id!\n");
@@ -214,7 +234,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         ++i;
     }
 
-    if (m_typeNr & 1) ++tp;
+    if (m_typeNr & 1)
+        ++tp;
     cp = (char*)tp;
 
     if (!ftCharNEq(cp, ftIdNames::ftSTRC, 4))
@@ -229,7 +250,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     nl = *ip++;
     tp = (FBTtype*)ip;
 
-    if (swap) nl = ftSwap32(nl);
+    if (swap)
+        nl = ftSwap32(nl);
 
     if (nl > FT_MAX_TABLE)
     {
@@ -318,7 +340,7 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
         FBTtype* strc = m_strc[i];
 
         oof = cof;
-        ol = m_tlen[strc[0]];
+        ol  = m_tlen[strc[0]];
 
         l = strc[1];
         strc += 2;
@@ -340,7 +362,6 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
 
         if ((cof - oof) != ol)
             printf("Build ==> invalid offset (%i)(%i:%i)\n", a, (cof - oof), ol);
-
     }
 }
 
@@ -364,13 +385,13 @@ void ftBinTables::compile(void)
 
         FBTtype strcType = strc[0];
 
-        depth = 0;
-        cof = 0;
-        ftStruct* off = new ftStruct;
+        depth             = 0;
+        cof               = 0;
+        ftStruct* off     = new ftStruct;
         off->m_key.k16[0] = strcType;
         off->m_key.k16[1] = 0;
         off->m_val.k32[0] = m_type[strcType].m_typeId;
-        off->m_val.k32[1] = 0; // no name
+        off->m_val.k32[1] = 0;  // no name
         off->m_nr         = 0;
         off->m_dp         = 0;
         off->m_off        = cof;
@@ -391,7 +412,7 @@ void ftBinTables::compile(void)
             if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
             {
                 ftStruct::Keys keys;
-                ftKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
+                ftKey64        k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
                 keys.push_back(k);
 
                 compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth + 1, keys);
@@ -438,18 +459,18 @@ FBTtype ftBinTables::findTypeId(const ftCharHashKey& cp)
 
 const char* ftBinTables::getStructType(const ftStruct* strc)
 {
-    FBTuint32 k = strc ? strc->m_key.k16[0] : (FBTuint32) - 1;
+    FBTuint32 k = strc ? strc->m_key.k16[0] : (FBTuint32)-1;
     return (k >= m_typeNr) ? "" : m_type[k].m_name;
 }
 
 const char* ftBinTables::getStructName(const ftStruct* strc)
 {
-    FBTuint32 k = strc ? strc->m_key.k16[1] : (FBTuint32) - 1;
+    FBTuint32 k = strc ? strc->m_key.k16[1] : (FBTuint32)-1;
     return (k >= m_nameNr) ? "" : m_name[k].m_name;
 }
 
 const char* ftBinTables::getOwnerStructName(const ftStruct* strc)
 {
-    FBTuint32 k = strc ? strc->m_strcId : (FBTuint32) - 1;
+    FBTuint32 k = strc ? strc->m_strcId : (FBTuint32)-1;
     return (k >= m_strcNr || *m_strc[k] >= m_typeNr) ? "" : m_type[*m_strc[k]].m_name;
 }

@@ -1742,15 +1742,15 @@ public:
     template <const FBTuint16 OL>
     ftFixedString<L>& operator=(const ftFixedString<OL>& o)
     {
-        if (o.m_size > 0)
+        if (o.size() > 0)
         {
-            if (m_hash == ftNPOS || m_hash != o.m_hash)
+            if (m_hash == ftNPOS || m_hash != o.hash())
             {
                 FBTuint16 i;
                 m_size = 0;
-                m_hash = o.m_hash;
-                for (i = 0; (i < L && i < OL) && i < o.m_size; ++i, ++m_size)
-                    m_buffer[i] = o.m_buffer[i];
+                m_hash = o.hash();
+                for (i = 0; (i < L && i < OL) && i < o.size(); ++i, ++m_size)
+                    m_buffer[i] = o.c_str()[i];
                 m_buffer[m_size] = 0;
             }
         }

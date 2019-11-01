@@ -43,5 +43,4 @@ int main(int argc, char** argv)
         return code;
 
     tables.writeFile(argv[1], argv[2]);
-    return 0;
-}
+ }

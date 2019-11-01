@@ -1,5 +1,11 @@
 /*
 -------------------------------------------------------------------------------
+
+    Copyright (c) Charles Carley.
+
+    Contributor(s): none yet.
+
+-------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -30,7 +36,7 @@
 // FileTools is only set up for two dimensional arrays
 // changing this may compile fine, but the supporting
 // code may not work as expected
-#define FT_ARR_DIM_MAX 2  // Maximum dimensional array, EG; (int m_member[..][..] -> [FT_ARR_DIM_MAX])
+#define FT_ARR_DIM_MAX 7  // Maximum dimensional array, EG; (int m_member[..][..] -> [FT_ARR_DIM_MAX])
 
 
 #endif//_ftConfig_h_

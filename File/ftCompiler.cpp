@@ -1,5 +1,11 @@
 /*
 -------------------------------------------------------------------------------
+
+    Copyright (c) Charles Carley.
+
+    Contributor(s): none yet.
+
+-------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -17,16 +23,20 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "ftConfig.h"
 #include "ftCompiler.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+//#include "Generated/ftScanner.inl"
+#include "ftConfig.h"
+#include "ftScanner.h"
 #include "ftStreams.h"
-#include "Generated/ftScanner.inl"
 
 #define ftValidToken(x) (x > 0)
 
 
-typedef ftArray<FBTtype>   IntPtrArray;
-typedef ftArray<FBTtype>   TypeArray;
+typedef ftArray<FBTtype> IntPtrArray;
+typedef ftArray<FBTtype> TypeArray;
 
 struct MaxAllocSize
 {
@@ -41,24 +51,25 @@ class ftBuildInfo
 {
 public:
     ftBuildInfo();
-    ~ftBuildInfo() {}
+    ~ftBuildInfo()
+    {
+    }
 
-    void    reserve(void);
-    int     getLengths(ftCompileStruct::Array& struct_builders);
-    int     getTLengths(ftCompileStruct::Array& struct_builders);
-    void    makeBuiltinTypes(void);
-
+    void        reserve(void);
+    int         getLengths(ftCompileStruct::Array& struct_builders);
+    int         getTLengths(ftCompileStruct::Array& struct_builders);
+    void        makeBuiltinTypes(void);
     bool        hasType(const ftId& type);
     FBTsizeType addType(const ftId& type, const FBTuint32& len);
     FBTsizeType addName(const ftId& name);
 
-    MaxAllocSize        m_alloc;
-    ftStringPtrArray    m_name;
-    ftStringPtrArray    m_type;
-    IntPtrArray         m_tlen;
-    IntPtrArray         m_64ln;
-    TypeArray           m_strc;
-    ftStringPtrArray    m_undef;
+    MaxAllocSize     m_alloc;
+    ftStringPtrArray m_name;
+    ftStringPtrArray m_type;
+    IntPtrArray      m_tlen;
+    IntPtrArray      m_64ln;
+    TypeArray        m_strc;
+    ftStringPtrArray m_undef;
 };
 
 
@@ -67,10 +78,11 @@ ftCompiler::ftCompiler() :
     m_build(new ftBuildInfo()),
     m_start(0),
     m_curBuf(0),
-    m_writeMode(0)
+    m_writeMode(0),
+    m_buffer(0),
+    m_pos(0)
 {
 }
-
 
 ftCompiler::~ftCompiler()
 {
@@ -81,7 +93,7 @@ ftCompiler::~ftCompiler()
 void ftCompiler::makeName(ftVariable& v, bool forceArray)
 {
     ftId newName;
-    int i = 0, j = 0;
+    int  i = 0, j = 0;
     if (v.m_isFptr)
         newName.push_back('(');
 
@@ -120,100 +132,117 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
     v.m_name = newName;
 }
 
-int ftCompiler::parseBuffer(const ftId& name, const char* ms)
+int ftCompiler::parseBuffer(const ftId& name, const char* ms, int len)
 {
-    ftParser parser = ftInitParse(name.c_str(), ms);
+    ftScanner scanner(ms, len);
+    m_scanner = &scanner;
     m_includes.push_back(name.c_str());
 
-    if (!parser)
-    {
-        printf("Error : Parser initialization failed!\n");
-        return -1;
-    }
 
-    int ret = doParse();
-    ftFreeParse(parser);
+    int ret   = doParse();
+    m_scanner = 0;
     return ret;
 }
+
 
 int ftCompiler::parseFile(const ftPath& id)
 {
-    ftParser parser = ftInitParse(id.c_str());
-    m_includes.push_back(id);
-
-    if (!parser)
+    FILE* fp = fopen(id.c_str(), "rb");
+    if (!fp)
     {
-        printf("Error : Parser initialization failed!\n");
+        printf("Error: File loading failed: %s\n", id.c_str());
         return -1;
     }
 
-    int ret = doParse();
-    ftFreeParse(parser);
+    fseek(fp, 0L, SEEK_END);
+    size_t len = ftell(fp), br;
+    fseek(fp, 0L, SEEK_SET);
+
+    char* buffer = new char[len + 1];
+    br           = fread(buffer, 1, len, fp);
+    buffer[br]   = 0;
+    fclose(fp);
+
+    int ret = parseBuffer(id.c_str(), buffer, len);
+
+    delete[] buffer;
     return ret;
 }
 
+#define ftTOK_IS_TYPE(x) (x >= IDENTIFIER && x <= VOID)
+
+
+int ftCompiler::lex(ftToken& cur)
+{
+    cur = m_scanner->lex();
+    return cur.getToken();
+}
+
+
+
 int ftCompiler::doParse(void)
 {
-    ftTokenID TOK = NULL_TOKEN;
+    int TOK = 1;
+
+
+
+    ftToken tp;
 
     while (ftValidToken(TOK))
     {
-        TOK = ftLex();
-
+        TOK = lex(tp);
         if (TOK == NAMESPACE)
         {
-            ftToken tp;
-            TOK = ftLex(tp);
+            TOK = lex(tp);
             if (TOK == IDENTIFIER)
-                m_namespaces.push_back(tp.m_buf);
+                m_namespaces.push_back(tp.getValue().c_str());
         }
-
-        if (TOK == STRUCT)
+        else if (TOK == STRUCT || TOK == CLASS)
         {
             ftToken tp;
             do
             {
-                TOK = ftLex(tp);
+                TOK = lex(tp);
 
                 if (TOK == IDENTIFIER)
                 {
                     ftCompileStruct bs;
-                    bs.m_name = tp.m_buf;
-                    bs.m_path = tp.m_src;
-                    bs.m_line = tp.m_line;
+                    bs.m_name = tp.getValue();
+                    //bs.m_path = tp.m_src;
+                    //bs.m_line = tp.m_line;
 
-                    TOK = ftLex(tp);
+                    TOK = lex(tp);
 
                     if (TOK == LBRACKET)
                     {
                         do
                         {
-                            TOK = ftLex(tp);
+                            TOK = lex(tp);
 
                             if (TOK == RBRACKET)
                                 break;
 
                             if (TOK == CLASS || TOK == STRUCT)
-                                TOK = ftLex(tp);
+                                TOK = lex(tp);
 
                             if (ftTOK_IS_TYPE(TOK))
                             {
-                                ftId typeId = tp.m_buf;
+                                const ftToken::String& typeId = tp.getValue();
 
                                 // Scan names till ';'
 
                                 ftVariable cur;
-                                cur.m_type          = typeId;
-                                cur.m_path          = tp.m_src;
-                                cur.m_line          = tp.m_line;
-                                cur.m_undefined     = 0;
+                                cur.m_type = typeId;
+                                //cur.m_path      = tp.m_src;
+                                //cur.m_line      = tp.m_line;
+                                cur.m_undefined = 0;
 
                                 bool forceArray = false;
-                                bool isId = TOK == IDENTIFIER;
+                                bool isId       = TOK == IDENTIFIER;
 
                                 do
                                 {
-                                    TOK = ftLex(tp);
+                                    TOK = lex(tp);
 
                                     switch (TOK)
                                     {
@@ -229,69 +258,65 @@ int ftCompiler::doParse(void)
                                             return -1;
                                         }
 
-                                        cur.m_arrays[cur.m_numSlots] = tp.m_constantSize;
-                                        cur.m_numSlots ++;
-                                        cur.m_arraySize *= tp.m_constantSize;
+                                        cur.m_arrays[cur.m_numSlots] = tp.getArrayLen();
+                                        cur.m_numSlots++;
+                                        cur.m_arraySize *= tp.getArrayLen();
                                         break;
                                     case POINTER:
                                         cur.m_ptrCount++;
                                         break;
                                     case IDENTIFIER:
-                                        cur.m_name = tp.m_buf;
+                                        cur.m_name = tp.getValue();
                                         break;
-                                    case FUNCTION_POINTER_BEG:
+                                    case LPARN:
                                         cur.m_isFptr = 1;
                                         cur.m_ptrCount++;
-                                        cur.m_name = tp.m_buf;
+                                        cur.m_name = tp.getValue();
                                         break;
-                                    case FUNCTION_POINTER_END:
+                                    case RPARN:
                                         break;
                                     case TERM:
                                     case COMMA:
+                                    {
+                                        makeName(cur, forceArray);
+
+                                        if (isId && cur.m_ptrCount == 0)
                                         {
-                                            makeName(cur, forceArray);
-
-                                            if (isId && cur.m_ptrCount == 0)
-                                            {
-                                                if (bs.m_nrDependentTypes > 0)
-                                                    bs.m_nrDependentTypes = bs.m_nrDependentTypes * 2;
-                                                else
-                                                    bs.m_nrDependentTypes ++;
-                                                cur.m_isDependentType = true;
-                                            }
-
-                                            bs.m_data.push_back(cur);
-                                            cur.m_ptrCount = 0;
-                                            cur.m_arraySize = 1;
-
-                                            if (TOK == COMMA)
-                                                cur.m_numSlots = 0;
+                                            if (bs.m_nrDependentTypes > 0)
+                                                bs.m_nrDependentTypes = bs.m_nrDependentTypes * 2;
+                                            else
+                                                bs.m_nrDependentTypes++;
+                                            cur.m_isDependentType = true;
                                         }
-                                        break;
-                                    default:
-                                        {
-                                            printf("%s(%i): error : Unknown character parsed! %s\n", tp.m_src, tp.m_line, tp.m_buf);
-                                            return -1;
-                                        }
-                                        break;
 
+                                        bs.m_data.push_back(cur);
+                                        cur.m_ptrCount  = 0;
+                                        cur.m_arraySize = 1;
+
+                                        if (TOK == COMMA)
+                                            cur.m_numSlots = 0;
                                     }
-                                }
-                                while ((TOK != TERM) && ftValidToken(TOK));
+                                    break;
+                                    default:
+                                    {
+                                        //printf("%s(%i): error : Unknown character parsed! %s\n", tp.m_src, tp.m_line, tp.m_buf);
+                                        return -1;
+                                    }
+                                    break;
+                                    }
+                                } while ((TOK != TERM) && ftValidToken(TOK));
                             }
                             else
                             {
-                                printf("%s(%i): error : unknown token parsed %s\n", tp.m_src, tp.m_line, tp.m_buf);
+                                //printf("%s(%i): error : unknown token parsed %s\n", tp.m_src, tp.m_line, tp.m_buf);
                                 return -1;
                             }
-                        }
-                        while ((TOK != RBRACKET) && ftValidToken(TOK));
+                        } while ((TOK != RBRACKET) && ftValidToken(TOK));
 
                         m_builders.push_back(bs);
                     }
                 }
-            }
-            while ((TOK != RBRACKET && TOK != TERM) && ftValidToken(TOK));
+            } while ((TOK != RBRACKET && TOK != TERM) && ftValidToken(TOK));
         }
     }
     return 0;
@@ -378,17 +403,17 @@ void ftCompiler::writeStream(ftStream* fp)
     writeBinPtr(fp, &i, 4);
 
 #if ftFAKE_ENDIAN == 1
-    for (i = 0; i < (int) m_build->m_strc.size(); i++)
+    for (i = 0; i < (int)m_build->m_strc.size(); i++)
         m_build->m_strc.at(i) = ftSwap16(m_build->m_strc.at(i));
 #endif
-    writeBinPtr(fp,  m_build->m_strc.ptr(), m_build->m_alloc.m_strc);
+    writeBinPtr(fp, m_build->m_strc.ptr(), m_build->m_alloc.m_strc);
 }
 
 void ftCompiler::writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs)
 {
-    char pad[4] = {'b', 'y', 't', 'e'};
+    char    pad[4] = {'b', 'y', 't', 'e'};
     FBTsize i = 0, s = ptrs.size();
-    int t = 0;
+    int     t = 0;
 
     while (i < s)
     {
@@ -399,11 +424,11 @@ void ftCompiler::writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs)
     }
 
     int len = t;
-    len = (len + 3) & ~3;
+    len     = (len + 3) & ~3;
     if (len - t)
     {
         ftId id;
-        int p;
+        int  p;
         for (p = 0; p < (len - t); p++)
             id.push_back(pad[p % 4]);
 
@@ -448,7 +473,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 {
 #if FT_TYLE_LEN_VALIDATE == 1
 
-    ftPath string;
+    ftPath      string;
     ftPathArray split;
     path.split(split, '/', '\\');
 
@@ -502,7 +527,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     {
         ftCompileStruct& bs = it.getNext();
 
-        ftId& cur = m_build->m_type.at(bs.m_structId);
+        ftId&   cur = m_build->m_type.at(bs.m_structId);
         FBTtype len = m_build->m_tlen.at(bs.m_structId);
 
         if (m_skip.find(cur) != ftNPOS)
@@ -513,18 +538,27 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         fprintf(fp, "\t");
         fprintf(fp, "if (sizeof(%s) != %i)\n\t{\n\t\terrors ++;\n", cur.c_str(), len);
         fprintf(fp, "#ifdef _MSC_VER\n");
-        fprintf(fp, "\t\tfprintf(stderr, \"%%s(%%i): error : Validation failed with "\
-                "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
+        fprintf(fp,
+                "\t\tfprintf(stderr, \"%%s(%%i): error : Validation failed with "
+                "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n",
+                cur.c_str(),
+                cur.c_str(),
+                len);
         fprintf(fp, "#else\n");
-        fprintf(fp, "\t\tfprintf(stderr, \"%%s:%%i: error : Validation failed with "\
-                "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n", cur.c_str(), cur.c_str(), len);
+        fprintf(fp,
+                "\t\tfprintf(stderr, \"%%s:%%i: error : Validation failed with "
+                "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n",
+                cur.c_str(),
+                cur.c_str(),
+                len);
         fprintf(fp, "#endif\n");
         fprintf(fp, "\t}\n");
         fprintf(fp, "\n");
     }
 
     fprintf(fp, "\t");
-    fprintf(fp, "if (errors > 0)fprintf(stderr, \"%%s(%%i): error : "\
+    fprintf(fp,
+            "if (errors > 0)fprintf(stderr, \"%%s(%%i): error : "
             "there are %%i misaligned types.\\n\", __FILE__, __LINE__, errors);\n");
 
     fprintf(fp, "\treturn errors == 0 ? 0 : 1;\n}\n");
@@ -554,23 +588,23 @@ void ftBuildInfo::reserve(void)
 
 void ftBuildInfo::makeBuiltinTypes(void)
 {
-    addType("char",         sizeof(char));
-    addType("uchar",        sizeof(char));
-    addType("short",        sizeof(short));
-    addType("ushort",       sizeof(short));
-    addType("int",          sizeof(int));
-    addType("long",         sizeof(long));
-    addType("ulong",        sizeof(long));
-    addType("float",        sizeof(float));
-    addType("double",       sizeof(double));
-    addType("int64_t",      sizeof(FBTint64));
-    addType("uint64_t",     sizeof(FBTuint64));
+    addType("char", sizeof(char));
+    addType("uchar", sizeof(char));
+    addType("short", sizeof(short));
+    addType("ushort", sizeof(short));
+    addType("int", sizeof(int));
+    addType("long", sizeof(long));
+    addType("ulong", sizeof(long));
+    addType("float", sizeof(float));
+    addType("double", sizeof(double));
+    addType("int64_t", sizeof(FBTint64));
+    addType("uint64_t", sizeof(FBTuint64));
 #ifdef ftSCALAR_DOUBLE
-    addType("scalar_t",     sizeof(double));
+    addType("scalar_t", sizeof(double));
 #else
-    addType("scalar_t",     sizeof(float));
+    addType("scalar_t", sizeof(float));
 #endif
-    addType("void",         0);
+    addType("void", 0);
 }
 
 FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
@@ -614,7 +648,7 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
     while (bit.hasMoreElements())
     {
         ftCompileStruct& bs = bit.getNext();
-        bs.m_structId = addType(bs.m_name, 0);
+        bs.m_structId       = addType(bs.m_name, 0);
 
         m_strc.push_back(bs.m_structId);
         m_strc.push_back((FBTint16)bs.m_data.size());
@@ -643,14 +677,14 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
 int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 {
     ftCompileStruct* strcs = struct_builders.ptr();
-    FBTsize tot = struct_builders.size(), i, e;
+    FBTsize          tot   = struct_builders.size(), i, e;
 
     int next = tot, prev = 0;
 
-    FBTtype* tln64 = m_64ln.ptr();
-    FBTtype* tlens = m_tlen.ptr();
-    FBTsize nrel = 0, ct, len, fake64;
-    int status = LNK_OK;
+    FBTtype*         tln64  = m_64ln.ptr();
+    FBTtype*         tlens  = m_tlen.ptr();
+    FBTsize          nrel   = 0, ct, len, fake64;
+    int              status = LNK_OK;
     ftStringPtrArray m_missingReport, m_zpdef;
 
     FBTtype ft_start = 0;
@@ -677,13 +711,13 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                 vptr = cur.m_data.ptr();
                 nrel = cur.m_data.size();
 
-                len     = 0;
-                fake64  = 0;
+                len         = 0;
+                fake64      = 0;
                 bool hasPtr = false;
                 for (e = 0; e < nrel; ++e)
                 {
                     ftVariable& v = vptr[e];
-                    ct = v.m_typeId;
+                    ct            = v.m_typeId;
 
                     if (v.m_ptrCount > 0)
                     {
@@ -691,18 +725,24 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                         if (len % ftVOID)
                         {
                             printf(v.m_path.c_str(),
-                                    v.m_line, "align %i: %s %s add %i bytes\n", ftVOID,
-                                    v.m_type.c_str(), v.m_name.c_str(), ftVOID - (len % ftVOID)
-                                   );
+                                   v.m_line,
+                                   "align %i: %s %s add %i bytes\n",
+                                   ftVOID,
+                                   v.m_type.c_str(),
+                                   v.m_name.c_str(),
+                                   ftVOID - (len % ftVOID));
 
                             status |= LNK_ALIGNEMENTP;
                         }
                         if (fake64 % 8)
                         {
                             printf(v.m_path.c_str(),
-                                    v.m_line, "align %i: %s %s add %i bytes\n", 8,
-                                    v.m_type.c_str(), v.m_name.c_str(), 8 - (fake64 % 8)
-                                   );
+                                   v.m_line,
+                                   "align %i: %s %s add %i bytes\n",
+                                   8,
+                                   v.m_type.c_str(),
+                                   v.m_name.c_str(),
+                                   8 - (fake64 % 8));
 
                             status |= LNK_ALIGNEMENTP;
                         }
@@ -716,10 +756,10 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                             if (ftVOID8 && (len % 8))
                             {
                                 printf(v.m_path.c_str(),
-                                        v.m_line, "align: %i alignment error add %i bytes\n",
-                                        8,
-                                        8 - (len % 8)
-                                       );
+                                       v.m_line,
+                                       "align: %i alignment error add %i bytes\n",
+                                       8,
+                                       8 - (len % 8));
                                 status |= LNK_ALIGNEMENTS;
                             }
                         }
@@ -727,20 +767,23 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                         if (tlens[ct] > 3 && (len % 4))
                         {
                             printf(cur.m_path.c_str(),
-                                    v.m_line,
-                                    "align %i: in %s::%s add %i bytes\n",
-                                    4,
-                                    cur.m_name.c_str(), v.m_name.c_str(), 4 - (len % 4)
-                                   );
+                                   v.m_line,
+                                   "align %i: in %s::%s add %i bytes\n",
+                                   4,
+                                   cur.m_name.c_str(),
+                                   v.m_name.c_str(),
+                                   4 - (len % 4));
                             status |= LNK_ALIGNEMENT4;
                         }
                         else if (tlens[ct] == 2 && (len % 2))
                         {
                             printf(cur.m_path.c_str(),
-                                    v.m_line, "align %i: in %s::%s add %i bytes\n",
-                                    2,
-                                    cur.m_name.c_str(), v.m_name.c_str(), 2 - (len % 2)
-                                   );
+                                   v.m_line,
+                                   "align %i: in %s::%s add %i bytes\n",
+                                   2,
+                                   cur.m_name.c_str(),
+                                   v.m_name.c_str(),
+                                   2 - (len % 2));
                             status |= LNK_ALIGNEMENT2;
                         }
 
@@ -749,7 +792,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                     }
                     else
                     {
-                        next ++;
+                        next++;
                         len = 0;
                         if (m_missingReport.find(cur.m_name) == ftNPOS)
                             m_missingReport.push_back(cur.m_name);
@@ -770,10 +813,10 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                         if (fake64 % 8)
                         {
                             printf(cur.m_path.c_str(),
-                                    cur.m_line,
-                                    "64Bit alignment, in %s add %i bytes\n",
-                                    cur.m_name.c_str(), 8 - (fake64 % 8)
-                                   );
+                                   cur.m_line,
+                                   "64Bit alignment, in %s add %i bytes\n",
+                                   cur.m_name.c_str(),
+                                   8 - (fake64 % 8));
                             status |= LNK_ALIGNEMENT8;
                         }
                     }
@@ -781,10 +824,10 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                     if (len % 4)
                     {
                         printf(cur.m_path.c_str(),
-                                cur.m_line,
-                                "align 4: in %s add %i bytes\n",
-                                cur.m_name.c_str(), 4 - (len % 4)
-                               );
+                               cur.m_line,
+                               "align 4: in %s add %i bytes\n",
+                               cur.m_name.c_str(),
+                               4 - (len % 4));
                         status |= LNK_ALIGNEMENT4;
                     }
                 }
@@ -820,12 +863,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                 while (it.hasMoreElements())
                 {
                     ftVariable& cvar = it.getNext();
-                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n",
-                            cvar.m_typeId, cvar.m_nameId,
-                            (cvar.m_ptrCount > 0 ? ftVOID : tlens[cvar.m_typeId]) * cvar.m_arraySize,
-                            cvar.m_type.c_str(),
-                            cvar.m_name.c_str()
-                           );
+                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", cvar.m_typeId, cvar.m_nameId, (cvar.m_ptrCount > 0 ? ftVOID : tlens[cvar.m_typeId]) * cvar.m_arraySize, cvar.m_type.c_str(), cvar.m_name.c_str());
                 }
             }
         }
