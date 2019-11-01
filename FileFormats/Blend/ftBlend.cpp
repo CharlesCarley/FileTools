@@ -21,11 +21,6 @@
 #include "ftStreams.h"
 #include "ftTables.h"
 
-
-
-extern unsigned char bfBlenderTable[];
-extern int           bfBlenderLen;
-
 const FBTuint32 GLOB = ftID('G', 'L', 'O', 'B');
 
 
@@ -36,7 +31,7 @@ struct ftIdDB
 };
 
 
-ftIdDB ftData[] =
+const ftIdDB ftData[] =
     {
         {ftID2('S', 'C'), &ftBlend::m_scene},
         {ftID2('L', 'I'), &ftBlend::m_library},
@@ -68,11 +63,14 @@ ftIdDB ftData[] =
         {ftID2('W', 'M'), &ftBlend::m_wm},
         {0, 0}};
 
+
+
 ftBlend::ftBlend() :
     ftFile("BLENDER"),
     m_filterList(0),
     m_filterListLen(0),
-    m_inclusive(false)
+    m_inclusive(false),
+    m_fg()
 {
 }
 
@@ -173,6 +171,15 @@ void ftBlend::setFilterList(FBTuint32* filter, bool inclusive)
 }
 
 
+int ftBlend::save(const char* path, const int mode)
+{
+    m_version = m_fileVersion;
+    return ftFile::save(path, mode);
+}
+
+
+#include "bfBlender.inl"
+
 void* ftBlend::getTables(void)
 {
     return (void*)bfBlenderTable;
@@ -181,10 +188,4 @@ void* ftBlend::getTables(void)
 FBTsize ftBlend::getTableSize(void)
 {
     return bfBlenderLen;
-}
-
-int ftBlend::save(const char* path, const int mode)
-{
-    m_version = m_fileVersion;
-    return ftFile::save(path, mode);
 }

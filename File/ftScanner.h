@@ -32,40 +32,40 @@
 
 enum ftTokenID
 {
-    NULL_TOKEN = -1,
+    FT_KEEP_GOING = -2,
+    FT_NULL_TOKEN = -1,
     FT_EOF,
-    COMMA      = ',',
-    POINTER  = '*',
-    LBRACE   = '[',
-    COLON    = ':',
-    RBRACE   = ']',
-    LPARN    = '(',
-    RPARN    = ')',
-    LBRACKET = '{',
-    RBRACKET = '}',
-    TERM     = ';',
-    IDENTIFIER = 256,
-    CHAR,
-    SHORT,
-    INT,
-    LONG,
-    FLOAT,
-    DOUBLE,
-    INT64,
-    SCALAR,
-    PUBLIC,
-    PRIVATE,
-    PROTECTED,
-    PRIVSEC,
-    VOID,
-    FUNCTION_POINTER_BEG,
-    FUNCTION_POINTER_END,
-    CONSTANT,
-    NAMESPACE,
-    CLASS,
-    STRUCT,
-    UNION,
+    FT_COMMA    = ',',
+    FT_POINTER  = '*',
+    FT_LBRACE   = '[',
+    FT_COLON    = ':',
+    FT_RBRACE   = ']',
+    FT_LPARAN   = '(',
+    FT_RPARN    = ')',
+    FT_LBRACKET = '{',
+    FT_RBRACKET = '}',
+    FT_TERM     = ';',
+    FT_ID       = 256,
+    FT_CHAR,
+    FT_SHORT,
+    FT_INTEGER,
+    FT_LONG,
+    FT_FLOAT,
+    FT_DOUBLE,
+    FT_INT64,
+    FT_SCALAR,
+    FT_PUBLIC,
+    FT_PRIVATE,
+    FT_PROTECTED,
+    FT_VOID,
+    FT_CLASS,
+    FT_NAMESPACE,
+    FT_STRUCT,
+    FT_CONSTANT,
+    // FT_UNION, ?
+
 };
+
 
 struct ftKeywordTable
 {
@@ -86,9 +86,8 @@ private:
     int    m_arrayConstant;
 
 public:
-
     ftToken() :
-        m_id(NULL_TOKEN),
+        m_id(FT_NULL_TOKEN),
         m_value(),
         m_arrayConstant(0)
     {
@@ -154,7 +153,6 @@ private:
     const static size_t         KeywordTableSize;
 
 public:
-
     ftScanner(const char* ptr, int length) :
         m_buffer(ptr),
         m_pos(0),
@@ -174,8 +172,8 @@ public:
 
 
 private:
-
     int  isKeyword(const char* kw, int len, int stateIf);
+    bool isEOF();
     bool isNewLine(const char& ch);
     bool isNCS(const char& ch);
     bool isAlpha(const char& ch);
@@ -189,7 +187,7 @@ private:
     void ignoreUntilNCS();
     int  newlineTest();
 
-    void makeKeyword(ftToken& tok, const char *kw, int id);
+    void makeKeyword(ftToken& tok, const char* kw, int id);
     void makeIdentifier(ftToken& tok);
     void makeLeftBracket(ftToken& tok);
     void makeRightBracket(ftToken& tok);
@@ -202,6 +200,13 @@ private:
     void makeRightParen(ftToken& tok);
     void makeComma(ftToken& tok);
     void makeDigit(ftToken& tok);
+
+
+    int handleStartState(ftToken& ct);
+    int handleNamespaceState(ftToken& ct);
+    int handleClassState(ftToken& ct);
+    int handleInsideState(ftToken& ct);
+    int handleToggleState(ftToken& ct);
 };
 
 

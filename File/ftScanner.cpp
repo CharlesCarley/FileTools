@@ -26,244 +26,288 @@
 #include "ftScanner.h"
 #include <stdlib.h>
 
+
 enum ftLexState
 {
-    FT_START = 0,
-    FT_NAMESPCE,
-    FT_CLASS,
-    FT_STRUCT,
+    FT_IN_START = 0,
+    FT_IN_NAMESPACE,
+    FT_IN_CLASS,
+    FT_IN_STRUCT,
     FT_INSIDE,
-    FT_ISENUM,
-    FT_IN_PRIVSEC,
-    FT_IN_COMMENT,
+    FT_IN_SKIP,
 };
+
 
 int ftScanner::lex(ftToken& ct)
 {
     if (!m_buffer)
-        return NULL_TOKEN;
+        return FT_NULL_TOKEN;
 
-    char cp = 1;
-    while (cp != 0 && m_pos < m_len)
+    int decision;
+    while (!isEOF())
     {
-        cp = m_buffer[m_pos];
-        if (m_state == FT_START)
+        switch (m_state)
         {
-            ignoreUntilNCS();
-
-            if (m_buffer[m_pos] == 'n')
-            {
-                m_pos += isKeyword("namespace", 9, FT_NAMESPCE);
-                if (m_state == FT_NAMESPCE)
-                {
-                    makeKeyword(ct, "namespace", NAMESPACE);
-                    return ct.getToken();
-                }
-            }
-            else if (m_buffer[m_pos] == 'c')
-            {
-                m_pos += isKeyword("class", 5, FT_CLASS);
-                if (m_state == FT_CLASS)
-                {
-                    makeKeyword(ct, "class", CLASS);
-                    return ct.getToken();
-                }
-            }
-            else if (m_buffer[m_pos] == 's')
-            {
-                m_pos += isKeyword("struct", 6, FT_STRUCT);
-                if (m_state == FT_STRUCT)
-                {
-                    makeKeyword(ct, "struct", STRUCT);
-                    return ct.getToken();
-                }
-            }
-            else
-                m_pos++;
+        case FT_IN_START:
+            decision = handleStartState(ct);
+            break;
+        case FT_IN_NAMESPACE:
+            decision = handleNamespaceState(ct);
+            break;
+        case FT_INSIDE:
+            decision = handleInsideState(ct);
+            break;
+        case FT_IN_CLASS:
+        case FT_IN_STRUCT:
+            decision = handleClassState(ct);
+            break;
+        case FT_IN_SKIP:
+            decision = handleToggleState(ct);
+            break;
+        default:
+            decision = FT_KEEP_GOING;
+            m_pos++;
+            break;
         }
-        else if (m_state == FT_NAMESPCE)
+
+        if (decision == FT_EOF)
+            return FT_EOF;
+        if (decision != FT_KEEP_GOING)
+            return ct.getToken();
+    }
+    return FT_EOF;
+} 
+
+
+
+int ftScanner::handleStartState(ftToken& ct)
+{
+    ignoreUntilNCS();
+    if (isEOF())
+        return FT_EOF;
+
+    if (m_buffer[m_pos] == 'n')
+    {
+        m_pos += isKeyword("namespace", 9, FT_IN_NAMESPACE);
+        if (m_state == FT_IN_NAMESPACE)
         {
-            if (!isWS(m_buffer[m_pos]))
+            makeKeyword(ct, "namespace", FT_NAMESPACE);
+            return ct.getToken();
+        }
+    }
+    else if (m_buffer[m_pos] == 'c')
+    {
+        m_pos += isKeyword("class", 5, FT_IN_CLASS);
+        if (m_state == FT_IN_CLASS)
+        {
+            makeKeyword(ct, "class", FT_CLASS);
+            return ct.getToken();
+        }
+    }
+    else if (m_buffer[m_pos] == 's')
+    {
+        m_pos += isKeyword("struct", 6, FT_IN_STRUCT);
+        if (m_state == FT_IN_STRUCT)
+        {
+            makeKeyword(ct, "struct", FT_STRUCT);
+            return ct.getToken();
+        }
+    }
+    else
+        m_pos++;
+
+    return FT_KEEP_GOING;
+}
+
+
+int ftScanner::handleNamespaceState(ftToken& ct)
+{
+    ignoreWhiteSpace();
+    if (isEOF())
+        return FT_EOF;
+
+    if (isAlpha(m_buffer[m_pos]) || m_buffer[m_pos] == '_')
+    {
+        makeIdentifier(ct);
+        m_state = FT_IN_START;
+        return ct.getToken();
+    }
+    else
+    {
+        ++m_pos;
+        m_state = FT_IN_START;
+    }
+    return FT_KEEP_GOING;
+}
+
+int ftScanner::handleClassState(ftToken& ct)
+{
+    ignoreWhiteSpace();
+    if (isEOF())
+        return FT_EOF;
+
+    if (isAlpha(m_buffer[m_pos]) || m_buffer[m_pos] == '_')
+    {
+        makeIdentifier(ct);
+        return ct.getToken();
+    }
+    else
+    {
+        switch (m_buffer[m_pos])
+        {
+        case '{':
+            makeLeftBracket(ct);
+            m_state = FT_INSIDE;
+            return ct.getToken();
+        case '}':
+            makeRightBracket(ct);
+            return ct.getToken();
+        case ';':
+            makeSemicolon(ct);
+            m_state = FT_IN_START;
+            return ct.getToken();
+        default:
+            ++m_pos;
+            break;
+        }
+    }
+    return FT_KEEP_GOING;
+}
+
+int ftScanner::handleInsideState(ftToken& ct)
+{
+    ignoreWhiteSpace();
+    if (isEOF())
+        return FT_EOF;
+
+    char cp = m_buffer[m_pos];
+    if (isAlpha(cp) || cp == '_')
+    {
+        bool keepgoing = false;
+
+        if (isPotentialKeyword(cp))
+        {
+            size_t i;
+            for (i = 0; i < KeywordTableSize && !keepgoing; ++i)
+            {
+                if (KeywordTable[i].m_name[0] == cp &&
+                    isKeyword(KeywordTable[i].m_name, KeywordTable[i].m_len, m_state) > 1)
+                {
+                    int tz = KeywordTable[i].m_token;
+                    if (tz != FT_PUBLIC && tz != FT_PRIVATE && tz != FT_PROTECTED)
+                    {
+                        m_pos += KeywordTable[i].m_len;
+                        makeKeyword(ct, KeywordTable[i].m_name, KeywordTable[i].m_token);
+                        return ct.getToken();
+                    }
+                    else
+                    {
+                        m_pos += KeywordTable[i].m_len;
+                        keepgoing = true;
+                    }
+                }
+            }
+        }
+        if (!keepgoing)
+        {
+            makeIdentifier(ct);
+            return ct.getToken();
+        }
+    }
+    else if (isDigit(cp))
+    {
+        makeDigit(ct);
+        return ct.getToken();
+    }
+    else if (cp == '/')
+    {
+        m_pos++;
+        if (isEOF())
+            return FT_EOF;
+
+        cp = m_buffer[m_pos];
+        if (cp == '/')
+        {
+            while (m_pos < m_len &&
+                   m_buffer[m_pos] != '@' &&
+                   !isNewLine(m_buffer[m_pos]))
+                m_pos++;
+
+            if (isEOF())
+                return FT_EOF;
+            else if (!isNewLine(m_buffer[m_pos]))
             {
                 m_pos++;
-                m_state = FT_START;
-            }
-            else
-            {
-                ignoreWhiteSpace();
-
-                cp = m_buffer[m_pos];
-                if (isAlpha(cp) || cp == '_')
-                {
-                    makeIdentifier(ct);
-                    m_state = FT_START;
-                    return ct.getToken();
-                }
+                if (isKeyword("makeft_ignore", 13, FT_IN_SKIP))
+                    m_pos += 13;
                 else
                 {
-                    ++m_pos;
-                    m_state = FT_START;
-                }
-            }
-        }
-        else if (m_state == FT_INSIDE)
-        {
-            ignoreWhiteSpace();
-
-            cp = m_buffer[m_pos];
-            if (isAlpha(cp) || cp == '_')
-            {
-                bool keepgoing = false;
-
-                if (isPotentialKeyword(cp))
-                {
-                    size_t i;
-                    for (i = 0; i < KeywordTableSize && !keepgoing; ++i)
-                    {
-                        if (KeywordTable[i].m_name[0] == cp &&
-                            isKeyword(KeywordTable[i].m_name, KeywordTable[i].m_len, m_state) > 1)
-                        {
-                            int tz = KeywordTable[i].m_token;
-                            if (tz != PUBLIC && tz != PRIVATE && tz != PROTECTED)
-                            {
-                                m_pos += KeywordTable[i].m_len;
-                                makeKeyword(ct, KeywordTable[i].m_name, KeywordTable[i].m_token);
-                                return ct.getToken();
-                            }
-                            else
-                            {
-                                m_pos += KeywordTable[i].m_len;
-                                keepgoing = true;
-                            }
-                        }
-                    }
-                }
-
-                if (!keepgoing)
-                {
-                    makeIdentifier(ct);
-                    return ct.getToken();
-                }
-            }
-            else if (isDigit(cp))
-            {
-                makeDigit(ct);
-                return ct.getToken();
-            }
-            else if (cp == '/')
-            {
-                cp = m_buffer[++m_pos];
-                if (cp == '/')
-                {
-                    while (m_pos < m_len &&
-                           m_buffer[m_pos] != '@' &&
-                           !isNewLine(m_buffer[m_pos]))
+                    while (m_pos < m_len && !isNewLine(m_buffer[m_pos]))
                         m_pos++;
 
-                    if (m_pos == m_len)
+                    if (isEOF())
                         return FT_EOF;
-                    else if (!isNewLine(m_buffer[m_pos]))
-                    {
+
+                    if (isNewLine(m_buffer[m_pos + 1]))
                         m_pos++;
-                        if (isKeyword("makeft_ignore", 13, FT_IN_PRIVSEC))
-                            m_pos += 13;
-                        else
-                        {
-                            while (m_pos < m_len && !isNewLine(m_buffer[m_pos]))
-                                m_pos++;
-                            
-                            if (isNewLine(m_buffer[m_pos+1]))
-                                m_pos++;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                switch (m_buffer[m_pos])
-                {
-                case '*':
-                    makePointer(ct);
-                    return ct.getToken();
-                case ',':
-                    makeComma(ct);
-                    return ct.getToken();
-                case ':':
-                    m_pos++;
-                    break;
-                case '[':
-                    makeLeftBrace(ct);
-                    return ct.getToken();
-                case ']':
-                    makeRightBrace(ct);
-                    return ct.getToken();
-                case '(':
-                    makeLeftParen(ct);
-                    return ct.getToken();
-                case ')':
-                    makeRightParen(ct);
-                    return ct.getToken();
-                case '}':
-                    makeRightBracket(ct);
-                    m_state = FT_START;
-                    return ct.getToken();
-                case ';':
-                    makeSemicolon(ct);
-                    return ct.getToken();
-                default:
-                    ++m_pos;
-                    break;
                 }
             }
         }
-        else if (m_state == FT_CLASS || m_state == FT_STRUCT)
-        {
-            ignoreWhiteSpace();
-
-            cp = m_buffer[m_pos];
-            if (isAlpha(cp) || cp == '_')
-            {
-                makeIdentifier(ct);
-                return ct.getToken();
-            }
-            else
-            {
-                switch (m_buffer[m_pos])
-                {
-                case '{':
-                    makeLeftBracket(ct);
-                    m_state = FT_INSIDE;
-                    return ct.getToken();
-                case '}':
-                    makeRightBracket(ct);
-                    return ct.getToken();
-                case ';':
-                    makeSemicolon(ct);
-                    m_state = FT_START;
-                    return ct.getToken();
-                default:
-                    ++m_pos;
-                    break;
-                }
-            }
-        }
-        else if (m_state == FT_IN_PRIVSEC)
-        {
-            while (m_pos < m_len && m_buffer[m_pos] != '@')
-                m_pos++;
-
-            if (m_pos == m_len)
-                return FT_EOF;
-
-            m_pos++;
-            if (isKeyword("makeft_ignore", 13, FT_INSIDE))
-                m_pos += 13;
-        }
-        else
-            m_pos++;
     }
+    else
+    {
+        switch (m_buffer[m_pos])
+        {
+        case '*':
+            makePointer(ct);
+            return ct.getToken();
+        case ',':
+            makeComma(ct);
+            return ct.getToken();
+        case ':':
+            m_pos++;
+            break;
+        case '[':
+            makeLeftBrace(ct);
+            return ct.getToken();
+        case ']':
+            makeRightBrace(ct);
+            return ct.getToken();
+        case '(':
+            makeLeftParen(ct);
+            return ct.getToken();
+        case ')':
+            makeRightParen(ct);
+            return ct.getToken();
+        case '}':
+            makeRightBracket(ct);
+            m_state = FT_IN_START;
+            return ct.getToken();
+        case ';':
+            makeSemicolon(ct);
+            return ct.getToken();
+        default:
+            ++m_pos;
+            break;
+        }
+    }
+    return FT_KEEP_GOING;
+}
 
-    return FT_EOF;
+
+int ftScanner::handleToggleState(ftToken& ct)
+{
+    while (m_pos < m_len && m_buffer[m_pos] != '@')
+        m_pos++;
+
+    if (isEOF())
+        return FT_EOF;
+
+    m_pos++;
+    if (isKeyword("makeft_ignore", 13, FT_INSIDE))
+        m_pos += 13;
+
+    return FT_KEEP_GOING;
 }
 
 
@@ -312,7 +356,7 @@ void ftScanner::makeIdentifier(ftToken& ct)
         ref.push_back(m_buffer[m_pos]);
         m_pos++;
     }
-    ct.setToken(IDENTIFIER);
+    ct.setToken(FT_ID);
 }
 
 void ftScanner::makeLeftBracket(ftToken& ct)
@@ -320,7 +364,7 @@ void ftScanner::makeLeftBracket(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back('{');
-    ct.setToken(LBRACKET);
+    ct.setToken(FT_LBRACKET);
     m_pos++;
 }
 
@@ -329,7 +373,7 @@ void ftScanner::makeRightBracket(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back('}');
-    ct.setToken(RBRACKET);
+    ct.setToken(FT_RBRACKET);
     m_pos++;
 }
 
@@ -338,7 +382,7 @@ void ftScanner::makeSemicolon(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back(';');
-    ct.setToken(TERM);
+    ct.setToken(FT_TERM);
     m_pos++;
 }
 
@@ -347,7 +391,7 @@ void ftScanner::makeColon(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back(':');
-    ct.setToken(COLON);
+    ct.setToken(FT_COLON);
     m_pos++;
 }
 
@@ -356,7 +400,7 @@ void ftScanner::makePointer(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back('*');
-    ct.setToken(POINTER);
+    ct.setToken(FT_POINTER);
     m_pos++;
 }
 
@@ -365,7 +409,7 @@ void ftScanner::makeLeftBrace(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back('[');
-    ct.setToken(LBRACE);
+    ct.setToken(FT_LBRACE);
     m_pos++;
 }
 
@@ -374,7 +418,7 @@ void ftScanner::makeRightBrace(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back(']');
-    ct.setToken(RBRACE);
+    ct.setToken(FT_RBRACE);
     m_pos++;
 }
 
@@ -383,7 +427,7 @@ void ftScanner::makeComma(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back(',');
-    ct.setToken(COMMA);
+    ct.setToken(FT_COMMA);
     m_pos++;
 }
 
@@ -392,7 +436,7 @@ void ftScanner::makeLeftParen(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back('(');
-    ct.setToken(LPARN);
+    ct.setToken(FT_LPARAN);
     m_pos++;
 }
 
@@ -401,7 +445,7 @@ void ftScanner::makeRightParen(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back(')');
-    ct.setToken(RPARN);
+    ct.setToken(FT_RPARN);
     m_pos++;
 }
 
@@ -418,7 +462,7 @@ void ftScanner::makeDigit(ftToken& ct)
     }
 
     ct.setArrayLen(::atoi(ref.c_str()));
-    ct.setToken(CONSTANT);
+    ct.setToken(FT_CONSTANT);
 }
 
 void ftScanner::makeKeyword(ftToken& ct, const char* kw, int id)
@@ -431,26 +475,31 @@ void ftScanner::makeKeyword(ftToken& ct, const char* kw, int id)
 
 
 const ftKeywordTable ftScanner::KeywordTable[] = {
-    {"public", 6, PUBLIC},
-    {"private", 7, PRIVATE},
-    {"protected", 9, PROTECTED},
-    {"privsec", 7, PRIVSEC},
-    {"struct", 6, STRUCT},
-    {"class", 5, CLASS},
-    {"char", 4, CHAR},
-    {"uchar", 5, CHAR},
-    {"short", 5, SHORT},
-    {"ushort", 6, SHORT},
-    {"int", 3, INT},
-    {"uint", 4, INT},
-    {"long", 4, LONG},
-    {"ulong", 5, LONG},
-    {"float", 5, FLOAT},
-    {"double", 6, DOUBLE},
-    {"void", 4, VOID},
+    {"public", 6, FT_PUBLIC},
+    {"private", 7, FT_PRIVATE},
+    {"protected", 9, FT_PROTECTED},
+    {"struct", 6, FT_STRUCT},
+    {"class", 5, FT_CLASS},
+    {"char", 4, FT_CHAR},
+    {"uchar", 5, FT_CHAR},
+    {"short", 5, FT_SHORT},
+    {"ushort", 6, FT_SHORT},
+    {"int", 3, FT_INTEGER},
+    {"uint", 4, FT_INTEGER},
+    {"long", 4, FT_LONG},
+    {"ulong", 5, FT_LONG},
+    {"float", 5, FT_FLOAT},
+    {"double", 6, FT_DOUBLE},
+    {"void", 4, FT_VOID},
 };
 
 const size_t ftScanner::KeywordTableSize = sizeof(KeywordTable) / sizeof(ftKeywordTable);
+
+bool ftScanner::isEOF()
+{
+    return m_pos >= m_len || m_buffer[m_pos] == '\0';
+}
+
 
 bool ftScanner::isNewLine(const char& ch)
 {
@@ -482,17 +531,17 @@ bool ftScanner::isPotentialKeyword(const char& ch)
 
 bool ftScanner::isDigit(const char& ch)
 {
-    return ch >= '0' && ch <= '9';
+    return ch != '\0' && (ch >= '0' && ch <= '9');
 }
 
 bool ftScanner::isAlphaNumeric(const char& ch)
 {
-    return isAlpha(ch) || isDigit(ch);
+    return ch != '\0' && (isAlpha(ch) || isDigit(ch));
 }
 
 bool ftScanner::isIdentifier(const char& ch)
 {
-    return isAlphaNumeric(ch) || ch == '_';
+    return isAlphaNumeric(ch) || ch == '_' && ch != '\0';
 }
 
 bool ftScanner::isWS(const char& ch)
@@ -503,7 +552,7 @@ bool ftScanner::isWS(const char& ch)
 int ftScanner::isKeyword(const char* kw, int len, int stateIf)
 {
     const char* tp = &m_buffer[m_pos];
-    if (m_pos + len < m_len &&
+    if (m_pos + (len - 1) < m_len &&
         !isIdentifier(m_buffer[m_pos + len]) &&
         strncmp(tp, kw, len) == 0)
     {
