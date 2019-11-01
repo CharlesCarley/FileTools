@@ -32,10 +32,9 @@
 
 enum ftTokenID
 {
-
     NULL_TOKEN = -1,
-
-    COMMA    = ',',
+    FT_EOF,
+    COMMA      = ',',
     POINTER  = '*',
     LBRACE   = '[',
     RBRACE   = ']',
@@ -44,7 +43,6 @@ enum ftTokenID
     LBRACKET = '{',
     RBRACKET = '}',
     TERM     = ';',
-
     IDENTIFIER = 256,
     CHAR,
     SHORT,
@@ -58,19 +56,17 @@ enum ftTokenID
     FUNCTION_POINTER_BEG,
     FUNCTION_POINTER_END,
     CONSTANT,
-
     NAMESPACE,
     CLASS,
     STRUCT,
     UNION,
 };
 
-
 struct ftKeywordTable
 {
-    char* name;
-    int   len;
-    int   token;
+    char* m_name;
+    int   m_len;
+    int   m_token;
 };
 
 
@@ -85,6 +81,7 @@ private:
     int    m_arrayConstant;
 
 public:
+
     ftToken() :
         m_id(NULL_TOKEN),
         m_value(),
@@ -92,13 +89,12 @@ public:
     {
     }
 
-    ftToken(ftTokenID id, const String& val) :
+    ftToken(int id, const String& val) :
         m_id(id),
         m_value(val),
         m_arrayConstant(0)
     {
     }
-
 
     ftToken(const ftToken& tok) :
         m_id(tok.m_id),
@@ -106,7 +102,6 @@ public:
         m_arrayConstant(tok.m_arrayConstant)
     {
     }
-
 
     inline int getToken()
     {
@@ -128,8 +123,6 @@ public:
         return m_value;
     }
 
-
-
     inline void setArrayLen(int alen)
     {
         m_arrayConstant = alen;
@@ -150,34 +143,57 @@ private:
     int         m_pos;
     int         m_len;
     int         m_state;
+    int         m_lineNo;
 
     const static ftKeywordTable KeywordTable[];
+    const static size_t         KeywordTableSize;
 
 public:
+
     ftScanner(const char* ptr, int length) :
         m_buffer(ptr),
         m_pos(0),
         m_len(length),
-        m_state(0)
+        m_state(0),
+        m_lineNo(1)
     {
     }
 
-    ftToken lex();
+    int lex(ftToken& tok);
+
+
+    inline int getLine()
+    {
+        return m_lineNo;
+    }
 
 
 private:
+
     int  isKeyword(const char* kw, int len, int stateIf);
+    bool isNewLine(const char& ch);
+    bool isNCS(const char& ch);
+    bool isAlpha(const char& ch);
+    bool isPotentialKeyword(const char& ch);
+    bool isDigit(const char& ch);
+    bool isAlphaNumeric(const char& ch);
+    bool isIdentifier(const char& ch);
+    bool isWS(const char& ch);
+
+    void ignoreWhiteSpace();
+    void ignoreUntilNCS();
+    int  newlineTest();
+
+    void makeKeyword(ftToken& tok, const char *kw, int id);
     void makeIdentifier(ftToken& tok);
     void makeLeftBracket(ftToken& tok);
     void makeRightBracket(ftToken& tok);
     void makeSemicolon(ftToken& tok);
-
     void makePointer(ftToken& tok);
     void makeLeftBrace(ftToken& tok);
     void makeRightBrace(ftToken& tok);
     void makeLeftParen(ftToken& tok);
     void makeRightParen(ftToken& tok);
-
     void makeComma(ftToken& tok);
     void makeDigit(ftToken& tok);
 };

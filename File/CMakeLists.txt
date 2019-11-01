@@ -15,8 +15,6 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 #------------------------------------------------------------------------------
-#include(FlexBison)
-
 set(File_SRC
     ftFile.cpp
     ftTables.cpp
@@ -25,7 +23,6 @@ set(File_SRC
     ftStreams.cpp
     ftCompiler.cpp
 )
-
 set(File_HDR
     ftFile.h
     ftTables.h
@@ -35,21 +32,14 @@ set(File_HDR
     ftScanner.h
     ftStreams.h
     ftPlatformHeaders.h
-    #ftScanner.l
 )
-
-# only for updating scanner 
-#add_flex(ftScanner File_HDR ftScanner.l ft)
-set(ftScanner Generated/ftScanner.inl)
 
 if (ftUSE_ZLIB)
     include_directories(${ftZLIB_INCLUDE})
     link_libraries(${ftZLIB_LIBRARY})
 endif()
 
-
-
-add_library(ftFile ${File_SRC} ${File_HDR}  ${ftScanner})
+add_library(ftFile ${File_SRC} ${File_HDR})
 if (ft_FOLDER)
     set_target_properties(ftFile PROPERTIES FOLDER "${ft_FOLDER}")
 endif()

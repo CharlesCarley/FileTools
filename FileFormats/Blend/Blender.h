@@ -7,6 +7,8 @@ typedef unsigned long long uint64_t;
 #include <stdint.h>
 #endif
 
+
+
 #ifdef near
     #undef near
 #endif

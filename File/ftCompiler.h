@@ -36,7 +36,8 @@ typedef ftFixedString<FT_MAX_ID>      ftId;
 typedef int                         ftArraySlots[FT_ARR_DIM_MAX];
 typedef void*                       ftParser;
 typedef ftArray<ftId>               ftStringPtrArray;
-typedef ftArray<ftPath>             ftPathArray;
+typedef ftHashTable<ftId, ftId>     ftStringPtrTable;
+typedef ftArray<ftPath>               ftPathArray;
 
 class ftBuildInfo;
 class ftScanner;
@@ -141,9 +142,7 @@ public:
 
 private:
 
-    int doParse(void);
-    int lex(ftToken &cur);
-
+    int  doParse(void);
     void writeBinPtr(ftStream* fp, void* ptr, int len);
     void writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs);
     void writeValidationProgram(const ftPath& path);

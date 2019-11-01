@@ -61,7 +61,6 @@ macro(ADD_FT TARGET)
 	    OUTPUT ${OUTFILE}
 	    COMMAND ${FT_EXECUTABLE} ${TARNAME} ${OUTFILE} ${SRC_FILES}
 	    DEPENDS ${FT_EXECUTABLE} ${SRC_FILES}
-	    COMMENT "${BASE_FILES}"
 	    )
     set(${TARGET} ${OUTFILE})
 endmacro(ADD_FT)
@@ -90,19 +89,17 @@ macro(ADD_FT_VALIDATOR TARGET)
 	    OUTPUT ${OUTFILE} ${OUTFILEV}
 	    COMMAND ${FT_EXECUTABLE} ${TARNAME} ${OUTFILE} ${SRC_FILES}
 	    DEPENDS ${FT_EXECUTABLE} ${SRC_FILES}
-	    COMMENT "${BASE_FILES}"
+	    COMMENT ""
 	    )
 
 
     add_executable(${TARNAME}Validator ${OUTFILEV})
-
     add_custom_command(
         TARGET ${TARNAME}Validator
         POST_BUILD
 	    COMMAND ${TARNAME}Validator
-	    COMMENT "Validating ${OUTFILE}"
+	    COMMENT "Validating -> ${TARNAME}"
 	    )
-
 
     set(${TARGET} ${OUTFILE})
 endmacro(ADD_FT_VALIDATOR)

@@ -63,9 +63,9 @@ public:
     FBTsizeType addType(const ftId& type, const FBTuint32& len);
     FBTsizeType addName(const ftId& name);
 
-    MaxAllocSize     m_alloc;
+    MaxAllocSize m_alloc;
     ftStringPtrArray m_name;
-    ftStringPtrArray m_type;
+    ftStringPtrArray m_typeLookup;
     IntPtrArray      m_tlen;
     IntPtrArray      m_64ln;
     TypeArray        m_strc;
@@ -169,68 +169,47 @@ int ftCompiler::parseFile(const ftPath& id)
     return ret;
 }
 
-#define ftTOK_IS_TYPE(x) (x >= IDENTIFIER && x <= VOID)
-
-
-int ftCompiler::lex(ftToken& cur)
-{
-    cur = m_scanner->lex();
-    return cur.getToken();
-}
-
-
 
 int ftCompiler::doParse(void)
 {
-    int TOK = 1;
+    int     TOK;
+    ftToken tp, np;
 
-
-
-    ftToken tp;
-
-    while (ftValidToken(TOK))
+    do
     {
-        TOK = lex(tp);
+        TOK = m_scanner->lex(tp);
         if (TOK == NAMESPACE)
         {
-            TOK = lex(tp);
+            TOK = m_scanner->lex(tp);
             if (TOK == IDENTIFIER)
                 m_namespaces.push_back(tp.getValue().c_str());
         }
         else if (TOK == STRUCT || TOK == CLASS)
         {
-            ftToken tp;
             do
             {
-                TOK = lex(tp);
-
+                TOK = m_scanner->lex(tp);
                 if (TOK == IDENTIFIER)
                 {
                     ftCompileStruct bs;
                     bs.m_name = tp.getValue();
-                    //bs.m_path = tp.m_src;
-                    //bs.m_line = tp.m_line;
 
-                    TOK = lex(tp);
-
+                    TOK = m_scanner->lex(tp);
                     if (TOK == LBRACKET)
                     {
                         do
                         {
-                            TOK = lex(tp);
-
+                            TOK = m_scanner->lex(tp);
                             if (TOK == RBRACKET)
                                 break;
 
                             if (TOK == CLASS || TOK == STRUCT)
-                                TOK = lex(tp);
+                                TOK = m_scanner->lex(tp);
 
-                            if (ftTOK_IS_TYPE(TOK))
+                            if (TOK >= IDENTIFIER && TOK <= VOID)
                             {
                                 const ftToken::String& typeId = tp.getValue();
-
                                 // Scan names till ';'
-
                                 ftVariable cur;
                                 cur.m_type = typeId;
                                 //cur.m_path      = tp.m_src;
@@ -239,10 +218,9 @@ int ftCompiler::doParse(void)
 
                                 bool forceArray = false;
                                 bool isId       = TOK == IDENTIFIER;
-
                                 do
                                 {
-                                    TOK = lex(tp);
+                                    TOK = m_scanner->lex(tp);
 
                                     switch (TOK)
                                     {
@@ -299,7 +277,10 @@ int ftCompiler::doParse(void)
                                     break;
                                     default:
                                     {
-                                        //printf("%s(%i): error : Unknown character parsed! %s\n", tp.m_src, tp.m_line, tp.m_buf);
+                                        printf("%s(%i): error : Unknown character parsed! %s\n",
+                                               m_includes.back().c_str(),
+                                               m_scanner->getLine(),
+                                               tp.getValue().c_str());
                                         return -1;
                                     }
                                     break;
@@ -308,7 +289,10 @@ int ftCompiler::doParse(void)
                             }
                             else
                             {
-                                //printf("%s(%i): error : unknown token parsed %s\n", tp.m_src, tp.m_line, tp.m_buf);
+                                printf("%s(%i): error : Unknown character parsed! %s\n",
+                                       m_includes.back().c_str(),
+                                       m_scanner->getLine(),
+                                       tp.getValue().c_str());
                                 return -1;
                             }
                         } while ((TOK != RBRACKET) && ftValidToken(TOK));
@@ -318,7 +302,7 @@ int ftCompiler::doParse(void)
                 }
             } while ((TOK != RBRACKET && TOK != TERM) && ftValidToken(TOK));
         }
-    }
+    } while (ftValidToken(TOK));
     return 0;
 }
 
@@ -376,13 +360,13 @@ void ftCompiler::writeStream(ftStream* fp)
     writeCharPtr(fp, m_build->m_name);
 
     writeBinPtr(fp, (void*)&ftIdNames::ftTYPE[0], 4);
-    i = m_build->m_type.size();
+    i = m_build->m_typeLookup.size();
 #if ftFAKE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
     writeBinPtr(fp, &i, 4);
-    writeCharPtr(fp, m_build->m_type);
 
+    writeCharPtr(fp, m_build->m_typeLookup);
     writeBinPtr(fp, (void*)&ftIdNames::ftTLEN[0], 4);
 #if ftFAKE_ENDIAN == 1
     for (i = 0; i < (int)m_build->m_tlen.size(); i++)
@@ -397,6 +381,7 @@ void ftCompiler::writeStream(ftStream* fp)
 
     writeBinPtr(fp, (void*)&ftIdNames::ftSTRC[0], 4);
     i = m_builders.size();
+
 #if ftFAKE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
@@ -408,6 +393,8 @@ void ftCompiler::writeStream(ftStream* fp)
 #endif
     writeBinPtr(fp, m_build->m_strc.ptr(), m_build->m_alloc.m_strc);
 }
+
+
 
 void ftCompiler::writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs)
 {
@@ -431,7 +418,6 @@ void ftCompiler::writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs)
         int  p;
         for (p = 0; p < (len - t); p++)
             id.push_back(pad[p % 4]);
-
         writeBinPtr(fp, (void*)id.c_str(), id.size());
     }
 }
@@ -527,7 +513,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     {
         ftCompileStruct& bs = it.getNext();
 
-        ftId&   cur = m_build->m_type.at(bs.m_structId);
+        ftId&   cur = m_build->m_typeLookup.at(bs.m_structId);
         FBTtype len = m_build->m_tlen.at(bs.m_structId);
 
         if (m_skip.find(cur) != ftNPOS)
@@ -581,10 +567,11 @@ ftBuildInfo::ftBuildInfo()
 void ftBuildInfo::reserve(void)
 {
     m_name.reserve(FT_MAX_TABLE);
-    m_type.reserve(FT_MAX_TABLE);
+    m_typeLookup.reserve(FT_MAX_TABLE);
     m_tlen.reserve(FT_MAX_TABLE);
     m_strc.reserve(FT_MAX_TABLE * FT_MAX_MEMBERS);
 }
+
 
 void ftBuildInfo::makeBuiltinTypes(void)
 {
@@ -609,14 +596,14 @@ void ftBuildInfo::makeBuiltinTypes(void)
 
 FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 {
-    FBTsize loc;
-    if ((loc = m_type.find(type)) == ftNPOS)
+    FBTsize loc = m_typeLookup.find(type);
+    if (loc == ftNPOS)
     {
         m_alloc.m_type += type.size() + 1;
         m_alloc.m_tlen += sizeof(FBTtype);
-        loc = m_type.size();
+        loc = m_typeLookup.size();
 
-        m_type.push_back(type);
+        m_typeLookup.push_back(type);
         m_tlen.push_back(len);
         m_64ln.push_back(len);
     }
@@ -625,7 +612,7 @@ FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 
 bool ftBuildInfo::hasType(const ftId& type)
 {
-    return m_type.find(type) != ftNPOS;
+    return m_typeLookup.find(type) != ftNPOS;
 }
 
 FBTsizeType ftBuildInfo::addName(const ftId& name)

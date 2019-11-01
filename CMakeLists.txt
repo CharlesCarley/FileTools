@@ -45,7 +45,7 @@ endif()
 add_definitions("-DftSCALAR_DOUBLE")
 
 subdirs(File Compiler)
-subdirs(FileFormats/Blend)
+#subdirs(FileFormats/Blend)
 
 if (NOT ftNO_EXAMPLES)
     subdirs(FileFormats/Example)

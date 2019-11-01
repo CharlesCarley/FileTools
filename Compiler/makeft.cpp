@@ -17,30 +17,47 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "ftCompiler.h"
 #include <stdio.h>
-
+#include "ftCompiler.h"
 
 
 int main(int argc, char** argv)
 {
     if (argc < 4)
     {
-        printf("Usage:\n");
-        printf("\t makeft FileId <out-file> <in-file>[0] ... <in-file>[n]\n");
+        printf("makeft <tablename> <outfile> <infile>[0] ... <infile>[n]\n");
+        printf("\n");
+        printf("       tablename - A prefix on the generated table.  \n");
+        printf("                   Eg: 'File' would be generated as:\n");
+        printf("\n");
+        printf("                      const unsigned char FileTable[]={...};\n");
+        printf("                      const unsigned int  FileTableLen;\n");
+        printf("\n");
+        printf("       outfile   - The name of the output file that will be used to store the tables.\n");
+        printf("       infile    - a space separated list of file names to compile.\n");
         return 1;
     }
+
+
+    printf("makeft -> Building table %s\n", argv[1]);
 
     ftCompiler tables;
     for (int i = 3; i < argc; ++i)
     {
         if (tables.parseFile(argv[i]) < 0)
+        {
+            printf("makeft -> Parse Error: When compiling file %s\n", argv[i]);
             return 1;
+        }
     }
 
     int code;
     if ((code = tables.buildTypes()) != LNK_OK)
+    {
+        printf("makeft -> Link Error: When compiling table %s\n", argv[1]);
         return code;
+    }
 
     tables.writeFile(argv[1], argv[2]);
- }
+    return 0;
+}

@@ -680,7 +680,6 @@ public:
     }
 
 protected:
-
     void swap(FBTsizeType a, FBTsizeType b)
     {
         ValueType t = m_data[a];
@@ -932,14 +931,12 @@ public:
     {
     }
 
-
     ftSizeHashKey(const FBTsize& k) :
         m_hash(ftNPOS),
         m_key(k)
     {
         hash();
     }
-
 
     ftSizeHashKey(const ftSizeHashKey& k) :
         m_hash(ftNPOS),
@@ -1676,7 +1673,6 @@ public:
         return lhs;
     }
 
-
     ftFixedString operator+=(const ftFixedString& rhs)
     {
         append(rhs);
@@ -1761,43 +1757,50 @@ public:
     {
         return m_buffer;
     }
+
     FT_INLINE char* ptr(void)
     {
         return m_buffer;
     }
+
     FT_INLINE const char* ptr(void) const
     {
         return m_buffer;
     }
+
     FT_INLINE const char operator[](FBTuint16 i) const
     {
         ftASSERT(i < L);
         return m_buffer[i];
     }
+
+
     FT_INLINE const char at(FBTuint16 i) const
     {
         ftASSERT(i < L);
         return m_buffer[i];
     }
-    FT_INLINE void clear(void)
+
+    void clear(void)
     {
         m_buffer[0] = 0;
         m_size      = 0;
     }
+
     FT_INLINE int empty(void) const
     {
-        return m_size == 0;
+        return !(m_size > 0);
     }
+
     FT_INLINE int size(void) const
     {
         return m_size;
     }
+
     FT_INLINE int capacity(void) const
     {
         return L;
     }
-
-
 
     FBTsize hash(void) const
     {
@@ -1813,7 +1816,13 @@ public:
 
     FT_INLINE bool operator==(const ftFixedString& str) const
     {
-        return this->hash() == str.hash();
+        if (m_size != str.m_size)
+            return false;
+        if (m_buffer[0] != str.m_buffer[0])
+            return false;
+        if (m_buffer[m_size - 1] != str.m_buffer[m_size - 1])
+            return false;
+        return ::strncmp(m_buffer, str.m_buffer, m_size) == 0;
     }
     FT_INLINE bool operator!=(const ftFixedString& str) const
     {
@@ -1825,8 +1834,6 @@ protected:
     FBTuint16       m_size;
     mutable FBThash m_hash;
 };
-
-
 
 
 
@@ -1853,6 +1860,5 @@ extern ftAtomic ftGetPrimType(const char* typeName);
 extern bool     ftIsIntType(FBTuint32 typeKey);
 bool            ftIsFloatType(FBTuint32 typeKey);
 extern bool     ftIsNumberType(FBTuint32 typeKey);
-
 
 #endif  //_ftTypes_h_
