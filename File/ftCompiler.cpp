@@ -63,7 +63,7 @@ public:
     FBTsizeType addType(const ftId& type, const FBTuint32& len);
     FBTsizeType addName(const ftId& name);
 
-    MaxAllocSize m_alloc;
+    MaxAllocSize     m_alloc;
     ftStringPtrArray m_name;
     ftStringPtrArray m_typeLookup;
     IntPtrArray      m_tlen;
@@ -182,7 +182,10 @@ int ftCompiler::doParse(void)
         {
             TOK = m_scanner->lex(tp);
             if (TOK == IDENTIFIER)
-                m_namespaces.push_back(tp.getValue().c_str());
+            {
+                if (m_namespaces.find(tp.getValue().c_str()) == ftNPOS)
+                    m_namespaces.push_back(tp.getValue().c_str());
+            }
         }
         else if (TOK == STRUCT || TOK == CLASS)
         {
@@ -252,12 +255,15 @@ int ftCompiler::doParse(void)
                                         cur.m_name = tp.getValue();
                                         break;
                                     case RPARN:
+                                    case PRIVATE:
+                                    case PUBLIC:
+                                    case PROTECTED:
+                                    case COLON:
                                         break;
                                     case TERM:
                                     case COMMA:
                                     {
                                         makeName(cur, forceArray);
-
                                         if (isId && cur.m_ptrCount == 0)
                                         {
                                             if (bs.m_nrDependentTypes > 0)

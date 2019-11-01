@@ -113,27 +113,70 @@ int ftScanner::lex(ftToken& ct)
             cp = m_buffer[m_pos];
             if (isAlpha(cp) || cp == '_')
             {
+                bool keepgoing = false;
+
                 if (isPotentialKeyword(cp))
                 {
                     size_t i;
-                    for (i = 0; i < KeywordTableSize; ++i)
+                    for (i = 0; i < KeywordTableSize && !keepgoing; ++i)
                     {
                         if (KeywordTable[i].m_name[0] == cp &&
                             isKeyword(KeywordTable[i].m_name, KeywordTable[i].m_len, m_state) > 1)
                         {
-                            m_pos += KeywordTable[i].m_len;
-                            makeKeyword(ct, KeywordTable[i].m_name, KeywordTable[i].m_token);
-                            return ct.getToken();
+                            int tz = KeywordTable[i].m_token;
+                            if (tz != PUBLIC && tz != PRIVATE && tz != PROTECTED)
+                            {
+                                m_pos += KeywordTable[i].m_len;
+                                makeKeyword(ct, KeywordTable[i].m_name, KeywordTable[i].m_token);
+                                return ct.getToken();
+                            }
+                            else
+                            {
+                                m_pos += KeywordTable[i].m_len;
+                                keepgoing = true;
+                            }
                         }
                     }
                 }
-                makeIdentifier(ct);
-                return ct.getToken();
+
+                if (!keepgoing)
+                {
+                    makeIdentifier(ct);
+                    return ct.getToken();
+                }
             }
             else if (isDigit(cp))
             {
                 makeDigit(ct);
                 return ct.getToken();
+            }
+            else if (cp == '/')
+            {
+                cp = m_buffer[++m_pos];
+                if (cp == '/')
+                {
+                    while (m_pos < m_len &&
+                           m_buffer[m_pos] != '@' &&
+                           !isNewLine(m_buffer[m_pos]))
+                        m_pos++;
+
+                    if (m_pos == m_len)
+                        return FT_EOF;
+                    else if (!isNewLine(m_buffer[m_pos]))
+                    {
+                        m_pos++;
+                        if (isKeyword("makeft_ignore", 13, FT_IN_PRIVSEC))
+                            m_pos += 13;
+                        else
+                        {
+                            while (m_pos < m_len && !isNewLine(m_buffer[m_pos]))
+                                m_pos++;
+                            
+                            if (isNewLine(m_buffer[m_pos+1]))
+                                m_pos++;
+                        }
+                    }
+                }
             }
             else
             {
@@ -145,6 +188,9 @@ int ftScanner::lex(ftToken& ct)
                 case ',':
                     makeComma(ct);
                     return ct.getToken();
+                case ':':
+                    m_pos++;
+                    break;
                 case '[':
                     makeLeftBrace(ct);
                     return ct.getToken();
@@ -201,9 +247,22 @@ int ftScanner::lex(ftToken& ct)
                 }
             }
         }
+        else if (m_state == FT_IN_PRIVSEC)
+        {
+            while (m_pos < m_len && m_buffer[m_pos] != '@')
+                m_pos++;
+
+            if (m_pos == m_len)
+                return FT_EOF;
+
+            m_pos++;
+            if (isKeyword("makeft_ignore", 13, FT_INSIDE))
+                m_pos += 13;
+        }
         else
             m_pos++;
     }
+
     return FT_EOF;
 }
 
@@ -228,7 +287,7 @@ void ftScanner::ignoreUntilNCS()
 {
     while (m_pos < m_len && !isNCS(m_buffer[m_pos]))
     {
-        if (newlineTest()==0)
+        if (newlineTest() == 0)
             ++m_pos;
     }
 }
@@ -280,6 +339,15 @@ void ftScanner::makeSemicolon(ftToken& ct)
     ref.clear();
     ref.push_back(';');
     ct.setToken(TERM);
+    m_pos++;
+}
+
+void ftScanner::makeColon(ftToken& ct)
+{
+    ftToken::String& ref = ct.getRef();
+    ref.clear();
+    ref.push_back(':');
+    ct.setToken(COLON);
     m_pos++;
 }
 
@@ -363,6 +431,12 @@ void ftScanner::makeKeyword(ftToken& ct, const char* kw, int id)
 
 
 const ftKeywordTable ftScanner::KeywordTable[] = {
+    {"public", 6, PUBLIC},
+    {"private", 7, PRIVATE},
+    {"protected", 9, PROTECTED},
+    {"privsec", 7, PRIVSEC},
+    {"struct", 6, STRUCT},
+    {"class", 5, CLASS},
     {"char", 4, CHAR},
     {"uchar", 5, CHAR},
     {"short", 5, SHORT},
@@ -374,8 +448,6 @@ const ftKeywordTable ftScanner::KeywordTable[] = {
     {"float", 5, FLOAT},
     {"double", 6, DOUBLE},
     {"void", 4, VOID},
-    {"class", 5, CLASS},
-    {"struct", 6, STRUCT},
 };
 
 const size_t ftScanner::KeywordTableSize = sizeof(KeywordTable) / sizeof(ftKeywordTable);
@@ -402,6 +474,7 @@ bool ftScanner::isPotentialKeyword(const char& ch)
            ch == 's' ||
            ch == 'i' ||
            ch == 'l' ||
+           ch == 'p' ||
            ch == 'f' ||
            ch == 'd' ||
            ch == 'v';

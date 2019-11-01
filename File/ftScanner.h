@@ -37,6 +37,7 @@ enum ftTokenID
     COMMA      = ',',
     POINTER  = '*',
     LBRACE   = '[',
+    COLON    = ':',
     RBRACE   = ']',
     LPARN    = '(',
     RPARN    = ')',
@@ -52,6 +53,10 @@ enum ftTokenID
     DOUBLE,
     INT64,
     SCALAR,
+    PUBLIC,
+    PRIVATE,
+    PROTECTED,
+    PRIVSEC,
     VOID,
     FUNCTION_POINTER_BEG,
     FUNCTION_POINTER_END,
@@ -188,6 +193,7 @@ private:
     void makeIdentifier(ftToken& tok);
     void makeLeftBracket(ftToken& tok);
     void makeRightBracket(ftToken& tok);
+    void makeColon(ftToken& tok);
     void makeSemicolon(ftToken& tok);
     void makePointer(ftToken& tok);
     void makeLeftBrace(ftToken& tok);
