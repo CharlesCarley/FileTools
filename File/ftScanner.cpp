@@ -187,7 +187,7 @@ ftToken ftScanner::lex()
                 while (isWS(m_buffer[m_pos]))
                     m_pos++;
 
-                cp = m_buffer[m_pos++];
+                cp = m_buffer[m_pos];
                 if (isAlpha(cp) || cp == '_')
                 {
                     makeIdentifier(ct);
