@@ -16,6 +16,7 @@
 # 3. This notice may not be removed or altered from any source distribution.
 #------------------------------------------------------------------------------
 set(File_SRC
+    ftAtomic.cpp
     ftFile.cpp
     ftTables.cpp
     ftTypes.cpp
@@ -24,6 +25,7 @@ set(File_SRC
     ftCompiler.cpp
 )
 set(File_HDR
+    ftAtomic.h
     ftFile.h
     ftTables.h
     ftCompiler.h

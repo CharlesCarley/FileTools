@@ -29,6 +29,9 @@
 #include "ftPlatformHeaders.h"
 #include "ftStreams.h"
 #include "ftTables.h"
+#include "ftAtomic.h"
+
+
 
 // Common Identifiers
 const FBTuint32 ENDB = ftID('E', 'N', 'D', 'B');
@@ -117,15 +120,16 @@ int ftFile::load(const char* path, int mode)
         {
             // Test the file for magic numbers ID1, ID2
             // https://www.ietf.org/rfc/rfc1952.txt ( 2.3.1.)
+
             unsigned char magic[3];
             fs.read(magic, 2);
             magic[2] = 0;
 
             if (magic[0] != 0x1F && magic[1] != 0x8B)
             {
-                // Assuming it's an uncompressed .blend, or any unknown type of file.
+                // Assuming it is uncompressed or any unknown type of file.
                 mode = PM_UNCOMPRESSED;
-            }  // or something else masquerading as a gz file.
+            } 
         }
     }
 
@@ -178,7 +182,7 @@ int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
 
     if (!ms.isOpen())
     {
-        printf("Memory %p(%i) loading failed\n", memory, sizeInBytes);
+        printf("Memory %p(%d) loading failed\n", memory, sizeInBytes);
         return FS_FAILED;
     }
 

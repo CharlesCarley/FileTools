@@ -1836,29 +1836,4 @@ protected:
 };
 
 
-
-enum ftAtomic
-{
-    FT_ATOMIC_CHAR,      // 0
-    FT_ATOMIC_UCHAR,     // 1
-    FT_ATOMIC_SHORT,     // 2
-    FT_ATOMIC_USHORT,    // 3
-    FT_ATOMIC_INT,       // 4
-    FT_ATOMIC_LONG,      // 5
-    FT_ATOMIC_ULONG,     // 6
-    FT_ATOMIC_FLOAT,     // 7
-    FT_ATOMIC_DOUBLE,    // 8
-    FT_ATOMIC_INT64_T,   // 9
-    FT_ATOMIC_UINT64_T,  // 10
-    FT_ATOMIC_SCALAR_T,  // 11
-    FT_ATOMIC_VOID,      // 13
-    FT_ATOMIC_UNKNOWN    // 10
-};
-
-extern ftAtomic ftGetPrimType(FBTuint32 typeKey);
-extern ftAtomic ftGetPrimType(const char* typeName);
-extern bool     ftIsIntType(FBTuint32 typeKey);
-bool            ftIsFloatType(FBTuint32 typeKey);
-extern bool     ftIsNumberType(FBTuint32 typeKey);
-
 #endif  //_ftTypes_h_
