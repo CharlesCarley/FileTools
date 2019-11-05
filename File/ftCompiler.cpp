@@ -135,8 +135,7 @@ int ftCompiler::parseBuffer(const ftId& name, const char* ms, int len)
     m_scanner = &scanner;
     m_includes.push_back(name.c_str());
 
-
-    int ret   = doParse();
+    int ret   = parse();
     m_scanner = 0;
     return ret;
 }
@@ -167,7 +166,7 @@ int ftCompiler::parseFile(const ftPath& id)
 }
 
 
-int ftCompiler::doParse(void)
+int ftCompiler::parse(void)
 {
     int     TOK;
     ftToken tp, np;
@@ -185,127 +184,126 @@ int ftCompiler::doParse(void)
             }
         }
         else if (TOK == FT_STRUCT || TOK == FT_CLASS)
-        {
-            do
-            {
-                TOK = m_scanner->lex(tp);
-                if (TOK == FT_ID)
-                {
-                    ftCompileStruct bs;
-                    bs.m_name = tp.getValue();
+            parseClass(TOK, tp);
+    } while (ftValidToken(TOK));
 
+    return 0;
+}
+
+
+void ftCompiler::parseClass(int& TOK, ftToken& tp)
+{
+    do
+    {
+        TOK = m_scanner->lex(tp);
+        if (TOK == FT_ID)
+        {
+            ftCompileStruct bs;
+            bs.m_name = tp.getValue();
+
+            TOK = m_scanner->lex(tp);
+            if (TOK == FT_LBRACKET)
+            {
+                do
+                {
                     TOK = m_scanner->lex(tp);
-                    if (TOK == FT_LBRACKET)
+                    if (TOK == FT_RBRACKET)
+                        break;
+
+                    if (TOK == FT_CLASS || TOK == FT_STRUCT)
+                        TOK = m_scanner->lex(tp);
+
+                    if (TOK >= FT_ID && TOK <= FT_VOID)
                     {
+                        const ftToken::String& typeId = tp.getValue();
+                        ftVariable             cur;
+
+                        cur.m_type      = typeId;
+                        cur.m_undefined = 0;
+
+                        bool forceArray = false;
+                        bool isId       = TOK == FT_ID;
                         do
                         {
                             TOK = m_scanner->lex(tp);
-                            if (TOK == FT_RBRACKET)
+                            switch (TOK)
+                            {
+                            case FT_RBRACE:
+                            case FT_LBRACE:
+                                forceArray = true;
                                 break;
-
-                            if (TOK == FT_CLASS || TOK == FT_STRUCT)
-                                TOK = m_scanner->lex(tp);
-
-                            if (TOK >= FT_ID && TOK <= FT_VOID)
-                            {
-                                const ftToken::String& typeId = tp.getValue();
-                                ftVariable             cur;
-
-                                cur.m_type      = typeId;
-                                cur.m_undefined = 0;
-
-                                bool forceArray = false;
-                                bool isId       = TOK == FT_ID;
-
-                                do
+                            case FT_CONSTANT:
+                                if (cur.m_numSlots + 1 > FT_ARR_DIM_MAX)
                                 {
-                                    TOK = m_scanner->lex(tp);
-
-                                    switch (TOK)
-                                    {
-                                    case FT_RBRACE:
-                                    case FT_LBRACE:
-                                        forceArray = true;
-                                        break;
-                                    case FT_CONSTANT:
-
-                                        if (cur.m_numSlots + 1 > FT_ARR_DIM_MAX)
-                                        {
-                                            printf("Maximum number of array slots exceeded!\n");
-                                            printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FT_ARR_DIM_MAX);
-                                            return -1;
-                                        }
-                                        cur.m_arrays[cur.m_numSlots] = tp.getArrayLen();
-                                        cur.m_numSlots++;
-                                        cur.m_arraySize *= tp.getArrayLen();
-                                        break;
-                                    case FT_POINTER:
-                                        cur.m_ptrCount++;
-                                        break;
-                                    case FT_ID:
-                                        cur.m_name = tp.getValue();
-                                        break;
-                                    case FT_LPARAN:
-                                        cur.m_isFptr = 1;
-                                        cur.m_ptrCount++;
-                                        cur.m_name = tp.getValue();
-                                        break;
-                                    case FT_RPARN:
-                                    case FT_PRIVATE:
-                                    case FT_PUBLIC:
-                                    case FT_PROTECTED:
-                                    case FT_COLON:
-                                        break;
-                                    case FT_TERM:
-                                    case FT_COMMA:
-                                    {
-                                        makeName(cur, forceArray);
-                                        if (isId && cur.m_ptrCount == 0)
-                                        {
-                                            if (bs.m_nrDependentTypes > 0)
-                                                bs.m_nrDependentTypes = bs.m_nrDependentTypes * 2;
-                                            else
-                                                bs.m_nrDependentTypes++;
-                                            cur.m_isDependentType = true;
-                                        }
-                                        bs.m_data.push_back(cur);
-                                        cur.m_ptrCount  = 0;
-                                        cur.m_arraySize = 1;
-                                        if (TOK == FT_COMMA)
-                                            cur.m_numSlots = 0;
-                                    }
-                                    break;
-                                    default:
-                                    {
-                                        printf("%s(%i): error : Unknown character parsed! %s\n",
-                                               m_includes.back().c_str(),
-                                               m_scanner->getLine(),
-                                               tp.getValue().c_str());
-                                        return -1;
-                                    }
-                                    break;
-                                    }
-                                } while ((TOK != FT_TERM) && ftValidToken(TOK));
-                            }
-                            else
+                                    printf("Maximum number of array slots exceeded!\n");
+                                    printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FT_ARR_DIM_MAX);
+                                    TOK = FT_NULL_TOKEN;
+                                }
+                                cur.m_arrays[cur.m_numSlots] = tp.getArrayLen();
+                                cur.m_numSlots++;
+                                cur.m_arraySize *= tp.getArrayLen();
+                                break;
+                            case FT_POINTER:
+                                cur.m_ptrCount++;
+                                break;
+                            case FT_ID:
+                                cur.m_name = tp.getValue();
+                                break;
+                            case FT_LPARAN:
+                                cur.m_isFptr = 1;
+                                cur.m_ptrCount++;
+                                cur.m_name = tp.getValue();
+                                break;
+                            case FT_RPARN:
+                            case FT_PRIVATE:
+                            case FT_PUBLIC:
+                            case FT_PROTECTED:
+                            case FT_COLON:
+                                break;
+                            case FT_TERM:
+                            case FT_COMMA:
                             {
+                                makeName(cur, forceArray);
+                                if (isId && cur.m_ptrCount == 0)
+                                {
+                                    if (bs.m_nrDependentTypes > 0)
+                                        bs.m_nrDependentTypes = bs.m_nrDependentTypes * 2;
+                                    else
+                                        bs.m_nrDependentTypes++;
+                                    cur.m_isDependentType = true;
+                                }
+                                bs.m_data.push_back(cur);
+                                cur.m_ptrCount  = 0;
+                                cur.m_arraySize = 1;
+                                if (TOK == FT_COMMA)
+                                    cur.m_numSlots = 0;
+                                break;
+                            }
+                            default:
                                 printf("%s(%i): error : Unknown character parsed! %s\n",
                                        m_includes.back().c_str(),
                                        m_scanner->getLine(),
                                        tp.getValue().c_str());
-                                return -1;
+                                TOK = FT_NULL_TOKEN;
+                                break;
                             }
-
-                        } while ((TOK != FT_RBRACKET) && ftValidToken(TOK));
-
-                        m_builders.push_back(bs);
+                        } while ((TOK != FT_TERM) && ftValidToken(TOK));
                     }
-                }
-            } while ((TOK != FT_RBRACKET && TOK != FT_TERM) && ftValidToken(TOK));
-        }
-    } while (ftValidToken(TOK));
+                    else
+                    {
+                        printf("%s(%i): error : Unknown character parsed! %s\n",
+                               m_includes.back().c_str(),
+                               m_scanner->getLine(),
+                               tp.getValue().c_str());
+                        TOK = FT_NULL_TOKEN;
+                    }
 
-    return 0;
+                } while ((TOK != FT_RBRACKET) && ftValidToken(TOK));
+
+                m_builders.push_back(bs);
+            }
+        }
+    } while ((TOK != FT_RBRACKET && TOK != FT_TERM) && ftValidToken(TOK));
 }
 
 int ftCompiler::buildTypes(void)
@@ -431,14 +429,14 @@ void ftCompiler::writeBinPtr(ftStream* fp, void* ptr, int len)
 {
     if (m_writeMode == 0)
     {
+        int            i;
         unsigned char* cb = (unsigned char*)ptr;
-        for (int i = 0; i < len; ++i, ++m_curBuf)
-        {
-            if ((m_curBuf % 18) == (17))
-                fp->writef("\n");
 
-            unsigned char cp = cb[i];
-            fp->writef("0x%02X,", cp);
+        for (i = 0; i < len; ++i, ++m_curBuf)
+        {
+            if ((m_curBuf % 16) == 15)
+                fp->writef("\n");
+            fp->writef("0x%02X,", (unsigned char)cb[i]);
         }
     }
     else
@@ -855,10 +853,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                 while (it.hasMoreElements())
                 {
                     ftVariable& cvar = it.getNext();
-                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", 
-                        cvar.m_typeId, cvar.m_nameId, 
-                        (cvar.m_ptrCount > 0 ? ftVOID : tlens[cvar.m_typeId]) * cvar.m_arraySize, 
-                        cvar.m_type.c_str(), cvar.m_name.c_str());
+                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", cvar.m_typeId, cvar.m_nameId, (cvar.m_ptrCount > 0 ? ftVOID : tlens[cvar.m_typeId]) * cvar.m_arraySize, cvar.m_type.c_str(), cvar.m_name.c_str());
                 }
             }
         }

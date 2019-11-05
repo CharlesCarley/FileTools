@@ -141,8 +141,10 @@ public:
     ftBinTables* write(void);
 
 private:
+    int  parse(void);
+    void parseClass(int& tok, ftToken &tp);
 
-    int  doParse(void);
+
     void writeBinPtr(ftStream* fp, void* ptr, int len);
     void writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs);
     void writeValidationProgram(const ftPath& path);

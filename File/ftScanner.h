@@ -185,7 +185,7 @@ private:
 
     void ignoreWhiteSpace();
     void ignoreUntilNCS();
-    int  newlineTest();
+    bool newlineTest();
 
     void makeKeyword(ftToken& tok, const char* kw, int id);
     void makeIdentifier(ftToken& tok);

@@ -311,17 +311,15 @@ int ftScanner::handleToggleState(ftToken& ct)
 }
 
 
-int ftScanner::newlineTest()
+bool ftScanner::newlineTest()
 {
-    int skp = 0;
-
+    bool skp = m_pos < m_len && isNewLine(m_buffer[m_pos]);
     while (m_pos < m_len && isNewLine(m_buffer[m_pos]))
     {
         m_lineNo++;
         if (m_pos + 1 < m_len && isNewLine(m_buffer[m_pos + 1]))
-            skp++;
-        skp++;
-        m_pos += skp;
+            m_pos++;
+        m_pos++;
     }
     return skp;
 }
@@ -331,7 +329,7 @@ void ftScanner::ignoreUntilNCS()
 {
     while (m_pos < m_len && !isNCS(m_buffer[m_pos]))
     {
-        if (newlineTest() == 0)
+        if (!newlineTest())
             ++m_pos;
     }
 }
