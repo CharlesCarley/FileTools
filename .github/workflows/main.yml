@@ -11,9 +11,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: Setting up  
       run: mkdir build
-    - name: Configure with cmake
-      run: cmake ..
     - name: Changing to build dir
       run: cd build
+    - name: Configure with cmake
+      run: cmake ..
     - name: building
       run: make 
