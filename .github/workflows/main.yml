@@ -10,6 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Configure with cmake
+      run: ls
+    - name: Configure with cmake
       run: cmake .
     - name: building
       run: make 
