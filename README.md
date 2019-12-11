@@ -1,6 +1,6 @@
 # FileTools
 
-File tools is a file format based off the blender .blend file. The .blend basically consists of a set of tables that are compiled from a C API. The compiled lookup tables contain type names, size of all the types, and the parent structures. One set of tables gets placed in the file during the saving process and the other table is maintained in memory. The file loader resolves discrepancies between the file and memory tables then casts the file data through the memory tables.
+File tools is a file format based off the blender .blend file. The .blend basically consists of a set of tables that are compiled from a C API. The compiled lookup tables contain type names, size of all the types, and the parent structures. One set of tables gets placed in the file during the saving process and the other table is maintained in memory. The file loader resolves discrepancies between the file and memory tables then casts the file data through the memory tables. This allows previously saved structures to be rebuilt into the newest version.  
 
 Files are 32/64 bit safe and saved in native byte order. If the byte order varies between the file version and the loading platform. The bytes will be swapped to native endian.
 
@@ -14,3 +14,4 @@ Documentation efforts, refactoring, and testing for consistency is still a work 
 
 * [Table-structure](Table-structure.md)
 * [makeft](makeft.md)
+
