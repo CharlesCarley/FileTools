@@ -110,6 +110,11 @@ ftFile::~ftFile()
 int ftFile::load(const char* path, int mode)
 {
     ftStream* stream = 0;
+    if (path == 0 || !(*path))
+    {
+        printf("Path name must not be null\n");
+        return FS_FAILED;
+    }
 
     if (mode == PM_COMPRESSED)
     {
