@@ -26,10 +26,10 @@
 #define FT_IN_SOURCE_FILE
 
 #include "ftFile.h"
+#include "ftAtomic.h"
 #include "ftPlatformHeaders.h"
 #include "ftStreams.h"
 #include "ftTables.h"
-#include "ftAtomic.h"
 
 
 
@@ -129,7 +129,7 @@ int ftFile::load(const char* path, int mode)
             {
                 // Assuming it is uncompressed or any unknown type of file.
                 mode = PM_UNCOMPRESSED;
-            } 
+            }
         }
     }
 
@@ -141,7 +141,6 @@ int ftFile::load(const char* path, int mode)
         else
 #endif
             stream = new ftFileStream();
-
         stream->open(path, ftStream::SM_READ);
     }
     else
@@ -155,7 +154,6 @@ int ftFile::load(const char* path, int mode)
         printf("File '%s' loading failed\n", path);
         return FS_FAILED;
     }
-
     if (m_curFile)
         ::free(m_curFile);
 
@@ -202,7 +200,7 @@ int ftFile::initializeTables(ftBinTables* tables)
     FBTsize tableSize = getTableSize();
 
     if (tableData != 0 && tableSize > 0 && tableSize != ftNPOS)
-        return tables->read(tableData, tableSize, false) ? FS_OK : FS_FAILED;
+        return tables->read(tableData, tableSize, false) ? (int)FS_OK : (int)FS_FAILED;
     return FS_FAILED;
 }
 
@@ -499,7 +497,6 @@ void ftSetCastValue(FBTsize*& destination, const FBTint64& value)
     *(T*)(destination) = (T)(value);
     destination += sizeof(T);
 }
-
 
 
 

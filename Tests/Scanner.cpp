@@ -42,7 +42,6 @@ TEST_CASE("Basic Struct Test")
     EXPECT_EQ(tok, FT_ID);
     EXPECT_TRUE(strcmp("XYZ", tp.getValue().c_str())==0);
 
-
     tok = sc.lex(tp);
     EXPECT_EQ(tok, FT_LBRACKET);
 
