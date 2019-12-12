@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "Generated/ftScanner.inl"
 #include "ftConfig.h"
 #include "ftScanner.h"
 #include "ftStreams.h"
@@ -829,7 +828,6 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
     if (!m_missingReport.empty())
     {
         status |= LNK_UNDEFINED_TYPES;
-
         ftStringPtrArray::Iterator it = m_missingReport.iterator();
         while (it.hasMoreElements())
         {

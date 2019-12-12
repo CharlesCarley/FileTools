@@ -51,10 +51,10 @@ int main(int argc, char** argv)
         }
     }
 
-    int code;
-    if ((code = tables.buildTypes()) != LNK_OK)
+    int code = tables.buildTypes();
+    if (code != LNK_OK)
     {
-        printf("makeft -> Link Error: When compiling table %s\n", argv[1]);
+        printf("makeft -> Link Error(%08X): When compiling table %s\n", code, argv[1]);
         return code;
     }
 
