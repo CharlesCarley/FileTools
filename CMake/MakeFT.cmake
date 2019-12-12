@@ -39,6 +39,7 @@ macro(FT_BASE_SRC TARGET)
         set(${TARGET} ${${TARGET}} ${N})
     endforeach(it)
 endmacro(FT_BASE_SRC)
+
 # ----------------------------------------------------------------------------#
 #                                                                             #
 #   Usage: ${FT_EXECUTABLE} ${OUTFILE} {ARGN}                                #
