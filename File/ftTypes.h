@@ -471,23 +471,12 @@ public:
 
     void clear(bool useCache = false)
     {
-        if (!useCache)
-        {
-            if (m_data)
-                delete[] m_data;
-            m_data     = 0;
-            m_capacity = 0;
-            m_size     = 0;
-            m_cache    = 0;
-        }
-        else
-        {
-            ++m_cache;
-            if (m_cache > _ftCACHE_LIMIT)
-                clear(false);
-            else
-                m_size = 0;
-        }
+        if (m_data)
+            delete[] m_data;
+        m_data     = 0;
+        m_capacity = 0;
+        m_size     = 0;
+        m_cache    = 0;
     }
 
     FBTsizeType find(const T& v)
@@ -1041,6 +1030,9 @@ public:
         return hash() != v;
     }
 };
+
+
+
 typedef ftTHashKey<void> ftPointerHashKey;
 
 
@@ -1063,6 +1055,7 @@ struct ftHashEntry
         return first == rhs.first && second == rhs.second;
     }
 };
+
 
 #define _ftUTHASHTABLE_HASH(key) ((key.hash() & (m_capacity - 1)))
 #define _ftUTHASHTABLE_HKHASH(key) ((hk & (m_capacity - 1)))

@@ -27,65 +27,208 @@
 #define FT_IN_SOURCE_FILE
 #include "ftPlatformHeaders.h"
 
-static const FBTuint32 charT   = ftCharHashKey("char").hash();
-static const FBTuint32 ucharT  = ftCharHashKey("uchar").hash();
-static const FBTuint32 shortT  = ftCharHashKey("short").hash();
-static const FBTuint32 ushortT = ftCharHashKey("ushort").hash();
-static const FBTuint32 intT    = ftCharHashKey("int").hash();
-static const FBTuint32 longT   = ftCharHashKey("long").hash();
-static const FBTuint32 ulongT  = ftCharHashKey("ulong").hash();
-static const FBTuint32 floatT  = ftCharHashKey("float").hash();
-static const FBTuint32 doubleT = ftCharHashKey("double").hash();
-static const FBTuint32 voidT   = ftCharHashKey("void").hash();
 
-
-ftAtomic ftGetPrimType(FBTuint32 typeKey)
+FBTuint32 mkhash(const char* name)
 {
-    if (typeKey == charT)
-        return FT_ATOMIC_CHAR;
-    if (typeKey == ucharT)
-        return FT_ATOMIC_UCHAR;
-    if (typeKey == shortT)
-        return FT_ATOMIC_SHORT;
-    if (typeKey == ushortT)
-        return FT_ATOMIC_USHORT;
-    if (typeKey == intT)
-        return FT_ATOMIC_INT;
-    if (typeKey == longT)
-        return FT_ATOMIC_LONG;
-    if (typeKey == ulongT)
-        return FT_ATOMIC_ULONG;
-    if (typeKey == floatT)
-        return FT_ATOMIC_FLOAT;
-    if (typeKey == doubleT)
-        return FT_ATOMIC_DOUBLE;
-    if (typeKey == voidT)
-        return FT_ATOMIC_VOID;
-    return FT_ATOMIC_UNKNOWN;
+    if (!name || !(*name))
+        return -1;
+    return ftCharHashKey(name).hash();
 }
 
 
-ftAtomic ftGetPrimType(const char* typeName)
+ftAtomic ftAtomicUtils::getPrimitiveType(FBTuint32 typeKey)
 {
-    if (!typeName)
+    ftAtomic res = ftAtomic::FT_ATOMIC_UNKNOWN;
+    size_t   i;
+    for (i = 0; i < NumberOfTypes && res != ftAtomic::FT_ATOMIC_UNKNOWN; ++i)
+    {
+        if (Types[i].m_hash == typeKey)
+            res = Types[i].m_type;
+    }
+    return res;
+}
+
+
+ftAtomic ftAtomicUtils::getPrimitiveType(const char* typeName)
+{
+    if (!typeName || !(*typeName))
         return ftAtomic::FT_ATOMIC_UNKNOWN;
-    return ftGetPrimType(ftCharHashKey(typeName).hash());
+    return getPrimitiveType(ftCharHashKey(typeName).hash());
 }
 
-bool ftIsIntType(FBTuint32 typeKey)
+
+bool ftAtomicUtils::isInteger(FBTuint32 typeKey)
 {
-    ftAtomic tp = ftGetPrimType(typeKey);
-    return tp < FT_ATOMIC_FLOAT;
+    ftAtomic tp = getPrimitiveType(typeKey);
+    return tp < ftAtomic::FT_ATOMIC_FLOAT;
 }
 
-bool ftIsFloatType(FBTuint32 typeKey)
+bool ftAtomicUtils::isReal(FBTuint32 typeKey)
 {
-    ftAtomic tp = ftGetPrimType(typeKey);
-    return tp == FT_ATOMIC_FLOAT || tp == FT_ATOMIC_DOUBLE;
+    ftAtomic tp = getPrimitiveType(typeKey);
+    return tp == ftAtomic::FT_ATOMIC_FLOAT || tp == ftAtomic::FT_ATOMIC_DOUBLE;
 }
 
-bool ftIsNumberType(FBTuint32 typeKey)
+bool ftAtomicUtils::isNumeric(FBTuint32 typeKey)
 {
-    ftAtomic tp = ftGetPrimType(typeKey);
-    return tp != FT_ATOMIC_VOID && tp != FT_ATOMIC_UNKNOWN;
+    ftAtomic tp = getPrimitiveType(typeKey);
+    return tp != ftAtomic::FT_ATOMIC_VOID && tp != ftAtomic::FT_ATOMIC_UNKNOWN;
 }
+
+
+template <typename T>
+double ftAtomicUtils_getValue(char*& src)
+{
+    double value = (double)(T)(*(T*)src);
+    src += sizeof(T);
+    return value;
+}
+
+
+template <typename T>
+void ftAtomicUtils_setValue(char*& dest, const double& value)
+{
+    (*(T*)(dest)) = (T)(value);
+    dest += sizeof(T);
+}
+
+
+
+void ftAtomicUtils_set(char*& destination, ftAtomic destinationType, const double& value)
+{
+    switch (destinationType)
+    {
+    case ftAtomic::FT_ATOMIC_CHAR:
+        ftAtomicUtils_setValue<char>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_SHORT:
+        ftAtomicUtils_setValue<short>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_USHORT:
+        ftAtomicUtils_setValue<unsigned short>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_INT:
+        ftAtomicUtils_setValue<int>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_LONG:
+        ftAtomicUtils_setValue<long>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_FLOAT:
+        ftAtomicUtils_setValue<float>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_DOUBLE:
+        ftAtomicUtils_setValue<double>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_INT64_T:
+        ftAtomicUtils_setValue<FBTint64>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_UINT64_T:
+        ftAtomicUtils_setValue<FBTuint64>(destination, value);
+        break;
+    case ftAtomic::FT_ATOMIC_SCALAR_T:
+        ftAtomicUtils_setValue<scalar_t>(destination, value);
+        break;
+    }
+}
+
+void ftAtomicUtils::cast(char*    source,
+                         char*    destination,
+                         ftAtomic sourceType,
+                         ftAtomic destinationType,
+                         FBTsize  length)
+{
+    if (!source || !destination)
+    {
+        printf("Invalid source and destination pointers!\n");
+        return;
+    }
+
+    double  value = 0;
+    FBTsize i     = 0;
+
+    while (i < length)
+    {
+        switch (sourceType)
+        {
+        case ftAtomic::FT_ATOMIC_CHAR:
+            value = ftAtomicUtils_getValue<char>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_SHORT:
+            value = ftAtomicUtils_getValue<short>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_USHORT:
+            value = ftAtomicUtils_getValue<unsigned short>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_INT:
+            value = ftAtomicUtils_getValue<int>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_LONG:
+            value = ftAtomicUtils_getValue<long>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_FLOAT:
+            value = ftAtomicUtils_getValue<float>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_DOUBLE:
+            value = ftAtomicUtils_getValue<double>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_INT64_T:
+            value = ftAtomicUtils_getValue<FBTint64>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_UINT64_T:
+            value = ftAtomicUtils_getValue<FBTuint64>(source);
+            break;
+        case ftAtomic::FT_ATOMIC_SCALAR_T:
+            value = ftAtomicUtils_getValue<scalar_t>(source);
+            break;
+        default:
+            value = 0;
+            break;
+        }
+
+        ftAtomicUtils_set(destination, destinationType, value);
+        ++i;
+    }
+}
+
+
+void ftAtomicUtils::cast(char*    source,
+                         FBTsize  srcoffs,
+                         char*    destination,
+                         FBTsize  dstoffs,
+                         ftAtomic sourceType,
+                         ftAtomic destinationType,
+                         FBTsize  length)
+{
+    if (srcoffs != -1 && dstoffs != -1)
+    {
+        cast(source + srcoffs,
+             destination + dstoffs,
+             sourceType,
+             destinationType,
+             length);
+    }
+}
+
+
+
+const ftAtomicType ftAtomicUtils::Types[] = {
+    {"char", sizeof(char), ftAtomic::FT_ATOMIC_CHAR, mkhash("char")},
+    {"uchar", sizeof(char), ftAtomic::FT_ATOMIC_UCHAR, mkhash("uchar")},
+    {"short", sizeof(short), ftAtomic::FT_ATOMIC_SHORT, mkhash("short")},
+    {"ushort", sizeof(short), ftAtomic::FT_ATOMIC_USHORT, mkhash("ushort")},
+    {"int", sizeof(int), ftAtomic::FT_ATOMIC_INT, mkhash("int")},
+    {"long", sizeof(long), ftAtomic::FT_ATOMIC_LONG, mkhash("long")},
+    {"ulong", sizeof(long), ftAtomic::FT_ATOMIC_ULONG, mkhash("ulong")},
+    {"float", sizeof(float), ftAtomic::FT_ATOMIC_FLOAT, mkhash("float")},
+    {"double", sizeof(double), ftAtomic::FT_ATOMIC_DOUBLE, mkhash("double")},
+    {"int64_t", sizeof(FBTint64), ftAtomic::FT_ATOMIC_INT64_T, mkhash("int64_t")},
+    {"uint64_t", sizeof(FBTint64), ftAtomic::FT_ATOMIC_UINT64_T, mkhash("uint64_t")},
+#ifdef ftSCALAR_DOUBLE
+    {"scalar_t", sizeof(double), ftAtomic::FT_ATOMIC_SCALAR_T, mkhash("scalar_t")},
+#else
+    {"scalar_t", sizeof(float), ftAtomic::FT_ATOMIC_SCALAR_T, mkhash("scalar_t")},
+#endif
+    {"void", 0, ftAtomic::FT_ATOMIC_VOID, mkhash("void")},
+};
+
+size_t ftAtomicUtils::NumberOfTypes = sizeof(ftAtomicUtils::Types) / sizeof(ftAtomicType);

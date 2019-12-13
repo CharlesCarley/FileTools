@@ -30,6 +30,7 @@
 #include "ftConfig.h"
 #include "ftScanner.h"
 #include "ftStreams.h"
+#include "ftAtomic.h"
 
 #define ftValidToken(x) (x > 0)
 
@@ -442,19 +443,6 @@ void ftCompiler::writeBinPtr(ftStream* fp, void* ptr, int len)
         fp->write(ptr, len);
 }
 
-ftBinTables* ftCompiler::write(void)
-{
-    ftMemoryStream ms;
-    ms.open(ftStream::SM_WRITE);
-    m_writeMode = -1;
-
-    writeStream(&ms);
-
-    void* buffer = ::malloc(ms.size() + 1);
-    if (buffer != 0)
-        ::memcpy(buffer, ms.ptr(), ms.size());
-    return new ftBinTables(buffer, ms.size());
-}
 
 
 void ftCompiler::writeValidationProgram(const ftPath& path)
@@ -577,24 +565,14 @@ void ftBuildInfo::reserve(void)
 
 void ftBuildInfo::makeBuiltinTypes(void)
 {
-    addType("char", sizeof(char));
-    addType("uchar", sizeof(char));
-    addType("short", sizeof(short));
-    addType("ushort", sizeof(short));
-    addType("int", sizeof(int));
-    addType("long", sizeof(long));
-    addType("ulong", sizeof(long));
-    addType("float", sizeof(float));
-    addType("double", sizeof(double));
-    addType("int64_t", sizeof(FBTint64));
-    addType("uint64_t", sizeof(FBTuint64));
-#ifdef ftSCALAR_DOUBLE
-    addType("scalar_t", sizeof(double));
-#else
-    addType("scalar_t", sizeof(float));
-#endif
-    addType("void", 0);
+    size_t i;
+    for (i = 0; i < ftAtomicUtils::NumberOfTypes; ++i)
+    {
+        const ftAtomicType& type = ftAtomicUtils::Types[i];
+        addType(type.m_name, type.m_sizeof);
+    }
 }
+
 
 FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 {

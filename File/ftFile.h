@@ -27,6 +27,7 @@
 #define _ftFile_h_
 
 #include "ftTypes.h"
+#include "Utils/skMap.h"
 
 class ftStream;
 class ftMemoryStream;
@@ -112,7 +113,8 @@ public:
         FBTtype      m_newTypeId;
     };
 
-    typedef ftHashTable<ftSizeHashKey, MemoryChunk*> ChunkMap;
+    typedef skHashTable<SKuintPtr, MemoryChunk*> ChunkMap;
+
 
 public:
     ftFile(const char* uid);
@@ -154,13 +156,12 @@ public:
 
     void serialize(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
     void serialize(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
-    void serialize(ftStream* stream, FBTsize len, void* writeData);
-
-    void generateTypeCastLog(const char* fname);
+    void serialize(ftStream* stream, FBTsize len, void* writeData, int nr = 1);
 
 protected:
     int initializeTables(ftBinTables* tables);
     int initializeMemory(void);
+    void clearStorage(void);
 
     virtual bool skip(const FBTuint32& id) { return false; }
 
@@ -175,6 +176,7 @@ protected:
     const char*         m_uhid;
     ftFixedString<12>   m_header;
     char*               m_curFile;
+    void*               m_fileData;
     ftList              m_chunks;
     ChunkMap            m_map;
     ftBinTables*        m_memory;
@@ -184,6 +186,10 @@ private:
 
     void*        findPtr(const FBTsize& iptr);
     MemoryChunk* findBlock(const FBTsize& iptr);
+
+    ftStream* openStream(const char* path, int mode);
+
+
 
     int parseHeader(ftStream* stream);
     int parseStreamImpl(ftStream* stream);

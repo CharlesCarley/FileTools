@@ -20,6 +20,9 @@ set(FILE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../File)
 include_directories(. ${FILE_SRC_DIR})
 link_libraries(ftFile)
 
+include_directories(${SID_UTILS_DIR})
+link_libraries(${SID_UTILS_LIB})
+
 add_executable(makeft  makeft.cpp)
 
 if (ft_FOLDER)

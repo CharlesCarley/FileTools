@@ -33,9 +33,10 @@ add_ft(bfBlender Blender.h)
 
 
 list(APPEND BlendSRC ${bfBlender}) #use manually generated 32bit DNA file from Blender.h
-
-
+include_directories(${SID_UTILS_DIR})
 add_library(Blend ${BlendSRC} ${bfBlender})
+link_libraries(${SID_UTILS_LIB})
+
 if (ft_FOLDER)
     set_target_properties(Blend PROPERTIES FOLDER "${ft_FOLDER}")
 endif()

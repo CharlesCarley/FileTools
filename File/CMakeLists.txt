@@ -41,6 +41,9 @@ if (ftUSE_ZLIB)
     link_libraries(${ftZLIB_LIBRARY})
 endif()
 
+include_directories(${SID_UTILS_DIR})
+link_libraries(${SID_UTILS_LIB})
+
 add_library(ftFile ${File_SRC} ${File_HDR})
 if (ft_FOLDER)
     set_target_properties(ftFile PROPERTIES FOLDER "${ft_FOLDER}")

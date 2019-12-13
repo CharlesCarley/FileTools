@@ -28,7 +28,7 @@
 
 #include "ftTypes.h"
 
-enum ftAtomic
+enum class ftAtomic
 {
     FT_ATOMIC_CHAR,      // 0
     FT_ATOMIC_UCHAR,     // 1
@@ -43,14 +43,51 @@ enum ftAtomic
     FT_ATOMIC_UINT64_T,  // 10
     FT_ATOMIC_SCALAR_T,  // 11
     FT_ATOMIC_VOID,      // 13
-    FT_ATOMIC_UNKNOWN    // 10
+    FT_ATOMIC_UNKNOWN    // 14
 };
 
-extern ftAtomic ftGetPrimType(FBTuint32 typeKey);
-extern ftAtomic ftGetPrimType(const char* typeName);
-extern bool     ftIsIntType(FBTuint32 typeKey);
-bool            ftIsFloatType(FBTuint32 typeKey);
-extern bool     ftIsNumberType(FBTuint32 typeKey);
+
+struct ftAtomicType
+{
+    char*     m_name;
+    size_t    m_sizeof;
+    ftAtomic  m_type;
+    FBTuint32 m_hash;
+};
+
+
+
+
+
+
+class ftAtomicUtils
+{
+public:
+    static ftAtomic getPrimitiveType(FBTuint32 typeKey);
+    static ftAtomic getPrimitiveType(const char* typeName);
+    static bool     isInteger(FBTuint32 typeKey);
+    static bool     isReal(FBTuint32 typeKey);
+    static bool     isNumeric(FBTuint32 typeKey);
+
+    static void cast(char*    source,
+                     char*    destination,
+                     ftAtomic sourceType,
+                     ftAtomic destinationType,
+                     FBTsize  length);
+
+    
+    static void cast(char*    source,
+                     FBTsize  srcoffs,
+                     char*    destination,
+                     FBTsize  dstoffs,
+                     ftAtomic sourceType,
+                     ftAtomic destinationType,
+                     FBTsize  length);
+
+    static const ftAtomicType Types[];
+    static size_t             NumberOfTypes;
+};
+
 
 
 #endif  //_ftAtomic_h_

@@ -35,13 +35,13 @@ ftBinTables::ftBinTables() :
     m_nameNr(0),
     m_typeNr(0),
     m_strcNr(0),
-    m_ptr(ftVOID),
+    m_ptrLength(ftVOID),
     m_otherBlock(0),
     m_otherLen(0)
 {
 }
 
-ftBinTables::ftBinTables(void* ptr, const FBTsize& len) :
+ftBinTables::ftBinTables(void* ptr, FBTsize len, FBTuint8 ptrSize) :
     m_name(0),
     m_type(0),
     m_tlen(0),
@@ -49,31 +49,51 @@ ftBinTables::ftBinTables(void* ptr, const FBTsize& len) :
     m_nameNr(0),
     m_typeNr(0),
     m_strcNr(0),
-    m_ptr(ftVOID),
+    m_ptrLength(ptrSize),
     m_otherBlock(ptr),
     m_otherLen(len)
 {
 }
 
+
+
 ftBinTables::~ftBinTables()
 {
+    OffsM::Iterator it = m_offs.iterator();
+    while (it.hasMoreElements())
+        delete it.getNext();
+
     ::free(m_name);
     ::free(m_type);
     ::free(m_tlen);
     ::free(m_strc);
-    if (m_otherBlock)
-        ::free(m_otherBlock);
+}
 
 
-    OffsM::Iterator it = m_offs.iterator();
-    while (it.hasMoreElements())
-        delete it.getNext();
+ftBinTables::OffsM::PointerType ftBinTables::getOffsetPtr()
+{
+    return m_offs.ptr();
+}
+
+
+ftBinTables::OffsM::SizeType ftBinTables::getOffsetCount()
+{
+    return m_offs.size();
+}
+
+ftStruct* ftBinTables::findStructByName(const ftCharHashKey& kvp)
+{
+    FBTtype i;
+    i = findTypeId(kvp);
+    if (i != SK_NPOS16)
+        return m_offs.at(i);
+    return nullptr;
 }
 
 
 bool ftBinTables::read(bool swap)
 {
-    if (m_otherBlock && m_otherLen != 0)
+    if (m_otherBlock && m_otherLen > 0)
         return read(m_otherBlock, m_otherLen, swap);
     return false;
 }
@@ -442,7 +462,7 @@ void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& c
     nof.m_dp         = depth;
     nof.m_link       = 0;
     nof.m_flag       = ftStruct::CAN_LINK;
-    nof.m_len        = (m_name[cp[1]].m_ptrCount ? m_ptr : m_tlen[cp[0]]) * m_name[cp[1]].m_arraySize;
+    nof.m_len        = (m_name[cp[1]].m_ptrCount ? m_ptrLength : m_tlen[cp[0]]) * m_name[cp[1]].m_arraySize;
     nof.m_keyChain   = keys;
     off->m_members.push_back(nof);
     cof += nof.m_len;
@@ -454,7 +474,8 @@ FBTtype ftBinTables::findTypeId(const ftCharHashKey& cp)
     FBTsizeType pos = m_typeFinder.find(cp);
     if (pos != ftNPOS)
         return m_typeFinder.at(pos).m_strcId;
-    return -1;
+
+    return SK_NPOS16;
 }
 
 const char* ftBinTables::getStructType(const ftStruct* strc)

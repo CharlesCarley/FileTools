@@ -104,7 +104,8 @@ int ftBlend::dataRead(void* p, const Chunk& id)
 
 int ftBlend::serializeData(ftStream* stream)
 {
-    ftBinTables::OffsM::Pointer md = m_memory->m_offs.ptr();
+    ftBinTables::OffsM::PointerType md = m_memory->getOffsetPtr();
+
     for (MemoryChunk* node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
     {
         if (node->m_newTypeId > m_memory->m_strcNr)

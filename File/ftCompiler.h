@@ -138,7 +138,7 @@ public:
     void writeFile(const ftId& id, const ftPath& path);
     void writeStream(class ftStream* fp);
 
-    ftBinTables* write(void);
+    // ftBinTables* write(void);
 
 private:
     int  parse(void);
