@@ -29,7 +29,7 @@
 #include "ftTypes.h"
 #include "Utils/skMap.h"
 
-class ftStream;
+class skStream;
 class ftMemoryStream;
 class ftBinTables;
 
@@ -154,9 +154,9 @@ public:
 
     virtual void setFilterList(FBTuint32* filter, bool inclusive = false) {}
 
-    void serialize(ftStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
-    void serialize(ftStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
-    void serialize(ftStream* stream, FBTsize len, void* writeData, int nr = 1);
+    void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
+    void serialize(skStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
+    void serialize(skStream* stream, FBTsize len, void* writeData, int nr = 1);
 
 protected:
     int initializeTables(ftBinTables* tables);
@@ -168,7 +168,7 @@ protected:
     virtual void*   getTables(void)                    = 0;
     virtual FBTsize getTableSize(void)                 = 0;
     virtual int     dataRead(void* p, const Chunk& id) = 0;
-    virtual int     serializeData(ftStream* stream)    = 0;
+    virtual int     serializeData(skStream* stream)    = 0;
 
 
     int                 m_version, m_fileVersion;
@@ -187,12 +187,12 @@ private:
     void*        findPtr(const FBTsize& iptr);
     MemoryChunk* findBlock(const FBTsize& iptr);
 
-    ftStream* openStream(const char* path, int mode);
+    skStream* openStream(const char* path, int mode);
 
 
 
-    int parseHeader(ftStream* stream);
-    int parseStreamImpl(ftStream* stream);
+    int parseHeader(skStream* stream);
+    int parseStreamImpl(skStream* stream);
 
     int compileOffsets(void);
     int link(void);

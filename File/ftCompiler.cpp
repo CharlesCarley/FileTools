@@ -312,7 +312,7 @@ int ftCompiler::buildTypes(void)
     return m_build->getLengths(m_builders);
 }
 
-void ftCompiler::writeFile(const ftId& id, ftStream* fp)
+void ftCompiler::writeFile(const ftId& id, skStream* fp)
 {
     if (!fp)
         return;
@@ -328,8 +328,8 @@ void ftCompiler::writeFile(const ftId& id, ftStream* fp)
 
 void ftCompiler::writeFile(const ftId& id, const ftPath& path)
 {
-    ftFileStream fp;
-    fp.open(path.c_str(), ftStream::SM_WRITE);
+    skFileStream fp;
+    fp.open(path.c_str(), skStream::WRITE);
     if (!fp.isOpen())
     {
         printf("Failed to open data file: %s\n", path.c_str());
@@ -350,7 +350,7 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
 #endif
 }
 
-void ftCompiler::writeStream(ftStream* fp)
+void ftCompiler::writeStream(skStream* fp)
 {
     m_curBuf = -1;
     int i;
@@ -400,7 +400,7 @@ void ftCompiler::writeStream(ftStream* fp)
 
 
 
-void ftCompiler::writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs)
+void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
 {
     char    pad[4] = {'b', 'y', 't', 'e'};
     FBTsize i = 0, s = ptrs.size();
@@ -426,7 +426,7 @@ void ftCompiler::writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs)
     }
 }
 
-void ftCompiler::writeBinPtr(ftStream* fp, void* ptr, int len)
+void ftCompiler::writeBinPtr(skStream* fp, void* ptr, int len)
 {
     if (m_writeMode == 0)
     {

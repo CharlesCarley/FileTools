@@ -102,7 +102,7 @@ int ftBlend::dataRead(void* p, const Chunk& id)
     return FS_OK;
 }
 
-int ftBlend::serializeData(ftStream* stream)
+int ftBlend::serializeData(skStream* stream)
 {
     ftBinTables::OffsM::PointerType md = m_memory->getOffsetPtr();
 

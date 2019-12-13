@@ -66,8 +66,8 @@ struct ftChunk
         Block32   = sizeof(ftFile::Chunk32),
         Block64   = sizeof(ftFile::Chunk64),
     };
-    static int read(ftFile::Chunk* dest, ftStream* stream, int flags);
-    static int write(ftFile::Chunk* src, ftStream* stream);
+    static int read(ftFile::Chunk* dest, skStream* stream, int flags);
+    static int write(ftFile::Chunk* src, skStream* stream);
 };
 
 
@@ -91,9 +91,9 @@ ftFile::~ftFile()
 }
 
 
-ftStream* ftFile::openStream(const char* path, int mode)
+skStream* ftFile::openStream(const char* path, int mode)
 {
-    ftStream* stream = 0;
+    skStream* stream = 0;
     if (mode == PM_UNCOMPRESSED || mode == PM_COMPRESSED)
     {
 #if ftUSE_GZ_FILE == 1
@@ -101,13 +101,13 @@ ftStream* ftFile::openStream(const char* path, int mode)
             stream = new ftGzStream();
         else
 #endif
-            stream = new ftFileStream();
-        stream->open(path, ftStream::SM_READ);
+            stream = new skFileStream();
+        stream->open(path, skStream::READ);
     }
     else
     {
-        stream = new ftMemoryStream();
-        stream->open(path, ftStream::SM_READ);
+        stream = new skMemoryStream();
+        stream->open(path, skStream::READ);
     }
     return stream;
 }
@@ -116,7 +116,7 @@ ftStream* ftFile::openStream(const char* path, int mode)
 
 int ftFile::load(const char* path, int mode)
 {
-    ftStream* stream = 0;
+    skStream* stream = 0;
     if (path == 0 || !(*path))
     {
         printf("Path name must not be null\n");
@@ -125,8 +125,8 @@ int ftFile::load(const char* path, int mode)
 
     if (mode == PM_COMPRESSED)
     {
-        ftFileStream fs;
-        fs.open(path, ftStream::SM_READ);
+        skFileStream fs;
+        fs.open(path, skStream::READ);
 
         if (fs.isOpen())
         {
@@ -175,8 +175,8 @@ int ftFile::load(const char* path, int mode)
 
 int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
 {
-    ftMemoryStream ms;
-    ms.open(memory, sizeInBytes, ftStream::SM_READ, mode == PM_COMPRESSED);
+    skMemoryStream ms;
+    ms.open(memory, sizeInBytes, skStream::READ);//, mode == PM_COMPRESSED);
     if (!ms.isOpen())
     {
         printf("Memory %p(%d) loading failed!\n", memory, sizeInBytes);
@@ -206,7 +206,7 @@ int ftFile::initializeTables(ftBinTables* tables)
 }
 
 
-int ftFile::parseHeader(ftStream* stream)
+int ftFile::parseHeader(skStream* stream)
 {
     m_header.resize(12);
     stream->read(m_header.ptr(), 12);
@@ -301,7 +301,7 @@ void ftFile::clearStorage(void)
 }
 
 
-int ftFile::parseStreamImpl(ftStream* stream)
+int ftFile::parseStreamImpl(skStream* stream)
 {
 
 
@@ -773,7 +773,7 @@ int ftFile::compileOffsets(void)
 
 int ftFile::save(const char* path, const int mode)
 {
-    ftStream* fs;
+    skStream* fs;
 
 #if ftUSE_GZ_FILE == 1
     if (mode == PM_COMPRESSED)
@@ -781,10 +781,10 @@ int ftFile::save(const char* path, const int mode)
     else
 #endif
     {
-        fs = new ftFileStream();
+        fs = new skFileStream();
     }
 
-    fs->open(path, ftStream::SM_WRITE);
+    fs->open(path, skStream::WRITE);
 
 
     FBTuint8 cp = ftVOID8 ? FM_64_BIT : FM_32_BIT;
@@ -826,7 +826,7 @@ int ftFile::save(const char* path, const int mode)
 
 
 
-void ftFile::serialize(ftStream*   stream,
+void ftFile::serialize(skStream*   stream,
                        const char* id,
                        FBTuint32   code,
                        FBTsize     len,
@@ -851,7 +851,7 @@ void ftFile::serialize(ftStream*   stream,
 }
 
 
-void ftFile::serialize(ftStream* stream,
+void ftFile::serialize(skStream* stream,
                        FBTtype   index,
                        FBTuint32 code,
                        FBTsize   len,
@@ -873,7 +873,7 @@ void ftFile::serialize(ftStream* stream,
     ftChunk::write(&ch, stream);
 }
 
-void ftFile::serialize(ftStream* stream, FBTsize len, void* writeData, int nr)
+void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
 {
     if (m_memory == 0)
         getMemoryTable();
@@ -894,7 +894,7 @@ void ftFile::serialize(ftStream* stream, FBTsize len, void* writeData, int nr)
     ftChunk::write(&ch, stream);
 }
 
-int ftChunk::write(ftFile::Chunk* src, ftStream* stream)
+int ftChunk::write(ftFile::Chunk* src, skStream* stream)
 {
     int size = 0;
     size += stream->write(src, BlockSize);
@@ -903,7 +903,7 @@ int ftChunk::write(ftFile::Chunk* src, ftStream* stream)
 }
 
 
-int ftChunk::read(ftFile::Chunk* dest, ftStream* stream, int flags)
+int ftChunk::read(ftFile::Chunk* dest, skStream* stream, int flags)
 {
     int  bytesRead  = 0;
     bool bitsVary   = (flags & ftFile::FH_VAR_BITS) != 0;

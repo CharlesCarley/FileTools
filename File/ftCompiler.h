@@ -136,9 +136,9 @@ public:
     int parseBuffer(const ftId& name, const char* ms, int len);
     int buildTypes(void);
 
-    void writeFile(const ftId& id, class ftStream* fp);
+    void writeFile(const ftId& id, class skStream* fp);
     void writeFile(const ftId& id, const ftPath& path);
-    void writeStream(class ftStream* fp);
+    void writeStream(class skStream* fp);
 
     // ftBinTables* write(void);
 
@@ -147,8 +147,8 @@ private:
     void parseClass(int& tok, ftToken& tp);
 
 
-    void writeBinPtr(ftStream* fp, void* ptr, int len);
-    void writeCharPtr(ftStream* fp, const ftStringPtrArray& ptrs);
+    void writeBinPtr(skStream* fp, void* ptr, int len);
+    void writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs);
     void writeValidationProgram(const ftPath& path);
     void makeName(ftVariable&, bool);
 

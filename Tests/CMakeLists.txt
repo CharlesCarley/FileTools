@@ -43,5 +43,8 @@ set(SRC
 )
 
 include_directories(. ../File)
+include_directories(${SID_UTILS_DIR})
+link_libraries(${SID_UTILS_LIB})
+
 add_executable(${TargetName} ${SRC})
 target_link_libraries(${TargetName} ftFile)
