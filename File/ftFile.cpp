@@ -442,7 +442,7 @@ ftStruct* ftLinkCompiler::find(const ftCharHashKey& kvp)
 
 ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer, bool& needCast)
 {
-    ftStruct::Members::Pointer md = strc->m_members.ptr();
+    ftStruct::Members::PointerType md = strc->m_members.ptr();
     FBTsizeType                i, s = strc->m_members.size();
 
     FBTuint32 k1 = member->m_val.k32[0];
@@ -453,7 +453,7 @@ ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer,
         {
             if (strc2->m_val.k32[1] == member->m_val.k32[1])
             {
-                if (!strc2->m_keyChain.equal(member->m_keyChain))
+                if (!strc2->m_keyChain.equals(member->m_keyChain))
                     continue;
 
                 FBTuint32 k2 = strc2->m_val.k32[0];
@@ -485,7 +485,7 @@ int ftLinkCompiler::link(void)
     ftBinTables::OffsM::PointerType fd = m_fp->getOffsetPtr();
 
     FBTsizeType                i, i2;
-    ftStruct::Members::Pointer p2;
+    ftStruct::Members::PointerType p2;
     for (i = 0; i < m_mp->getOffsetCount(); ++i)
     {
         ftStruct* strc = md[i];
@@ -530,7 +530,7 @@ int ftFile::link(void)
     ftBinTables::OffsM::PointerType fd = m_file->getOffsetPtr();
 
     FBTsizeType                s2, i2, a2, n;
-    ftStruct::Members::Pointer p2;
+    ftStruct::Members::PointerType p2;
     FBTsize                    mlen, malen, total, pi, mptrsz;
 
     char *   dst, *src;

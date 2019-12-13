@@ -27,6 +27,7 @@
 #define _ftTables_h_
 
 #include "Utils/skArray.h"
+#include "Utils/skMap.h"
 #include "ftTypes.h"
 
 
@@ -93,8 +94,8 @@ typedef union ftKey64 {
 class ftStruct
 {
 public:
-    typedef ftArray<ftStruct> Members;
-    typedef ftArray<ftKey64>  Keys;
+    typedef skArray<ftStruct> Members;
+    typedef skArray<ftKey64>  Keys;
 
     enum Flag
     {
@@ -148,7 +149,7 @@ public:
     typedef skArray<FBTuint32> NameB;
     typedef skArray<ftStruct*> OffsM;
 
-    typedef ftHashTable<ftCharHashKey, ftType> TypeFinder;
+    typedef skHashTable<ftCharHashKey, ftType> TypeFinder;
 
 public:
     ftBinTables();

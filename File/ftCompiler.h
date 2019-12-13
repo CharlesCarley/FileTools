@@ -26,23 +26,25 @@
 #ifndef _ftBuilder_h_
 #define _ftBuilder_h_
 
-#include "ftTypes.h"
+#include "Utils/skArray.h"
+#include "Utils/skFixedString.h"
+#include "Utils/skMap.h"
 #include "ftTables.h"
+#include "ftTypes.h"
 
 
 
-typedef ftFixedString<272>          ftPath;
-typedef ftFixedString<FT_MAX_ID>      ftId;
-typedef int                         ftArraySlots[FT_ARR_DIM_MAX];
-typedef void*                       ftParser;
-typedef ftArray<ftId>               ftStringPtrArray;
-typedef ftHashTable<ftId, ftId>     ftStringPtrTable;
-typedef ftArray<ftPath>               ftPathArray;
+typedef skFixedString<272>       ftPath;
+typedef skFixedString<FT_MAX_ID> ftId;
+typedef int                      ftArraySlots[FT_ARR_DIM_MAX];
+typedef void*                    ftParser;
+typedef skArray<ftId>            ftStringPtrArray;
+typedef skHashTable<ftId, ftId>  ftStringPtrTable;
+typedef skArray<ftPath>          ftPathArray;
 
 class ftBuildInfo;
 class ftScanner;
 class ftToken;
-
 
 
 
@@ -83,14 +85,14 @@ public:
     FBTsize      m_line;
 };
 
-typedef ftArray<ftVariable> ftVariables;
+typedef skArray<ftVariable> ftVariables;
 
 
 
 class ftCompileStruct
 {
 public:
-    typedef ftArray<ftCompileStruct> Array;
+    typedef skArray<ftCompileStruct> Array;
 
 public:
     ftCompileStruct() :
@@ -142,7 +144,7 @@ public:
 
 private:
     int  parse(void);
-    void parseClass(int& tok, ftToken &tp);
+    void parseClass(int& tok, ftToken& tp);
 
 
     void writeBinPtr(ftStream* fp, void* ptr, int len);
@@ -161,4 +163,4 @@ private:
     ftScanner*             m_scanner;
 };
 
-#endif//_ftBuilder_h_
+#endif  //_ftBuilder_h_

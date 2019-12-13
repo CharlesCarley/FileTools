@@ -863,6 +863,10 @@ public:
     }
 };
 
+extern FBTuint32 skHash(const ftCharHashKey& hk);
+
+
+
 class ftIntHashKey
 {
 protected:

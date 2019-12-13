@@ -31,12 +31,13 @@
 #include "ftScanner.h"
 #include "ftStreams.h"
 #include "ftAtomic.h"
+#include "Utils/skArray.h"
 
 #define ftValidToken(x) (x > 0)
 
 
-typedef ftArray<FBTtype> IntPtrArray;
-typedef ftArray<FBTtype> TypeArray;
+typedef skArray<FBTtype> IntPtrArray;
+typedef skArray<FBTtype> TypeArray;
 
 struct MaxAllocSize
 {
@@ -482,7 +483,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
     for (i = 0; i < (int)m_includes.size(); ++i)
     {
-        split.clear(true);
+        split.clear();
         m_includes[i].split(split, '/', '\\');
 
         fprintf(fp, "#include \"%s\"\n", m_includes[i].c_str());
@@ -671,7 +672,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
             {
                 FBTsizeType pos;
                 if ((pos = m_missingReport.find(cur.m_name)) != ftNPOS)
-                    m_missingReport.erase(pos);
+                    m_missingReport.remove(pos);
             }
             else
             {
