@@ -33,11 +33,11 @@
 
 
 
-// Common Identifiers
-const FBTuint32 ENDB = ftID('E', 'N', 'D', 'B');
-const FBTuint32 DNA1 = ftID('D', 'N', 'A', '1');
-const FBTuint32 DATA = ftID('D', 'A', 'T', 'A');
-const FBTuint32 SDNA = ftID('S', 'D', 'N', 'A');
+const FBTuint32      ENDB      = ftID('E', 'N', 'D', 'B');
+const FBTuint32      DNA1      = ftID('D', 'N', 'A', '1');
+const FBTuint32      DATA      = ftID('D', 'A', 'T', 'A');
+const FBTuint32      SDNA      = ftID('S', 'D', 'N', 'A');
+static const FBThash DATABLOCK = ftCharHashKey("Link").hash();
 
 
 // Compile asserts
@@ -268,8 +268,9 @@ void ftFile::clearStorage(void)
         ::free(m_fileData);
     m_fileData = 0;
 
-    MemoryChunk *node = (MemoryChunk*)m_chunks.first,
-                *tnd;
+    MemoryChunk* node = (MemoryChunk*)m_chunks.first;
+    MemoryChunk* tmp;
+
 
     while (node)
     {
@@ -281,14 +282,15 @@ void ftFile::clearStorage(void)
             ::free(node->m_newBlock);
 
         node->m_newBlock = 0;
-        tnd              = node;
-        node             = node->m_next;
-        ::free(tnd);
+
+        tmp  = node;
+        node = node->m_next;
+
+        ::free(tmp);
     }
 
     delete m_file;
     m_file = 0;
-
 
     if (m_fileData)
         free(m_fileData);
@@ -299,14 +301,13 @@ void ftFile::clearStorage(void)
 }
 
 
+
 int ftFile::parseStreamImpl(skStream* stream)
 {
     int status, bytesRead = 0;
 
     // ensure that any previous memory has been freed
     clearStorage();
-
-
     status = parseHeader(stream);
 
     if (status != FS_OK)
@@ -363,7 +364,6 @@ int ftFile::parseStreamImpl(skStream* stream)
             m_fileData = curPtr;
             m_file     = new ftBinTables(curPtr, chunk.m_len, m_hederFlags & FH_CHUNK_64 ? 8 : 4);
 
-
             if (!m_file->read((m_hederFlags & FH_ENDIAN_SWAP) != 0))
             {
                 FT_TABLE_FAILED;
@@ -371,6 +371,7 @@ int ftFile::parseStreamImpl(skStream* stream)
             }
 
             compileOffsets();
+
             if ((status = link()) != FS_OK)
             {
                 ftLINK_FAILED;
@@ -519,84 +520,116 @@ int ftLinkCompiler::link(void)
     return ftFile::FS_OK;
 }
 
-static const FBThash DATABLOCK = ftCharHashKey("Link").hash();
+
+
+int ftFile::allocNewBlocks(void)
+{
+    ftBinTables::OffsM::ConstPointerType fdata = m_file->getOffsetPtr();
+    ftBinTables::OffsM::SizeType         folen = m_file->getOffsetCount();
+
+    int status = FS_OK;
+
+    MemoryChunk* node = (MemoryChunk*)m_chunks.first;
+
+    while (node && status == FS_OK)
+    {
+        const Chunk& chunk = node->m_chunk;
+
+        if (chunk.m_typeid > m_file->m_strcNr)
+        {
+            printf("Chunk type id out of bounds(%d)\n", chunk.m_typeid);
+        }
+
+        else if (chunk.m_typeid > folen)
+        {
+            printf("Chunk type id outside of offset bounds(%d)\n", chunk.m_typeid);
+        }
+
+        else if (fdata[chunk.m_typeid]->m_link)
+        {
+            const ftStruct *fileStruct, *memoryStruct;
+
+            fileStruct   = fdata[node->m_chunk.m_typeid];
+            memoryStruct = fileStruct->m_link;
+
+            // link the new type id
+            node->m_newTypeId = memoryStruct->m_strcId;
+
+            if (m_memory->getTypeId(memoryStruct->m_key.k16[0]) == DATABLOCK)
+            {
+                node->m_newBlock = ::malloc(node->m_chunk.m_len);
+
+                if (!node->m_newBlock)
+                {
+                    ftMALLOC_FAILED;
+                    status = FS_BAD_ALLOC;
+                }
+                else
+                    ::memcpy(node->m_newBlock, node->m_block, node->m_chunk.m_len);
+            }
+            else if (!skip(m_memory->getTypeId(memoryStruct->m_key.k16[0])))
+            {
+                const FBTsize totSize = (node->m_chunk.m_nr * memoryStruct->m_len);
+
+                node->m_chunk.m_len = totSize;
+                node->m_newBlock    = ::malloc(totSize);
+
+                if (!node->m_newBlock)
+                {
+                    ftMALLOC_FAILED;
+                    status = FS_BAD_ALLOC;
+                }
+                else
+                {
+                    ::memset(node->m_newBlock, 0, totSize);
+                }
+            }
+        }
+
+        node = node->m_next;
+    }
+
+    return status;
+}
 
 
 
 int ftFile::link(void)
 {
-
     // split this up into functions
     ftBinTables::OffsM::PointerType mdata = m_memory->getOffsetPtr();
     ftBinTables::OffsM::PointerType fdata = m_file->getOffsetPtr();
 
+    char *                         dst, *src;
+    FBTsize *                      dstPtr, *srcPtr;
     FBTsizeType                    s2, i2, a2, n;
     ftStruct::Members::PointerType p2;
     FBTsize                        mlen, malen, total, pi, mptrsz;
+    FBTuint32                      folen, molen;
+    MemoryChunk*                   node;
+    FBTuint8                       mps, fps;
+    bool                           endianSwap = (m_hederFlags & FH_ENDIAN_SWAP) != 0;
 
-    FBTuint32 folen, molen;
+
     folen = m_file->getOffsetCount();
     molen = m_memory->getOffsetCount();
 
+    int status;
+    if ((status = allocNewBlocks()) != FS_OK)
+        return status;
 
-    char *   dst, *src;
-    FBTsize *dstPtr, *srcPtr;
-
-    bool endianSwap = (m_hederFlags & FH_ENDIAN_SWAP) != 0;
-
-    MemoryChunk* node;
-    for (node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
-    {
-        const Chunk& chunk = node->m_chunk;
-        // filter any potential errors..
-        if (chunk.m_typeid > m_file->m_strcNr)
-            printf("Chunk type id out of bounds(%d)\n", chunk.m_typeid);
-        else if (chunk.m_typeid > folen)
-            printf("Chunk type id outside of offset bounds(%d)\n", chunk.m_typeid);
-        else if (fdata[chunk.m_typeid]->m_link)
-        {
-            ftStruct *fs, *ms;
-
-            fs = fdata[node->m_chunk.m_typeid];
-            ms = fs->m_link;
-
-            node->m_newTypeId = ms->m_strcId;
-
-            if (m_memory->getTypeId(ms->m_key.k16[0]) == DATABLOCK)
-            {
-                FBTsize totSize  = node->m_chunk.m_len;
-                node->m_newBlock = ::malloc(totSize);
-                if (!node->m_newBlock)
-                {
-                    ftMALLOC_FAILED;
-                    return FS_BAD_ALLOC;
-                }
-                ::memcpy(node->m_newBlock, node->m_block, totSize);
-            }
-            else if (!skip(m_memory->getTypeId(ms->m_key.k16[0])))
-            {
-                FBTsize totSize     = (node->m_chunk.m_nr * ms->m_len);
-                node->m_chunk.m_len = totSize;
-
-                node->m_newBlock = ::malloc(totSize);
-
-                if (!node->m_newBlock)
-                {
-                    ftMALLOC_FAILED;
-                    return FS_BAD_ALLOC;
-                }
-
-                ::memset(node->m_newBlock, 0, totSize);
-            }
-        }
-    }
-
-    FBTuint8 mps, fps;
     mps = m_memory->getTablePtrSize();
     fps = m_file->getTablePtrSize();
 
     for (node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
     {
+        const Chunk& chunk = node->m_chunk;
+
+        if (chunk.m_typeid > m_file->m_strcNr)
+        {
+            printf("Chunk type id out of bounds(%d)\n", chunk.m_typeid);
+            continue;
+        }
         if (node->m_newTypeId > m_memory->m_strcNr)
         {
             printf("Type id out of bounds(%d)", node->m_newTypeId);
@@ -903,15 +936,15 @@ void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
         return;
     }
 
-
     Chunk ch;
     ch.m_code   = DATA;
     ch.m_len    = len * nr;
     ch.m_nr     = 1;
     ch.m_old    = (FBTsize)writeData;
-    ch.m_typeid = DATABLOCK;
+    ch.m_typeid = 0;
     ftChunk::write(&ch, stream);
 }
+
 
 int ftChunk::write(ftFile::Chunk* src, skStream* stream)
 {

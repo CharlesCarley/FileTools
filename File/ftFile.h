@@ -26,9 +26,9 @@
 #ifndef _ftFile_h_
 #define _ftFile_h_
 
-#include "ftTypes.h"
-#include "ftHashTypes.h"
 #include "Utils/skMap.h"
+#include "ftHashTypes.h"
+#include "ftTypes.h"
 
 class skStream;
 class ftMemoryStream;
@@ -40,10 +40,10 @@ class ftFile
 public:
     enum FileMagic
     {
-        FM_BIG_ENDIAN       = 'V',
-        FM_LITTLE_ENDIAN    = 'v',
-        FM_32_BIT           = '_',
-        FM_64_BIT           = '-',
+        FM_BIG_ENDIAN    = 'V',
+        FM_LITTLE_ENDIAN = 'v',
+        FM_32_BIT        = '_',
+        FM_64_BIT        = '-',
     };
 
     enum FileStatus
@@ -67,36 +67,36 @@ public:
     };
     enum FileHeader
     {
-        FH_ENDIAN_SWAP  = (1 << 0),
-        FH_CHUNK_64     = (1 << 1),
-        FH_VAR_BITS     = (1 << 2),
+        FH_ENDIAN_SWAP = (1 << 0),
+        FH_CHUNK_64    = (1 << 1),
+        FH_VAR_BITS    = (1 << 2),
     };
 
     struct Chunk32
     {
-        FBTuint32       m_code;
-        FBTuint32       m_len;
-        FBTuint32       m_old;
-        FBTuint32       m_typeid;
-        FBTuint32       m_nr;
+        FBTuint32 m_code;
+        FBTuint32 m_len;
+        FBTuint32 m_old;
+        FBTuint32 m_typeid;
+        FBTuint32 m_nr;
     };
 
     struct Chunk64
     {
-        FBTuint32       m_code;
-        FBTuint32       m_len;
-        FBTuint64       m_old;
-        FBTuint32       m_typeid;
-        FBTuint32       m_nr;
+        FBTuint32 m_code;
+        FBTuint32 m_len;
+        FBTuint64 m_old;
+        FBTuint32 m_typeid;
+        FBTuint32 m_nr;
     };
 
     struct Chunk
     {
-        FBTuint32       m_code;
-        FBTuint32       m_len;
-        FBTsize         m_old;
-        FBTuint32       m_typeid;
-        FBTuint32       m_nr;
+        FBTuint32 m_code;
+        FBTuint32 m_len;
+        FBTsize   m_old;
+        FBTuint32 m_typeid;
+        FBTuint32 m_nr;
     };
 
     struct MemoryChunk
@@ -106,7 +106,7 @@ public:
             BLK_MODIFIED = (1 << 0),
         };
 
-        MemoryChunk* m_next, *m_prev;
+        MemoryChunk *m_next, *m_prev;
         Chunk        m_chunk;
         void*        m_block;
         void*        m_newBlock;
@@ -116,8 +116,23 @@ public:
 
     typedef skHashTable<SKuintPtr, MemoryChunk*> ChunkMap;
 
-public:
+private:
 
+    int               m_hederFlags;
+    const char*       m_uhid;
+    ftFixedString<12> m_header;
+    char*             m_curFile;
+    void*             m_fileData;
+
+protected:
+
+    int          m_version, m_fileVersion;
+    ftList       m_chunks;
+    ChunkMap     m_map;
+    ftBinTables* m_memory;
+    ftBinTables* m_file;
+
+public:
 
     ftFile(const char* uid);
     virtual ~ftFile();
@@ -171,9 +186,11 @@ protected:
 
     int  initializeTables(ftBinTables* tables);
     int  initializeMemory(void);
-    void clearStorage(void);
 
-    virtual bool skip(const FBTuint32& id) { return false; }
+    virtual bool skip(const FBTuint32& id)
+    {
+        return false;
+    }
 
     virtual void*   getTables(void)                    = 0;
     virtual FBTsize getTableSize(void)                 = 0;
@@ -181,27 +198,20 @@ protected:
     virtual int     serializeData(skStream* stream)    = 0;
 
 
-    int                 m_version, m_fileVersion;
-    int                 m_hederFlags;
-    const char*         m_uhid;
-    ftFixedString<12>   m_header;
-    char*               m_curFile;
-    void*               m_fileData;
-    ftList              m_chunks;
-    ChunkMap            m_map;
-    ftBinTables*        m_memory;
-    ftBinTables*        m_file;
 
 private:
-
     void*        findPtr(const FBTsize& iptr);
     MemoryChunk* findBlock(const FBTsize& iptr);
     skStream*    openStream(const char* path, int mode);
-    
-    int parseHeader(skStream* stream);
-    int parseStreamImpl(skStream* stream);
-    int compileOffsets(void);
-    int link(void);
+
+
+    void clearStorage(void);
+    int  allocNewBlocks(void);
+    int  parseHeader(skStream* stream);
+    int  parseStreamImpl(skStream* stream);
+    int  compileOffsets(void);
+    int  link(void);
 };
 
-#endif//_ftFile_h_
+
+#endif  //_ftFile_h_
