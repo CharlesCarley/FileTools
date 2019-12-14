@@ -1,5 +1,11 @@
 /*
 -------------------------------------------------------------------------------
+
+    Copyright (c) Charles Carley.
+
+    Contributor(s): none yet.
+
+-------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -20,7 +26,6 @@
 #include <stdio.h>
 #include "ftCompiler.h"
 
-
 int main(int argc, char** argv)
 {
     if (argc < 4)
@@ -37,8 +42,6 @@ int main(int argc, char** argv)
         printf("       infile    - a space separated list of file names to compile.\n");
         return 1;
     }
-
-
     printf("makeft -> Building table %s\n", argv[1]);
 
     ftCompiler tables;

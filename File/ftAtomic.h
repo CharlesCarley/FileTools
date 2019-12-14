@@ -47,6 +47,7 @@ enum class ftAtomic
 };
 
 
+// Structure to manage the default data types
 struct ftAtomicType
 {
     char*     m_name;
@@ -54,9 +55,6 @@ struct ftAtomicType
     ftAtomic  m_type;
     FBTuint32 m_hash;
 };
-
-
-
 
 
 
@@ -85,7 +83,7 @@ public:
                      FBTsize  length);
 
     static const ftAtomicType Types[];
-    static size_t             NumberOfTypes;
+    static const size_t        NumberOfTypes;
 };
 
 

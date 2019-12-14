@@ -28,8 +28,6 @@
 
 #include "ftTypes.h"
 
-
-
 enum ftTokenID
 {
     FT_KEEP_GOING = -2,
@@ -78,7 +76,7 @@ struct ftKeywordTable
 class ftToken
 {
 public:
-    typedef ftFixedString<72> String;
+    typedef ftFixedString<FT_MAX_TOK> String;
 
 private:
     int    m_id;
@@ -107,7 +105,7 @@ public:
     {
     }
 
-    inline int getToken()
+    inline int getToken() const
     {
         return m_id;
     }
@@ -117,7 +115,12 @@ public:
         m_id = tok;
     }
 
-    inline const String& getValue()
+    inline const String& getValue() const
+    {
+        return m_value;
+    }
+
+    inline const String& getConstRef() const
     {
         return m_value;
     }
@@ -127,14 +130,15 @@ public:
         return m_value;
     }
 
+    
+    inline int getArrayLen() const
+    {
+        return m_arrayConstant;
+    }
+
     inline void setArrayLen(int alen)
     {
         m_arrayConstant = alen;
-    }
-
-    inline int getArrayLen()
-    {
-        return m_arrayConstant;
     }
 };
 
@@ -149,10 +153,11 @@ private:
     int         m_state;
     int         m_lineNo;
 
-    const static ftKeywordTable KeywordTable[];
-    const static size_t         KeywordTableSize;
+    static const ftKeywordTable KeywordTable[];
+    static const size_t         KeywordTableSize;
 
 public:
+
     ftScanner(const char* ptr, int length) :
         m_buffer(ptr),
         m_pos(0),
@@ -165,7 +170,7 @@ public:
     int lex(ftToken& tok);
 
 
-    inline int getLine()
+    inline int getLine() const
     {
         return m_lineNo;
     }

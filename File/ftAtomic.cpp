@@ -233,4 +233,4 @@ const ftAtomicType ftAtomicUtils::Types[] = {
     {"void", 0, ftAtomic::FT_ATOMIC_VOID, mkhash("void")},
 };
 
-size_t ftAtomicUtils::NumberOfTypes = sizeof(ftAtomicUtils::Types) / sizeof(ftAtomicType);
+const size_t ftAtomicUtils::NumberOfTypes = sizeof(ftAtomicUtils::Types) / sizeof(ftAtomicType);

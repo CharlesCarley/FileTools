@@ -33,6 +33,6 @@
 #define FT_DEF_ALLOC 1024       // Table default allocation size
 #define FT_TYLE_LEN_VALIDATE 1  // Write a validation file (use MakeFBT.cmake->ADD_FT_VALIDATOR to add a self validating build)
 #define FT_ARR_DIM_MAX 3        // Maximum dimensional array, EG; (int m_member[..][..] -> [FT_ARR_DIM_MAX])
-
+#define FT_MAX_TOK 32            // Maximum allowed C/C++ name (keyword, identifier, ...)
 
 #endif//_ftConfig_h_

@@ -415,13 +415,15 @@ void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
     }
 
     int len = t;
-    len     = (len + 3) & ~3;
+
+    len = (len + 3) & ~3;
     if (len - t)
     {
         ftId id;
         int  p;
         for (p = 0; p < (len - t); p++)
             id.push_back(pad[p % 4]);
+
         writeBinPtr(fp, (void*)id.c_str(), id.size());
     }
 }
