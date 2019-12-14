@@ -107,7 +107,7 @@ public:
         NEED_CAST  = (1 << 3)
     };
 
-
+public:
     ftStruct() :
         m_key(),
         m_val(),
@@ -124,6 +124,22 @@ public:
 
     ~ftStruct()
     {
+    }
+
+
+    inline const FBTint16& getTypeIndex() const
+    {
+        return m_key.k16[0];
+    }
+
+    inline const FBTint16& getNameIndex() const
+    {
+        return m_key.k16[1];
+    }
+
+    inline const FBTint32& getSizeInBytes() const
+    {
+        return m_len;
     }
 
 
@@ -177,10 +193,22 @@ public:
         return m_ptrLength;
     }
 
+    inline bool isValidType(const FBTuint32& typeidx) const
+    {
+        // look at this, i think they are the same...
+        return typeidx < m_strcNr && typeidx < m_offs.size();
+    }
+
+
+
 
 
     ftStruct* findStructByName(const ftCharHashKey& kvp);
 
+
+    // accessors
+    ftStruct* findStructByType(const FBTuint16& type);
+    bool      isLinkedToMemory(const FBTuint16& type);
 
     FBTuint32 getTypeId(const FBTuint16& type)
     {

@@ -25,8 +25,8 @@
 */
 #define FT_IN_SOURCE_FILE
 #include "ftTables.h"
-#include "ftPlatformHeaders.h"
 #include "ftHashTypes.h"
+#include "ftPlatformHeaders.h"
 
 
 
@@ -394,7 +394,7 @@ void ftBinTables::compile(void)
 
     if (!m_strc || m_strcNr <= 0)
     {
-        printf("Build ==> No structures.");
+        printf("No structures to compile.");
         return;
     }
 
@@ -447,12 +447,22 @@ void ftBinTables::compile(void)
         if (cof != off->m_len)
         {
             off->m_flag |= ftStruct::MISALIGNED;
-            printf("Build ==> invalid offset %s:%i:%i:%i\n", m_type[off->m_key.k16[0]].m_name, i, cof, off->m_len);
+            printf("Build ==> invalid offset %s:%i:%i:%i\n",
+                   m_type[off->m_key.k16[0]].m_name,
+                   i,
+                   cof,
+                   off->m_len);
         }
     }
 }
 
-void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys)
+
+void ftBinTables::putMember(FBTtype*        cp,
+                            ftStruct*       off,
+                            FBTtype         nr,
+                            FBTuint32&      cof,
+                            FBTuint32       depth,
+                            ftStruct::Keys& keys)
 {
     ftStruct nof;
     nof.m_key.k16[0] = cp[0];
@@ -470,6 +480,24 @@ void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& c
     off->m_members.push_back(nof);
     cof += nof.m_len;
 }
+
+
+ftStruct* ftBinTables::findStructByType(const FBTuint16& type)
+{
+    if (type < m_offs.size())
+        return m_offs.at(type);
+    return nullptr;
+}
+
+
+
+bool ftBinTables::isLinkedToMemory(const FBTuint16& type)
+{
+    if (type < m_offs.size())
+        return m_offs.at(type)->m_link != 0;
+    return false;
+}
+
 
 
 FBTtype ftBinTables::findTypeId(const ftCharHashKey& cp)
