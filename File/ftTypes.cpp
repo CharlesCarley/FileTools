@@ -1,4 +1,5 @@
 #include "ftTypes.h"
+#include "ftHashTypes.h"
 
 
 

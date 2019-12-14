@@ -28,6 +28,7 @@
 
 #include "Utils/skArray.h"
 #include "Utils/skMap.h"
+#include "ftHashTypes.h"
 #include "ftTypes.h"
 
 
@@ -181,6 +182,15 @@ public:
     ftStruct* findStructByName(const ftCharHashKey& kvp);
 
 
+    FBTuint32 getTypeId(const FBTuint16& type)
+    {
+        if (type < m_typeNr)
+            return m_type[type].m_typeId;
+        return SK_NPOS32;
+    }
+
+
+    // make these private
     Names m_name;
     Types m_type;
     TypeL m_tlen;
@@ -196,7 +206,7 @@ public:
 private:
     OffsM m_offs;
 
-    // It's safe to assume that memory len is ftVOID and file len is FH_CHUNK_64 ? 8 : 4
+    // It's safe to assume that memory len is FT_VOIDP and file len is FH_CHUNK_64 ? 8 : 4
     // Otherwise this library will not even compile (no more need for 'sizeof(ListBase) / 2')
     FBTuint8 m_ptrLength;
 

@@ -167,7 +167,7 @@ void ftBlend::setFilterList(FBTuint32* filter, bool inclusive)
                 k = j;
         }
         if (k != i)
-            ftSwap(m_filterList[i], m_filterList[k]);
+            skSwap(m_filterList[i], m_filterList[k]);
     }
 }
 

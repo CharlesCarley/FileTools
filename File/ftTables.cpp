@@ -26,6 +26,9 @@
 #define FT_IN_SOURCE_FILE
 #include "ftTables.h"
 #include "ftPlatformHeaders.h"
+#include "ftHashTypes.h"
+
+
 
 ftBinTables::ftBinTables() :
     m_name(0),
@@ -35,7 +38,7 @@ ftBinTables::ftBinTables() :
     m_nameNr(0),
     m_typeNr(0),
     m_strcNr(0),
-    m_ptrLength(ftVOID),
+    m_ptrLength(FT_VOIDP),
     m_otherBlock(0),
     m_otherLen(0)
 {
@@ -224,7 +227,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     i = 0;
     while (i < nl)
     {
-        ftType typeData    = {cp, ftCharHashKey(cp).hash(), ftNPOS};
+        ftType typeData    = {cp, ftCharHashKey(cp).hash(), SK_NPOS32};
         m_type[m_typeNr++] = typeData;
         while (*cp)
             ++cp;
@@ -297,7 +300,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
             m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
             k = tp[1];
-            ftASSERT(k < FT_MAX_MEMBERS);
+            SK_ASSERT(k < FT_MAX_MEMBERS);
 
             j = 0;
             tp += 2;
@@ -312,7 +315,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         }
         else
         {
-            ftASSERT(tp[1] < FT_MAX_MEMBERS);
+            SK_ASSERT(tp[1] < FT_MAX_MEMBERS);
             m_type[tp[0]].m_strcId = m_strcNr - 1;
             m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
@@ -472,7 +475,7 @@ void ftBinTables::putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& c
 FBTtype ftBinTables::findTypeId(const ftCharHashKey& cp)
 {
     FBTsizeType pos = m_typeFinder.find(cp);
-    if (pos != ftNPOS)
+    if (pos != m_typeFinder.npos)
         return m_typeFinder.at(pos).m_strcId;
 
     return SK_NPOS16;

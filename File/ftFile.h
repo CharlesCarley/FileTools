@@ -27,6 +27,7 @@
 #define _ftFile_h_
 
 #include "ftTypes.h"
+#include "ftHashTypes.h"
 #include "Utils/skMap.h"
 
 class skStream;
@@ -115,8 +116,9 @@ public:
 
     typedef skHashTable<SKuintPtr, MemoryChunk*> ChunkMap;
 
-
 public:
+
+
     ftFile(const char* uid);
     virtual ~ftFile();
 
@@ -152,15 +154,23 @@ public:
         return m_chunks;
     }
 
-    virtual void setFilterList(FBTuint32* filter, bool inclusive = false) {}
+
+    // Enable a filter for structures
+    // inclusive - true:  Filter everything except what is in the list.
+    // inclusive - false: Filter everything not but list.
+    virtual void setFilterList(FBTuint32* filter, bool inclusive = false)
+    {
+    }
 
     void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
     void serialize(skStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
     void serialize(skStream* stream, FBTsize len, void* writeData, int nr = 1);
 
+
 protected:
-    int initializeTables(ftBinTables* tables);
-    int initializeMemory(void);
+
+    int  initializeTables(ftBinTables* tables);
+    int  initializeMemory(void);
     void clearStorage(void);
 
     virtual bool skip(const FBTuint32& id) { return false; }
@@ -186,14 +196,10 @@ private:
 
     void*        findPtr(const FBTsize& iptr);
     MemoryChunk* findBlock(const FBTsize& iptr);
-
-    skStream* openStream(const char* path, int mode);
-
-
-
+    skStream*    openStream(const char* path, int mode);
+    
     int parseHeader(skStream* stream);
     int parseStreamImpl(skStream* stream);
-
     int compileOffsets(void);
     int link(void);
 };

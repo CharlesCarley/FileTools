@@ -27,37 +27,37 @@
 #define _ftPlatformHeaders_h_
 
 #ifndef FT_IN_SOURCE_FILE
-    #error source include only!
+#error source include only!
 #endif
 
-#if ftPLATFORM == ftPLATFORM_WIN32
-    #if ftCOMPILER == ftCOMPILER_MSVC
-        #define _WIN32_WINNT 0x403
-    #endif
-    #ifndef WIN32_LEAN_AND_MEAN
-        #define WIN32_LEAN_AND_MEAN 1
-    #endif
-    #include <windows.h>
-    #include <io.h>
+#if SK_PLATFORM == SK_PLATFORM_WIN32
+#if SK_COMPILER == SK_COMPILER_MSVC
+#define _WIN32_WINNT 0x403
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN 1
+#endif
+#include <io.h>
+#include <windows.h>
 #else
 #endif
 
+#include <memory.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-#include <memory.h>
 
 #ifdef _MSC_VER
-    #pragma warning(disable : 4996)
+#pragma warning(disable : 4996)
 #endif
 
-#if ftCOMPILER == ftCOMPILER_MSVC
-    #define ftp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, fmt, lst)
-    #define ftp_sprintf _snprintf_s
+#if SK_COMPILER == SK_COMPILER_MSVC
+#define ftp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, _TRUNCATE, fmt, lst)
+#define ftp_sprintf _snprintf_s
 #else
-    #define ftp_printf vsnprintf
-    #define ftp_sprintf snprintf
+#define ftp_printf vsnprintf
+#define ftp_sprintf snprintf
 #endif
 
-#endif//_ftPlatformHeaders_h_
+#endif  //_ftPlatformHeaders_h_

@@ -41,13 +41,13 @@ const FBTuint32 SDNA = ftID('S', 'D', 'N', 'A');
 
 
 // Compile asserts
-ftASSERTCOMP(ChunkLen32, sizeof(ftFile::Chunk32) == 20);
-ftASSERTCOMP(ChunkLen64, sizeof(ftFile::Chunk64) == 24);
+SK_ASSERTCOMP(ChunkLen32, sizeof(ftFile::Chunk32) == 20);
+SK_ASSERTCOMP(ChunkLen64, sizeof(ftFile::Chunk64) == 24);
 
 #if ftARCH == ftARCH_32
-ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
+SK_ASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
 #else
-ftASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
+SK_ASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
 #endif
 
 #define ftMALLOC_FAILED printf("Failed to allocate memory!\n");
@@ -87,9 +87,11 @@ ftFile::ftFile(const char* uid) :
 
 ftFile::~ftFile()
 {
+    if (m_curFile)
+        ::free(m_curFile);
+    m_curFile = 0;
     clearStorage();
 }
-
 
 skStream* ftFile::openStream(const char* path, int mode)
 {
@@ -176,7 +178,7 @@ int ftFile::load(const char* path, int mode)
 int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
 {
     skMemoryStream ms;
-    ms.open(memory, sizeInBytes, skStream::READ);//, mode == PM_COMPRESSED);
+    ms.open(memory, sizeInBytes, skStream::READ);  //, mode == PM_COMPRESSED);
     if (!ms.isOpen())
     {
         printf("Memory %p(%d) loading failed!\n", memory, sizeInBytes);
@@ -200,7 +202,7 @@ int ftFile::initializeTables(ftBinTables* tables)
     void*   tableData = getTables();
     FBTsize tableSize = getTableSize();
 
-    if (tableData != 0 && tableSize > 0 && tableSize != ftNPOS)
+    if (tableData != 0 && tableSize > 0 && tableSize != SK_NPOS)
         return tables->read(tableData, tableSize, false) ? (int)FS_OK : (int)FS_FAILED;
     return FS_FAILED;
 }
@@ -223,18 +225,18 @@ int ftFile::parseHeader(skStream* stream)
     if (*(headerMagic++) == FM_64_BIT)
     {
         m_hederFlags |= FH_CHUNK_64;
-        if (ftVOID4)
+        if (FT_VOID4)
             m_hederFlags |= FH_VAR_BITS;
     }
-    else if (ftVOID8)
+    else if (FT_VOID8)
         m_hederFlags |= FH_VAR_BITS;
 
     if (*(headerMagic++) == FM_BIG_ENDIAN)
     {
-        if (ftENDIAN_IS_LITTLE)
+        if (FT_ENDIAN_IS_LITTLE)
             m_hederFlags |= FH_ENDIAN_SWAP;
     }
-    else if (ftENDIAN_IS_BIG)
+    else if (FT_ENDIAN_IS_BIG)
         m_hederFlags |= FH_ENDIAN_SWAP;
 
     m_fileVersion = atoi(headerMagic);
@@ -262,9 +264,6 @@ int ftFile::initializeMemory(void)
 
 void ftFile::clearStorage(void)
 {
-    if (m_curFile)
-        ::free(m_curFile);
-    m_curFile = 0;
     if (m_fileData)
         ::free(m_fileData);
     m_fileData = 0;
@@ -282,8 +281,8 @@ void ftFile::clearStorage(void)
             ::free(node->m_newBlock);
 
         node->m_newBlock = 0;
-        tnd  = node;
-        node = node->m_next;
+        tnd              = node;
+        node             = node->m_next;
         ::free(tnd);
     }
 
@@ -297,20 +296,17 @@ void ftFile::clearStorage(void)
 
     delete m_memory;
     m_memory = 0;
-
 }
 
 
 int ftFile::parseStreamImpl(skStream* stream)
 {
-
-
     int status, bytesRead = 0;
-   
+
     // ensure that any previous memory has been freed
     clearStorage();
 
-    
+
     status = parseHeader(stream);
 
     if (status != FS_OK)
@@ -384,7 +380,7 @@ int ftFile::parseStreamImpl(skStream* stream)
         }
         else
         {
-            if (m_map.find(chunk.m_old) != ftNPOS)
+            if (m_map.find(chunk.m_old) != m_map.npos)
             {
                 ::free(curPtr);
                 curPtr = 0;
@@ -442,13 +438,13 @@ ftStruct* ftLinkCompiler::find(const ftCharHashKey& kvp)
 
 ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer, bool& needCast)
 {
-    ftStruct::Members::PointerType md = strc->m_members.ptr();
-    FBTsizeType                i, s = strc->m_members.size();
+    ftStruct::Members::PointerType mdata = strc->m_members.ptr();
+    FBTsizeType                    i, s = strc->m_members.size();
 
     FBTuint32 k1 = member->m_val.k32[0];
     for (i = 0; i < s; i++)
     {
-        ftStruct* strc2 = &md[i];
+        ftStruct* strc2 = &mdata[i];
         if (strc2->m_nr == member->m_nr && strc2->m_dp == member->m_dp)
         {
             if (strc2->m_val.k32[1] == member->m_val.k32[1])
@@ -481,14 +477,14 @@ ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer,
 
 int ftLinkCompiler::link(void)
 {
-    ftBinTables::OffsM::PointerType md = m_mp->getOffsetPtr();
-    ftBinTables::OffsM::PointerType fd = m_fp->getOffsetPtr();
+    ftBinTables::OffsM::PointerType mdata = m_mp->getOffsetPtr();
+    ftBinTables::OffsM::PointerType fdata = m_fp->getOffsetPtr();
 
-    FBTsizeType                i, i2;
+    FBTsizeType                    i, i2;
     ftStruct::Members::PointerType p2;
     for (i = 0; i < m_mp->getOffsetCount(); ++i)
     {
-        ftStruct* strc = md[i];
+        ftStruct* strc = mdata[i];
         strc->m_link   = find(m_mp->m_type[strc->m_key.k16[0]].m_name);
 
         if (strc->m_link)
@@ -498,12 +494,12 @@ int ftLinkCompiler::link(void)
         for (i2 = 0; i2 < strc->m_members.size(); ++i2)
         {
             ftStruct* member = &strc->m_members[i2];
-            ftASSERT(!member->m_link);
+            SK_ASSERT(!member->m_link);
 
             member->m_flag |= strc->m_link ? 0 : ftStruct::MISSING;
             if (!(member->m_flag & ftStruct::MISSING))
             {
-                ftASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
+                SK_ASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
 
                 bool isPointer = m_mp->m_name[member->m_key.k16[1]].m_ptrCount > 0;
                 bool needCast  = false;
@@ -523,79 +519,101 @@ int ftLinkCompiler::link(void)
     return ftFile::FS_OK;
 }
 
+static const FBThash DATABLOCK = ftCharHashKey("Link").hash();
+
+
 
 int ftFile::link(void)
 {
-    ftBinTables::OffsM::PointerType md = m_memory->getOffsetPtr();
-    ftBinTables::OffsM::PointerType fd = m_file->getOffsetPtr();
 
-    FBTsizeType                s2, i2, a2, n;
+    // split this up into functions
+    ftBinTables::OffsM::PointerType mdata = m_memory->getOffsetPtr();
+    ftBinTables::OffsM::PointerType fdata = m_file->getOffsetPtr();
+
+    FBTsizeType                    s2, i2, a2, n;
     ftStruct::Members::PointerType p2;
-    FBTsize                    mlen, malen, total, pi, mptrsz;
+    FBTsize                        mlen, malen, total, pi, mptrsz;
+
+    FBTuint32 folen, molen;
+    folen = m_file->getOffsetCount();
+    molen = m_memory->getOffsetCount();
+
 
     char *   dst, *src;
     FBTsize *dstPtr, *srcPtr;
 
     bool endianSwap = (m_hederFlags & FH_ENDIAN_SWAP) != 0;
 
-    static const FBThash hk = ftCharHashKey("Link").hash();
-
     MemoryChunk* node;
     for (node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
     {
-        if (node->m_chunk.m_typeid > m_file->m_strcNr || !(fd[node->m_chunk.m_typeid]->m_link))
-            continue;
-
-        ftStruct *fs, *ms;
-        fs = fd[node->m_chunk.m_typeid];
-        ms = fs->m_link;
-
-        node->m_newTypeId = ms->m_strcId;
-
-        if (m_memory->m_type[ms->m_key.k16[0]].m_typeId == hk)
+        const Chunk& chunk = node->m_chunk;
+        // filter any potential errors..
+        if (chunk.m_typeid > m_file->m_strcNr)
+            printf("Chunk type id out of bounds(%d)\n", chunk.m_typeid);
+        else if (chunk.m_typeid > folen)
+            printf("Chunk type id outside of offset bounds(%d)\n", chunk.m_typeid);
+        else if (fdata[chunk.m_typeid]->m_link)
         {
-            FBTsize totSize  = node->m_chunk.m_len;
-            node->m_newBlock = ::malloc(totSize);
-            if (!node->m_newBlock)
+            ftStruct *fs, *ms;
+
+            fs = fdata[node->m_chunk.m_typeid];
+            ms = fs->m_link;
+
+            node->m_newTypeId = ms->m_strcId;
+
+            if (m_memory->getTypeId(ms->m_key.k16[0]) == DATABLOCK)
             {
-                ftMALLOC_FAILED;
-                return FS_BAD_ALLOC;
+                FBTsize totSize  = node->m_chunk.m_len;
+                node->m_newBlock = ::malloc(totSize);
+                if (!node->m_newBlock)
+                {
+                    ftMALLOC_FAILED;
+                    return FS_BAD_ALLOC;
+                }
+                ::memcpy(node->m_newBlock, node->m_block, totSize);
             }
+            else if (!skip(m_memory->getTypeId(ms->m_key.k16[0])))
+            {
+                FBTsize totSize     = (node->m_chunk.m_nr * ms->m_len);
+                node->m_chunk.m_len = totSize;
 
-            ::memcpy(node->m_newBlock, node->m_block, totSize);
-            continue;
+                node->m_newBlock = ::malloc(totSize);
+
+                if (!node->m_newBlock)
+                {
+                    ftMALLOC_FAILED;
+                    return FS_BAD_ALLOC;
+                }
+
+                ::memset(node->m_newBlock, 0, totSize);
+            }
         }
-
-        if (skip(m_memory->m_type[ms->m_key.k16[0]].m_typeId))
-            continue;
-
-        FBTsize totSize     = (node->m_chunk.m_nr * ms->m_len);
-        node->m_chunk.m_len = totSize;
-
-        node->m_newBlock = ::malloc(totSize);
-        if (!node->m_newBlock)
-        {
-            ftMALLOC_FAILED;
-            return FS_BAD_ALLOC;
-        }
-
-        ::memset(node->m_newBlock, 0, totSize);
     }
 
-    FBTuint8 mps = m_memory->getTablePtrSize(), fps = m_file->getTablePtrSize();
+    FBTuint8 mps, fps;
+    mps = m_memory->getTablePtrSize();
+    fps = m_file->getTablePtrSize();
 
     for (node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
     {
         if (node->m_newTypeId > m_memory->m_strcNr)
+        {
+            printf("Type id out of bounds(%d)", node->m_newTypeId);
             continue;
+        }
 
-        ftStruct* cs = md[node->m_newTypeId];
-        if (m_memory->m_type[cs->m_key.k16[0]].m_typeId == hk)
+        ftStruct* cs = mdata[node->m_newTypeId];
+        if (m_memory->getTypeId(cs->m_key.k16[0]) == DATABLOCK)
             continue;
 
         if (!cs->m_link || skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
         {
-            ::free(node->m_newBlock);
+            if (!node->m_newBlock)
+            {
+                printf("Missing block for %s \n", m_memory->getStructName(cs));
+                ::free(node->m_newBlock);
+            }
             node->m_newBlock = 0;
             continue;
         }
@@ -681,7 +699,7 @@ int ftFile::link(void)
 
                     if (!needCast && !needSwap && srcStrc->m_val.k32[0] == dstStrc->m_val.k32[0])  //same type
                     {
-                        mlen = ftMin(srcStrc->m_len, dstStrc->m_len);
+                        mlen = skMin(srcStrc->m_len, dstStrc->m_len);
                         ::memcpy(dstPtr, srcPtr, mlen);
                         continue;
                     }
@@ -696,8 +714,8 @@ int ftFile::link(void)
                         dtp = ftAtomicUtils::getPrimitiveType(dstStrc->m_val.k32[0]);
                     }
 
-                    FBTsize alen = ftMin(nameS.m_arraySize, nameD.m_arraySize);
-                    FBTsize elen = ftMin(srcElmSize, dstElmSize);
+                    FBTsize alen = skMin(nameS.m_arraySize, nameD.m_arraySize);
+                    FBTsize elen = skMin(srcElmSize, dstElmSize);
 
                     FBTbyte tmpBuf[8] = {
                         0,
@@ -746,10 +764,11 @@ int ftFile::link(void)
     return ftFile::FS_OK;
 }
 
+
 void* ftFile::findPtr(const FBTsize& iptr)
 {
     FBTsizeType i;
-    if ((i = m_map.find(iptr)) != ftNPOS)
+    if ((i = m_map.find(iptr)) != m_map.npos)
         return m_map.at(i)->m_newBlock;
     return 0;
 }
@@ -758,7 +777,7 @@ void* ftFile::findPtr(const FBTsize& iptr)
 ftFile::MemoryChunk* ftFile::findBlock(const FBTsize& iptr)
 {
     FBTsizeType i;
-    if ((i = m_map.find(iptr)) != ftNPOS)
+    if ((i = m_map.find(iptr)) != m_map.npos)
         return m_map.at(i);
     return 0;
 }
@@ -787,8 +806,8 @@ int ftFile::save(const char* path, const int mode)
     fs->open(path, skStream::WRITE);
 
 
-    FBTuint8 cp = ftVOID8 ? FM_64_BIT : FM_32_BIT;
-    FBTuint8 ce = ((FBTuint8)ftGetEndian()) == ftENDIAN_IS_BIG ? FM_BIG_ENDIAN : FM_LITTLE_ENDIAN;
+    FBTuint8 cp = FT_VOID8 ? FM_64_BIT : FM_32_BIT;
+    FBTuint8 ce = ((FBTuint8)ftGetEndian()) == FT_ENDIAN_IS_BIG ? FM_BIG_ENDIAN : FM_LITTLE_ENDIAN;
 
     char header[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     char version[33];
@@ -890,7 +909,7 @@ void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
     ch.m_len    = len * nr;
     ch.m_nr     = 1;
     ch.m_old    = (FBTsize)writeData;
-    ch.m_typeid = m_memory->findTypeId("Link");
+    ch.m_typeid = DATABLOCK;
     ftChunk::write(&ch, stream);
 }
 
@@ -913,7 +932,7 @@ int ftChunk::read(ftFile::Chunk* dest, skStream* stream, int flags)
     ftFile::Chunk32 c32;
     ftFile::Chunk*  cpy;
 
-    if (ftVOID8)
+    if (FT_VOID8)
     {
         if (bitsVary)
         {
@@ -999,7 +1018,7 @@ int ftChunk::read(ftFile::Chunk* dest, skStream* stream, int flags)
         cpy = (ftFile::Chunk*)(&c32);
     }
 
-    if (cpy->m_len == ftNPOS)
+    if (cpy->m_len == SK_NPOS32)
     {
         ftINVALID_LEN;
         return ftFile::FS_INV_LENGTH;

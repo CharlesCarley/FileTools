@@ -180,7 +180,7 @@ int ftCompiler::parse(void)
             TOK = m_scanner->lex(tp);
             if (TOK == FT_ID)
             {
-                if (m_namespaces.find(tp.getValue().c_str()) == ftNPOS)
+                if (m_namespaces.find(tp.getValue().c_str()) == m_namespaces.npos)
                     m_namespaces.push_back(tp.getValue().c_str());
             }
         }
@@ -507,7 +507,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         ftId&   cur = m_build->m_typeLookup.at(bs.m_structId);
         FBTtype len = m_build->m_tlen.at(bs.m_structId);
 
-        if (m_skip.find(cur) != ftNPOS)
+        if (m_skip.find(cur) != m_skip.npos)
             continue;
 #if ftFAKE_ENDIAN == 1
         len = ftSwap16(len);
@@ -578,7 +578,7 @@ void ftBuildInfo::makeBuiltinTypes(void)
 FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 {
     FBTsize loc = m_typeLookup.find(type);
-    if (loc == ftNPOS)
+    if (loc == m_typeLookup.npos)
     {
         m_alloc.m_type += type.size() + 1;
         m_alloc.m_tlen += sizeof(FBTtype);
@@ -593,13 +593,13 @@ FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 
 bool ftBuildInfo::hasType(const ftId& type)
 {
-    return m_typeLookup.find(type) != ftNPOS;
+    return m_typeLookup.find(type) != m_typeLookup.npos;
 }
 
 FBTsizeType ftBuildInfo::addName(const ftId& name)
 {
     FBTsize loc;
-    if ((loc = m_name.find(name)) == ftNPOS)
+    if ((loc = m_name.find(name)) == m_name.npos)
     {
         m_alloc.m_name += name.size() + 1;
         loc = m_name.size();
@@ -671,7 +671,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
             if (tlens[cur.m_structId] != 0)
             {
                 FBTsizeType pos;
-                if ((pos = m_missingReport.find(cur.m_name)) != ftNPOS)
+                if ((pos = m_missingReport.find(cur.m_name)) != m_missingReport.npos)
                     m_missingReport.remove(pos);
             }
             else
@@ -690,15 +690,15 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                     if (v.m_ptrCount > 0)
                     {
                         hasPtr = true;
-                        if (len % ftVOID)
+                        if (len % FT_VOIDP)
                         {
                             printf(v.m_path.c_str(),
                                    v.m_line,
                                    "align %i: %s %s add %i bytes\n",
-                                   ftVOID,
+                                   FT_VOIDP,
                                    v.m_type.c_str(),
                                    v.m_name.c_str(),
-                                   ftVOID - (len % ftVOID));
+                                   FT_VOIDP - (len % FT_VOIDP));
 
                             status |= LNK_ALIGNEMENTP;
                         }
@@ -714,14 +714,14 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
                             status |= LNK_ALIGNEMENTP;
                         }
-                        len += ftVOID * v.m_arraySize;
+                        len += FT_VOIDP * v.m_arraySize;
                         fake64 += 8 * v.m_arraySize;
                     }
                     else if (tlens[ct])
                     {
                         if (ct >= ft_start)
                         {
-                            if (ftVOID8 && (len % 8))
+                            if (FT_VOID8 && (len % 8))
                             {
                                 printf(v.m_path.c_str(),
                                        v.m_line,
@@ -762,7 +762,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                     {
                         next++;
                         len = 0;
-                        if (m_missingReport.find(cur.m_name) == ftNPOS)
+                        if (m_missingReport.find(cur.m_name) == m_missingReport.npos)
                             m_missingReport.push_back(cur.m_name);
 
                         tln64[cur.m_structId] = 0;
@@ -830,7 +830,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                 while (it.hasMoreElements())
                 {
                     ftVariable& cvar = it.getNext();
-                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", cvar.m_typeId, cvar.m_nameId, (cvar.m_ptrCount > 0 ? ftVOID : tlens[cvar.m_typeId]) * cvar.m_arraySize, cvar.m_type.c_str(), cvar.m_name.c_str());
+                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", cvar.m_typeId, cvar.m_nameId, (cvar.m_ptrCount > 0 ? FT_VOIDP : tlens[cvar.m_typeId]) * cvar.m_arraySize, cvar.m_type.c_str(), cvar.m_name.c_str());
                 }
             }
         }

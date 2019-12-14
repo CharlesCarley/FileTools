@@ -24,6 +24,7 @@
 -------------------------------------------------------------------------------
 */
 #include "ftAtomic.h"
+#include "ftHashTypes.h"
 #define FT_IN_SOURCE_FILE
 #include "ftPlatformHeaders.h"
 
@@ -34,6 +35,7 @@ FBTuint32 mkhash(const char* name)
         return -1;
     return ftCharHashKey(name).hash();
 }
+
 
 
 ftAtomic ftAtomicUtils::getPrimitiveType(FBTuint32 typeKey)

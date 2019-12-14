@@ -21,9 +21,11 @@ set(File_SRC
     ftTables.cpp
     ftTypes.cpp
     ftScanner.cpp
+    ftEndianUtils.cpp
     ftStreams.cpp
     ftCompiler.cpp
 )
+
 set(File_HDR
     ftAtomic.h
     ftFile.h
@@ -33,8 +35,11 @@ set(File_HDR
     ftConfig.h
     ftScanner.h
     ftStreams.h
+    ftHashTypes.h
+    ftEndianUtils.h
     ftPlatformHeaders.h
 )
+
 
 if (ftUSE_ZLIB)
     include_directories(${ftZLIB_INCLUDE})
