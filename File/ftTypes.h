@@ -56,7 +56,7 @@ typedef SKuint64 FBTuint64;
 
 typedef SKuintPtr  FBTuintPtr;
 typedef SKintPtr   FBTintPtr;
-typedef FBTuintPtr FBTsize;
+typedef SKuintPtr  FBTsize;
 
 // Scalar types are defined as [a-z]"Scalar"
 #ifdef ftSCALAR_DOUBLE

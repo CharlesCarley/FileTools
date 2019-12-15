@@ -32,6 +32,13 @@
 #include "ftTables.h"
 
 
+class ftLogger
+{
+public:
+    static void log(const ftFile::Chunk& chunk);
+};
+
+
 
 const FBTuint32      ENDB      = ftID('E', 'N', 'D', 'B');
 const FBTuint32      DNA1      = ftID('D', 'N', 'A', '1');
@@ -529,8 +536,8 @@ int ftLinkCompiler::link(void)
 
 int ftFile::allocNewBlocks(void)
 {
-    int status = FS_OK;
-    MemoryChunk* node = (MemoryChunk*)m_chunks.first;
+    int          status = FS_OK;
+    MemoryChunk* node   = (MemoryChunk*)m_chunks.first;
 
     while (node && status == FS_OK)
     {
@@ -545,7 +552,7 @@ int ftFile::allocNewBlocks(void)
             fileStruct   = m_file->findStructByType(chunk.m_typeid);
             memoryStruct = fileStruct->m_link;
 
-            // link the new type id on the node 
+            // link the new type id on the node
             // so it's accessible later
             node->m_newTypeId = memoryStruct->m_strcId;
 
@@ -637,7 +644,7 @@ int ftFile::link(void)
             continue;
         }
 
-        // filter out saved pointers, 
+        // filter out saved pointers,
         // there is no need to attempt to update them.
         if (m_memory->getTypeId(currentStruct->getTypeIndex()) == DATABLOCK)
             continue;
@@ -660,8 +667,8 @@ int ftFile::link(void)
         p2 = currentStruct->m_members.ptr();
         for (n = 0; n < node->m_chunk.m_nr; ++n)
         {
-            dst = static_cast<char*>(node->m_newBlock) + (currentStruct->m_len * n);
-            src = static_cast<char*>(node->m_block) + (currentStruct->m_link->m_len * n);
+            dst = static_cast<char*>(node->m_newBlock) + ((FBTsize)currentStruct->m_len * n);
+            src = static_cast<char*>(node->m_block) + ((FBTsize)currentStruct->m_link->m_len * n);
 
             for (i2 = 0; i2 < s2; ++i2)
             {
@@ -1064,4 +1071,9 @@ int ftChunk::read(ftFile::Chunk* dest, skStream* stream, int flags)
 
     ::memcpy(dest, cpy, BlockSize);
     return bytesRead;
+}
+
+
+void ftLogger::log(const ftFile::Chunk& chunk)
+{
 }
