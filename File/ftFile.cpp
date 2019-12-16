@@ -30,13 +30,7 @@
 #include "ftPlatformHeaders.h"
 #include "ftStreams.h"
 #include "ftTables.h"
-
-
-class ftLogger
-{
-public:
-    static void log(const ftFile::Chunk& chunk);
-};
+#include "ftLogger.h"
 
 
 
@@ -625,6 +619,8 @@ int ftFile::link(void)
     {
         const Chunk& chunk = node->m_chunk;
 
+        // ftLogger::log(chunk);
+
         if (!m_file->isValidType(chunk.m_typeid))
         {
             printf("Chunk type id out of bounds(%d)\n", chunk.m_typeid);
@@ -732,6 +728,11 @@ int ftFile::link(void)
                             for (a2 = 0; a2 < malen; ++a2, sptr += (fps == 4 ? 1 : 2))
                                 dptr[a2] = (FBTsize)findPtr((FBTsize)*sptr);
                         }
+                    }
+                    else
+                    {
+                        //printf("Source pointer is null\n");
+                    
                     }
                 }
                 else
@@ -963,6 +964,9 @@ int ftChunk::write(ftFile::Chunk* src, skStream* stream)
     int size = 0;
     size += stream->write(src, BlockSize);
     size += stream->write((void*)src->m_old, src->m_len);
+
+    //ftLogger::log(*src);
+    //ftLogger::log((void*)src->m_old, src->m_len);
     return size;
 }
 
@@ -1071,9 +1075,4 @@ int ftChunk::read(ftFile::Chunk* dest, skStream* stream, int flags)
 
     ::memcpy(dest, cpy, BlockSize);
     return bytesRead;
-}
-
-
-void ftLogger::log(const ftFile::Chunk& chunk)
-{
 }

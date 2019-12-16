@@ -210,7 +210,7 @@ public:
     ftStruct* findStructByType(const FBTuint16& type);
     bool      isLinkedToMemory(const FBTuint16& type);
 
-    FBTuint32 getTypeId(const FBTuint16& type)
+    FBTuint32 getTypeId(const FBTuint16& type) const
     {
         if (type < m_typeNr)
             return m_type[type].m_typeId;
