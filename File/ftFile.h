@@ -94,7 +94,7 @@ public:
     {
         FBTuint32 m_code;
         FBTuint32 m_len;
-        FBTsize   m_old;
+        FBTsize   m_old; // varies
         FBTuint32 m_typeid;
         FBTuint32 m_nr;
     };
@@ -187,7 +187,7 @@ protected:
     int  initializeTables(ftBinTables* tables);
     int  initializeMemory(void);
 
-    virtual bool skip(const FBTuint32& id)
+    virtual bool skip(const FBThash& id)
     {
         return false;
     }

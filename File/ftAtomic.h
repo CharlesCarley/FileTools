@@ -53,7 +53,7 @@ struct ftAtomicType
     char*     m_name;
     size_t    m_sizeof;
     ftAtomic  m_type;
-    FBTuint32 m_hash;
+    FBThash   m_hash;
 };
 
 
@@ -61,11 +61,11 @@ struct ftAtomicType
 class ftAtomicUtils
 {
 public:
-    static ftAtomic getPrimitiveType(FBTuint32 typeKey);
+    static ftAtomic getPrimitiveType(FBThash typeKey);
     static ftAtomic getPrimitiveType(const char* typeName);
-    static bool     isInteger(FBTuint32 typeKey);
-    static bool     isReal(FBTuint32 typeKey);
-    static bool     isNumeric(FBTuint32 typeKey);
+    static bool     isInteger(FBThash typeKey);
+    static bool     isReal(FBThash typeKey);
+    static bool     isNumeric(FBThash typeKey);
 
     static void cast(char*    source,
                      char*    destination,

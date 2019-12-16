@@ -67,8 +67,8 @@ struct ftChunk
         Block32   = sizeof(ftFile::Chunk32),
         Block64   = sizeof(ftFile::Chunk64),
     };
-    static int read(ftFile::Chunk* dest, skStream* stream, int flags);
-    static int write(ftFile::Chunk* src, skStream* stream);
+    static FBTsize read(ftFile::Chunk* dest, skStream* stream, int flags);
+    static FBTsize write(ftFile::Chunk* src, skStream* stream);
 };
 
 
@@ -182,7 +182,7 @@ int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
     ms.open(memory, sizeInBytes, skStream::READ);  //, mode == PM_COMPRESSED);
     if (!ms.isOpen())
     {
-        printf("Memory %p(%d) loading failed!\n", memory, sizeInBytes);
+        printf("Memory %p(%lld) loading failed!\n", memory, sizeInBytes);
         return FS_FAILED;
     }
 
@@ -305,7 +305,9 @@ void ftFile::clearStorage(void)
 
 int ftFile::parseStreamImpl(skStream* stream)
 {
-    int status, bytesRead = 0;
+    int status;
+    
+    FBTsize bytesRead = 0;
 
     // ensure that any previous memory has been freed
     clearStorage();
@@ -337,8 +339,8 @@ int ftFile::parseStreamImpl(skStream* stream)
         if (chunk.m_code == SDNA)
         {
             chunk.m_code = DNA1;
-            stream->seek(-bytesRead, SEEK_CUR);
-            chunk.m_len = stream->size() - stream->position();
+            stream->seek(-(int)bytesRead, SEEK_CUR);
+            chunk.m_len = (FBTuint32)(stream->size() - stream->position());
         }
 
         // exit on end byte
@@ -565,7 +567,7 @@ int ftFile::allocNewBlocks(void)
 
             else if (!skip(m_memory->getTypeId(memoryStruct->getTypeIndex())))
             {
-                const FBTsize totSize = (chunk.m_nr * memoryStruct->getSizeInBytes());
+                const FBTuint32 totSize = (chunk.m_nr * memoryStruct->getSizeInBytes());
 
                 node->m_chunk.m_len = totSize;
                 node->m_newBlock    = ::malloc(totSize);
@@ -693,20 +695,20 @@ int ftFile::link(void)
                                 else
                                 {
                                     total  = bin->m_chunk.m_len / fps;
-                                    mptrsz = total * sizeof(FBTuintPtr);
+                                    mptrsz = total * sizeof(FBTsize);
 
-                                    FBTuintPtr* nptr = (FBTuintPtr*)::malloc(mptrsz);
+                                    FBTsize* nptr = (FBTsize*)::malloc(mptrsz);
                                     ::memset(nptr, 0, mptrsz);
 
                                     // Always use a 32 bit integer,
                                     // then offset + 2 for a 64 bit pointer.
                                     FBTuint32* optr = (FBTuint32*)bin->m_block;
-                                    FBTuint32* mptr = (FBTuint32*)nptr;
-
+                                    FBTsize*   mptr = nptr;
+                                    
                                     for (pi = 0; pi < total; pi++, optr += (fps == 4 ? 1 : 2))
-                                        (*mptr++) = (FBTuintPtr)findPtr((size_t)*optr);
+                                        (*mptr++) = (FBTsize)findPtr((FBTsize)*optr);
 
-                                    (*dstPtr) = (size_t)(nptr);
+                                    (*dstPtr) = (FBTsize)(nptr);
 
                                     bin->m_chunk.m_len = total * mps;
                                     bin->m_flag |= MemoryChunk::BLK_MODIFIED;
@@ -731,7 +733,7 @@ int ftFile::link(void)
                     }
                     else
                     {
-                        //printf("Source pointer is null\n");
+                        printf("Source pointer is null\n");
                     
                     }
                 }
@@ -951,7 +953,7 @@ void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
 
     Chunk ch;
     ch.m_code   = DATA;
-    ch.m_len    = len * nr;
+    ch.m_len    = len;
     ch.m_nr     = 1;
     ch.m_old    = (FBTsize)writeData;
     ch.m_typeid = 0;
@@ -959,22 +961,23 @@ void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
 }
 
 
-int ftChunk::write(ftFile::Chunk* src, skStream* stream)
+
+FBTsize ftChunk::write(ftFile::Chunk* src, skStream* stream)
 {
-    int size = 0;
+    FBTsize size = 0;
     size += stream->write(src, BlockSize);
     size += stream->write((void*)src->m_old, src->m_len);
 
-    //ftLogger::log(*src);
-    //ftLogger::log((void*)src->m_old, src->m_len);
+    ftLogger::log(*src);
+    ftLogger::log((void*)src->m_old, src->m_len);
     return size;
 }
 
 
-int ftChunk::read(ftFile::Chunk* dest, skStream* stream, int flags)
+FBTsize ftChunk::read(ftFile::Chunk* dest, skStream* stream, int flags)
 {
-    int  bytesRead  = 0;
-    bool bitsVary   = (flags & ftFile::FH_VAR_BITS) != 0;
+    FBTsize bytesRead  = 0;
+    bool    bitsVary   = (flags & ftFile::FH_VAR_BITS) != 0;
     bool swapEndian = (flags & ftFile::FH_ENDIAN_SWAP) != 0;
 
     ftFile::Chunk64 c64;

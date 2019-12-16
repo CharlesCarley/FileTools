@@ -65,8 +65,8 @@ typedef SKuintPtr  FBTsize;
 #define scalar_t float
 #endif
 
-typedef FBTuint32 FBTsizeType;
-typedef FBTuint32 FBThash;
+typedef FBTsize   FBTsizeType;
+typedef FBTsize   FBThash;
 typedef FBTuint16 FBTtype;
 
 #define _ftCACHE_LIMIT 999

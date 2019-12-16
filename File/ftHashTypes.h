@@ -36,20 +36,20 @@ class ftCharHashKey
 {
 protected:
     char*          m_key;
-    mutable SKhash m_hash;
+    mutable FBThash m_hash;
 
 public:
 
     ftCharHashKey() :
         m_key(0),
-        m_hash(SK_NPOS32)
+        m_hash(SK_NPOS)
     {
     }
 
 
     ftCharHashKey(char* k) :
         m_key(k),
-        m_hash(SK_NPOS32)
+        m_hash(SK_NPOS)
     {
         hash();
     }
@@ -57,7 +57,7 @@ public:
 
     ftCharHashKey(const char* k) :
         m_key(const_cast<char*>(k)),
-        m_hash(SK_NPOS32)
+        m_hash(SK_NPOS)
     {
         hash();
     }
@@ -65,7 +65,7 @@ public:
 
     ftCharHashKey(const ftCharHashKey& k) :
         m_key(k.m_key),
-        m_hash(SK_NPOS32)
+        m_hash(SK_NPOS)
     {
         hash();
     }
@@ -74,10 +74,10 @@ public:
     SKhash hash(void) const
     {
         if (m_key == nullptr || !(*m_key))
-            return SK_NPOS32;
+            return SK_NPOS;
      
         // it has already been calculated
-        if (m_hash != SK_NPOS32)
+        if (m_hash != SK_NPOS)
             return m_hash;
 
         m_hash = skHash(m_key, ::strlen(m_key));

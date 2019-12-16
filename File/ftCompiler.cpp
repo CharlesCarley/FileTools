@@ -130,13 +130,14 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
     v.m_name = newName;
 }
 
-int ftCompiler::parseBuffer(const ftId& name, const char* ms, int len)
+int ftCompiler::parseBuffer(const ftId& name, const char* ms, size_t len)
 {
     ftScanner scanner(ms, len);
     m_scanner = &scanner;
     m_includes.push_back(name.c_str());
 
-    int ret   = parse();
+    int ret = parse();
+
     m_scanner = 0;
     return ret;
 }
@@ -156,12 +157,12 @@ int ftCompiler::parseFile(const ftPath& id)
     fseek(fp, 0L, SEEK_SET);
 
     char* buffer = new char[len + 1];
-    br           = fread(buffer, 1, len, fp);
+
+    br = fread(buffer, 1, len, fp);
     buffer[br]   = 0;
     fclose(fp);
 
     int ret = parseBuffer(id.c_str(), buffer, len + 1);
-
     delete[] buffer;
     return ret;
 }

@@ -74,7 +74,7 @@ typedef struct ftName
 typedef struct ftType
 {
     char*     m_name;    // note: memory is in the main table.
-    FBTuint32 m_typeId;  // ftCharHashKey(typeName)
+    FBThash   m_typeId;  // ftCharHashKey(typeName)
     FBTuint32 m_strcId;
 } ftType;
 
@@ -163,7 +163,7 @@ public:
     typedef ftType*            Types;  // < FT_MAX_TABLE
     typedef FBTtype*           TypeL;  // < FT_MAX_TABLE
     typedef FBTtype**          Strcs;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
-    typedef skArray<FBTuint32> NameB;
+    typedef skArray<SKsize>    NameB;
     typedef skArray<ftStruct*> OffsM;
 
     typedef skHashTable<ftCharHashKey, ftType> TypeFinder;
@@ -210,11 +210,11 @@ public:
     ftStruct* findStructByType(const FBTuint16& type);
     bool      isLinkedToMemory(const FBTuint16& type);
 
-    FBTuint32 getTypeId(const FBTuint16& type) const
+    FBThash getTypeId(const FBTuint16& type) const
     {
         if (type < m_typeNr)
             return m_type[type].m_typeId;
-        return SK_NPOS32;
+        return SK_NPOS;
     }
 
 

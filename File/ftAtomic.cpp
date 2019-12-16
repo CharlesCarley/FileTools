@@ -29,7 +29,7 @@
 #include "ftPlatformHeaders.h"
 
 
-FBTuint32 mkhash(const char* name)
+FBThash mkhash(const char* name)
 {
     if (!name || !(*name))
         return -1;
@@ -38,7 +38,7 @@ FBTuint32 mkhash(const char* name)
 
 
 
-ftAtomic ftAtomicUtils::getPrimitiveType(FBTuint32 typeKey)
+ftAtomic ftAtomicUtils::getPrimitiveType(FBThash typeKey)
 {
     ftAtomic res = ftAtomic::FT_ATOMIC_UNKNOWN;
     size_t   i;
@@ -59,19 +59,19 @@ ftAtomic ftAtomicUtils::getPrimitiveType(const char* typeName)
 }
 
 
-bool ftAtomicUtils::isInteger(FBTuint32 typeKey)
+bool ftAtomicUtils::isInteger(FBThash typeKey)
 {
     ftAtomic tp = getPrimitiveType(typeKey);
     return tp < ftAtomic::FT_ATOMIC_FLOAT;
 }
 
-bool ftAtomicUtils::isReal(FBTuint32 typeKey)
+bool ftAtomicUtils::isReal(FBThash typeKey)
 {
     ftAtomic tp = getPrimitiveType(typeKey);
     return tp == ftAtomic::FT_ATOMIC_FLOAT || tp == ftAtomic::FT_ATOMIC_DOUBLE;
 }
 
-bool ftAtomicUtils::isNumeric(FBTuint32 typeKey)
+bool ftAtomicUtils::isNumeric(FBThash typeKey)
 {
     ftAtomic tp = getPrimitiveType(typeKey);
     return tp != ftAtomic::FT_ATOMIC_VOID && tp != ftAtomic::FT_ATOMIC_UNKNOWN;

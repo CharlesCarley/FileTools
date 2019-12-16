@@ -133,7 +133,7 @@ public:
     ~ftCompiler();
 
     int parseFile(const ftPath& id);
-    int parseBuffer(const ftId& name, const char* ms, int len);
+    int parseBuffer(const ftId& name, const char* ms, size_t len);
     int buildTypes(void);
 
     void writeFile(const ftId& id, class skStream* fp);
