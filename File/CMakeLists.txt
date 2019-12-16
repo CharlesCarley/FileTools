@@ -21,6 +21,7 @@ set(File_SRC
     ftTables.cpp
     ftTypes.cpp
     ftScanner.cpp
+    ftStruct.cpp
     ftLogger.cpp
     ftEndianUtils.cpp
     ftStreams.cpp
@@ -34,6 +35,7 @@ set(File_HDR
     ftCompiler.h
     ftTypes.h
     ftConfig.h
+    ftStruct.h
     ftScanner.h
     ftLogger.h
     ftStreams.h

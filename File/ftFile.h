@@ -33,6 +33,8 @@
 class skStream;
 class ftMemoryStream;
 class ftBinTables;
+class ftStruct;
+class ftName;
 
 
 class ftFile
@@ -210,7 +212,19 @@ private:
     int  parseHeader(skStream* stream);
     int  parseStreamImpl(skStream* stream);
     int  compileOffsets(void);
+
+
     int  link(void);
+    
+    void linkMembers(MemoryChunk* chunk, ftStruct* cur);
+    void linkMembers(ftStruct* dst, FBTsize*& dstPtr, ftStruct* src, FBTsize*& srcPtr);
+
+    void castPointers(
+        const ftName& name,
+        ftStruct*     dst,
+        FBTsize*&     dstPtr,
+        ftStruct*     src,
+        FBTsize*&     srcPtr);
 };
 
 

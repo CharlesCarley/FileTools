@@ -35,11 +35,10 @@
 class ftCharHashKey
 {
 protected:
-    char*          m_key;
+    char*           m_key;
     mutable FBThash m_hash;
 
 public:
-
     ftCharHashKey() :
         m_key(0),
         m_hash(SK_NPOS)
@@ -75,7 +74,7 @@ public:
     {
         if (m_key == nullptr || !(*m_key))
             return SK_NPOS;
-     
+
         // it has already been calculated
         if (m_hash != SK_NPOS)
             return m_hash;
@@ -107,7 +106,7 @@ public:
 };
 
 
-extern FBTuint32 skHash(const ftCharHashKey& hk);
+extern FBThash skHash(const ftCharHashKey& hk);
 
 
 #endif  //_ftHashTypes_h_

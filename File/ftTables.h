@@ -64,7 +64,7 @@ typedef struct ftName
 {
     char*     m_name;  // note: memory is in the main table.
     int       m_loc;
-    FBTuint32 m_nameId;
+    FBThash   m_nameId;
     int       m_ptrCount;
     int       m_numSlots, m_isFptr;
     int       m_arraySize;
@@ -85,10 +85,10 @@ typedef union ftKey32 {
     FBTint32 k32;
 } ftKey32;
 
-typedef union ftKey64 {
-    FBTuint32 k32[2];
-    FBTuint64 k64;
 
+typedef struct ftKey64 {
+    FBThash m_type;
+    FBThash m_name;
 } ftKey64;
 
 
@@ -142,6 +142,12 @@ public:
         return m_len;
     }
 
+    ftStruct* getMember(Members::SizeType idx)
+    {
+        if (idx < m_members.size())
+            return &m_members.ptr()[idx];
+        return nullptr;
+    }
 
     ftKey32   m_key;  // k[0]: type, k[1]: name
     ftKey64   m_val;  // key hash value, k[0]: type hash id, k[1]: member(field) base name hash id or 0(struct)
@@ -168,6 +174,9 @@ public:
 
     typedef skHashTable<ftCharHashKey, ftType> TypeFinder;
 
+
+    static const ftName INVALID_NAME;
+
 public:
     ftBinTables();
     ftBinTables(void* ptr, FBTsize len, FBTuint8 ptrSize);
@@ -180,6 +189,15 @@ public:
     const char* getStructType(const ftStruct* strc);
     const char* getStructName(const ftStruct* strc);
     const char* getOwnerStructName(const ftStruct* strc);
+
+
+    const ftName& getName(const FBTuint16& idx) const
+    {    
+        if (idx < m_nameNr)
+            return m_name[idx];
+        return INVALID_NAME;
+    }
+
 
 
     OffsM::PointerType getOffsetPtr();
@@ -204,13 +222,10 @@ public:
 
 
     ftStruct* findStructByName(const ftCharHashKey& kvp);
-
-
-    // accessors
     ftStruct* findStructByType(const FBTuint16& type);
     bool      isLinkedToMemory(const FBTuint16& type);
 
-    FBThash getTypeId(const FBTuint16& type) const
+    FBThash getTypeHash(const FBTuint16& type) const
     {
         if (type < m_typeNr)
             return m_type[type].m_typeId;
@@ -232,16 +247,24 @@ public:
     FBTsize   m_otherLen;
 
 private:
-    OffsM m_offs;
-
-    // It's safe to assume that memory len is FT_VOIDP and file len is FH_CHUNK_64 ? 8 : 4
-    // Otherwise this library will not even compile (no more need for 'sizeof(ListBase) / 2')
-    FBTuint8 m_ptrLength;
-
+    OffsM      m_offs;
+    FBTuint8   m_ptrLength;
     TypeFinder m_typeFinder;
 
-    void putMember(FBTtype* cp, ftStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys);
-    void compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys);
+    void putMember(FBTtype*        cp,
+                   ftStruct*       off,
+                   FBTtype         nr,
+                   FBTuint32&      cof,
+                   FBTuint32       depth,
+                   ftStruct::Keys& keys);
+    
+    void compile(FBTtype         i,
+                 FBTtype         nr,
+                 ftStruct*       off,
+                 FBTuint32&      cof,
+                 FBTuint32       depth,
+                 ftStruct::Keys& keys);
+
     void compile(void);
 };
 #endif  //_ftTables_h_

@@ -34,6 +34,7 @@ public:
     static void log(const char *msg);
     static void log(const ftFile::Chunk &chunk);
     static void log(void *ptr, FBTsize len);
+    static void log(ftStruct *strc);
 };
 
 

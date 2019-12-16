@@ -30,6 +30,19 @@
 
 
 
+const ftName ftBinTables::INVALID_NAME = {
+    nullptr,  // m_name
+    0,        // m_loc
+    SK_NPOS,  // m_nameId
+    -1,       // m_ptrCount
+    -1,       // m_numSlots
+    -1,       // m_isFptr;
+    -1,       // m_arraySize
+    {0, 0}    // m_array
+};
+
+
+
 ftBinTables::ftBinTables() :
     m_name(0),
     m_type(0),
@@ -251,7 +264,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     i = 0;
     while (i < m_typeNr)
     {
-        m_tlen[i] = *tp++;
+        m_tlen[i] = (*tp++);
         if (swap)
             m_tlen[i] = ftSwap16(m_tlen[i]);
         ++i;
@@ -259,8 +272,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (m_typeNr & 1)
         ++tp;
-    cp = (char*)tp;
 
+    cp = (char*)tp;
     if (!ftCharNEq(cp, ftIdNames::ftSTRC, 4))
     {
         printf("Bin table is missing the tlen id!\n");
@@ -317,8 +330,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         {
             SK_ASSERT(tp[1] < FT_MAX_MEMBERS);
             m_type[tp[0]].m_strcId = m_strcNr - 1;
-            m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
+            m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
             tp += (2 * tp[1]) + 2;
         }
         ++i;
@@ -344,7 +357,12 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 }
 
 
-void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, FBTuint32 depth, ftStruct::Keys& keys)
+void ftBinTables::compile(FBTtype         i,
+                          FBTtype         nr,
+                          ftStruct*       off,
+                          FBTuint32&      cof,
+                          FBTuint32       depth,
+                          ftStruct::Keys& keys)
 {
     FBTuint32 e, l, a, oof, ol;
     FBTuint16 f = m_strc[0][0];
@@ -354,6 +372,9 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
         printf("Missing recursive type\n");
         return;
     }
+
+
+    ftKey64 keypair;
 
 
     for (a = 0; a < nr; ++a)
@@ -372,10 +393,16 @@ void ftBinTables::compile(FBTtype i, FBTtype nr, ftStruct* off, FBTuint32& cof, 
         {
             if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
             {
-                ftKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
-                keys.push_back(k);
+                keypair.m_type = m_type[strc[0]].m_typeId;
+                keypair.m_name = m_name[strc[1]].m_nameId;
+                keys.push_back(keypair);
 
-                compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth + 1, keys);
+                compile(m_type[strc[0]].m_strcId,
+                        m_name[strc[1]].m_arraySize,
+                        off,
+                        cof,
+                        depth + 1,
+                        keys);
 
                 keys.pop_back();
             }
@@ -413,8 +440,8 @@ void ftBinTables::compile(void)
         ftStruct* off     = new ftStruct;
         off->m_key.k16[0] = strcType;
         off->m_key.k16[1] = 0;
-        off->m_val.k32[0] = m_type[strcType].m_typeId;
-        off->m_val.k32[1] = 0;  // no name
+        off->m_val.m_type = m_type[strcType].m_typeId;
+        off->m_val.m_name = 0;  // no name
         off->m_nr         = 0;
         off->m_dp         = 0;
         off->m_off        = cof;
@@ -467,8 +494,8 @@ void ftBinTables::putMember(FBTtype*        cp,
     ftStruct nof;
     nof.m_key.k16[0] = cp[0];
     nof.m_key.k16[1] = cp[1];
-    nof.m_val.k32[0] = m_type[cp[0]].m_typeId;
-    nof.m_val.k32[1] = m_base[cp[1]];
+    nof.m_val.m_type = m_type[cp[0]].m_typeId;
+    nof.m_val.m_name = m_base[cp[1]];
     nof.m_off        = cof;
     nof.m_strcId     = off->m_strcId;
     nof.m_nr         = nr;
@@ -525,4 +552,11 @@ const char* ftBinTables::getOwnerStructName(const ftStruct* strc)
 {
     FBTuint32 k = strc ? strc->m_strcId : (FBTuint32)-1;
     return (k >= m_strcNr || *m_strc[k] >= m_typeNr) ? "" : m_type[*m_strc[k]].m_name;
+}
+
+ftStruct* ftStruct::getMember(Members::SizeType idx)
+{
+    if (idx < m_members.size())
+        return &m_members.ptr()[idx];
+    return nullptr;
 }

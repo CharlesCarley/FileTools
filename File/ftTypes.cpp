@@ -28,7 +28,7 @@
 
 
 
-FBTuint32 skHash(const ftCharHashKey& hk)
+FBThash skHash(const ftCharHashKey& hk)
 {
     return hk.hash();
 }

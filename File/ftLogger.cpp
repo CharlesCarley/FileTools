@@ -24,6 +24,8 @@
 -------------------------------------------------------------------------------
 */
 #include "ftLogger.h"
+#include "ftTables.h"
+
 #include <iomanip>
 #include <iostream>
 #include "Utils/skHexPrint.h"
@@ -68,4 +70,17 @@ void ftLogger::log(void *ptr, FBTsize len)
 {
     ftLogger_writeSeperator();
     skHexPrint::dumpHex((char *)ptr, 0, len, skHexPrint::PF_DEFAULT, -1);
+}
+
+
+void ftLogger::log(ftStruct *strc)
+{
+    ftLogger_writeSeperator();
+    cout << "Struct" << endl;
+    cout << "-----------------------" << endl;
+    cout << "Key    :" << '{' << strc->m_key.k16[0] << ',' << strc->m_key.k16[1] << '}' << endl;
+    cout << "Hash   :" << '{' << strc->m_val.m_type << ',' << strc->m_val.m_name << '}' << endl;
+    cout << "Offs   :" << strc->m_off << endl;
+    cout << "Len    :" << strc->m_len << endl;
+    cout << "Nr     :" << strc->m_nr << endl;
 }
