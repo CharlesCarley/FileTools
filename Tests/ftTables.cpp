@@ -23,19 +23,25 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _ftLogger_h_
-#define _ftLogger_h_
+#include "Templates.h"
+#include "catch/Macro.h"
+#include "ftAtomic.h"
+#include "ftScanner.h"
+#include "ftCompiler.h"
 
-#include "ftFile.h"
 
-class ftLogger
+
+
+
+TEST_CASE("CompilerTest")
 {
-public:
-    static void log(const char *msg);
-    static void log(const ftFile::Chunk &chunk);
-    static void log(void *ptr, FBTsize len);
-    static void log(ftBinTables *table, ftStruct *strc);
-};
+
+    ftCompiler cplr;
+    cplr.parseBuffer("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
 
 
-#endif  //_ftLogger_h_
+    cplr.writeStream();
+}
+
+
+

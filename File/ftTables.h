@@ -29,8 +29,8 @@
 #include "Utils/skArray.h"
 #include "Utils/skMap.h"
 #include "ftHashTypes.h"
-#include "ftTypes.h"
 #include "ftStruct.h"
+#include "ftTypes.h"
 
 
 namespace ftIdNames
@@ -62,6 +62,7 @@ public:
 
 
     static const ftName INVALID_NAME;
+    static const ftType INVALID_TYPE;
 
 public:
     ftBinTables();
@@ -71,15 +72,14 @@ public:
     bool read(bool swap);
     bool read(const void* ptr, const FBTsize& len, bool swap);
 
-    FBTuint32   findTypeId(const ftCharHashKey& cp);
-    const char* getStructName(const ftStruct* strc);
-    const char* getOwnerStructName(const ftStruct* strc);
-
+    FBTuint32     findTypeId(const ftCharHashKey& cp);
+    const char*   getStructName(const ftStruct* strc);
+    const char*   getOwnerStructName(const ftStruct* strc);
     ftCharHashKey getStructHashByType(const FBTuint16& type);
-
 
     const ftName& getStructNameByIdx(const FBTuint16& idx) const;
     FBThash       getTypeHash(const FBTuint16& type) const;
+    bool          isPointer(const FBTuint16& name) const;
 
 
 
@@ -105,7 +105,62 @@ public:
 
 
 
-    // make these private
+    // Direct access to the table
+
+    inline FBTuint32 getNumberOfNames() const
+    {
+        return m_nameNr;
+    }
+
+    inline const ftName& getNameAt(FBTuint32 idx) const
+    {
+        if (idx < m_nameNr)
+            return m_name[idx];
+        return INVALID_NAME;
+    }
+
+
+
+    inline FBTuint32 getNumberOfTypes() const
+    {
+        return m_typeNr;
+    }
+
+    inline const ftType& getTypeAt(FBTuint32 idx) const
+    {
+        if (idx < m_typeNr)
+            return m_type[idx];
+        return INVALID_TYPE;
+    }
+
+
+
+    inline FBTuint32 getNumberOfTypeLengths() const
+    {
+        return m_typeNr;
+    }
+
+    inline const FBTtype& getTypeLengthAt(FBTuint32 idx) const
+    {
+        if (idx < m_typeNr)
+            return m_tlen[idx];
+        return SK_NPOS16;
+    }
+
+    inline FBTuint32 getNumberOfStructs() const
+    {
+        return m_strcNr;
+    }
+
+    inline FBTtype* getStructAt(FBTuint32 idx) const
+    {
+        if (idx < m_strcNr)
+            return m_strc[idx];
+        return 0;
+    }
+
+
+private:
     Names m_name;
     Types m_type;
     TypeL m_tlen;
@@ -118,7 +173,6 @@ public:
     void*     m_otherBlock;
     FBTsize   m_otherLen;
 
-private:
     OffsM      m_offs;
     FBTuint8   m_ptrLength;
     TypeFinder m_typeFinder;
@@ -129,7 +183,7 @@ private:
                    FBTuint32&      cof,
                    FBTuint32       depth,
                    ftStruct::Keys& keys);
-    
+
     void compile(FBTtype         i,
                  FBTtype         nr,
                  ftStruct*       off,

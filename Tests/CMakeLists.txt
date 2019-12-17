@@ -30,8 +30,6 @@ file(GLOB TMPL Templates/*.h)
 
 
 include (Data2Array)
-
-
 add_templates(Templates.h ${TMPL})
 
 set(SRC

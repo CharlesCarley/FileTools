@@ -488,16 +488,15 @@ int ftLinkCompiler::link(void)
     for (i = 0; i < m_mp->getOffsetCount(); ++i)
     {
         ftStruct* strc = mdata[i];
+        ftLogger::log(m_mp, strc);
+
 
         // cross link memory and file elements
 
         
         //m_mp->m_type[strc->getTypeIndex()].m_name
 
-        /// Pick this up later,
-        // find this by type name
-
-        ftCharHashKey chk  = m_mp->getStructHashByType(strc->getTypeIndex());
+        ftCharHashKey chk  = m_mp->getTypeAt(strc->getNameIndex()).m_name;
         ftStruct*     link = findInFileTable(chk);
 
         strc->setLink(link);
@@ -514,9 +513,10 @@ int ftLinkCompiler::link(void)
                 {
                     if (!member->hasFlag(ftStruct::MISSING))
                     {
-                        bool isPointer = m_mp->m_name[member->getNameIndex()].m_ptrCount > 0;
+                        bool isPointer = m_mp->isPointer(member->getNameIndex());
 
                         bool      needCast = false;
+
                         ftStruct* subLink  = find(strc->getLink(), member, isPointer, needCast);
                         if (subLink)
                         {

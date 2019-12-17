@@ -23,19 +23,60 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _ftLogger_h_
-#define _ftLogger_h_
+#ifndef _TestAPI_h_
+#define _TestAPI_h_
 
-#include "ftFile.h"
 
-class ftLogger
+struct StructTest1
 {
-public:
-    static void log(const char *msg);
-    static void log(const ftFile::Chunk &chunk);
-    static void log(void *ptr, FBTsize len);
-    static void log(ftBinTables *table, ftStruct *strc);
+    char name[64]; // 1d array []
+    int  id1, id2;
 };
 
 
-#endif  //_ftLogger_h_
+
+struct StructTest2
+{
+    // test recursive structures
+    StructTest1 nested;
+};
+
+struct StructTest3
+{
+    // Pointer
+    StructTest2* nested;
+};
+
+
+struct StructTest4
+{
+    // Pointer -> Pointer
+    StructTest2** nested;
+};
+
+
+struct StructTest4
+{
+    // function pointer.. 
+    void (*fp)();
+};
+
+
+struct StructTest5
+{
+    // multi dimensional 
+    double multi[4][4];
+};
+
+
+
+struct StructTest6
+{
+    // multi dimensional  -> FT_ARR_DIM_MAX
+    double multi[4][4][4];
+};
+
+
+
+
+#endif  //_TestAPI_h_

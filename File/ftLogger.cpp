@@ -24,17 +24,22 @@
 -------------------------------------------------------------------------------
 */
 #include "ftLogger.h"
-#include "ftTables.h"
-
 #include <iomanip>
 #include <iostream>
 #include "Utils/skHexPrint.h"
+#include "ftTables.h"
 
 using namespace std;
 
 
 void ftLogger::log(const char *msg)
 {
+    if (msg)
+    {
+        skHexPrint::writeColor(CS_RED);
+        cout << msg << endl;
+        skHexPrint::writeColor(CS_WHITE);
+    }
 }
 
 
@@ -63,6 +68,7 @@ void ftLogger::log(const ftFile::Chunk &chunk)
     cout << "Old    : " << chunk.m_old << endl;
     cout << "TypeId : " << chunk.m_typeid << endl;
     cout << "Count  : " << chunk.m_nr << endl;
+    skHexPrint::writeColor(CS_WHITE);
 }
 
 
@@ -73,11 +79,11 @@ void ftLogger::log(void *ptr, FBTsize len)
 }
 
 
-void ftLogger::log(ftStruct *strc)
+void ftLogger::log(ftBinTables *table, ftStruct *strc)
 {
     ftLogger_writeSeperator();
-    cout << "Struct" << endl;
+    cout << "Struct : " << table->getNameAt(strc->getNameIndex()).m_name << endl;
     cout << "-----------------------" << endl;
-    cout << "Key    :" << '{' << strc->getTypeIndex() << ',' << strc->getNameIndex() << '}' << endl;
-    cout << "Hash   :" << '{' << strc->getHashedType() << ',' << strc->getHashedName() << '}' << endl;
+    cout << "Key    : " << '{' << strc->getTypeIndex() << ',' << strc->getNameIndex() << '}' << endl;
+    cout << "Hash   : " << '{' << strc->getHashedType() << ',' << strc->getHashedName() << '}' << endl;
 }

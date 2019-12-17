@@ -108,7 +108,7 @@ int ftBlend::serializeData(skStream* stream)
 
     for (MemoryChunk* node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
     {
-        if (node->m_newTypeId > m_memory->m_strcNr)
+        if (node->m_newTypeId > m_memory->getNumberOfStructs())
             continue;
         if (!node->m_newBlock)
             continue;

@@ -353,16 +353,24 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
 
 void ftCompiler::writeStream(skStream* fp)
 {
-    m_curBuf = -1;
     int i;
+    m_curBuf = -1;
+
+
     writeBinPtr(fp, (void*)&ftIdNames::ftSDNA[0], 4);
     writeBinPtr(fp, (void*)&ftIdNames::ftNAME[0], 4);
     i = m_build->m_name.size();
+
+
 #if ftFAKE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
+
     writeBinPtr(fp, &i, 4);
     writeCharPtr(fp, m_build->m_name);
+
+
+
 
     writeBinPtr(fp, (void*)&ftIdNames::ftTYPE[0], 4);
     i = m_build->m_typeLookup.size();
@@ -370,9 +378,9 @@ void ftCompiler::writeStream(skStream* fp)
     i = ftSwap32(i);
 #endif
     writeBinPtr(fp, &i, 4);
-
     writeCharPtr(fp, m_build->m_typeLookup);
     writeBinPtr(fp, (void*)&ftIdNames::ftTLEN[0], 4);
+
 #if ftFAKE_ENDIAN == 1
     for (i = 0; i < (int)m_build->m_tlen.size(); i++)
         m_build->m_tlen.at(i) = ftSwap16(m_build->m_tlen.at(i));

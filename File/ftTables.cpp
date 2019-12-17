@@ -27,6 +27,7 @@
 #include "ftTables.h"
 #include "ftHashTypes.h"
 #include "ftPlatformHeaders.h"
+#include "ftLogger.h"
 
 
 
@@ -39,6 +40,12 @@ const ftName ftBinTables::INVALID_NAME = {
     0,        // m_isFptr;
     0,        // m_arraySize
     {0, 0}    // m_array
+};
+
+const ftType ftBinTables::INVALID_TYPE = {
+    nullptr,  // m_name
+    SK_NPOS,  // m_typeId
+    0,        // m_strcId
 };
 
 
@@ -96,6 +103,12 @@ ftBinTables::OffsM::SizeType ftBinTables::getOffsetCount()
 {
     return m_offs.size();
 }
+
+bool ftBinTables::isPointer(const FBTuint16& name) const
+{
+    return getNameAt(name).m_ptrCount > 0;
+}
+
 
 ftCharHashKey ftBinTables::getStructHashByType(const FBTuint16& type)
 {
@@ -270,7 +283,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     tp = (FBTtype*)cp;
 
     i = 0;
-    while (i < m_typeNr)
+    while (i < m_typeNr && i < SK_NPOS16)
     {
         m_tlen[i] = (*tp++);
         if (swap)
@@ -318,29 +331,40 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
             tp[1] = ftSwap16(tp[1]);
 
             m_type[tp[0]].m_strcId = m_strcNr - 1;
+
+
             m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
             k = tp[1];
-            SK_ASSERT(k < FT_MAX_MEMBERS);
-
-            j = 0;
-            tp += 2;
-            while (j < k)
+            if (k < FT_MAX_MEMBERS)
             {
-                tp[0] = ftSwap16(tp[0]);
-                tp[1] = ftSwap16(tp[1]);
-
-                ++j;
+                j = 0;
                 tp += 2;
+                while (j < k)
+                {
+                    tp[0] = ftSwap16(tp[0]);
+                    tp[1] = ftSwap16(tp[1]);
+
+                    ++j;
+                    tp += 2;
+                }
             }
+            else
+                ftLogger::log("Max members exceeded");
         }
         else
         {
-            SK_ASSERT(tp[1] < FT_MAX_MEMBERS);
-            m_type[tp[0]].m_strcId = m_strcNr - 1;
+            if (tp[1] < FT_MAX_MEMBERS)
+            {
+                m_type[tp[0]].m_strcId = m_strcNr - 1;
 
-            m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
-            tp += (2 * tp[1]) + 2;
+                m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
+                tp += (2 * tp[1]) + 2;
+            }
+            else
+                ftLogger::log("Max members exceeded");
+
+
         }
         ++i;
     }
@@ -448,7 +472,9 @@ void ftBinTables::compile(void)
         ftStruct* off = new ftStruct;
 
         off->setTypeIndex(strcType);
-        off->setNameIndex(0);
+        off->setNameIndex(strc[1]);
+
+
         off->setHashedType(m_type[strcType].m_typeId);
         off->setHashedName(0);
 
