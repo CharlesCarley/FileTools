@@ -92,26 +92,126 @@ public:
         return m_key.k16[1];
     }
 
+    inline const FBThash& getHashedType() const
+    {
+        return m_val.m_type;
+    }
+
+    inline const FBThash& getHashedName() const
+    {
+        return m_val.m_name;
+    }
+
+    inline FBTint32 getStructIndex() const
+    {
+        return m_strcId;
+    }
+
+
     inline const FBTint32& getSizeInBytes() const
     {
         return m_len;
     }
 
+
+    inline Members::Iterator getMemberIterator()
+    {
+        return m_members.iterator();
+    }
+
     ftStruct* getMember(Members::SizeType idx);
 
+    inline Members::SizeType getMemberCount() const
+    {
+        return m_members.size();
+    }
 
-public:
 
-    ftKey32   m_key;  // k[0]: type, k[1]: name
-    ftKey64   m_val;  // key hash value, k[0]: type hash id, k[1]: member(field) base name hash id or 0(struct)
-    FBTint32  m_off;  // offset
+
+    bool     isDifferent(ftStruct* rhs);
+
+    FBTbyte* getBlock(void* base, SKsize idx, const SKsize max);
+    FBTsize* jumpToOffset(void* base);
+
+
+    inline void setLink(ftStruct* strc)
+    {
+        m_link = strc;
+    }
+
+
+    inline ftStruct* getLink()
+    {
+        return m_link;
+    }
+
+    inline const ftStruct* getLink() const
+    {
+        return m_link;
+    }
+
+    inline bool hasLink() const
+    {
+        return m_link != nullptr;
+    }
+
+    inline FBTint32 getFlag() const
+    {
+        return m_flag;
+    }
+
+    inline void setFlag(const FBTint32& bits)
+    {
+        m_flag = bits;
+    }
+
+    inline void addFlag(const FBTint32& bit)
+    {
+        m_flag |= bit;
+    }
+
+    inline bool hasFlag(const FBTint32& bit) const
+    {
+        return (m_flag & bit) != 0;
+    }
+
+private:
+    inline void setNameIndex(const FBTuint16& idx)
+    {
+        m_key.k16[0] = idx;
+    }
+
+    inline void setTypeIndex(const FBTuint16& idx)
+    {
+        m_key.k16[1] = idx;
+    }
+
+
+
+    inline void setHashedType(const FBThash& hash)
+    {
+        m_val.m_type = hash;
+    }
+
+    inline void setHashedName(const FBThash& hash)
+    {
+        m_val.m_name = hash;
+    }
+
+    /// temp
+    friend class ftBinTables;
+
+    ftKey32  m_key;
+    ftKey64  m_val;
+    FBTint32 m_off;
+
     FBTint32  m_len;
-    FBTint32  m_nr, m_dp;  //nr: array index, dp: embedded depth
+    FBTint32  m_nr, m_dp;
     FBTint32  m_strcId;
     FBTint32  m_flag;
     Members   m_members;
-    ftStruct* m_link;      //file/memory table struct link
-    Keys      m_keyChain;  //parent key hash chain(0: type hash, 1: name hash), size() == m_dp
+    ftStruct* m_link;
+    Keys      m_keyChain;
 };
 
 

@@ -24,6 +24,7 @@
 -------------------------------------------------------------------------------
 */
 #include "ftStruct.h"
+#include <stdio.h>
 
 
 
@@ -39,6 +40,7 @@ ftStruct::ftStruct() :
     m_members(),
     m_link(0)
 {
+    m_key.k32 = 0;
 }
 
 
@@ -52,4 +54,52 @@ ftStruct* ftStruct::getMember(Members::SizeType idx)
     if (idx < m_members.size())
         return &m_members.ptr()[idx];
     return nullptr;
+}
+
+
+
+bool ftStruct::isDifferent(ftStruct* rhs)
+{
+    if (!rhs)
+        return false;
+
+    bool result = m_nr == rhs->m_nr;
+    if (result)
+    {
+        result = m_dp == rhs->m_dp;
+        if (result)
+        {
+            result = m_val.m_name == rhs->m_val.m_name;
+            if (result)
+                result = m_keyChain.equals(rhs->m_keyChain);
+        }
+    }
+    return result;
+}
+
+
+FBTbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max)
+{
+    FBTbyte* val = 0;
+    if (base && idx < max)
+    {
+        val = ((FBTbyte*)base);
+        val += m_len * idx;
+    }
+    return val;
+}
+
+
+
+FBTsize* ftStruct::jumpToOffset(void* base)
+{
+    FBTbyte* val = (FBTbyte*)base;
+
+    if (m_off < m_len)
+        val += m_off;
+    else
+    {
+        printf("offset exceeds length\n");
+    }
+    return (FBTsize*)val;
 }

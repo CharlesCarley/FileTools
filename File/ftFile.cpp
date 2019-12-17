@@ -429,12 +429,12 @@ public:
     ftBinTables* m_mp;
     ftBinTables* m_fp;
 
-    ftStruct* find(const ftCharHashKey& kvp);
+    ftStruct* findInFileTable(const ftCharHashKey& kvp);
     ftStruct* find(ftStruct* strc, ftStruct* member, bool isPointer, bool& needCast);
     int       link(void);
 };
 
-ftStruct* ftLinkCompiler::find(const ftCharHashKey& kvp)
+ftStruct* ftLinkCompiler::findInFileTable(const ftCharHashKey& kvp)
 {
     return m_fp->findStructByName(kvp);
 }
@@ -442,43 +442,38 @@ ftStruct* ftLinkCompiler::find(const ftCharHashKey& kvp)
 
 ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer, bool& needCast)
 {
-    ftStruct::Members::PointerType mdata = strc->m_members.ptr();
-    FBTsizeType                    i, s = strc->m_members.size();
+    ftStruct::Members::Iterator mdata = strc->getMemberIterator();
 
-    FBThash mtype = member->m_val.m_type;
+    FBThash   mtype   = member->getHashedType();
+    ftStruct* fndStrc = nullptr;
 
-    for (i = 0; i < s; i++)
+    while (mdata.hasMoreElements() && !fndStrc)
     {
-        ftStruct* strc2 = &mdata[i];
-        if (strc2->m_nr == member->m_nr && strc2->m_dp == member->m_dp)
+        ftStruct* strc2 = &mdata.getNext();
+
+        if (strc->isDifferent(member))
         {
-            if (strc2->m_val.m_name == member->m_val.m_name)
+            FBThash otype = strc2->getHashedType();
+            if (mtype == otype)
+                fndStrc = fndStrc;
+            else if (!isPointer)
             {
-                if (!strc2->m_keyChain.equals(member->m_keyChain))
-                    continue;
-
-                FBThash otype = strc2->m_val.m_type;
-                if (mtype == otype)
-                    return strc2;
-
-                if (isPointer)
-                    continue;
-
                 // Make sure it can cast properly if they are different
                 if (ftAtomicUtils::isInteger(mtype) &&
                     ftAtomicUtils::isInteger(otype))
-                    return strc2;
-
-                if (ftAtomicUtils::isNumeric(mtype) &&
-                    ftAtomicUtils::isNumeric(otype))
+                {
+                    fndStrc = fndStrc;
+                }
+                else if (ftAtomicUtils::isNumeric(mtype) &&
+                         ftAtomicUtils::isNumeric(otype))
                 {
                     needCast = true;
-                    return strc2;
+                    fndStrc  = fndStrc;
                 }
             }
         }
     }
-    return 0;
+    return fndStrc;
 }
 
 
@@ -486,7 +481,6 @@ ftStruct* ftLinkCompiler::find(ftStruct* strc, ftStruct* member, bool isPointer,
 int ftLinkCompiler::link(void)
 {
     ftBinTables::OffsM::PointerType mdata = m_mp->getOffsetPtr();
-    ftBinTables::OffsM::PointerType fdata = m_fp->getOffsetPtr();
 
     FBTsizeType                    i, i2;
     ftStruct::Members::PointerType p2;
@@ -494,34 +488,53 @@ int ftLinkCompiler::link(void)
     for (i = 0; i < m_mp->getOffsetCount(); ++i)
     {
         ftStruct* strc = mdata[i];
-        strc->m_link   = find(m_mp->m_type[strc->m_key.k16[0]].m_name);
 
-        if (strc->m_link)
-            strc->m_link->m_link = strc;
+        // cross link memory and file elements
 
-        p2 = strc->m_members.ptr();
-        for (i2 = 0; i2 < strc->m_members.size(); ++i2)
+        
+        //m_mp->m_type[strc->getTypeIndex()].m_name
+
+        /// Pick this up later,
+        // find this by type name
+
+        ftCharHashKey chk  = m_mp->getStructHashByType(strc->getTypeIndex());
+        ftStruct*     link = findInFileTable(chk);
+
+        strc->setLink(link);
+        if (link)
         {
-            ftStruct* member = &strc->m_members[i2];
-            SK_ASSERT(!member->m_link);
+            link->setLink(strc);
 
-            member->m_flag |= strc->m_link ? 0 : ftStruct::MISSING;
-
-            if (!(member->m_flag & ftStruct::MISSING))
+            ftStruct::Members::Iterator members = strc->getMemberIterator();
+            while (members.hasMoreElements())
             {
-                SK_ASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
+                ftStruct* member = &members.getNext();
 
-                bool isPointer = m_mp->m_name[member->m_key.k16[1]].m_ptrCount > 0;
-                bool needCast  = false;
-                member->m_link = find(strc->m_link, member, isPointer, needCast);
-                if (member->m_link)
+                if (!member->getLink())
                 {
-                    member->m_link->m_link = member;
-                    if (needCast)
+                    if (!member->hasFlag(ftStruct::MISSING))
                     {
-                        member->m_flag |= ftStruct::NEED_CAST;
-                        member->m_link->m_flag |= ftStruct::NEED_CAST;
+                        bool isPointer = m_mp->m_name[member->getNameIndex()].m_ptrCount > 0;
+
+                        bool      needCast = false;
+                        ftStruct* subLink  = find(strc->getLink(), member, isPointer, needCast);
+                        if (subLink)
+                        {
+                            subLink->setLink(member);
+
+                            if (needCast)
+                            {
+                                member->addFlag(ftStruct::NEED_CAST);
+                                subLink->addFlag(ftStruct::NEED_CAST);
+                            }
+                        }
+
+                        member->setLink(subLink);
                     }
+                }
+                else
+                {
+                    member->addFlag(ftStruct::MISSING);
                 }
             }
         }
@@ -541,24 +554,27 @@ int ftFile::allocNewBlocks(void)
         const Chunk& chunk = node->m_chunk;
 
         if (!m_file->isValidType(chunk.m_typeid))
+        {
             printf("Chunk type id out of bounds(%d)\n", chunk.m_typeid);
+        }
         else if (m_file->isLinkedToMemory(chunk.m_typeid))
         {
             const ftStruct *fileStruct, *memoryStruct;
 
             fileStruct   = m_file->findStructByType(chunk.m_typeid);
-            memoryStruct = fileStruct->m_link;
+            memoryStruct = fileStruct->getLink();
 
             // link the new type id on the node
             // so it's accessible later
-            node->m_newTypeId = memoryStruct->m_strcId;
+            node->m_newTypeId = memoryStruct->getStructIndex();
+
+
 
             FBThash curHash = m_memory->getTypeHash(memoryStruct->getTypeIndex());
 
             if (curHash == DATABLOCK)
             {
                 node->m_newBlock = ::malloc(chunk.m_len);
-
                 if (!node->m_newBlock)
                 {
                     ftMALLOC_FAILED;
@@ -637,7 +653,8 @@ int ftFile::link(void)
                 if (curHash != DATABLOCK)
                 {
                     bool skipBlock = skip(curHash);
-                    if (!currentStruct->m_link || skipBlock || !node->m_newBlock)
+
+                    if (!currentStruct->hasLink() || skipBlock || !node->m_newBlock)
                     {
                         if (!node->m_newBlock)
                         {
@@ -676,10 +693,12 @@ void ftFile::linkMembers(MemoryChunk* node, ftStruct* currentStruct)
     SK_ASSERT(node);
     SK_ASSERT(currentStruct);
 
-    ftStruct::Members::SizeType n, i, memberLen;
-    memberLen = currentStruct->m_members.size();
+    ftStruct::Members::SizeType n, i, mbrcnt;
 
-    char *   dst, *src;
+    mbrcnt = currentStruct->getMemberCount();
+
+
+    FBTbyte *dst, *src;
     FBTsize *dstPtr, *srcPtr;
 
     if (!node->m_newBlock)
@@ -693,40 +712,48 @@ void ftFile::linkMembers(MemoryChunk* node, ftStruct* currentStruct)
         return;
     }
 
-    for (n = 0; n < node->m_chunk.m_nr; ++n)
+
+    ftStruct*    linked = currentStruct->getLink();
+    const Chunk& chunk  = node->m_chunk;
+
+    if (linked)
     {
-        dst = ((char*)node->m_newBlock) + currentStruct->m_len * n;
-        src = ((char*)node->m_block) + currentStruct->m_link->m_len * n;
-
-        if (dst != nullptr && src != nullptr)
+        for (n = 0; n < chunk.m_nr; ++n)
         {
-            for (i = 0; i < memberLen; ++i)
-            {
-                ftStruct* dstStrc = currentStruct->getMember(i);
-                if (dstStrc != nullptr)
-                {
-                    ftStruct* srcStrc = dstStrc->m_link;
-                    if (srcStrc)
-                    {
-                        dstPtr = reinterpret_cast<FBTsize*>(dst + dstStrc->m_off);
-                        srcPtr = reinterpret_cast<FBTsize*>(src + srcStrc->m_off);
+            dst = currentStruct->getBlock(node->m_newBlock, n, chunk.m_nr);
+            src = linked->getBlock(node->m_block, n, chunk.m_nr);
 
-                        linkMembers(dstStrc,
-                                    dstPtr,
-                                    srcStrc,
-                                    srcPtr);
-                    }
-                    else
+            if (dst != nullptr && src != nullptr)
+            {
+                for (i = 0; i < mbrcnt; ++i)
+                {
+                    ftStruct* dstStrc = currentStruct->getMember(i);
+                    if (dstStrc != nullptr)
                     {
-                        //printf("Missing structure link\n");
-                        //ftLogger::log(dstStrc);
+                        ftStruct* srcStrc = dstStrc->getLink();
+
+                        if (srcStrc)
+                        {
+                            dstPtr = dstStrc->jumpToOffset(dst);
+                            srcPtr = srcStrc->jumpToOffset(src);
+
+                            linkMembers(dstStrc,
+                                        dstPtr,
+                                        srcStrc,
+                                        srcPtr);
+                        }
+                        else
+                        {
+                            //printf("Missing structure link\n");
+                            //ftLogger::log(dstStrc);
+                        }
                     }
                 }
             }
         }
-    }
 
-    notifyDataRead(node->m_newBlock, node->m_chunk);
+        notifyDataRead(node->m_newBlock, node->m_chunk);
+    }
 }
 
 
@@ -736,7 +763,7 @@ void ftFile::linkMembers(ftStruct* dst,
                          ftStruct* src,
                          FBTsize*& srcPtr)
 {
-    const ftName& name = m_memory->getStructNameByIdx(dst->m_key.k16[1]);
+    const ftName& name = m_memory->getStructNameByIdx(dst->getNameIndex());
     if (name.m_ptrCount > 0)
         castMemberPointer(name, dst, dstPtr, src, srcPtr);
     else
@@ -752,7 +779,7 @@ void ftFile::castMemberPointer(const ftName& name,
 {
     if (name.m_ptrCount > 1)
         castPointerToPointer(name, dst, dstPtr, src, srcPtr);
-    else 
+    else
         castPointer(name, dst, dstPtr, src, srcPtr);
 }
 
@@ -764,7 +791,7 @@ void ftFile::castPointer(const ftName& name,
                          ftStruct*     src,
                          FBTsize*&     srcPtr)
 {
-    const ftName& srcname = m_file->getStructNameByIdx(src->m_key.k16[1]);
+    const ftName& srcname = m_file->getStructNameByIdx(src->getNameIndex());
     if (srcname.m_name != nullptr)
     {
         int arrayLen = skMin(name.m_arraySize, name.m_arraySize);
@@ -792,7 +819,7 @@ void ftFile::castPointer(const ftName& name,
     else
     {
         printf("Unable to find struct name with index(%d)\n",
-               src->m_key.k16[1]);
+               src->getNameIndex());
     }
 }
 
@@ -867,21 +894,23 @@ void ftFile::castMemberVariable(const ftName& name,
 {
     FBTsize total, malen, pi, mptrsz, a2;
 
-    FBTsize       fps        = m_file->getSizeofPointer();
-    FBTsize       mps        = m_memory->getSizeofPointer();
-    const ftName& nameS      = m_file->getStructNameByIdx(src->m_key.k16[1]);
-    FBTsize       dstElmSize = dst->m_len / name.m_arraySize;
-    FBTsize       srcElmSize = src->m_len / nameS.m_arraySize;
+    FBTsize       fps   = m_file->getSizeofPointer();
+    FBTsize       mps   = m_memory->getSizeofPointer();
+    const ftName& nameS = m_file->getStructNameByIdx(src->getNameIndex());
+
+    FBTsize dstElmSize = dst->getSizeInBytes() / name.m_arraySize;
+    FBTsize srcElmSize = src->getSizeInBytes() / nameS.m_arraySize;
 
     bool endianSwap = (m_hederFlags & FH_ENDIAN_SWAP) != 0;
-    bool needCast   = (dst->m_flag & ftStruct::NEED_CAST) != 0;
-    bool needSwap   = endianSwap && srcElmSize > 1;
+    bool needCast   = dst->hasFlag(ftStruct::NEED_CAST);
 
-    if (!needCast && !needSwap &&
-        dst->m_val.m_type == dst->m_val.m_type)
-    {
-        ::memcpy(dstPtr, srcPtr, skMin(src->m_len, dst->m_len));
-    }
+    bool needSwap = endianSwap && srcElmSize > 1;
+
+    FBThash dhash = dst->getHashedType();
+    FBThash shash = src->getHashedType();
+
+    if (!needCast && !needSwap && dhash == shash)
+        ::memcpy(dstPtr, srcPtr, skMin(src->getSizeInBytes(), dst->getSizeInBytes()));
     else
     {
         FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
@@ -890,8 +919,8 @@ void ftFile::castMemberVariable(const ftName& name,
         ftAtomic stp = ftAtomic::FT_ATOMIC_UNKNOWN, dtp = ftAtomic::FT_ATOMIC_UNKNOWN;
         if (needCast || needSwap)
         {
-            stp = ftAtomicUtils::getPrimitiveType(src->m_val.m_type);
-            dtp = ftAtomicUtils::getPrimitiveType(dst->m_val.m_type);
+            stp = ftAtomicUtils::getPrimitiveType(src->getHashedType());
+            dtp = ftAtomicUtils::getPrimitiveType(dst->getHashedType());
         }
 
         FBTsize alen = skMin(nameS.m_arraySize, name.m_arraySize);

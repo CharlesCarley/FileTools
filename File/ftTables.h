@@ -72,9 +72,11 @@ public:
     bool read(const void* ptr, const FBTsize& len, bool swap);
 
     FBTuint32   findTypeId(const ftCharHashKey& cp);
-    const char* getStructType(const ftStruct* strc);
     const char* getStructName(const ftStruct* strc);
     const char* getOwnerStructName(const ftStruct* strc);
+
+    ftCharHashKey getStructHashByType(const FBTuint16& type);
+
 
     const ftName& getStructNameByIdx(const FBTuint16& idx) const;
     FBThash       getTypeHash(const FBTuint16& type) const;

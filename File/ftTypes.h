@@ -50,7 +50,7 @@ typedef SKuint16 FBTuint16;
 typedef SKint8   FBTint8;
 typedef SKuint8  FBTuint8;
 typedef SKuint8  FBTubyte;
-typedef SKint8   FBTbyte;
+typedef SKbyte   FBTbyte;
 typedef SKint64  FBTint64;
 typedef SKuint64 FBTuint64;
 

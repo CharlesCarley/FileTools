@@ -97,9 +97,16 @@ ftBinTables::OffsM::SizeType ftBinTables::getOffsetCount()
     return m_offs.size();
 }
 
+ftCharHashKey ftBinTables::getStructHashByType(const FBTuint16& type)
+{
+    if (type < m_typeNr)
+        return ftCharHashKey(m_type[type].m_name);
+    return ftCharHashKey();
+}
+
+
 ftStruct* ftBinTables::findStructByName(const ftCharHashKey& kvp)
 {
-
     FBTuint32 i;
     i = findTypeId(kvp);
     if (i != SK_NPOS32)
@@ -436,20 +443,22 @@ void ftBinTables::compile(void)
 
         FBTtype strcType = strc[0];
 
-        depth             = 0;
-        cof               = 0;
-        ftStruct* off     = new ftStruct;
-        off->m_key.k16[0] = strcType;
-        off->m_key.k16[1] = 0;
-        off->m_val.m_type = m_type[strcType].m_typeId;
-        off->m_val.m_name = 0;  // no name
-        off->m_nr         = 0;
-        off->m_dp         = 0;
-        off->m_off        = cof;
-        off->m_len        = m_tlen[strcType];
-        off->m_strcId     = i;
-        off->m_link       = 0;
-        off->m_flag       = ftStruct::CAN_LINK;
+        depth         = 0;
+        cof           = 0;
+        ftStruct* off = new ftStruct;
+
+        off->setTypeIndex(strcType);
+        off->setNameIndex(0);
+        off->setHashedType(m_type[strcType].m_typeId);
+        off->setHashedName(0);
+
+        off->m_nr     = 0;
+        off->m_dp     = 0;
+        off->m_off    = cof;
+        off->m_len    = m_tlen[strcType];
+        off->m_strcId = i;
+        off->m_link   = 0;
+        off->m_flag   = ftStruct::CAN_LINK;
 
         m_offs.push_back(off);
 
@@ -476,7 +485,7 @@ void ftBinTables::compile(void)
         {
             off->m_flag |= ftStruct::MISALIGNED;
             printf("Build ==> invalid offset %s:%i:%i:%i\n",
-                   m_type[off->m_key.k16[0]].m_name,
+                   m_type[off->getTypeIndex()].m_name,
                    i,
                    cof,
                    off->m_len);
@@ -493,18 +502,20 @@ void ftBinTables::putMember(FBTtype*        cp,
                             ftStruct::Keys& keys)
 {
     ftStruct nof;
-    nof.m_key.k16[0] = cp[0];
-    nof.m_key.k16[1] = cp[1];
-    nof.m_val.m_type = m_type[cp[0]].m_typeId;
-    nof.m_val.m_name = m_base[cp[1]];
-    nof.m_off        = cof;
-    nof.m_strcId     = off->m_strcId;
-    nof.m_nr         = nr;
-    nof.m_dp         = depth;
-    nof.m_link       = 0;
-    nof.m_flag       = ftStruct::CAN_LINK;
-    nof.m_len        = (m_name[cp[1]].m_ptrCount ? m_ptrLength : m_tlen[cp[0]]) * m_name[cp[1]].m_arraySize;
-    nof.m_keyChain   = keys;
+    nof.setTypeIndex(cp[0]);
+    nof.setNameIndex(cp[1]);
+    nof.setHashedType(m_type[cp[0]].m_typeId);
+    nof.setHashedName(m_base[cp[1]]);
+
+
+    nof.m_off      = cof;
+    nof.m_strcId   = off->m_strcId;
+    nof.m_nr       = nr;
+    nof.m_dp       = depth;
+    nof.m_link     = 0;
+    nof.m_flag     = ftStruct::CAN_LINK;
+    nof.m_len      = (m_name[cp[1]].m_ptrCount ? m_ptrLength : m_tlen[cp[0]]) * m_name[cp[1]].m_arraySize;
+    nof.m_keyChain = keys;
     off->m_members.push_back(nof);
     cof += nof.m_len;
 }
@@ -512,7 +523,6 @@ void ftBinTables::putMember(FBTtype*        cp,
 
 ftStruct* ftBinTables::findStructByType(const FBTuint16& type)
 {
-
     if (type < m_offs.size())
         return m_offs.at(type);
     return nullptr;
@@ -520,7 +530,6 @@ ftStruct* ftBinTables::findStructByType(const FBTuint16& type)
 
 bool ftBinTables::isLinkedToMemory(const FBTuint16& type)
 {
-
     if (type < m_offs.size())
         return m_offs.at(type)->m_link != 0;
     return false;
@@ -530,22 +539,15 @@ bool ftBinTables::isLinkedToMemory(const FBTuint16& type)
 
 FBTuint32 ftBinTables::findTypeId(const ftCharHashKey& cp)
 {
-
     FBTsize pos = m_typeFinder.find(cp);
     if (pos != m_typeFinder.npos)
         return m_typeFinder.at(pos).m_strcId;
     return SK_NPOS32;
 }
 
-const char* ftBinTables::getStructType(const ftStruct* strc)
-{
-    FBTuint32 k = strc ? strc->m_key.k16[0] : (FBTuint32)-1;
-    return (k >= m_typeNr) ? "" : m_type[k].m_name;
-}
-
 const char* ftBinTables::getStructName(const ftStruct* strc)
 {
-    FBTuint32 k = strc ? strc->m_key.k16[1] : (FBTuint32)-1;
+    FBTuint16 k = strc ? strc->getNameIndex() : (FBTuint32)-1;
     return (k >= m_nameNr) ? "" : m_name[k].m_name;
 }
 
