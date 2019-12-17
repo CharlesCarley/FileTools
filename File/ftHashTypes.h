@@ -83,6 +83,10 @@ public:
         return m_hash;
     }
 
+    inline const char* key() const
+    {
+        return m_key;
+    }
 
     inline bool operator==(const ftCharHashKey& v) const
     {
