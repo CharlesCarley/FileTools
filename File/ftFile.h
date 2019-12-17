@@ -177,6 +177,7 @@ public:
     // inclusive - false: Filter everything not but list.
     virtual void setFilterList(FBTuint32* filter, bool inclusive = false)
     {
+        // override to handle
     }
 
     void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
@@ -194,14 +195,13 @@ protected:
         return false;
     }
 
-    virtual void*   getTables(void)                    = 0;
-    virtual FBTsize getTableSize(void)                 = 0;
-    virtual int     dataRead(void* p, const Chunk& id) = 0;
-    virtual int     serializeData(skStream* stream)    = 0;
-
-
+    virtual void*   getTables(void)                          = 0;
+    virtual FBTsize getTableSize(void)                       = 0;
+    virtual int     notifyDataRead(void* p, const Chunk& id) = 0;
+    virtual int     serializeData(skStream* stream)          = 0;
 
 private:
+
     void*        findPtr(const FBTsize& iptr);
     MemoryChunk* findBlock(const FBTsize& iptr);
     skStream*    openStream(const char* path, int mode);
@@ -215,11 +215,32 @@ private:
 
 
     int  link(void);
-    
     void linkMembers(MemoryChunk* chunk, ftStruct* cur);
     void linkMembers(ftStruct* dst, FBTsize*& dstPtr, ftStruct* src, FBTsize*& srcPtr);
 
-    void castPointers(
+    void castMemberPointer(
+        const ftName& name,
+        ftStruct*     dst,
+        FBTsize*&     dstPtr,
+        ftStruct*     src,
+        FBTsize*&     srcPtr);
+
+    void castPointer(
+        const ftName& name,
+        ftStruct*     dst,
+        FBTsize*&     dstPtr,
+        ftStruct*     src,
+        FBTsize*&     srcPtr);
+
+    void castPointerToPointer(
+        const ftName& name,
+        ftStruct*     dst,
+        FBTsize*&     dstPtr,
+        ftStruct*     src,
+        FBTsize*&     srcPtr);
+
+
+    void castMemberVariable(
         const ftName& name,
         ftStruct*     dst,
         FBTsize*&     dstPtr,

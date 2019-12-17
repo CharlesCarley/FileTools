@@ -78,7 +78,7 @@ ftBlend::~ftBlend()
 {
 }
 
-int ftBlend::dataRead(void* p, const Chunk& id)
+int ftBlend::notifyDataRead(void* p, const Chunk& id)
 {
     if (id.m_code == GLOB)
     {
@@ -132,6 +132,7 @@ bool ftBlend::skip(const FBTuint32& id)
 {
     if (!m_filterList)
         return false;
+
     int f = 0, l = m_filterListLen - 1, m;
     while (f <= l)
     {

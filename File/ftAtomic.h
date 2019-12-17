@@ -67,12 +67,6 @@ public:
     static bool     isReal(FBThash typeKey);
     static bool     isNumeric(FBThash typeKey);
 
-
-    static char* cast(void*   base,
-                      FBTsize length,
-                      FBTsize count);
-
-
     static void cast(char*    source,
                      char*    destination,
                      ftAtomic sourceType,

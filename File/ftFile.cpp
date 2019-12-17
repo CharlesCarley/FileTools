@@ -682,201 +682,252 @@ void ftFile::linkMembers(MemoryChunk* node, ftStruct* currentStruct)
     char *   dst, *src;
     FBTsize *dstPtr, *srcPtr;
 
+    if (!node->m_newBlock)
+    {
+        printf("Missing new block\n");
+        return;
+    }
+    if (!node->m_block)
+    {
+        printf("Missing new block\n");
+        return;
+    }
+
     for (n = 0; n < node->m_chunk.m_nr; ++n)
     {
-        dst = ftAtomicUtils::cast(node->m_newBlock, currentStruct->m_len, n);
-        src = ftAtomicUtils::cast(node->m_block, currentStruct->m_link->m_len, n);
+        dst = ((char*)node->m_newBlock) + currentStruct->m_len * n;
+        src = ((char*)node->m_block) + currentStruct->m_link->m_len * n;
 
-        // cast will return null on error
         if (dst != nullptr && src != nullptr)
         {
             for (i = 0; i < memberLen; ++i)
             {
                 ftStruct* dstStrc = currentStruct->getMember(i);
-                if (dstStrc == nullptr)
-
-
-
-                ftStruct* srcStrc = dstStrc->m_link;
-
-                if (srcStrc)
+                if (dstStrc != nullptr)
                 {
-                    dstPtr = reinterpret_cast<FBTsize*>(dst + dstStrc->m_off);
-                    srcPtr = reinterpret_cast<FBTsize*>(src + srcStrc->m_off);
+                    ftStruct* srcStrc = dstStrc->m_link;
+                    if (srcStrc)
+                    {
+                        dstPtr = reinterpret_cast<FBTsize*>(dst + dstStrc->m_off);
+                        srcPtr = reinterpret_cast<FBTsize*>(src + srcStrc->m_off);
 
-                    linkMembers(dstStrc,
-                                dstPtr,
-                                srcStrc,
-                                srcPtr);
-                }
-                else
-                {
-                    //printf("Missing structure link\n");
-                    //ftLogger::log(dstStrc);
+                        linkMembers(dstStrc,
+                                    dstPtr,
+                                    srcStrc,
+                                    srcPtr);
+                    }
+                    else
+                    {
+                        //printf("Missing structure link\n");
+                        //ftLogger::log(dstStrc);
+                    }
                 }
             }
         }
     }
 
-    dataRead(node->m_newBlock, node->m_chunk);
+    notifyDataRead(node->m_newBlock, node->m_chunk);
 }
 
 
 
-void ftFile::castPointers(const ftName& name,
-                          ftStruct*     dst,
-                          FBTsize*&     dstPtr,
-                          ftStruct*     src,
-                          FBTsize*&     srcPtr)
+void ftFile::linkMembers(ftStruct* dst,
+                         FBTsize*& dstPtr,
+                         ftStruct* src,
+                         FBTsize*& srcPtr)
+{
+    const ftName& name = m_memory->getStructNameByIdx(dst->m_key.k16[1]);
+    if (name.m_ptrCount > 0)
+        castMemberPointer(name, dst, dstPtr, src, srcPtr);
+    else
+        castMemberVariable(name, dst, dstPtr, src, srcPtr);
+}
+
+
+void ftFile::castMemberPointer(const ftName& name,
+                               ftStruct*     dst,
+                               FBTsize*&     dstPtr,
+                               ftStruct*     src,
+                               FBTsize*&     srcPtr)
 {
     if (name.m_ptrCount > 1)
+        castPointerToPointer(name, dst, dstPtr, src, srcPtr);
+    else 
+        castPointer(name, dst, dstPtr, src, srcPtr);
+}
+
+
+
+void ftFile::castPointer(const ftName& name,
+                         ftStruct*     dst,
+                         FBTsize*&     dstPtr,
+                         ftStruct*     src,
+                         FBTsize*&     srcPtr)
+{
+    const ftName& srcname = m_file->getStructNameByIdx(src->m_key.k16[1]);
+    if (srcname.m_name != nullptr)
     {
-        // link pointers to pointers
-        MemoryChunk* bin = findBlock((FBTsize)(*srcPtr));
-        if (bin)
+        int arrayLen = skMin(name.m_arraySize, name.m_arraySize);
+
+        FBTsize fps = m_file->getSizeofPointer();
+        if (fps == 4 || fps == 8)
         {
-            if (bin->m_flag & MemoryChunk::BLK_MODIFIED)
-                (*dstPtr) = (FBTsize)bin->m_newBlock;
-            else
+            FBTsize* dptr = (FBTsize*)dstPtr;
+
+            // Always use a 32 bit integer,
+            // then offset + 2 for a 64 bit pointer.
+            FBTuint32* sptr = (FBTuint32*)srcPtr;
+            FBTsize*   mptr = dptr;
+
+            int i;
+            for (i = 0; i < arrayLen; ++i,
+                sptr += (fps == 4 ? 1 : 2))
             {
-                FBTsize fps = m_file->getTablePtrSize();
-                if (fps == 4 || fps == 8)
-                {
-                    FBTsize  i;
-                    FBTsize  total  = bin->m_chunk.m_len / fps;
-                    FBTsize  mptrsz = total * sizeof(FBTsize);
-                    FBTsize* nptr   = (FBTsize*)::malloc(mptrsz);
-                    if (nptr == nullptr)
-                    {
-                        // TODO examine the logic for this
-                        ftMALLOC_FAILED;
-                        return;
-                    }
-                    ::memset(nptr, 0, mptrsz);
-
-                    // Always use a 32 bit integer,
-                    // then offset + 2 for a 64 bit pointer.
-                    FBTuint32* optr = (FBTuint32*)bin->m_block;
-
-                    for (i = 0; i < total; i++, optr += (fps == 4 ? 1 : 2))
-                        nptr[i] = (FBTsize)findPtr((FBTsize)*optr);
-
-                    (*dstPtr) = (FBTsize)(nptr);
-
-                    bin->m_chunk.m_len = mptrsz;
-                    bin->m_flag |= MemoryChunk::BLK_MODIFIED;
-
-                    ::free(bin->m_newBlock);
-                    bin->m_newBlock = nptr;
-                }
-                else
-                {
-                    printf("Unknown pointer len\n");
-                }
+                (*mptr++) = (FBTsize)findPtr((FBTsize)(*sptr));
             }
         }
         else
-            printf("failed to find other chunk\n");
+            printf("Invalid size of pointer\n");
     }
-    else  // normal pointer
+    else
     {
-        const ftName& srcname = m_file->getName(src->m_key.k16[1]);
-        FBTsize       malen   = name.m_arraySize > srcname.m_arraySize ? srcname.m_arraySize : name.m_arraySize;
-
-        FBTsize fps = m_file->getTablePtrSize();
-        if (fps == 4 || fps == 8)
-        {
-            FBTsize  i;
-            FBTsize* dptr = (FBTsize*)dstPtr;
-
-            // always use 32 bit, then offset + 2 for 64 bit
-            // (Old pointers are sorted in this manor)
-            FBTuint32* sptr = (FBTuint32*)srcPtr;
-
-            for (i = 0; i < malen; ++i, sptr += (fps == 4 ? 1 : 2))
-                dptr[i] = (FBTsize)findPtr((FBTsize)*sptr);
-        }
+        printf("Unable to find struct name with index(%d)\n",
+               src->m_key.k16[1]);
     }
 }
 
+void ftFile::castPointerToPointer(const ftName& name,
+                                  ftStruct*     dst,
+                                  FBTsize*&     dstPtr,
+                                  ftStruct*     src,
+                                  FBTsize*&     srcPtr)
+{
+    // link pointers to pointers
+    MemoryChunk* bin = findBlock((FBTsize)(*srcPtr));
+    if (bin)
+    {
+        if (bin->m_flag & MemoryChunk::BLK_MODIFIED)
+            (*dstPtr) = (FBTsize)bin->m_newBlock;
+        else
+        {
+            FBTsize fps = m_file->getSizeofPointer();
+            if (fps == 4 || fps == 8)
+            {
+                FBTsize  total  = bin->m_chunk.m_len / fps;
+                FBTsize  mptrsz = total * sizeof(FBTsize);
+                FBTsize* nptr   = (FBTsize*)::malloc(mptrsz);
+
+                if (nptr == nullptr)
+                {
+                    // TODO examine the logic for this
+                    ftMALLOC_FAILED;
+                    return;
+                }
+                ::memset(nptr, 0, mptrsz);
+
+                // Always use a 32 bit integer,
+                // then offset + 2 for a 64 bit pointer.
+                FBTuint32* optr = (FBTuint32*)bin->m_block;
 
 
-void ftFile::linkMembers(ftStruct* dst, FBTsize*& dstPtr, ftStruct* src, FBTsize*& srcPtr)
+                FBTsize* mptr = nptr;
+
+                FBTsize i;
+                for (i = 0; i < total; i++,
+                    optr += (fps == 4 ? 1 : 2))
+                {
+                    (*mptr++) = (FBTsize)findPtr((FBTsize)*optr);
+                }
+
+
+                (*dstPtr) = (FBTsize)(nptr);
+
+                bin->m_chunk.m_len = mptrsz;
+                bin->m_flag |= MemoryChunk::BLK_MODIFIED;
+
+                ::free(bin->m_newBlock);
+                bin->m_newBlock = nptr;
+            }
+            else
+            {
+                printf("Unknown pointer len\n");
+            }
+        }
+    }
+    else
+        printf("failed to find other chunk\n");
+}
+
+
+void ftFile::castMemberVariable(const ftName& name,
+                                ftStruct*     dst,
+                                FBTsize*&     dstPtr,
+                                ftStruct*     src,
+                                FBTsize*&     srcPtr)
 {
     FBTsize total, malen, pi, mptrsz, a2;
 
+    FBTsize       fps        = m_file->getSizeofPointer();
+    FBTsize       mps        = m_memory->getSizeofPointer();
+    const ftName& nameS      = m_file->getStructNameByIdx(src->m_key.k16[1]);
+    FBTsize       dstElmSize = dst->m_len / name.m_arraySize;
+    FBTsize       srcElmSize = src->m_len / nameS.m_arraySize;
 
-    const ftName& nameD = m_memory->getName(dst->m_key.k16[1]);
-    const ftName& nameS = m_file->getName(src->m_key.k16[1]);
+    bool endianSwap = (m_hederFlags & FH_ENDIAN_SWAP) != 0;
+    bool needCast   = (dst->m_flag & ftStruct::NEED_CAST) != 0;
+    bool needSwap   = endianSwap && srcElmSize > 1;
 
-
-    FBTsize fps = m_file->getTablePtrSize();
-    FBTsize mps = m_memory->getTablePtrSize();
-
-    if (nameD.m_ptrCount > 0)
-        castPointers(nameD, dst, dstPtr, src, srcPtr);
+    if (!needCast && !needSwap &&
+        dst->m_val.m_type == dst->m_val.m_type)
+    {
+        ::memcpy(dstPtr, srcPtr, skMin(src->m_len, dst->m_len));
+    }
     else
     {
-        FBTsize dstElmSize = dst->m_len / nameD.m_arraySize;
-        FBTsize srcElmSize = src->m_len / nameS.m_arraySize;
+        FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
+        FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
 
-        bool endianSwap = (m_hederFlags & FH_ENDIAN_SWAP) != 0;
-        bool needCast   = (dst->m_flag & ftStruct::NEED_CAST) != 0;
-        bool needSwap   = endianSwap && srcElmSize > 1;
-
-        if (!needCast && !needSwap &&
-            dst->m_val.m_type == dst->m_val.m_type)
+        ftAtomic stp = ftAtomic::FT_ATOMIC_UNKNOWN, dtp = ftAtomic::FT_ATOMIC_UNKNOWN;
+        if (needCast || needSwap)
         {
-            ::memcpy(dstPtr, srcPtr, skMin(src->m_len, dst->m_len));
+            stp = ftAtomicUtils::getPrimitiveType(src->m_val.m_type);
+            dtp = ftAtomicUtils::getPrimitiveType(dst->m_val.m_type);
         }
-        else
+
+        FBTsize alen = skMin(nameS.m_arraySize, name.m_arraySize);
+        FBTsize elen = skMin(srcElmSize, dstElmSize);
+
+        FBTbyte tmpBuf[8] = {};
+
+        FBTsize i;
+        for (i = 0; i < alen; i++)
         {
-            FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
-            FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
-
-            ftAtomic stp = ftAtomic::FT_ATOMIC_UNKNOWN, dtp = ftAtomic::FT_ATOMIC_UNKNOWN;
-            if (needCast || needSwap)
+            FBTbyte* tmp = srcBPtr;
+            if (needSwap)
             {
-                stp = ftAtomicUtils::getPrimitiveType(src->m_val.m_type);
-                dtp = ftAtomicUtils::getPrimitiveType(dst->m_val.m_type);
-            }
+                tmp = tmpBuf;
+                ::memcpy(tmpBuf, srcBPtr, srcElmSize);
 
-            FBTsize alen = skMin(nameS.m_arraySize, nameD.m_arraySize);
-            FBTsize elen = skMin(srcElmSize, dstElmSize);
-
-            FBTbyte tmpBuf[8] = {};
-
-            FBTsize i;
-            for (i = 0; i < alen; i++)
-            {
-                FBTbyte* tmp = srcBPtr;
-                if (needSwap)
-                {
-                    tmp = tmpBuf;
-                    ::memcpy(tmpBuf, srcBPtr, srcElmSize);
-
-                    if (stp == ftAtomic::FT_ATOMIC_SHORT || stp == ftAtomic::FT_ATOMIC_USHORT)
-                        ftSwap16((FBTuint16*)tmpBuf, 1);
-                    else if (stp >= ftAtomic::FT_ATOMIC_INT && stp <= ftAtomic::FT_ATOMIC_FLOAT)
-                        ftSwap32((FBTuint32*)tmpBuf, 1);
-                    else if (stp == ftAtomic::FT_ATOMIC_DOUBLE)
-                        ftSwap64((FBTuint64*)tmpBuf, 1);
-                    else
-                        ::memset(tmpBuf, 0, sizeof(tmpBuf));  //unknown type
-                }
-
-                if (needCast)
-                    ftAtomicUtils::cast((char*)tmp, (char*)dstBPtr, stp, dtp, 1);
+                if (stp == ftAtomic::FT_ATOMIC_SHORT || stp == ftAtomic::FT_ATOMIC_USHORT)
+                    ftSwap16((FBTuint16*)tmpBuf, 1);
+                else if (stp >= ftAtomic::FT_ATOMIC_INT && stp <= ftAtomic::FT_ATOMIC_FLOAT)
+                    ftSwap32((FBTuint32*)tmpBuf, 1);
+                else if (stp == ftAtomic::FT_ATOMIC_DOUBLE)
+                    ftSwap64((FBTuint64*)tmpBuf, 1);
                 else
-                    ::memcpy(dstBPtr, tmp, elen);
-
-                dstBPtr += dstElmSize;
-                srcBPtr += srcElmSize;
+                    ::memset(tmpBuf, 0, sizeof(tmpBuf));  //unknown type
             }
+
+            if (needCast)
+                ftAtomicUtils::cast((char*)tmp, (char*)dstBPtr, stp, dtp, 1);
+            else
+                ::memcpy(dstBPtr, tmp, elen);
+
+            dstBPtr += dstElmSize;
+            srcBPtr += srcElmSize;
         }
     }
 }
-
 
 void* ftFile::findPtr(const FBTsize& iptr)
 {
@@ -967,18 +1018,19 @@ void ftFile::serialize(skStream*   stream,
     if (m_memory == 0)
         getMemoryTable();
 
-    if (writeData == nullptr || len < sizeof(void*))
+    if (writeData == nullptr || len <= 0)
     {
         printf("Invalid write data\n");
         return;
     }
 
-    FBTtype ft = m_memory->findTypeId(id);
-    if (ft == -1)
+    FBTuint32 ft = m_memory->findTypeId(id);
+    if (ft == SK_NPOS32)
     {
         printf("writeStruct: %s - not found", id);
         return;
     }
+
     serialize(stream, ft, code, len, writeData);
 }
 
@@ -1019,7 +1071,7 @@ void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
     Chunk ch;
     ch.m_code   = DATA;
     ch.m_len    = len;
-    ch.m_nr     = 1;
+    ch.m_nr     = nr;
     ch.m_old    = (FBTsize)writeData;
     ch.m_typeid = 0;
     ftChunk::write(&ch, stream);

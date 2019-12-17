@@ -34,10 +34,10 @@ const ftName ftBinTables::INVALID_NAME = {
     nullptr,  // m_name
     0,        // m_loc
     SK_NPOS,  // m_nameId
-    -1,       // m_ptrCount
-    -1,       // m_numSlots
-    -1,       // m_isFptr;
-    -1,       // m_arraySize
+    0,        // m_ptrCount
+    0,        // m_numSlots
+    0,        // m_isFptr;
+    0,        // m_arraySize
     {0, 0}    // m_array
 };
 
@@ -99,9 +99,10 @@ ftBinTables::OffsM::SizeType ftBinTables::getOffsetCount()
 
 ftStruct* ftBinTables::findStructByName(const ftCharHashKey& kvp)
 {
-    FBTtype i;
+
+    FBTuint32 i;
     i = findTypeId(kvp);
-    if (i != SK_NPOS16)
+    if (i != SK_NPOS32)
         return m_offs.at(i);
     return nullptr;
 }
@@ -511,15 +512,15 @@ void ftBinTables::putMember(FBTtype*        cp,
 
 ftStruct* ftBinTables::findStructByType(const FBTuint16& type)
 {
+
     if (type < m_offs.size())
         return m_offs.at(type);
     return nullptr;
 }
 
-
-
 bool ftBinTables::isLinkedToMemory(const FBTuint16& type)
 {
+
     if (type < m_offs.size())
         return m_offs.at(type)->m_link != 0;
     return false;
@@ -527,13 +528,13 @@ bool ftBinTables::isLinkedToMemory(const FBTuint16& type)
 
 
 
-FBTtype ftBinTables::findTypeId(const ftCharHashKey& cp)
+FBTuint32 ftBinTables::findTypeId(const ftCharHashKey& cp)
 {
-    FBTsizeType pos = m_typeFinder.find(cp);
+
+    FBTsize pos = m_typeFinder.find(cp);
     if (pos != m_typeFinder.npos)
         return m_typeFinder.at(pos).m_strcId;
-
-    return SK_NPOS16;
+    return SK_NPOS32;
 }
 
 const char* ftBinTables::getStructType(const ftStruct* strc)
@@ -554,9 +555,33 @@ const char* ftBinTables::getOwnerStructName(const ftStruct* strc)
     return (k >= m_strcNr || *m_strc[k] >= m_typeNr) ? "" : m_type[*m_strc[k]].m_name;
 }
 
-ftStruct* ftStruct::getMember(Members::SizeType idx)
+FBThash ftBinTables::getTypeHash(const FBTuint16& type) const
 {
-    if (idx < m_members.size())
-        return &m_members.ptr()[idx];
-    return nullptr;
+    if (type < m_typeNr)
+        return m_type[type].m_typeId;
+    return SK_NPOS;
+}
+
+const ftName& ftBinTables::getStructNameByIdx(const FBTuint16& idx) const
+{
+    if (idx < m_nameNr)
+        return m_name[idx];
+    return INVALID_NAME;
+}
+
+
+ftFixedString<4> ftByteToString(FBTuint32 i)
+{
+    union {
+        char      ids[4];
+        FBTuint32 idi;
+    } IDU;
+    IDU.idi = i;
+
+    ftFixedString<4> cp;
+    cp.push_back(IDU.ids[0]);
+    cp.push_back(IDU.ids[1]);
+    cp.push_back(IDU.ids[2]);
+    cp.push_back(IDU.ids[3]);
+    return cp;
 }

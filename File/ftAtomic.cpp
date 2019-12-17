@@ -133,25 +133,6 @@ void ftAtomicUtils_set(char*& destination, ftAtomic destinationType, const doubl
     }
 }
 
-
-
-char* ftAtomicUtils::cast(void*   base,
-                          FBTsize length,
-                          FBTsize count)
-{
-    if (base == nullptr)
-    {
-        printf("Invalid base pointer\n");
-        return nullptr;
-    }
-    else if (length == SK_NPOS)
-    {
-        printf("Invalid length\n");
-        return nullptr;
-    }
-    return static_cast<char*>(base) + length * count;
-}
-
 void ftAtomicUtils::cast(char*    source,
                          char*    destination,
                          ftAtomic sourceType,
