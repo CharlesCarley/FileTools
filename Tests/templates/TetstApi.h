@@ -77,6 +77,11 @@ struct StructTest6
 };
 
 
+struct StructTest6
+{
+    // multi dimensional  -> FT_ARR_DIM_MAX
+    double multi[4][4][4];
+};
 
 
 #endif  //_TestAPI_h_

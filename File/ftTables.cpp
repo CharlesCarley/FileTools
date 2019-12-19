@@ -26,18 +26,17 @@
 #define FT_IN_SOURCE_FILE
 #include "ftTables.h"
 #include "ftHashTypes.h"
-#include "ftPlatformHeaders.h"
 #include "ftLogger.h"
+#include "ftPlatformHeaders.h"
 
 
 
 const ftName ftBinTables::INVALID_NAME = {
     nullptr,  // m_name
-    0,        // m_loc
-    SK_NPOS,  // m_nameId
+    SK_NPOS,  // m_hashedName
     0,        // m_ptrCount
-    0,        // m_numSlots
-    0,        // m_isFptr;
+    0,        // m_numDimensions
+    0,        // m_isFunctionPointer;
     0,        // m_arraySize
     {0, 0}    // m_array
 };
@@ -59,8 +58,9 @@ ftBinTables::ftBinTables() :
     m_typeNr(0),
     m_strcNr(0),
     m_ptrLength(FT_VOIDP),
-    m_otherBlock(0),
-    m_otherLen(0)
+    m_block(0),
+    m_blockLen(0),
+    m_firstStruct(0)
 {
 }
 
@@ -73,8 +73,9 @@ ftBinTables::ftBinTables(void* ptr, FBTsize len, FBTuint8 ptrSize) :
     m_typeNr(0),
     m_strcNr(0),
     m_ptrLength(ptrSize),
-    m_otherBlock(ptr),
-    m_otherLen(len)
+    m_block(ptr),
+    m_blockLen(len),
+    m_firstStruct(0)
 {
 }
 
@@ -82,7 +83,7 @@ ftBinTables::ftBinTables(void* ptr, FBTsize len, FBTuint8 ptrSize) :
 
 ftBinTables::~ftBinTables()
 {
-    OffsM::Iterator it = m_offs.iterator();
+    OffsM::Iterator it = m_structures.iterator();
     while (it.hasMoreElements())
         delete it.getNext();
 
@@ -95,13 +96,13 @@ ftBinTables::~ftBinTables()
 
 ftBinTables::OffsM::PointerType ftBinTables::getOffsetPtr()
 {
-    return m_offs.ptr();
+    return m_structures.ptr();
 }
 
 
 ftBinTables::OffsM::SizeType ftBinTables::getOffsetCount()
 {
-    return m_offs.size();
+    return m_structures.size();
 }
 
 bool ftBinTables::isPointer(const FBTuint16& name) const
@@ -123,15 +124,15 @@ ftStruct* ftBinTables::findStructByName(const ftCharHashKey& kvp)
     FBTuint32 i;
     i = findTypeId(kvp);
     if (i != SK_NPOS32)
-        return m_offs.at(i);
+        return m_structures.at(i);
     return nullptr;
 }
 
 
 bool ftBinTables::read(bool swap)
 {
-    if (m_otherBlock && m_otherLen > 0)
-        return read(m_otherBlock, m_otherLen, swap);
+    if (m_block && m_blockLen > 0)
+        return read(m_block, m_blockLen, swap);
     return false;
 }
 
@@ -142,21 +143,21 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     FBTtype*   tp = 0;
 
     char* cp = (char*)ptr;
-    if (!ftCharNEq(cp, ftIdNames::ftSDNA, 4))
+    if (!ftCharNEq(cp, ftIdNames::FT_SDNA, 4))
     {
-        printf("Bin table is missing the start id!\n");
+        ftLogger::logF("Table is missing the SDNA code.");
         return false;
     }
 
     cp += 4;
-    if (!ftCharNEq(cp, ftIdNames::ftNAME, 4))
+    if (!ftCharNEq(cp, ftIdNames::FT_NAME, 4))
     {
-        printf("Bin table is missing the name id!\n");
+        ftLogger::logF("Table is missing the NAME code.");
         return false;
     }
-
     cp += 4;
     FBTintPtr opad;
+
 
     ip = (FBTuint32*)cp;
     nl = *ip++;
@@ -168,7 +169,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (nl > FT_MAX_TABLE)
     {
-        printf("Max name table size exceeded!\n");
+        ftLogger::logF("Table max names exceeded(%d)", FT_MAX_TABLE);
         return false;
     }
     else
@@ -179,7 +180,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     i = 0;
     while (i < nl && i < FT_MAX_TABLE)
     {
-        ftName name = {cp, (int)i, ftCharHashKey(cp).hash(), 0, 0, 0, 1};
+        ftName name = {cp, ftCharHashKey(cp).hash(), 0, 0, 0, 1};
 
         ftFixedString<64> bn;
 
@@ -201,7 +202,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
             case '(':
             {
                 ++cp;
-                name.m_isFptr = 1;
+                name.m_isFunctionPointer = 1;
                 break;
             }
             case '*':
@@ -213,8 +214,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
             case '[':
             {
                 while ((*++cp) != ']')
-                    name.m_slots[name.m_numSlots] = (name.m_slots[name.m_numSlots] * 10) + ((*cp) - '0');
-                name.m_arraySize *= name.m_slots[name.m_numSlots++];
+                    name.m_dimensions[name.m_numDimensions] = (name.m_dimensions[name.m_numDimensions] * 10) + ((*cp) - '0');
+                name.m_arraySize *= name.m_dimensions[name.m_numDimensions++];
             }
             break;
             }
@@ -232,9 +233,9 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         cp++;
 
 
-    if (!ftCharNEq(cp, ftIdNames::ftTYPE, 4))
+    if (!ftCharNEq(cp, ftIdNames::FT_TYPE, 4))
     {
-        printf("Bin table is missing the type id!\n");
+        ftLogger::logF("Table is missing the TYPE code.");
         return false;
     }
 
@@ -249,7 +250,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (nl > FT_MAX_TABLE)
     {
-        printf("Max name table size exceeded!\n");
+        ftLogger::logF("Table max names exceeded(%d)", FT_MAX_TABLE);
         return false;
     }
     else
@@ -273,9 +274,9 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     opad = ((opad + 3) & ~3) - opad;
     while (opad--)
         cp++;
-    if (!ftCharNEq(cp, ftIdNames::ftTLEN, 4))
+    if (!ftCharNEq(cp, ftIdNames::FT_TLEN, 4))
     {
-        printf("Bin table is missing the tlen id!\n");
+        ftLogger::logF("Table is missing the TLEN code.");
         return false;
     }
 
@@ -285,7 +286,9 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     i = 0;
     while (i < m_typeNr && i < SK_NPOS16)
     {
-        m_tlen[i] = (*tp++);
+        FBTtype& type = m_tlen[i];
+        type          = (*tp++);
+
         if (swap)
             m_tlen[i] = ftSwap16(m_tlen[i]);
         ++i;
@@ -295,9 +298,9 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         ++tp;
 
     cp = (char*)tp;
-    if (!ftCharNEq(cp, ftIdNames::ftSTRC, 4))
+    if (!ftCharNEq(cp, ftIdNames::FT_STRC, 4))
     {
-        printf("Bin table is missing the tlen id!\n");
+        ftLogger::logF("Table is missing the STRC code.");
         return false;
     }
 
@@ -312,7 +315,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
     if (nl > FT_MAX_TABLE)
     {
-        printf("Max name table size exceeded!\n");
+        ftLogger::logF("Max name table size exceeded(%d).", FT_MAX_TABLE);
         return false;
     }
     else
@@ -350,21 +353,19 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
                 }
             }
             else
-                ftLogger::log("Max members exceeded");
+                ftLogger::logF("Max members exceeded(%d).", FT_MAX_MEMBERS);
         }
         else
         {
             if (tp[1] < FT_MAX_MEMBERS)
             {
                 m_type[tp[0]].m_strcId = m_strcNr - 1;
-
                 m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
+
                 tp += (2 * tp[1]) + 2;
             }
             else
-                ftLogger::log("Max members exceeded");
-
-
+                ftLogger::logF("Max members exceeded(%d).", FT_MAX_MEMBERS);
         }
         ++i;
     }
@@ -389,12 +390,11 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 }
 
 
-void ftBinTables::compile(FBTtype         i,
-                          FBTtype         nr,
-                          ftStruct*       off,
-                          FBTuint32&      cof,
-                          FBTuint32       depth,
-                          ftStruct::Keys& keys)
+void ftBinTables::compile(FBTtype    i,
+                          FBTtype    nr,
+                          ftStruct*  off,
+                          FBTuint32& cof,
+                          FBTuint32  depth)
 {
     FBTuint32 e, l, a, oof, ol;
     FBTuint16 f = m_strc[0][0];
@@ -406,13 +406,8 @@ void ftBinTables::compile(FBTtype         i,
     }
 
 
-    ftKey64 keypair;
-
-
     for (a = 0; a < nr; ++a)
     {
-        // Only calculate offsets on recursive structures
-        // This saves unneeded buffers
         FBTtype* strc = m_strc[i];
 
         oof = cof;
@@ -425,21 +420,14 @@ void ftBinTables::compile(FBTtype         i,
         {
             if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
             {
-                keypair.m_type = m_type[strc[0]].m_typeId;
-                keypair.m_name = m_name[strc[1]].m_nameId;
-                keys.push_back(keypair);
-
                 compile(m_type[strc[0]].m_strcId,
                         m_name[strc[1]].m_arraySize,
                         off,
                         cof,
-                        depth + 1,
-                        keys);
-
-                keys.pop_back();
+                        depth + 1);
             }
             else
-                putMember(strc, off, a, cof, depth, keys);
+                putMember(strc, off, a, cof, depth);
         }
 
         if ((cof - oof) != ol)
@@ -449,7 +437,7 @@ void ftBinTables::compile(FBTtype         i,
 
 void ftBinTables::compile(void)
 {
-    m_offs.reserve(FT_MAX_TABLE);
+    m_structures.reserve(FT_MAX_TABLE);
 
     if (!m_strc || m_strcNr <= 0)
     {
@@ -458,106 +446,124 @@ void ftBinTables::compile(void)
     }
 
     FBTuint32 i, cof = 0, depth;
-    FBTuint16 f = m_strc[0][0], e, memberCount;
+    FBTuint16 e, memberCount;
 
-    ftStruct::Keys emptyKeys;
+    m_firstStruct = m_strc[0][0];
+
     for (i = 0; i < m_strcNr; i++)
     {
         FBTtype* strc = m_strc[i];
 
-        FBTtype strcType = strc[0];
+        FBTtype  strcType = strc[0];
 
-        depth         = 0;
-        cof           = 0;
-        ftStruct* off = new ftStruct;
+        depth = 0;
+        cof   = 0;
 
-        off->setTypeIndex(strcType);
-        off->setNameIndex(strc[1]);
+        ftStruct* nstrc;
+        nstrc = new ftStruct(this);
 
+        nstrc->setTypeIndex(strcType);
+        nstrc->setNameIndex(0);
+        nstrc->setHashedType(m_type[strcType].m_typeId);
+        nstrc->setHashedName(0);
 
-        off->setHashedType(m_type[strcType].m_typeId);
-        off->setHashedName(0);
-
-        off->m_nr     = 0;
-        off->m_dp     = 0;
-        off->m_off    = cof;
-        off->m_len    = m_tlen[strcType];
-        off->m_strcId = i;
-        off->m_link   = 0;
-        off->m_flag   = ftStruct::CAN_LINK;
-
-        m_offs.push_back(off);
+        nstrc->m_nr     = 0;
+        nstrc->m_dp     = 0;
+        nstrc->m_off    = cof;
+        nstrc->m_len    = m_tlen[strcType];
+        nstrc->m_strcId = i;
+        nstrc->m_link   = 0;
+        nstrc->m_flag   = ftStruct::CAN_LINK;
+        m_structures.push_back(nstrc);
 
         memberCount = strc[1];
 
         strc += 2;
-        off->m_members.reserve(FT_MAX_MEMBERS);
+        nstrc->m_members.reserve(FT_MEMBERS_RESERVE);
 
         for (e = 0; e < memberCount; ++e, strc += 2)
         {
-            if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
-            {
-                ftStruct::Keys keys;
-                ftKey64        k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
-                keys.push_back(k);
+            const short& type = strc[0];
+            const short& name = strc[1];
 
-                compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth + 1, keys);
+            if (type >= m_firstStruct && m_name[name].m_ptrCount == 0)
+            {
+                compile(m_type[type].m_strcId,
+                        m_name[name].m_arraySize,
+                        nstrc,
+                        cof,
+                        depth + 1);
             }
             else
-                putMember(strc, off, 0, cof, 0, emptyKeys);
+                putMember(strc, nstrc, 0, cof, 0);
         }
 
-        if (cof != off->m_len)
+        if (cof != nstrc->m_len)
         {
-            off->m_flag |= ftStruct::MISALIGNED;
-            printf("Build ==> invalid offset %s:%i:%i:%i\n",
-                   m_type[off->getTypeIndex()].m_name,
-                   i,
-                   cof,
-                   off->m_len);
+            nstrc->m_flag |= ftStruct::MISALIGNED;
+
+            ftLogger::logF("invalid offset %s:%i:%i:%i\n",
+                           m_type[nstrc->getTypeIndex()].m_name,
+                           i,
+                           cof,
+                           nstrc->m_len);
         }
     }
 }
 
 
-void ftBinTables::putMember(FBTtype*        cp,
-                            ftStruct*       off,
-                            FBTtype         nr,
-                            FBTuint32&      cof,
-                            FBTuint32       depth,
-                            ftStruct::Keys& keys)
+void ftBinTables::putMember(FBTtype*   cp,
+                            ftStruct*  parent,
+                            FBTtype    nr,
+                            FBTuint32& cof,
+                            FBTuint32  depth)
 {
-    ftStruct nof;
-    nof.setTypeIndex(cp[0]);
-    nof.setNameIndex(cp[1]);
-    nof.setHashedType(m_type[cp[0]].m_typeId);
-    nof.setHashedName(m_base[cp[1]]);
+    const short& type = cp[0];
+    const short& name = cp[1];
+
+    if (type < 0 || type >= m_typeNr)
+    {
+        ftLogger::logF("Invalid type index");
+        return;
+    }
+
+    if (name < 0 || name >= m_nameNr)
+    {
+        ftLogger::logF("Invalid name index");
+        return;
+    }
 
 
-    nof.m_off      = cof;
-    nof.m_strcId   = off->m_strcId;
-    nof.m_nr       = nr;
-    nof.m_dp       = depth;
-    nof.m_link     = 0;
-    nof.m_flag     = ftStruct::CAN_LINK;
-    nof.m_len      = (m_name[cp[1]].m_ptrCount ? m_ptrLength : m_tlen[cp[0]]) * m_name[cp[1]].m_arraySize;
-    nof.m_keyChain = keys;
-    off->m_members.push_back(nof);
-    cof += nof.m_len;
+    ftMember* member = parent->createMember();
+    member->setTypeIndex(type);
+    member->setNameIndex(name);
+
+    member->m_offset         = cof;
+    member->m_location       = nr;
+    member->m_recursiveDepth = depth;
+    member->m_link           = nullptr;
+
+    if (m_name[name].m_ptrCount > 0)
+        member->m_sizeInBytes = m_ptrLength * m_name[name].m_arraySize;
+    else
+        member->m_sizeInBytes = m_tlen[type] * m_name[name].m_arraySize;
+
+    cof += member->m_sizeInBytes;
 }
 
 
 ftStruct* ftBinTables::findStructByType(const FBTuint16& type)
 {
-    if (type < m_offs.size())
-        return m_offs.at(type);
+    if (type < m_structures.size())
+        return m_structures.at(type);
     return nullptr;
 }
 
+
 bool ftBinTables::isLinkedToMemory(const FBTuint16& type)
 {
-    if (type < m_offs.size())
-        return m_offs.at(type)->m_link != 0;
+    if (type < m_structures.size())
+        return m_structures.at(type)->m_link != 0;
     return false;
 }
 

@@ -27,11 +27,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Utils/skArray.h"
+#include "ftAtomic.h"
 #include "ftConfig.h"
 #include "ftScanner.h"
 #include "ftStreams.h"
-#include "ftAtomic.h"
-#include "Utils/skArray.h"
+#include "ftLogger.h"
+
 
 #define ftValidToken(x) (x > 0)
 
@@ -45,7 +47,7 @@ struct MaxAllocSize
     FBTuint32 m_type;
     FBTuint32 m_tlen;
     FBTuint32 m_strc;
-    FBTuint32 m_offs;
+    FBTuint32 m_structures;
 };
 
 class ftBuildInfo
@@ -71,6 +73,7 @@ public:
     IntPtrArray      m_64ln;
     TypeArray        m_strc;
     ftStringPtrArray m_undef;
+    FBTuint32        m_numberOfBuiltIn;
 };
 
 
@@ -79,7 +82,7 @@ ftCompiler::ftCompiler() :
     m_build(new ftBuildInfo()),
     m_start(0),
     m_curBuf(0),
-    m_writeMode(0),
+    m_writeMode(WRITE_ARRAY),
     m_buffer(0),
     m_pos(0),
     m_scanner(0)
@@ -96,7 +99,7 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
 {
     ftId newName;
     int  i = 0, j = 0;
-    if (v.m_isFptr)
+    if (v.m_isFunctionPointer)
         newName.push_back('(');
 
     if (v.m_ptrCount > 0)
@@ -106,7 +109,7 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
     }
     for (i = 0; i < v.m_name.size(); ++i)
         newName.push_back(v.m_name[i]);
-    if (v.m_isFptr)
+    if (v.m_isFunctionPointer)
     {
         newName.push_back(')');
         newName.push_back('(');
@@ -114,7 +117,7 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
     }
     if (v.m_arraySize > 1 || forceArray)
     {
-        for (i = 0; i < v.m_numSlots; ++i)
+        for (i = 0; i < v.m_numDimensions; ++i)
         {
             ftId dest;
             newName.push_back('[');
@@ -158,8 +161,8 @@ int ftCompiler::parseFile(const ftPath& id)
 
     char* buffer = new char[len + 1];
 
-    br = fread(buffer, 1, len, fp);
-    buffer[br]   = 0;
+    br         = fread(buffer, 1, len, fp);
+    buffer[br] = 0;
     fclose(fp);
 
     int ret = parseBuffer(id.c_str(), buffer, len + 1);
@@ -189,7 +192,7 @@ int ftCompiler::parse(void)
             parseClass(TOK, tp);
     } while (ftValidToken(TOK));
 
-    return 0;
+    return TOK;
 }
 
 
@@ -235,14 +238,14 @@ void ftCompiler::parseClass(int& TOK, ftToken& tp)
                                 forceArray = true;
                                 break;
                             case FT_CONSTANT:
-                                if (cur.m_numSlots + 1 > FT_ARR_DIM_MAX)
+                                if (cur.m_numDimensions + 1 > FT_ARR_DIM_MAX)
                                 {
                                     printf("Maximum number of array slots exceeded!\n");
                                     printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FT_ARR_DIM_MAX);
                                     TOK = FT_NULL_TOKEN;
                                 }
-                                cur.m_arrays[cur.m_numSlots] = tp.getArrayLen();
-                                cur.m_numSlots++;
+                                cur.m_arrays[cur.m_numDimensions] = tp.getArrayLen();
+                                cur.m_numDimensions++;
                                 cur.m_arraySize *= tp.getArrayLen();
                                 break;
                             case FT_POINTER:
@@ -252,7 +255,7 @@ void ftCompiler::parseClass(int& TOK, ftToken& tp)
                                 cur.m_name = tp.getValue();
                                 break;
                             case FT_LPARAN:
-                                cur.m_isFptr = 1;
+                                cur.m_isFunctionPointer = 1;
                                 cur.m_ptrCount++;
                                 cur.m_name = tp.getValue();
                                 break;
@@ -278,7 +281,7 @@ void ftCompiler::parseClass(int& TOK, ftToken& tp)
                                 cur.m_ptrCount  = 0;
                                 cur.m_arraySize = 1;
                                 if (TOK == FT_COMMA)
-                                    cur.m_numSlots = 0;
+                                    cur.m_numDimensions = 0;
                                 break;
                             }
                             default:
@@ -308,6 +311,14 @@ void ftCompiler::parseClass(int& TOK, ftToken& tp)
     } while ((TOK != FT_RBRACKET && TOK != FT_TERM) && ftValidToken(TOK));
 }
 
+
+FBTuint32 ftCompiler::getNumberOfBuiltinTypes(void)
+{
+    return m_build->m_numberOfBuiltIn;
+}
+
+
+
 int ftCompiler::buildTypes(void)
 {
     return m_build->getLengths(m_builders);
@@ -315,14 +326,18 @@ int ftCompiler::buildTypes(void)
 
 void ftCompiler::writeFile(const ftId& id, skStream* fp)
 {
-    if (!fp)
-        return;
-
-    fp->writef("const unsigned char %sTable[]={\n", id.c_str());
-    m_writeMode = 0;
-    writeStream(fp);
-    fp->writef("\n};\n");
-    fp->writef("const int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
+    if (fp)
+    {
+        fp->writef("const unsigned char %sTable[]={\n", id.c_str());
+        m_writeMode = WRITE_ARRAY;
+        writeStream(fp);
+        fp->writef("\n};\n");
+        fp->writef("const int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
+    }
+    else
+    {
+        ftLogger::logF("Invalid write stream");
+    }
 }
 
 
@@ -339,7 +354,7 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
 
     fp.writef("const unsigned char %sTable[]={\n", id.c_str());
 
-    m_writeMode = 0;
+    m_writeMode = WRITE_ARRAY;
     writeStream(&fp);
 
     fp.writef("\n};\n");
@@ -357,8 +372,8 @@ void ftCompiler::writeStream(skStream* fp)
     m_curBuf = -1;
 
 
-    writeBinPtr(fp, (void*)&ftIdNames::ftSDNA[0], 4);
-    writeBinPtr(fp, (void*)&ftIdNames::ftNAME[0], 4);
+    writeBinPtr(fp, (void*)&ftIdNames::FT_SDNA[0], 4);
+    writeBinPtr(fp, (void*)&ftIdNames::FT_NAME[0], 4);
     i = m_build->m_name.size();
 
 
@@ -371,15 +386,14 @@ void ftCompiler::writeStream(skStream* fp)
 
 
 
-
-    writeBinPtr(fp, (void*)&ftIdNames::ftTYPE[0], 4);
+    writeBinPtr(fp, (void*)&ftIdNames::FT_TYPE[0], 4);
     i = m_build->m_typeLookup.size();
 #if ftFAKE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
     writeBinPtr(fp, &i, 4);
     writeCharPtr(fp, m_build->m_typeLookup);
-    writeBinPtr(fp, (void*)&ftIdNames::ftTLEN[0], 4);
+    writeBinPtr(fp, (void*)&ftIdNames::FT_TLEN[0], 4);
 
 #if ftFAKE_ENDIAN == 1
     for (i = 0; i < (int)m_build->m_tlen.size(); i++)
@@ -392,7 +406,7 @@ void ftCompiler::writeStream(skStream* fp)
         writeBinPtr(fp, (void*)&pad[0], 2);
     }
 
-    writeBinPtr(fp, (void*)&ftIdNames::ftSTRC[0], 4);
+    writeBinPtr(fp, (void*)&ftIdNames::FT_STRC[0], 4);
     i = m_builders.size();
 
 #if ftFAKE_ENDIAN == 1
@@ -439,7 +453,7 @@ void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
 
 void ftCompiler::writeBinPtr(skStream* fp, void* ptr, int len)
 {
-    if (m_writeMode == 0)
+    if (m_writeMode == WRITE_ARRAY)
     {
         int            i;
         unsigned char* cb = (unsigned char*)ptr;
@@ -558,11 +572,12 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
 ftBuildInfo::ftBuildInfo()
 {
-    m_alloc.m_name = 0;
-    m_alloc.m_type = 0;
-    m_alloc.m_tlen = 0;
-    m_alloc.m_strc = 0;
-    m_alloc.m_offs = 0;
+    m_numberOfBuiltIn = 0;
+    m_alloc.m_name    = 0;
+    m_alloc.m_type    = 0;
+    m_alloc.m_tlen    = 0;
+    m_alloc.m_strc    = 0;
+    m_alloc.m_structures    = 0;
 }
 
 
@@ -583,6 +598,8 @@ void ftBuildInfo::makeBuiltinTypes(void)
         const ftAtomicType& type = ftAtomicUtils::Types[i];
         addType(type.m_name, type.m_sizeof);
     }
+
+    m_numberOfBuiltIn = m_typeLookup.size();
 }
 
 
@@ -640,10 +657,10 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
             ftVariable& cvar = it.getNext();
 
             cvar.m_typeId = addType(cvar.m_type, 0);
-            cvar.m_nameId = addName(cvar.m_name);
+            cvar.m_hashedName = addName(cvar.m_name);
 
             m_strc.push_back(cvar.m_typeId);
-            m_strc.push_back(cvar.m_nameId);
+            m_strc.push_back(cvar.m_hashedName);
 
             m_alloc.m_strc += (sizeof(FBTtype) * 2);
         }
@@ -841,7 +858,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                 while (it.hasMoreElements())
                 {
                     ftVariable& cvar = it.getNext();
-                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", cvar.m_typeId, cvar.m_nameId, (cvar.m_ptrCount > 0 ? FT_VOIDP : tlens[cvar.m_typeId]) * cvar.m_arraySize, cvar.m_type.c_str(), cvar.m_name.c_str());
+                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", cvar.m_typeId, cvar.m_hashedName, (cvar.m_ptrCount > 0 ? FT_VOIDP : tlens[cvar.m_typeId]) * cvar.m_arraySize, cvar.m_type.c_str(), cvar.m_name.c_str());
                 }
             }
         }

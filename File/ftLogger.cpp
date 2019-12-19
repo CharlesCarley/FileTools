@@ -27,18 +27,80 @@
 #include <iomanip>
 #include <iostream>
 #include "Utils/skHexPrint.h"
+#include "Utils/skPlatformHeaders.h"
 #include "ftTables.h"
 
 using namespace std;
 
+#define FT_INVALID_CHUNK_READ printf("Failed to read chunk.\n");
+#define FT_TABLE_FAILED printf("Failed to initialize tables.\n");
+#define FT_DUPLICATE_BLOCK printf("Duplicate memory block.\n");
 
-void ftLogger::log(const char *msg)
+void ftLogger::log(int status)
+{
+    switch (status)
+    {
+    case ftFile::FS_INV_HEADER_STR:
+        printf("Invalid header string.\n");
+        break;
+    case ftFile::FS_INV_LENGTH:
+        printf("Invalid block length.\n");
+        break;
+    case ftFile::FS_INV_READ:
+        printf("Invalid read.\n");
+        break;
+    case ftFile::FS_LINK_FAILED:
+        printf("Linking failed.\n");
+        break;
+    case ftFile::FS_BAD_ALLOC:
+        printf("Failed to allocate memory.\n");
+        break;
+    case ftFile::FS_INV_INSERT:
+        printf("Map insertion failed.\n");
+        break;
+    case ftFile::FS_DUPLICATE_BLOCK:
+        printf("Duplicate block read.\n");
+        break;
+    default:
+        break;
+    }
+}
+
+void ftLogger::log(int status, const char *msg, ...)
+{
+    log(status);
+    if (msg)
+    {
+        char    buf[513];
+        va_list lst;
+        va_start(lst, msg);
+        int size = skp_printf(buf, 512, msg, lst);
+        va_end(lst);
+        if (size < 0)
+            size = 0;
+
+        buf[size] = 0;
+        printf("%s\n", buf);
+    }
+}
+
+
+
+void ftLogger::logF(const char *msg, ...)
 {
     if (msg)
     {
-        skHexPrint::writeColor(CS_RED);
-        cout << msg << endl;
-        skHexPrint::writeColor(CS_WHITE);
+        char buf[513];
+
+        va_list lst;
+        va_start(lst, msg);
+        int size = skp_printf(buf, 512, msg, lst);
+        va_end(lst);
+        if (size < 0)
+            size = 0;
+
+        buf[size] = 0;
+        printf("%s\n", buf);
     }
 }
 
@@ -82,8 +144,22 @@ void ftLogger::log(void *ptr, FBTsize len)
 void ftLogger::log(ftBinTables *table, ftStruct *strc)
 {
     ftLogger_writeSeperator();
-    cout << "Struct : " << table->getNameAt(strc->getNameIndex()).m_name << endl;
+    skHexPrint::writeColor(CS_GREEN);
+    char *name = "", *tmpname;
+
+    tmpname = (char *)table->getTypeNameAt(strc->getNameIndex());
+    if (tmpname != nullptr)
+        name = tmpname;
+
+
+    cout << "Struct : " << name << endl;
+    skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << "-----------------------" << endl;
-    cout << "Key    : " << '{' << strc->getTypeIndex() << ',' << strc->getNameIndex() << '}' << endl;
-    cout << "Hash   : " << '{' << strc->getHashedType() << ',' << strc->getHashedName() << '}' << endl;
+    skHexPrint::writeColor(CS_WHITE);
+
+    cout << "Key           : " << '{' << strc->getTypeIndex() << ',' << strc->getNameIndex() << '}' << endl;
+    cout << "Hash          : " << '{' << strc->getHashedType() << ',' << strc->getHashedName() << '}' << endl;
+    cout << "Offset        : " << strc->getBufferOffset() << endl;
+    cout << "Size In Bytes : " << strc->getSizeInBytes() << endl;
+    cout << "Aligned 4     : " << (((strc->getSizeInBytes() % 4) == 0) ? 1 : 0) << endl;
 }

@@ -55,10 +55,10 @@ public:
         m_type(),
         m_name(),
         m_typeId(-1),
-        m_nameId(-1),
+        m_hashedName(-1),
         m_ptrCount(0),
-        m_numSlots(0),
-        m_isFptr(0),
+        m_numDimensions(0),
+        m_isFunctionPointer(0),
         m_lstat(0),
         m_undefined(0),
         m_isDependentType(false),
@@ -72,10 +72,10 @@ public:
     ftId         m_type;
     ftId         m_name;
     int          m_typeId;
-    int          m_nameId;
+    int          m_hashedName;
     int          m_ptrCount;
-    int          m_numSlots;
-    int          m_isFptr;
+    int          m_numDimensions;
+    int          m_isFunctionPointer;
     int          m_lstat;
     int          m_undefined;
     bool         m_isDependentType;
@@ -129,12 +129,28 @@ enum ftLinkerIssues
 class ftCompiler
 {
 public:
+    enum WriteMode
+    {
+        WRITE_ARRAY = 0,  // writes table as a c/c++ array (default)
+        WRITE_STREAM,     // writes table to the specified stream (data only no text)
+    };
+
+
+public:
     ftCompiler();
     ~ftCompiler();
 
     int parseFile(const ftPath& id);
     int parseBuffer(const ftId& name, const char* ms, size_t len);
     int buildTypes(void);
+    
+    FBTuint32 getNumberOfBuiltinTypes(void);
+
+    
+    inline void setWriteMode(int mode)
+    {
+        m_writeMode = mode;
+    }
 
     void writeFile(const ftId& id, class skStream* fp);
     void writeFile(const ftId& id, const ftPath& path);

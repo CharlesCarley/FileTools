@@ -76,7 +76,6 @@ TEST_CASE("PointerHash")
 
 
     PointerFinder find_ptr;
-
     int *it = ptrArray;
 
     for (i = 0; i < 100; ++i)

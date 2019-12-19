@@ -110,10 +110,10 @@ int ftBlend::serializeData(skStream* stream)
     {
         if (node->m_newTypeId > m_memory->getNumberOfStructs())
             continue;
-        if (!node->m_newBlock)
+        if (!node->m_mblock)
             continue;
 
-        void* wd = node->m_newBlock;
+        void* wd = node->m_mblock;
 
         Chunk ch;
         ch.m_code   = node->m_chunk.m_code;

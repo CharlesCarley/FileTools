@@ -31,7 +31,10 @@
 class ftLogger
 {
 public:
-    static void log(const char *msg);
+    static void log(int status);
+    static void log(int status, const char *msg, ...);
+    static void logF(const char *msg, ...);
+
     static void log(const ftFile::Chunk &chunk);
     static void log(void *ptr, FBTsize len);
     static void log(ftBinTables *table, ftStruct *strc);

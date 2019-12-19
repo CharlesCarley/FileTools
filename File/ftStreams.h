@@ -60,7 +60,8 @@ protected:
     int                 m_mode;
 };
 
-
+#else
+typedef skFileStream ftGzStream;
 #endif
 
 

@@ -35,12 +35,12 @@
 
 namespace ftIdNames
 {
-    const char ftSDNA[4] = {'S', 'D', 'N', 'A'};
-    const char ftNAME[4] = {'N', 'A', 'M', 'E'};  // Name array
-    const char ftTYPE[4] = {'T', 'Y', 'P', 'E'};  // Type Array
-    const char ftTLEN[4] = {'T', 'L', 'E', 'N'};  // Type length array
-    const char ftSTRC[4] = {'S', 'T', 'R', 'C'};  // Struct/Class Array
-    const char ftOFFS[4] = {'O', 'F', 'F', 'S'};  // Offset map (Optional & TODO)
+    const char FT_SDNA[4] = {'S', 'D', 'N', 'A'};
+    const char FT_NAME[4] = {'N', 'A', 'M', 'E'};  // Name array
+    const char FT_TYPE[4] = {'T', 'Y', 'P', 'E'};  // Type Array
+    const char FT_TLEN[4] = {'T', 'L', 'E', 'N'};  // Type length array
+    const char FT_STRC[4] = {'S', 'T', 'R', 'C'};  // Struct/Class Array
+    const char FT_OFFS[4] = {'O', 'F', 'F', 'S'};  // Offset map (Optional & TODO)
 
 
 }  // namespace ftIdNames
@@ -83,6 +83,11 @@ public:
 
 
 
+    inline OffsM::Iterator getOffsetIterator()
+    {
+        return m_structures.iterator();
+    }
+
     OffsM::PointerType getOffsetPtr();
     OffsM::SizeType    getOffsetCount();
 
@@ -96,7 +101,7 @@ public:
 
     inline bool isValidType(const FBTuint32& typeidx) const
     {
-        return typeidx < m_strcNr && typeidx < m_offs.size();
+        return typeidx < m_strcNr && typeidx < m_structures.size();
     }
 
     ftStruct* findStructByName(const ftCharHashKey& kvp);
@@ -119,6 +124,12 @@ public:
         return INVALID_NAME;
     }
 
+    inline const char* getStringNameAt(FBTuint32 idx) const
+    {
+        if (idx < m_nameNr)
+            return m_name[idx].m_name;
+        return "";
+    }
 
 
     inline FBTuint32 getNumberOfTypes() const
@@ -131,6 +142,13 @@ public:
         if (idx < m_typeNr)
             return m_type[idx];
         return INVALID_TYPE;
+    }
+
+    inline char* getTypeNameAt(FBTuint32 idx) const
+    {
+        if (idx < m_typeNr)
+            return m_type[idx].m_name;
+        return nullptr;
     }
 
 
@@ -161,6 +179,10 @@ public:
 
 
 private:
+
+    friend class ftStruct;
+    friend class ftMember;
+
     Names m_name;
     Types m_type;
     TypeL m_tlen;
@@ -170,10 +192,11 @@ private:
     FBTuint32 m_nameNr;
     FBTuint32 m_typeNr;
     FBTuint32 m_strcNr;
-    void*     m_otherBlock;
-    FBTsize   m_otherLen;
+    void*     m_block;
+    FBTsize   m_blockLen;
+    FBTuint16 m_firstStruct;
 
-    OffsM      m_offs;
+    OffsM      m_structures;
     FBTuint8   m_ptrLength;
     TypeFinder m_typeFinder;
 
@@ -181,15 +204,13 @@ private:
                    ftStruct*       off,
                    FBTtype         nr,
                    FBTuint32&      cof,
-                   FBTuint32       depth,
-                   ftStruct::Keys& keys);
+                   FBTuint32       depth);
 
     void compile(FBTtype         i,
                  FBTtype         nr,
                  ftStruct*       off,
                  FBTuint32&      cof,
-                 FBTuint32       depth,
-                 ftStruct::Keys& keys);
+                 FBTuint32       depth);
 
     void compile(void);
 };

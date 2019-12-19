@@ -197,8 +197,6 @@ public:
         Link* next;
         Link* prev;
     };
-
-
     Link* first;
     Link* last;
 
@@ -223,18 +221,36 @@ public:
         Link* link = ((Link*)v);
         if (!link)
             return;
-
         link->prev = last;
         if (last)
             last->next = link;
-
         if (!first)
             first = link;
-
         last = link;
     }
-};
 
+    bool erase(void *vp)
+    {
+        Link* link = ((Link*)vp);
+        if (!link)
+            return false;
+
+        if (link->next)
+            link->next->prev = link->prev;
+        if (link->prev)
+            link->prev->next = link->next;
+        if (last == link)
+            last = link->prev;
+        if (first == link)
+            first = link->next;
+        return true;
+    }
+
+    bool remove(void* vp)
+    {
+        return erase(vp);
+    }
+};
 
 
 #define ftCharNEq(a, b, n) ((a && b) && !strncmp(a, b, n))

@@ -26,6 +26,7 @@
 #ifndef _ftFile_h_
 #define _ftFile_h_
 
+#include "Utils/skList.h"
 #include "Utils/skMap.h"
 #include "ftHashTypes.h"
 #include "ftTypes.h"
@@ -34,7 +35,9 @@ class skStream;
 class ftMemoryStream;
 class ftBinTables;
 class ftStruct;
-class ftName;
+struct ftName;
+class ftMember;
+
 
 
 class ftFile
@@ -50,14 +53,15 @@ public:
 
     enum FileStatus
     {
-        FS_LINK_FAILED = -7,
+        FS_LINK_FAILED = -8,
         FS_INV_INSERT,
         FS_BAD_ALLOC,
+        FS_DUPLICATE_BLOCK,
         FS_INV_READ,
         FS_INV_LENGTH,
         FS_INV_HEADER_STR,
         FS_FAILED,
-        FS_OK,
+        FS_OK,  // should always be zero
     };
 
     enum ParseMode
@@ -96,7 +100,7 @@ public:
     {
         FBTuint32 m_code;
         FBTuint32 m_len;
-        FBTsize   m_old; // varies
+        FBTsize   m_old;  // varies
         FBTuint32 m_typeid;
         FBTuint32 m_nr;
     };
@@ -109,17 +113,19 @@ public:
         };
 
         MemoryChunk *m_next, *m_prev;
+        ftStruct*    m_attached;
         Chunk        m_chunk;
-        void*        m_block;
-        void*        m_newBlock;
+        void*        m_fblock;
+        void*        m_mblock;
         FBTuint8     m_flag;
         FBTtype      m_newTypeId;
     };
 
     typedef skHashTable<SKuintPtr, MemoryChunk*> ChunkMap;
+    typedef ftList                               MemoryChunks;
+
 
 private:
-
     int               m_hederFlags;
     const char*       m_uhid;
     ftFixedString<12> m_header;
@@ -127,15 +133,13 @@ private:
     void*             m_fileData;
 
 protected:
-
     int          m_version, m_fileVersion;
-    ftList       m_chunks;
+    MemoryChunks m_chunks;
     ChunkMap     m_map;
     ftBinTables* m_memory;
     ftBinTables* m_file;
 
 public:
-
     ftFile(const char* uid);
     virtual ~ftFile();
 
@@ -166,7 +170,7 @@ public:
         return m_file;
     }
 
-    inline ftList& getChunks(void)
+    inline MemoryChunks& getChunks(void)
     {
         return m_chunks;
     }
@@ -186,9 +190,8 @@ public:
 
 
 protected:
-
-    int  initializeTables(ftBinTables* tables);
-    int  initializeMemory(void);
+    int initializeTables(ftBinTables* tables);
+    int initializeMemory(void);
 
     virtual bool skip(const FBThash& id)
     {
@@ -201,51 +204,59 @@ protected:
     virtual int     serializeData(skStream* stream)          = 0;
 
 private:
-
     void*        findPtr(const FBTsize& iptr);
     MemoryChunk* findBlock(const FBTsize& iptr);
     skStream*    openStream(const char* path, int mode);
+
+
+    void handleTable(skStream* stream, void* block, const Chunk& chunk, int& status);
+    void handleChunk(skStream* stream, void* block, const Chunk& chunk, int& status);
 
 
     void clearStorage(void);
     int  allocNewBlocks(void);
     int  parseHeader(skStream* stream);
     int  parseStreamImpl(skStream* stream);
-    int  compileOffsets(void);
+    int  crossLink(void);
 
 
     int  link(void);
-    void linkMembers(MemoryChunk* chunk, ftStruct* cur);
-    void linkMembers(ftStruct* dst, FBTsize*& dstPtr, ftStruct* src, FBTsize*& srcPtr);
+    void castMembers(MemoryChunk* chunk, ftStruct* cur);
+    void castMember(ftMember* dst, FBTsize*& dstPtr, ftMember* src, FBTsize*& srcPtr);
 
     void castMemberPointer(
-        const ftName& name,
-        ftStruct*     dst,
-        FBTsize*&     dstPtr,
-        ftStruct*     src,
-        FBTsize*&     srcPtr);
+        ftMember* dst,
+        FBTsize*& dstPtr,
+        ftMember* src,
+        FBTsize*& srcPtr);
 
     void castPointer(
-        const ftName& name,
-        ftStruct*     dst,
-        FBTsize*&     dstPtr,
-        ftStruct*     src,
-        FBTsize*&     srcPtr);
+        ftMember* dst,
+        FBTsize*& dstPtr,
+        ftMember* src,
+        FBTsize*& srcPtr);
 
     void castPointerToPointer(
-        const ftName& name,
-        ftStruct*     dst,
-        FBTsize*&     dstPtr,
-        ftStruct*     src,
-        FBTsize*&     srcPtr);
+        ftMember* dst,
+        FBTsize*& dstPtr,
+        ftMember* src,
+        FBTsize*& srcPtr);
 
 
     void castMemberVariable(
-        const ftName& name,
-        ftStruct*     dst,
-        FBTsize*&     dstPtr,
-        ftStruct*     src,
-        FBTsize*&     srcPtr);
+        ftMember* dst,
+        FBTsize*& dstPtr,
+        ftMember* src,
+        FBTsize*& srcPtr);
+
+    ftStruct* findInTable(ftStruct* fileStruct, ftBinTables* sourceTable, ftBinTables* findInTable);
+
+    ftStruct* findInMemoryTable(ftStruct* fileStruct);
+    ftStruct* findInFileTable(ftStruct* memoryStruct);
+    ftMember* findInFileTable(ftStruct* fileStruct,
+                              ftMember* memoryMember,
+                              bool      isPointer,
+                              bool&     needCast);
 };
 
 

@@ -25,10 +25,152 @@
 */
 #include "ftStruct.h"
 #include <stdio.h>
+#include "ftTables.h"
+#include "ftAtomic.h"
 
 
 
-ftStruct::ftStruct() :
+ftMember::ftMember(ftStruct* owner) :
+    m_owner(owner),
+    m_offset(0),
+    m_type(0),
+    m_name(0),
+    m_hashedType(SK_NPOS),
+    m_hashedName(SK_NPOS),
+    m_link(0),
+    m_location(0),
+    m_recursiveDepth(0),
+    m_sizeInBytes(0)
+{
+}
+
+
+ftMember::~ftMember()
+{
+}
+
+
+bool ftMember::isBuiltinType()
+{
+    if (m_owner && m_owner->m_table)
+        return m_type < m_owner->m_table->m_firstStruct;
+    return false;
+}
+
+bool ftMember::isStructure()
+{
+    if (m_owner && m_owner->m_table)
+        return m_type >= m_owner->m_table->m_firstStruct;
+    return false;
+}
+
+bool ftMember::isPointer()
+{
+    return getPointerCount() > 0;
+}
+
+bool ftMember::isArray()
+{
+    if (m_owner && m_owner->m_table)
+    {
+        if (m_name < m_owner->m_table->m_nameNr)
+            return m_owner->m_table->m_name[m_name].m_arraySize > 1;
+    }
+    return false;
+}
+
+int ftMember::getArraySize()
+{
+    if (m_owner && m_owner->m_table)
+    {
+        if (m_name < m_owner->m_table->m_nameNr)
+            return m_owner->m_table->m_name[m_name].m_arraySize;
+    }
+    return 0;
+}
+
+
+int ftMember::getArrayElementSize()
+{
+    int arraySize = skMax(getArraySize(), 1);
+    return m_sizeInBytes / arraySize;
+}
+
+
+ftAtomic ftMember::getAtomicType()
+{
+    return ftAtomicUtils::getPrimitiveType(m_hashedType);
+}
+
+
+int ftMember::getPointerCount()
+{
+    if (m_owner && m_owner->m_table)
+    {
+        if (m_name < m_owner->m_table->m_nameNr)
+            return m_owner->m_table->m_name[m_name].m_ptrCount;
+    }
+    return 0;
+}
+
+
+
+void ftMember::setNameIndex(const FBTuint16& idx)
+{
+    m_name = idx;
+    if (m_owner && m_owner->m_table)
+    {
+        if (m_name < m_owner->m_table->m_base.size())
+            m_hashedName = m_owner->m_table->m_base.at(m_name);
+    }
+}
+
+void ftMember::setTypeIndex(const FBTuint16& idx)
+{
+    m_type = idx;
+    if (m_owner && m_owner->m_table)
+    {
+        if (m_name < m_owner->m_table->m_base.size())
+            m_hashedType = m_owner->m_table->m_type[m_type].m_typeId;
+    }
+}
+
+bool ftMember::compare(ftMember* rhs)
+{
+    if (!rhs)
+        return false;
+
+    bool result;
+
+    result = m_recursiveDepth <= rhs->m_recursiveDepth;
+    if (result)
+    {
+        result = m_hashedName == rhs->m_hashedName;
+        if (result)
+            result = m_hashedType == rhs->m_hashedType;
+    }
+    return result;
+}
+
+void* ftMember::getChunk()
+{
+    return m_owner ? m_owner->m_attached : 0;
+}
+
+
+FBTsize* ftMember::jumpToOffset(void* base)
+{
+    if (m_offset < m_owner->m_len)
+        return reinterpret_cast<FBTsize*>(reinterpret_cast<FBTbyte*>(base) + m_offset);
+    return nullptr;
+}
+
+
+
+
+
+ftStruct::ftStruct(ftBinTables* parent) :
+    m_table(parent),
     m_key(),
     m_val(),
     m_off(0),
@@ -37,6 +179,7 @@ ftStruct::ftStruct() :
     m_dp(0),
     m_strcId(0),
     m_flag(0),
+    m_attached(0),
     m_members(),
     m_link(0)
 {
@@ -44,37 +187,29 @@ ftStruct::ftStruct() :
 }
 
 
+
 ftStruct::~ftStruct()
 {
+    Members::Iterator it = m_members.iterator();
+    while (it.hasMoreElements())
+        delete it.getNext();
 }
 
 
-ftStruct* ftStruct::getMember(Members::SizeType idx)
+ftMember* ftStruct::createMember()
+{
+    ftMember* mbr = new ftMember(this);
+    m_members.push_back(mbr);
+    return mbr;
+}
+
+
+
+ftMember* ftStruct::getMember(Members::SizeType idx)
 {
     if (idx < m_members.size())
-        return &m_members.ptr()[idx];
+        return m_members[idx];
     return nullptr;
-}
-
-
-
-bool ftStruct::isDifferent(ftStruct* rhs)
-{
-    if (!rhs)
-        return false;
-
-    bool result = m_nr == rhs->m_nr;
-    if (result)
-    {
-        result = m_dp == rhs->m_dp;
-        if (result)
-        {
-            result = m_val.m_name == rhs->m_val.m_name;
-            if (result)
-                result = m_keyChain.equals(rhs->m_keyChain);
-        }
-    }
-    return result;
 }
 
 
@@ -87,19 +222,4 @@ FBTbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max)
         val += m_len * idx;
     }
     return val;
-}
-
-
-
-FBTsize* ftStruct::jumpToOffset(void* base)
-{
-    FBTbyte* val = (FBTbyte*)base;
-
-    if (m_off < m_len)
-        val += m_off;
-    else
-    {
-        printf("offset exceeds length\n");
-    }
-    return (FBTsize*)val;
 }
