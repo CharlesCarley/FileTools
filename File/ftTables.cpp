@@ -27,6 +27,7 @@
 #include "ftTables.h"
 #include "ftHashTypes.h"
 #include "ftLogger.h"
+#include "ftMember.h"
 #include "ftPlatformHeaders.h"
 
 
@@ -462,18 +463,15 @@ void ftBinTables::compile(void)
         ftStruct* nstrc;
         nstrc = new ftStruct(this);
 
-        nstrc->setTypeIndex(strcType);
-        nstrc->setNameIndex(0);
-        nstrc->setHashedType(m_type[strcType].m_typeId);
-        nstrc->setHashedName(0);
+        nstrc->m_type       = strcType;
+        nstrc->m_hashedType = m_type[strcType].m_typeId;
+        nstrc->m_strcId     = i;
+        nstrc->m_sizeInBytes = m_tlen[strcType];
 
-        nstrc->m_nr     = 0;
-        nstrc->m_dp     = 0;
-        nstrc->m_off    = cof;
-        nstrc->m_len    = m_tlen[strcType];
-        nstrc->m_strcId = i;
-        nstrc->m_link   = 0;
-        nstrc->m_flag   = ftStruct::CAN_LINK;
+        nstrc->m_nr          = 0;
+        nstrc->m_dp          = 0;
+        nstrc->m_link        = 0;
+        nstrc->m_flag        = ftStruct::CAN_LINK;
         m_structures.push_back(nstrc);
 
         memberCount = strc[1];
@@ -498,7 +496,7 @@ void ftBinTables::compile(void)
                 putMember(strc, nstrc, 0, cof, 0);
         }
 
-        if (cof != nstrc->m_len)
+        if (cof != nstrc->m_sizeInBytes)
         {
             nstrc->m_flag |= ftStruct::MISALIGNED;
 
@@ -506,7 +504,7 @@ void ftBinTables::compile(void)
                            m_type[nstrc->getTypeIndex()].m_name,
                            i,
                            cof,
-                           nstrc->m_len);
+                           nstrc->m_sizeInBytes);
         }
     }
 }
@@ -575,18 +573,6 @@ FBTuint32 ftBinTables::findTypeId(const ftCharHashKey& cp)
     if (pos != m_typeFinder.npos)
         return m_typeFinder.at(pos).m_strcId;
     return SK_NPOS32;
-}
-
-const char* ftBinTables::getStructName(const ftStruct* strc)
-{
-    FBTuint16 k = strc ? strc->getNameIndex() : (FBTuint32)-1;
-    return (k >= m_nameNr) ? "" : m_name[k].m_name;
-}
-
-const char* ftBinTables::getOwnerStructName(const ftStruct* strc)
-{
-    FBTuint32 k = strc ? strc->m_strcId : (FBTuint32)-1;
-    return (k >= m_strcNr || *m_strc[k] >= m_typeNr) ? "" : m_type[*m_strc[k]].m_name;
 }
 
 FBThash ftBinTables::getTypeHash(const FBTuint16& type) const

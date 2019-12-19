@@ -30,9 +30,9 @@
 #include "Utils/skArray.h"
 #include "ftAtomic.h"
 #include "ftConfig.h"
+#include "ftLogger.h"
 #include "ftScanner.h"
 #include "ftStreams.h"
-#include "ftLogger.h"
 
 
 #define ftValidToken(x) (x > 0)
@@ -40,6 +40,7 @@
 
 typedef skArray<FBTtype> IntPtrArray;
 typedef skArray<FBTtype> TypeArray;
+
 
 struct MaxAllocSize
 {
@@ -54,9 +55,7 @@ class ftBuildInfo
 {
 public:
     ftBuildInfo();
-    ~ftBuildInfo()
-    {
-    }
+    ~ftBuildInfo();
 
     void        reserve(void);
     int         getLengths(ftCompileStruct::Array& struct_builders);
@@ -572,12 +571,16 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
 ftBuildInfo::ftBuildInfo()
 {
-    m_numberOfBuiltIn = 0;
-    m_alloc.m_name    = 0;
-    m_alloc.m_type    = 0;
-    m_alloc.m_tlen    = 0;
-    m_alloc.m_strc    = 0;
-    m_alloc.m_structures    = 0;
+    m_numberOfBuiltIn    = 0;
+    m_alloc.m_name       = 0;
+    m_alloc.m_type       = 0;
+    m_alloc.m_tlen       = 0;
+    m_alloc.m_strc       = 0;
+    m_alloc.m_structures = 0;
+}
+
+ftBuildInfo::~ftBuildInfo()
+{
 }
 
 
@@ -589,7 +592,6 @@ void ftBuildInfo::reserve(void)
     m_strc.reserve(FT_MAX_TABLE * FT_MAX_MEMBERS);
 }
 
-
 void ftBuildInfo::makeBuiltinTypes(void)
 {
     size_t i;
@@ -598,10 +600,8 @@ void ftBuildInfo::makeBuiltinTypes(void)
         const ftAtomicType& type = ftAtomicUtils::Types[i];
         addType(type.m_name, type.m_sizeof);
     }
-
     m_numberOfBuiltIn = m_typeLookup.size();
 }
-
 
 FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 {
@@ -656,7 +656,7 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
         {
             ftVariable& cvar = it.getNext();
 
-            cvar.m_typeId = addType(cvar.m_type, 0);
+            cvar.m_typeId     = addType(cvar.m_type, 0);
             cvar.m_hashedName = addName(cvar.m_name);
 
             m_strc.push_back(cvar.m_typeId);

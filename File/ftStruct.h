@@ -31,6 +31,7 @@
 
 class ftBinTables;
 class ftStruct;
+class ftMember;
 
 
 struct ftName
@@ -67,91 +68,6 @@ struct ftKey64
     FBThash m_name;
 };
 
-
-
-class ftMember
-{
-public:
-    ftMember(ftStruct* owner);
-    ~ftMember();
-
-
-    void setNameIndex(const FBTuint16& idx);
-    void setTypeIndex(const FBTuint16& idx);
-
-    bool     isBuiltinType();
-    bool     isStructure();
-    bool     isPointer();
-    bool     isArray();
-    int      getArraySize();
-    int      getPointerCount();
-    int      getArrayElementSize();
-    ftAtomic getAtomicType();
-
-    bool     compare(ftMember* rhs);
-    FBTsize* jumpToOffset(void* base);
-
-
-    void* getChunk();
-
-    inline FBTsize getSizeInBytes()
-    {
-        return m_sizeInBytes;
-    }
-
-    inline const FBThash& getTypeName() const
-    {
-        return m_hashedType;
-    }
-
-    inline const FBThash& getHashedName() const
-    {
-        return m_hashedName;
-    }
-
-    inline ftStruct* getOwner()
-    {
-        return m_owner;
-    }
-
-
-    inline ftMember* getLink()
-    {
-        return m_link;
-    }
-
-    inline bool hasLink()
-    {
-        return m_link != 0;
-    }
-
-
-    inline void setLink(ftMember* member)
-    {
-        m_link = member;
-    }
-
-
-private:
-    friend class ftBinTables;
-    friend class ftStruct;
-
-    ftStruct* m_owner;
-    ftMember* m_link;
-
-    FBTint32 m_location;
-    FBTint32 m_offset;
-    FBTint32 m_recursiveDepth;
-    FBTint32 m_sizeInBytes;
-
-    FBTint16 m_type;
-    FBTint16 m_name;
-    FBThash  m_hashedType;
-    FBThash  m_hashedName;
-};
-
-
-
 class ftStruct
 {
 public:
@@ -170,6 +86,9 @@ public:
     ftStruct(ftBinTables* parent);
     ~ftStruct();
 
+
+    const char* getName();
+
     ftMember* createMember();
     ftMember* getMember(Members::SizeType idx);
     FBTbyte*  getBlock(void* base, SKsize idx, const SKsize max);
@@ -178,6 +97,7 @@ public:
     {
         m_attached = ptr;
     }
+
     void* getAttached()
     {
         return m_attached;
@@ -190,23 +110,14 @@ public:
 
     inline const FBTint16& getTypeIndex() const
     {
-        return m_key.k16[0];
-    }
-
-    inline const FBTint16& getNameIndex() const
-    {
-        return m_key.k16[1];
+        return m_type;
     }
 
     inline const FBThash& getHashedType() const
     {
-        return m_val.m_type;
+        return m_hashedType;
     }
 
-    inline const FBThash& getHashedName() const
-    {
-        return m_val.m_name;
-    }
 
     inline FBTint32 getStructIndex() const
     {
@@ -216,7 +127,7 @@ public:
 
     inline const FBTint32& getSizeInBytes() const
     {
-        return m_len;
+        return m_sizeInBytes;
     }
 
 
@@ -230,13 +141,6 @@ public:
     {
         return m_members.size();
     }
-
-
-    inline FBTsize getOffset()
-    {
-        return m_off;
-    }
-
 
 
     inline void setLink(ftStruct* strc)
@@ -281,45 +185,15 @@ public:
     }
 
 
-    inline FBTint32 getBufferOffset()
-    {
-        return m_off;
-    }
-
-
-
 private:
-    inline void setNameIndex(const FBTuint16& idx)
-    {
-        m_key.k16[0] = idx;
-    }
-
-    inline void setTypeIndex(const FBTuint16& idx)
-    {
-        m_key.k16[1] = idx;
-    }
-
-
-
-    inline void setHashedType(const FBThash& hash)
-    {
-        m_val.m_type = hash;
-    }
-
-    inline void setHashedName(const FBThash& hash)
-    {
-        m_val.m_name = hash;
-    }
-
     friend class ftBinTables;
     friend class ftMember;
 
-    ftKey32  m_key;
-    ftKey64  m_val;
-    FBTint32 m_off;
-    void*    m_attached;
+    FBTuint16 m_type;
+    FBThash   m_hashedType;
+    void*     m_attached;
 
-    FBTint32 m_len;
+    FBTint32 m_sizeInBytes;
     FBTint32 m_nr, m_dp;
     FBTint32 m_strcId;
     FBTint32 m_flag;

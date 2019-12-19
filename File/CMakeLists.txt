@@ -18,6 +18,7 @@
 set(File_SRC
     ftAtomic.cpp
     ftFile.cpp
+    ftMember.cpp
     ftTables.cpp
     ftTypes.cpp
     ftScanner.cpp
@@ -32,6 +33,7 @@ set(File_HDR
     ftAtomic.h
     ftFile.h
     ftTables.h
+    ftMember.h
     ftCompiler.h
     ftTypes.h
     ftConfig.h

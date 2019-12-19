@@ -31,6 +31,7 @@
 #include "ftPlatformHeaders.h"
 #include "ftStreams.h"
 #include "ftTables.h"
+#include "ftMember.h"
 
 
 
@@ -42,7 +43,7 @@ const FBThash   DATABLOCK = ftCharHashKey("Link").hash();
 
 const ftFile::Chunk BLANK_CHUNK = {
     0,  // m_code
-    0,  // m_len
+    0,  // m_sizeInBytes
     0,  // m_old
     0,  // m_typeid
     0,  // m_nr
@@ -448,7 +449,7 @@ ftStruct* ftFile::findInTable(ftStruct* findStruct, ftBinTables* sourceTable, ft
         FBTuint16 name;
         FBTbyte*  searchKey;
 
-        name      = findStruct->getNameIndex();
+        name      = findStruct->getTypeIndex();
         searchKey = sourceTable->getTypeNameAt(name);
         if (searchKey != nullptr)
             fstrc = findInTable->findStructByName(searchKey);
@@ -579,30 +580,29 @@ int ftFile::allocNewBlocks(void)
             }
 
         }
-        else
+        else if (0)
         {
-            //ftLogger::logF("Missing link for %s.",
-            //               m_memory->getStructName(fileStruct));
-            //ftLogger::log(chunk);
-            //ftLogger::log(m_file, fileStruct);
+            ftLogger::logF("Missing link for (%s).", fileStruct->getName());
+            ftLogger::log(chunk);
+            ftLogger::log(m_file, fileStruct);
 
-            //tnode = node->m_next;
-            //m_chunks.erase(node);
-            //if (node->m_fblock)
-            //{
-            //    ::free(node->m_fblock);
-            //    node->m_fblock = 0;
-            //}
+            tnode = node->m_next;
+            m_chunks.erase(node);
+            if (node->m_fblock)
+            {
+                ::free(node->m_fblock);
+                node->m_fblock = 0;
+            }
 
-            //if (node->m_mblock)
-            //{
-            //    ::free(node->m_mblock);
-            //    node->m_mblock = 0;
-            //}
+            if (node->m_mblock)
+            {
+                ::free(node->m_mblock);
+                node->m_mblock = 0;
+            }
 
 
-            //free(node);
-            //node = tnode;
+            free(node);
+            node = tnode;
         }
 
         node = node->m_next;
@@ -656,8 +656,7 @@ int ftFile::link(void)
                     {
                         if (!node->m_mblock)
                         {
-                            ftLogger::logF("Missing block for %s.",
-                                           m_memory->getStructName(mstrc));
+                            ftLogger::logF("Missing block for %s.", mstrc->getName());
                             ftLogger::log(chunk);
                             ftLogger::log(m_memory, mstrc);
 
@@ -800,6 +799,7 @@ void ftFile::castPointer(ftMember* mstrc,
     else
         ftLogger::logF("Invalid size of pointer.");
 }
+
 
 void ftFile::castPointerToPointer(ftMember* dst,
                                   FBTsize*&     dstPtr,

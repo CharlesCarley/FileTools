@@ -145,21 +145,16 @@ void ftLogger::log(ftBinTables *table, ftStruct *strc)
 {
     ftLogger_writeSeperator();
     skHexPrint::writeColor(CS_GREEN);
-    char *name = "", *tmpname;
 
-    tmpname = (char *)table->getTypeNameAt(strc->getNameIndex());
-    if (tmpname != nullptr)
-        name = tmpname;
-
-
-    cout << "Struct : " << name << endl;
+    cout << "Struct : " << strc->getName() << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << "-----------------------" << endl;
+
     skHexPrint::writeColor(CS_WHITE);
 
-    cout << "Key           : " << '{' << strc->getTypeIndex() << ',' << strc->getNameIndex() << '}' << endl;
-    cout << "Hash          : " << '{' << strc->getHashedType() << ',' << strc->getHashedName() << '}' << endl;
-    cout << "Offset        : " << strc->getBufferOffset() << endl;
+    cout << "Type          : " << strc->getTypeIndex() << endl;
+    cout << "Hash          : " << strc->getHashedType() << endl;
     cout << "Size In Bytes : " << strc->getSizeInBytes() << endl;
     cout << "Aligned 4     : " << (((strc->getSizeInBytes() % 4) == 0) ? 1 : 0) << endl;
+
 }
