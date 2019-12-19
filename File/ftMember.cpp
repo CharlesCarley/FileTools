@@ -121,7 +121,7 @@ void ftMember::setNameIndex(const FBTuint16& idx)
     m_name = idx;
     if (m_owner && m_owner->m_table)
     {
-        if (m_name < m_owner->m_table->m_base.size())
+        if (m_name < (FBTuint16)m_owner->m_table->m_base.size())
             m_hashedName = m_owner->m_table->m_base.at(m_name);
     }
 }
@@ -131,7 +131,7 @@ void ftMember::setTypeIndex(const FBTuint16& idx)
     m_type = idx;
     if (m_owner && m_owner->m_table)
     {
-        if (m_name < m_owner->m_table->m_base.size())
+        if (m_name < (FBTint16)m_owner->m_table->m_base.size())
             m_hashedType = m_owner->m_table->m_type[m_type].m_typeId;
     }
 }

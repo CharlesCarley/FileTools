@@ -90,7 +90,7 @@ typedef union ftEndianTest {
 FT_INLINE ftEndian ftGetEndian(void)
 {
     ftEndianTest e;
-    e.test = FT_ENDIAN_IS_LITTLE;
+    e.test = (FBTint32)FT_ENDIAN_IS_LITTLE;
     return static_cast<ftEndian>(e.bo[0]);
 }
 

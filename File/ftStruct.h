@@ -87,11 +87,26 @@ public:
     ~ftStruct();
 
 
-    const char* getName();
+    // String type name
+    const char* getName() const;
 
-    ftMember* createMember();
     ftMember* getMember(Members::SizeType idx);
-    FBTbyte*  getBlock(void* base, SKsize idx, const SKsize max);
+
+    inline Members::SizeType getMemberCount() const
+    {
+        return m_members.size();
+    }
+
+    inline Members::Iterator getMemberIterator()
+    {
+        return m_members.iterator();
+    }
+
+
+    // Returns the base address as byte pointer of the nth block of base.
+    FBTbyte* getBlock(void* base, SKsize n, const SKsize max);
+
+
 
     void attachChunk(void* ptr)
     {
@@ -108,7 +123,7 @@ public:
         return m_table;
     }
 
-    inline const FBTint16& getTypeIndex() const
+    inline const FBTint16 getTypeIndex() const
     {
         return m_type;
     }
@@ -128,18 +143,6 @@ public:
     inline const FBTint32& getSizeInBytes() const
     {
         return m_sizeInBytes;
-    }
-
-
-    inline Members::Iterator getMemberIterator()
-    {
-        return m_members.iterator();
-    }
-
-
-    inline Members::SizeType getMemberCount() const
-    {
-        return m_members.size();
     }
 
 
@@ -186,6 +189,9 @@ public:
 
 
 private:
+    ftMember* createMember();
+
+
     friend class ftBinTables;
     friend class ftMember;
 
@@ -194,10 +200,10 @@ private:
     void*     m_attached;
 
     FBTint32 m_sizeInBytes;
-    FBTint32 m_nr, m_dp;
     FBTint32 m_strcId;
     FBTint32 m_flag;
     Members  m_members;
+
 
     ftBinTables* m_table;
     ftStruct*    m_link;

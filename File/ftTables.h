@@ -187,9 +187,9 @@ private:
     Strcs m_strc;
     NameB m_base;
 
-    FBTuint32 m_nameNr;
-    FBTuint32 m_typeNr;
-    FBTuint32 m_strcNr;
+    FBTuint16 m_nameNr;
+    FBTuint16 m_typeNr;
+    FBTuint16 m_strcNr;
     void*     m_block;
     FBTsize   m_blockLen;
     FBTuint16 m_firstStruct;

@@ -65,6 +65,8 @@ ftBinTables::ftBinTables() :
 {
 }
 
+
+
 ftBinTables::ftBinTables(void* ptr, FBTsize len, FBTuint8 ptrSize) :
     m_name(0),
     m_type(0),
@@ -454,7 +456,6 @@ void ftBinTables::compile(void)
     for (i = 0; i < m_strcNr; i++)
     {
         FBTtype* strc = m_strc[i];
-
         FBTtype  strcType = strc[0];
 
         depth = 0;
@@ -462,14 +463,10 @@ void ftBinTables::compile(void)
 
         ftStruct* nstrc;
         nstrc = new ftStruct(this);
-
         nstrc->m_type       = strcType;
         nstrc->m_hashedType = m_type[strcType].m_typeId;
         nstrc->m_strcId     = i;
         nstrc->m_sizeInBytes = m_tlen[strcType];
-
-        nstrc->m_nr          = 0;
-        nstrc->m_dp          = 0;
         nstrc->m_link        = 0;
         nstrc->m_flag        = ftStruct::CAN_LINK;
         m_structures.push_back(nstrc);
@@ -499,9 +496,8 @@ void ftBinTables::compile(void)
         if (cof != nstrc->m_sizeInBytes)
         {
             nstrc->m_flag |= ftStruct::MISALIGNED;
-
-            ftLogger::logF("invalid offset %s:%i:%i:%i\n",
-                           m_type[nstrc->getTypeIndex()].m_name,
+            ftLogger::logF("Misaligned struct %s:%i:%i:%i\n",
+                           m_type[nstrc->m_type].m_name,
                            i,
                            cof,
                            nstrc->m_sizeInBytes);
@@ -516,8 +512,8 @@ void ftBinTables::putMember(FBTtype*   cp,
                             FBTuint32& cof,
                             FBTuint32  depth)
 {
-    const short& type = cp[0];
-    const short& name = cp[1];
+    const FBTuint16& type = cp[0];
+    const FBTuint16& name = cp[1];
 
     if (type < 0 || type >= m_typeNr)
     {

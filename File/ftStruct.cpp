@@ -37,8 +37,6 @@ ftStruct::ftStruct(ftBinTables* parent) :
     m_type(0),
     m_hashedType(SK_NPOS),
     m_sizeInBytes(0),
-    m_nr(0),
-    m_dp(0),
     m_strcId(0),
     m_flag(0),
     m_attached(0),
@@ -46,7 +44,6 @@ ftStruct::ftStruct(ftBinTables* parent) :
     m_link(0)
 {
 }
-
 
 
 ftStruct::~ftStruct()
@@ -86,9 +83,9 @@ FBTbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max)
 }
 
 
-const char* ftStruct::getName()
+const char* ftStruct::getName() const
 {
-    if (m_table)
+    if (m_table && m_type < m_table->m_typeNr)
         return m_table->m_type[m_type].m_name;
     return "";
 }

@@ -126,7 +126,7 @@ public:
 
 
 private:
-    int               m_hederFlags;
+    int               m_headerFlags;
     const char*       m_uhid;
     ftFixedString<12> m_header;
     char*             m_curFile;
