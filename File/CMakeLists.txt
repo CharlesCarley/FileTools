@@ -1,9 +1,15 @@
-#------------------------------------------------------------------------------
-# This software is provided 'as-is', without any express or implied
+# -----------------------------------------------------------------------------
+#
+#   Copyright (c) 2019 Charles Carley.
+#
+#   Contributor(s): none yet
+#
+# ------------------------------------------------------------------------------
+#   This software is provided 'as-is', without any express or implied
 # warranty. In no event will the authors be held liable for any damages
 # arising from the use of this software.
 #
-# Permission is granted to anyone to use this software for any purpose,
+#   Permission is granted to anyone to use this software for any purpose,
 # including commercial applications, and to alter it and redistribute it
 # freely, subject to the following restrictions:
 #
@@ -14,38 +20,40 @@
 # 2. Altered source versions must be plainly marked as such, and must not be
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
 set(File_SRC
     ftAtomic.cpp
+    ftChunk.cpp
+    ftCompiler.cpp
+    ftEndianUtils.cpp
     ftFile.cpp
+    ftLogger.cpp
     ftMember.cpp
+    ftScanner.cpp
+    ftStreams.cpp
+    ftStruct.cpp
     ftTables.cpp
     ftTypes.cpp
-    ftScanner.cpp
-    ftStruct.cpp
-    ftLogger.cpp
-    ftEndianUtils.cpp
-    ftStreams.cpp
-    ftCompiler.cpp
 )
 
 set(File_HDR
     ftAtomic.h
-    ftFile.h
-    ftTables.h
-    ftMember.h
+    ftChunk.h
     ftCompiler.h
-    ftTypes.h
     ftConfig.h
-    ftStruct.h
-    ftScanner.h
-    ftLogger.h
-    ftStreams.h
-    ftHashTypes.h
     ftEndianUtils.h
+    ftFile.h
+    ftHashTypes.h
+    ftLogger.h
+    ftMember.h
     ftPlatformHeaders.h
+    ftScanner.h
+    ftStreams.h
+    ftStruct.h
+    ftTables.h
+    ftTypes.h
 )
-
 
 if (ftUSE_ZLIB)
     include_directories(${ftZLIB_INCLUDE})

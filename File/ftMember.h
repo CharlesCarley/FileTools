@@ -40,6 +40,9 @@ public:
     ~ftMember();
 
 
+    const char* getName();
+    const char* getType();
+
     void setNameIndex(const FBTuint16& idx);
     void setTypeIndex(const FBTuint16& idx);
 
@@ -71,7 +74,7 @@ public:
         return m_hashedName;
     }
 
-    inline ftStruct* getOwner()
+    inline ftStruct* getParent()
     {
         return m_owner;
     }

@@ -23,11 +23,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "ftMember.h"
 #include "ftAtomic.h"
 #include "ftStruct.h"
-#include "ftMember.h"
 #include "ftTables.h"
-
 
 
 
@@ -45,9 +44,30 @@ ftMember::ftMember(ftStruct* owner) :
 {
 }
 
-
 ftMember::~ftMember()
 {
+}
+
+
+const char* ftMember::getName()
+{
+    if (m_owner && m_owner->m_table)
+    {
+        if (m_name < m_owner->m_table->m_nameNr)
+            return m_owner->m_table->m_name[m_name].m_name;
+    }
+    return "";
+}
+
+
+const char* ftMember::getType()
+{
+    if (m_owner && m_owner->m_table)
+    {
+        if (m_type < m_owner->m_table->m_typeNr)
+            return m_owner->m_table->m_type[m_type].m_name;
+    }
+    return "";
 }
 
 
@@ -129,6 +149,7 @@ void ftMember::setNameIndex(const FBTuint16& idx)
 void ftMember::setTypeIndex(const FBTuint16& idx)
 {
     m_type = idx;
+
     if (m_owner && m_owner->m_table)
     {
         if (m_name < (FBTint16)m_owner->m_table->m_base.size())
@@ -142,7 +163,6 @@ bool ftMember::compare(ftMember* rhs)
         return false;
 
     bool result;
-
     result = m_recursiveDepth <= rhs->m_recursiveDepth;
     if (result)
     {
@@ -157,7 +177,6 @@ void* ftMember::getChunk()
 {
     return m_owner ? m_owner->m_attached : 0;
 }
-
 
 FBTsize* ftMember::jumpToOffset(void* base)
 {

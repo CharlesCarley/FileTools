@@ -30,6 +30,7 @@
 #include "Utils/skMap.h"
 #include "ftHashTypes.h"
 #include "ftTypes.h"
+#include "ftChunk.h"
 
 class skStream;
 class ftMemoryStream;
@@ -76,49 +77,6 @@ public:
         FH_ENDIAN_SWAP = (1 << 0),
         FH_CHUNK_64    = (1 << 1),
         FH_VAR_BITS    = (1 << 2),
-    };
-
-    struct Chunk32
-    {
-        FBTuint32 m_code;
-        FBTuint32 m_len;
-        FBTuint32 m_old;
-        FBTuint32 m_typeid;
-        FBTuint32 m_nr;
-    };
-
-    struct Chunk64
-    {
-        FBTuint32 m_code;
-        FBTuint32 m_len;
-        FBTuint64 m_old;
-        FBTuint32 m_typeid;
-        FBTuint32 m_nr;
-    };
-
-    struct Chunk
-    {
-        FBTuint32 m_code;
-        FBTuint32 m_len;
-        FBTsize   m_old;  // varies
-        FBTuint32 m_typeid;
-        FBTuint32 m_nr;
-    };
-
-    struct MemoryChunk
-    {
-        enum Flag
-        {
-            BLK_MODIFIED = (1 << 0),
-        };
-
-        MemoryChunk *m_next, *m_prev;
-        ftStruct*    m_attached;
-        Chunk        m_chunk;
-        void*        m_fblock;
-        void*        m_mblock;
-        FBTuint8     m_flag;
-        FBTtype      m_newTypeId;
     };
 
     typedef skHashTable<ftPointerHashKey, MemoryChunk*> ChunkMap;

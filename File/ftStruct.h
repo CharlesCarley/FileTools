@@ -86,7 +86,6 @@ public:
     ftStruct(ftBinTables* parent);
     ~ftStruct();
 
-
     // String type name
     const char* getName() const;
 
@@ -102,21 +101,8 @@ public:
         return m_members.iterator();
     }
 
-
     // Returns the base address as byte pointer of the nth block of base.
     FBTbyte* getBlock(void* base, SKsize n, const SKsize max);
-
-
-
-    void attachChunk(void* ptr)
-    {
-        m_attached = ptr;
-    }
-
-    void* getAttached()
-    {
-        return m_attached;
-    }
 
     inline ftBinTables* getParent()
     {
@@ -189,22 +175,18 @@ public:
 
 
 private:
-    ftMember* createMember();
-
-
     friend class ftBinTables;
     friend class ftMember;
 
-    FBTuint16 m_type;
-    FBThash   m_hashedType;
-    void*     m_attached;
+    ftMember* createMember();
 
-    FBTint32 m_sizeInBytes;
-    FBTint32 m_strcId;
-    FBTint32 m_flag;
-    Members  m_members;
-
-
+    FBTuint16    m_type;
+    FBThash      m_hashedType;
+    void*        m_attached;
+    FBTint32     m_sizeInBytes;
+    FBTint32     m_strcId;
+    FBTint32     m_flag;
+    Members      m_members;
     ftBinTables* m_table;
     ftStruct*    m_link;
 };

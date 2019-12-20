@@ -29,7 +29,10 @@
 #include "ftLogger.h"
 #include "ftMember.h"
 #include "ftPlatformHeaders.h"
+#include "ftEndianUtils.h"
 
+
+using namespace ftEndianUtils;
 
 
 const ftName ftBinTables::INVALID_NAME = {
@@ -167,7 +170,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     cp = (char*)ip;
 
     if (swap)
-        nl = ftSwap32(nl);
+        nl = swap32(nl);
 
 
     if (nl > FT_MAX_TABLE)
@@ -249,7 +252,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     cp = (char*)ip;
 
     if (swap)
-        nl = ftSwap32(nl);
+        nl = swap32(nl);
 
     if (nl > FT_MAX_TABLE)
     {
@@ -293,7 +296,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         type          = (*tp++);
 
         if (swap)
-            m_tlen[i] = ftSwap16(m_tlen[i]);
+            m_tlen[i] = swap16(m_tlen[i]);
         ++i;
     }
 
@@ -314,7 +317,7 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
     tp = (FBTtype*)ip;
 
     if (swap)
-        nl = ftSwap32(nl);
+        nl = swap32(nl);
 
     if (nl > FT_MAX_TABLE)
     {
@@ -333,8 +336,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
         m_strc[m_strcNr++] = tp;
         if (swap)
         {
-            tp[0] = ftSwap16(tp[0]);
-            tp[1] = ftSwap16(tp[1]);
+            tp[0] = swap16(tp[0]);
+            tp[1] = swap16(tp[1]);
 
             m_type[tp[0]].m_strcId = m_strcNr - 1;
 
@@ -348,8 +351,8 @@ bool ftBinTables::read(const void* ptr, const FBTsize& len, bool swap)
                 tp += 2;
                 while (j < k)
                 {
-                    tp[0] = ftSwap16(tp[0]);
-                    tp[1] = ftSwap16(tp[1]);
+                    tp[0] = swap16(tp[0]);
+                    tp[1] = swap16(tp[1]);
 
                     ++j;
                     tp += 2;

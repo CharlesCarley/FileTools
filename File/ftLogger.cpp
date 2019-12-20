@@ -28,6 +28,7 @@
 #include <iostream>
 #include "Utils/skHexPrint.h"
 #include "Utils/skPlatformHeaders.h"
+#include "ftMember.h"
 #include "ftTables.h"
 
 using namespace std;
@@ -90,7 +91,7 @@ void ftLogger::logF(const char *msg, ...)
 {
     if (msg)
     {
-        char    buf[513] = {};
+        char buf[513] = {};
 
         va_list lst;
         va_start(lst, msg);
@@ -114,7 +115,7 @@ void ftLogger_writeSeperator()
 }
 
 
-void ftLogger::log(const ftFile::Chunk &chunk)
+void ftLogger::log(const Chunk &chunk)
 {
     char *cp = (char *)&chunk.m_code;
     char  buf[5];
@@ -141,11 +142,10 @@ void ftLogger::log(void *ptr, FBTsize len)
 }
 
 
-void ftLogger::log(ftBinTables *table, ftStruct *strc)
+void ftLogger::log(ftStruct *strc)
 {
     ftLogger_writeSeperator();
     skHexPrint::writeColor(CS_GREEN);
-
     cout << "Struct : " << strc->getName() << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << "-----------------------" << endl;
@@ -156,5 +156,27 @@ void ftLogger::log(ftBinTables *table, ftStruct *strc)
     cout << "Hash          : " << strc->getHashedType() << endl;
     cout << "Size In Bytes : " << strc->getSizeInBytes() << endl;
     cout << "Aligned 4     : " << (((strc->getSizeInBytes() % 4) == 0) ? 1 : 0) << endl;
+}
+
+
+
+void ftLogger::log(ftMember *member)
+{
+    ftStruct *parent = member->getParent();
+    if (parent != nullptr)
+    {
+        ftLogger_writeSeperator();
+        skHexPrint::writeColor(CS_GREEN);
+
+        cout << "Struct        : " << parent->getName() << endl;
+        skHexPrint::writeColor(CS_LIGHT_GREY);
+        cout << "-----------------------" << endl;
+        skHexPrint::writeColor(CS_WHITE);
+
+        cout << "Type          : " << member->getType() << endl;
+        cout << "Name          : " << member->getName() << endl;
+        cout << "Pointer Count : " << member->getPointerCount() << endl;
+        cout << "Array Size    : " << member->getArraySize() << endl;
+    }
 
 }

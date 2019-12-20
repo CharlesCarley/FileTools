@@ -102,8 +102,7 @@ TEST_CASE("CompilerTest")
         ftStruct* src = tbl.getOffsetPtr()[i];
         mnr           = src->getMemberCount();
 
-        ftLogger::log(&tbl, src);
-
+        ftLogger::log(src);
 
         j = 0;
         while (j < mnr)

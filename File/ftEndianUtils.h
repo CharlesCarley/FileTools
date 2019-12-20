@@ -26,5 +26,37 @@
 #ifndef _ftEndianUtils_h_
 #define _ftEndianUtils_h_
 
+#include "ftTypes.h"
 
-#endif//_ftEndianUtils_h_
+
+typedef enum ftEndian
+{
+    FT_ENDIAN_IS_BIG    = 0,
+    FT_ENDIAN_IS_LITTLE = 1,
+    FT_ENDIAN_NATIVE,
+} ftEndian;
+
+typedef union ftEndianTest {
+    FBTbyte  bo[4];
+    FBTint32 test;
+} ftEndianTest;
+
+
+
+namespace ftEndianUtils
+{
+    extern ftEndian  getEndian(void);
+    extern bool      isEndian(const ftEndian& endian);
+    extern FBTuint16 swap16(FBTuint16 in);
+    extern FBTuint32 swap32(const FBTuint32& in);
+    extern FBTint16  swap16(FBTint16 in);
+    extern FBTint32  swap32(const FBTint32& in);
+    extern FBTuint64 swap64(const FBTuint64& in);
+    extern void      swap16(FBTuint16* sp, FBTsize len);
+    extern void      swap32(FBTuint32* ip, FBTsize len);
+    extern void      swap64(FBTuint64* dp, FBTsize len);
+    extern FBTint64  swap64(const FBTint64& in);
+};
+
+
+#endif  //_ftEndianUtils_h_
