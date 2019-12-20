@@ -39,40 +39,29 @@
 #define ftID2(a, b) SK_ID2(a, b)
 #define FT_INLINE SK_INLINE
 
+typedef SKlong    FBTlong;
+typedef SKulong   FBTulong;
+typedef SKint32   FBTint32;
+typedef SKuint32  FBTuint32;
+typedef SKint16   FBTint16;
+typedef SKuint16  FBTuint16;
+typedef SKint8    FBTint8;
+typedef SKuint8   FBTuint8;
+typedef SKuint8   FBTubyte;
+typedef SKbyte    FBTbyte;
+typedef SKint64   FBTint64;
+typedef SKuint64  FBTuint64;
+typedef SKuintPtr FBTuintPtr;
+typedef SKintPtr  FBTintPtr;
+typedef SKuintPtr FBTsize;
+typedef FBTsize   FBThash;
+typedef FBTuint16 FBTtype;
 
-// Integer types
-typedef SKlong   FBTlong;
-typedef SKulong  FBTulong;
-typedef SKint32  FBTint32;
-typedef SKuint32 FBTuint32;
-typedef SKint16  FBTint16;
-typedef SKuint16 FBTuint16;
-typedef SKint8   FBTint8;
-typedef SKuint8  FBTuint8;
-typedef SKuint8  FBTubyte;
-typedef SKbyte   FBTbyte;
-typedef SKint64  FBTint64;
-typedef SKuint64 FBTuint64;
-
-typedef SKuintPtr  FBTuintPtr;
-typedef SKintPtr   FBTintPtr;
-typedef SKuintPtr  FBTsize;
-
-// Scalar types are defined as [a-z]"Scalar"
 #ifdef ftSCALAR_DOUBLE
 #define scalar_t double
 #else
 #define scalar_t float
 #endif
-
-typedef FBTsize   FBTsizeType;
-typedef FBTsize   FBThash;
-typedef FBTuint16 FBTtype;
-
-#define _ftCACHE_LIMIT 999
-
-
-
 
 enum ftPointerLen
 {
@@ -80,8 +69,6 @@ enum ftPointerLen
     FT_VOID4 = FT_VOIDP == 4,
     FT_VOID8 = FT_VOIDP == 8,
 };
-
-
 
 class ftList
 {
@@ -91,6 +78,7 @@ public:
         Link* next;
         Link* prev;
     };
+
     Link* first;
     Link* last;
 
@@ -156,6 +144,13 @@ public:
 #define ftFixedString skFixedString
 
 class skStream;
+class ftMemoryStream;
+class ftBinTables;
+class ftStruct;
+struct ftName;
+class ftMember;
+class ftBinTables;
+class ftStruct;
 
 
 #endif  //_ftTypes_h_

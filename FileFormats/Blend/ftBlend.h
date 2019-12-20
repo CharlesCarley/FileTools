@@ -67,7 +67,7 @@ public:
 protected:
     virtual bool skip(const FBTuint32& id);
 
-    virtual int notifyDataRead(void* p, const Chunk& id);
+    virtual int notifyDataRead(void* p, const ftChunk& id);
     virtual int serializeData(skStream* stream);
 
     FBTuint32*      m_filterList;

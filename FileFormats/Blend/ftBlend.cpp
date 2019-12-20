@@ -78,7 +78,7 @@ ftBlend::~ftBlend()
 {
 }
 
-int ftBlend::notifyDataRead(void* p, const Chunk& id)
+int ftBlend::notifyDataRead(void* p, const ftChunk& id)
 {
     if (id.m_code == GLOB)
     {
@@ -106,7 +106,7 @@ int ftBlend::serializeData(skStream* stream)
 {
     ftBinTables::OffsM::PointerType md = m_memory->getOffsetPtr();
 
-    for (MemoryChunk* node = (MemoryChunk*)m_chunks.first; node; node = node->m_next)
+    for (ftMemoryChunk* node = (ftMemoryChunk*)m_chunks.first; node; node = node->m_next)
     {
         if (node->m_newTypeId > m_memory->getNumberOfStructs())
             continue;
@@ -115,14 +115,14 @@ int ftBlend::serializeData(skStream* stream)
 
         void* wd = node->m_mblock;
 
-        Chunk ch;
+        ftChunk ch;
         ch.m_code   = node->m_chunk.m_code;
         ch.m_nr     = node->m_chunk.m_nr;
         ch.m_len    = node->m_chunk.m_len;
         ch.m_typeid = node->m_newTypeId;
         ch.m_old    = (FBTsize)wd;
 
-        stream->write(&ch, sizeof(Chunk));
+        stream->write(&ch, sizeof(ftChunk));
         stream->write(wd, ch.m_len);
     }
     return FS_OK;

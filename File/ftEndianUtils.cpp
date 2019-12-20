@@ -82,7 +82,7 @@ FBTuint64 ftEndianUtils::swap64(const FBTuint64& in)
 
 void ftEndianUtils::swap16(FBTuint16* sp, FBTsize len)
 {
-    FBTsizeType i;
+    FBTsize i;
     for (i = 0; i < len; ++i)
     {
         *sp = swap16(*sp);
@@ -92,7 +92,7 @@ void ftEndianUtils::swap16(FBTuint16* sp, FBTsize len)
 
 void ftEndianUtils::swap32(FBTuint32* ip, FBTsize len)
 {
-    FBTsizeType i;
+    FBTsize i;
     for (i = 0; i < len; ++i)
     {
         *ip = swap32(*ip);
@@ -103,7 +103,7 @@ void ftEndianUtils::swap32(FBTuint32* ip, FBTsize len)
 
 void ftEndianUtils::swap64(FBTuint64* dp, FBTsize len)
 {
-    FBTsizeType i;
+    FBTsize i;
     for (i = 0; i < len; ++i)
     {
         *dp = swap64(*dp);

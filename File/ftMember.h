@@ -29,32 +29,30 @@
 #include "ftAtomic.h"
 #include "ftTypes.h"
 
-class ftBinTables;
-class ftStruct;
-
-
 class ftMember
 {
 public:
     ftMember(ftStruct* owner);
     ~ftMember();
 
-
     const char* getName();
     const char* getType();
 
-    void setNameIndex(const FBTuint16& idx);
-    void setTypeIndex(const FBTuint16& idx);
-
+    void     setNameIndex(const FBTuint16& idx);
+    void     setTypeIndex(const FBTuint16& idx);
     bool     isBuiltinType();
     bool     isStructure();
     bool     isPointer();
     bool     isArray();
+
     int      getArraySize();
     int      getPointerCount();
     int      getArrayElementSize();
+
     ftAtomic getAtomicType();
+
     bool     compare(ftMember* rhs);
+
     FBTsize* jumpToOffset(void* base);
     void*    getChunk();
 
@@ -76,9 +74,8 @@ public:
 
     inline ftStruct* getParent()
     {
-        return m_owner;
+        return m_parent;
     }
-
 
     inline ftMember* getLink()
     {
@@ -101,7 +98,7 @@ private:
     friend class ftBinTables;
     friend class ftStruct;
 
-    ftStruct* m_owner;
+    ftStruct* m_parent;
     ftMember* m_link;
 
     FBTint32 m_location;

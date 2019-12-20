@@ -62,8 +62,8 @@ public:
     int         getTLengths(ftCompileStruct::Array& struct_builders);
     void        makeBuiltinTypes(void);
     bool        hasType(const ftId& type);
-    FBTsizeType addType(const ftId& type, const FBTuint32& len);
-    FBTsizeType addName(const ftId& name);
+    FBTsize addType(const ftId& type, const FBTuint32& len);
+    FBTsize addName(const ftId& name);
 
     MaxAllocSize     m_alloc;
     ftStringPtrArray m_name;
@@ -603,7 +603,7 @@ void ftBuildInfo::makeBuiltinTypes(void)
     m_numberOfBuiltIn = m_typeLookup.size();
 }
 
-FBTsizeType ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
+FBTsize ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
 {
     FBTsize loc = m_typeLookup.find(type);
     if (loc == m_typeLookup.npos)
@@ -624,7 +624,7 @@ bool ftBuildInfo::hasType(const ftId& type)
     return m_typeLookup.find(type) != m_typeLookup.npos;
 }
 
-FBTsizeType ftBuildInfo::addName(const ftId& name)
+FBTsize ftBuildInfo::addName(const ftId& name)
 {
     FBTsize loc;
     if ((loc = m_name.find(name)) == m_name.npos)
@@ -698,7 +698,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
             ftCompileStruct& cur = strcs[i];
             if (tlens[cur.m_structId] != 0)
             {
-                FBTsizeType pos;
+                FBTsize pos;
                 if ((pos = m_missingReport.find(cur.m_name)) != m_missingReport.npos)
                     m_missingReport.remove(pos);
             }

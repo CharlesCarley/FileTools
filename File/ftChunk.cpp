@@ -32,7 +32,7 @@
 using namespace ftEndianUtils;
 
 
-const Chunk ftChunk::BLANK_CHUNK = {
+const ftChunk ftChunkUtils::BLANK_CHUNK = {
     0,  // m_code
     0,  // m_sizeInBytes
     0,  // m_old
@@ -41,32 +41,29 @@ const Chunk ftChunk::BLANK_CHUNK = {
 };
 
 
-FBTsize ftChunk::write(Chunk* src, skStream* stream)
+FBTsize ftChunkUtils::write(ftChunk* src, skStream* stream)
 {
     FBTsize size = 0;
     size += stream->write(src, BlockSize);
     size += stream->write((void*)src->m_old, src->m_len);
-
-    ftLogger::log(*src);
-    ftLogger::log((void*)src->m_old, src->m_len);
     return size;
 }
 
 
-FBTsize ftChunk::read(Chunk* dest, skStream* stream, int flags)
+FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 {
     FBTsize bytesRead  = 0;
     bool    bitsVary   = (flags & ftFile::FH_VAR_BITS) != 0;
     bool    swapEndian = (flags & ftFile::FH_ENDIAN_SWAP) != 0;
 
-    Chunk* cpy;
+    ftChunk* cpy;
     if (FT_VOID8)
     {
-        Chunk64 c64;
+        ftChunk64 c64;
 
         if (bitsVary)
         {
-            Chunk32 src;
+            ftChunk32 src;
             if ((bytesRead = stream->read(&src, Block32)) <= 0)
                 return ftFile::FS_INV_READ;
 
@@ -97,15 +94,15 @@ FBTsize ftChunk::read(Chunk* dest, skStream* stream, int flags)
             c64.m_nr     = swap32(c64.m_nr);
             c64.m_typeid = swap32(c64.m_typeid);
         }
-        cpy = (Chunk*)(&c64);
+        cpy = (ftChunk*)(&c64);
     }
     else
     {
-        Chunk32 c32;
+        ftChunk32 c32;
 
         if (bitsVary)
         {
-            Chunk64 src;
+            ftChunk64 src;
             if ((bytesRead = stream->read(&src, Block64)) <= 0)
                 return ftFile::FS_INV_READ;
 
@@ -146,7 +143,7 @@ FBTsize ftChunk::read(Chunk* dest, skStream* stream, int flags)
             c32.m_typeid = swap32(c32.m_typeid);
         }
 
-        cpy = (Chunk*)(&c32);
+        cpy = (ftChunk*)(&c32);
     }
 
     if (cpy->m_len == SK_NPOS32)

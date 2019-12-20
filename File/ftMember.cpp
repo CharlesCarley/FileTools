@@ -31,7 +31,7 @@
 
 
 ftMember::ftMember(ftStruct* owner) :
-    m_owner(owner),
+    m_parent(owner),
     m_offset(0),
     m_type(0),
     m_name(0),
@@ -51,10 +51,10 @@ ftMember::~ftMember()
 
 const char* ftMember::getName()
 {
-    if (m_owner && m_owner->m_table)
+    if (m_parent && m_parent->m_table)
     {
-        if (m_name < m_owner->m_table->m_nameNr)
-            return m_owner->m_table->m_name[m_name].m_name;
+        if (m_name < m_parent->m_table->m_nameNr)
+            return m_parent->m_table->m_name[m_name].m_name;
     }
     return "";
 }
@@ -62,10 +62,10 @@ const char* ftMember::getName()
 
 const char* ftMember::getType()
 {
-    if (m_owner && m_owner->m_table)
+    if (m_parent && m_parent->m_table)
     {
-        if (m_type < m_owner->m_table->m_typeNr)
-            return m_owner->m_table->m_type[m_type].m_name;
+        if (m_type < m_parent->m_table->m_typeNr)
+            return m_parent->m_table->m_type[m_type].m_name;
     }
     return "";
 }
@@ -73,15 +73,15 @@ const char* ftMember::getType()
 
 bool ftMember::isBuiltinType()
 {
-    if (m_owner && m_owner->m_table)
-        return m_type < m_owner->m_table->m_firstStruct;
+    if (m_parent && m_parent->m_table)
+        return m_type < m_parent->m_table->m_firstStruct;
     return false;
 }
 
 bool ftMember::isStructure()
 {
-    if (m_owner && m_owner->m_table)
-        return m_type >= m_owner->m_table->m_firstStruct;
+    if (m_parent && m_parent->m_table)
+        return m_type >= m_parent->m_table->m_firstStruct;
     return false;
 }
 
@@ -92,20 +92,20 @@ bool ftMember::isPointer()
 
 bool ftMember::isArray()
 {
-    if (m_owner && m_owner->m_table)
+    if (m_parent && m_parent->m_table)
     {
-        if (m_name < m_owner->m_table->m_nameNr)
-            return m_owner->m_table->m_name[m_name].m_arraySize > 1;
+        if (m_name < m_parent->m_table->m_nameNr)
+            return m_parent->m_table->m_name[m_name].m_arraySize > 1;
     }
     return false;
 }
 
 int ftMember::getArraySize()
 {
-    if (m_owner && m_owner->m_table)
+    if (m_parent && m_parent->m_table)
     {
-        if (m_name < m_owner->m_table->m_nameNr)
-            return m_owner->m_table->m_name[m_name].m_arraySize;
+        if (m_name < m_parent->m_table->m_nameNr)
+            return m_parent->m_table->m_name[m_name].m_arraySize;
     }
     return 0;
 }
@@ -126,10 +126,10 @@ ftAtomic ftMember::getAtomicType()
 
 int ftMember::getPointerCount()
 {
-    if (m_owner && m_owner->m_table)
+    if (m_parent && m_parent->m_table)
     {
-        if (m_name < m_owner->m_table->m_nameNr)
-            return m_owner->m_table->m_name[m_name].m_ptrCount;
+        if (m_name < m_parent->m_table->m_nameNr)
+            return m_parent->m_table->m_name[m_name].m_ptrCount;
     }
     return 0;
 }
@@ -139,10 +139,10 @@ int ftMember::getPointerCount()
 void ftMember::setNameIndex(const FBTuint16& idx)
 {
     m_name = idx;
-    if (m_owner && m_owner->m_table)
+    if (m_parent && m_parent->m_table)
     {
-        if (m_name < (FBTuint16)m_owner->m_table->m_base.size())
-            m_hashedName = m_owner->m_table->m_base.at(m_name);
+        if (m_name < (FBTuint16)m_parent->m_table->m_base.size())
+            m_hashedName = m_parent->m_table->m_base.at(m_name);
     }
 }
 
@@ -150,10 +150,10 @@ void ftMember::setTypeIndex(const FBTuint16& idx)
 {
     m_type = idx;
 
-    if (m_owner && m_owner->m_table)
+    if (m_parent && m_parent->m_table)
     {
-        if (m_name < (FBTint16)m_owner->m_table->m_base.size())
-            m_hashedType = m_owner->m_table->m_type[m_type].m_typeId;
+        if (m_name < (FBTint16)m_parent->m_table->m_base.size())
+            m_hashedType = m_parent->m_table->m_type[m_type].m_typeId;
     }
 }
 
@@ -175,12 +175,12 @@ bool ftMember::compare(ftMember* rhs)
 
 void* ftMember::getChunk()
 {
-    return m_owner ? m_owner->m_attached : 0;
+    return m_parent ? m_parent->m_attached : 0;
 }
 
 FBTsize* ftMember::jumpToOffset(void* base)
 {
-    if (m_offset < m_owner->m_sizeInBytes)
+    if (m_offset < m_parent->m_sizeInBytes)
         return reinterpret_cast<FBTsize*>(reinterpret_cast<FBTbyte*>(base) + m_offset);
     return nullptr;
 }

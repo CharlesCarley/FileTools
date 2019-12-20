@@ -28,16 +28,9 @@
 
 #include "Utils/skList.h"
 #include "Utils/skMap.h"
+#include "ftChunk.h"
 #include "ftHashTypes.h"
 #include "ftTypes.h"
-#include "ftChunk.h"
-
-class skStream;
-class ftMemoryStream;
-class ftBinTables;
-class ftStruct;
-struct ftName;
-class ftMember;
 
 
 
@@ -72,6 +65,7 @@ public:
         PM_READTOMEMORY,
 
     };
+
     enum FileHeader
     {
         FH_ENDIAN_SWAP = (1 << 0),
@@ -79,11 +73,19 @@ public:
         FH_VAR_BITS    = (1 << 2),
     };
 
-    typedef skHashTable<ftPointerHashKey, MemoryChunk*> ChunkMap;
-    typedef ftList                                      MemoryChunks;
+    enum LogFlags
+    {
+        LF_NONE         = 0,         // No logging
+        LF_ONLY_ERR     = (1 << 0),  // Errors only (default)
+        LF_READ_CHUNKS  = (1 << 1),
+        LF_WRITE_CHUNKS = (1 << 2)
+    };
+
+    typedef skHashTable<ftPointerHashKey, ftMemoryChunk*> ChunkMap;
+    typedef ftList                                        MemoryChunks;
 
 private:
-    int               m_headerFlags;
+    int               m_headerFlags, m_loggerFlags;
     const char*       m_uhid;
     ftFixedString<12> m_header;
     char*             m_curFile;
@@ -145,11 +147,25 @@ public:
     void serialize(skStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
     void serialize(skStream* stream, FBTsize len, void* writeData, int nr = 1);
 
+    inline int getLogFlags()
+    {
+        return m_loggerFlags;
+    }
+
+    inline void setLogFlags(int v)
+    {
+        m_loggerFlags = v;
+    }
+
+    inline void addLogFlag(int v)
+    {
+        m_loggerFlags |= v;
+    }
+
 
 protected:
-    
     bool isValidWriteData(void* writeData, FBTsize len);
-    
+
     int initializeTables(ftBinTables* tables);
     int initializeMemory(void);
 
@@ -158,19 +174,26 @@ protected:
         return false;
     }
 
-    virtual void*   getTables(void)                          = 0;
-    virtual FBTsize getTableSize(void)                       = 0;
-    virtual int     notifyDataRead(void* p, const Chunk& id) = 0;
-    virtual int     serializeData(skStream* stream)          = 0;
+    virtual void*   getTables(void)                            = 0;
+    virtual FBTsize getTableSize(void)                         = 0;
+    virtual int     notifyDataRead(void* p, const ftChunk& id) = 0;
+    virtual int     serializeData(skStream* stream)            = 0;
 
 private:
-    void*        findPtr(const FBTsize& iptr);
-    MemoryChunk* findBlock(const FBTsize& iptr);
-    skStream*    openStream(const char* path, int mode);
+    void*          findPtr(const FBTsize& iptr);
+    ftMemoryChunk* findBlock(const FBTsize& iptr);
+    skStream*      openStream(const char* path, int mode);
+
+    void serializeChunk(skStream* stream,
+                        FBTuint32 code,
+                        FBTuint32 nr,
+                        FBTuint32 typeIndex,
+                        FBTsize   len,
+                        void*     writeData);
 
 
-    void handleTable(skStream* stream, void* block, const Chunk& chunk, int& status);
-    void handleChunk(skStream* stream, void* block, const Chunk& chunk, int& status);
+    void handleTable(skStream* stream, void* block, const ftChunk& chunk, int& status);
+    void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
 
 
     void clearStorage(void);
@@ -181,7 +204,7 @@ private:
 
 
     int  link(void);
-    void castMembers(MemoryChunk* chunk, ftStruct* cur);
+    void castMembers(ftMemoryChunk* chunk, ftStruct* cur);
     void castMember(ftMember* dst, FBTsize*& dstPtr, ftMember* src, FBTsize*& srcPtr);
 
     void castMemberPointer(

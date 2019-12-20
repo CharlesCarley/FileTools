@@ -35,7 +35,7 @@ public:
     static void log(int status, const char *msg, ...);
     static void logF(const char *msg, ...);
 
-    static void log(const Chunk &chunk);
+    static void log(const ftChunk &chunk);
     static void log(void *ptr, FBTsize len);
     static void log(ftStruct *strc);
     static void log(ftMember *strc);

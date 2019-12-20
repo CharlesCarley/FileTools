@@ -30,7 +30,7 @@
 
 
 
-struct Chunk32
+struct ftChunk32
 {
     FBTuint32 m_code;
     FBTuint32 m_len;
@@ -38,10 +38,10 @@ struct Chunk32
     FBTuint32 m_typeid;
     FBTuint32 m_nr;
 };
-SK_ASSERTCOMP(ChunkLen32, sizeof(ftFile::Chunk32) == 20);
+SK_ASSERTCOMP(ChunkLen32, sizeof(ftChunk32) == 20);
 
 
-struct Chunk64
+struct ftChunk64
 {
     FBTuint32 m_code;
     FBTuint32 m_len;
@@ -49,10 +49,10 @@ struct Chunk64
     FBTuint32 m_typeid;
     FBTuint32 m_nr;
 };
-SK_ASSERTCOMP(ChunkLen64, sizeof(ftFile::Chunk64) == 24);
+SK_ASSERTCOMP(ChunkLen64, sizeof(ftChunk64) == 24);
 
 
-struct Chunk
+struct ftChunk
 {
     FBTuint32 m_code;
     FBTuint32 m_len;
@@ -60,24 +60,26 @@ struct Chunk
     FBTuint32 m_typeid;
     FBTuint32 m_nr;
 };
+
+
 #if ftARCH == ftARCH_32
-SK_ASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk32) == sizeof(ftFile::Chunk));
+SK_ASSERTCOMP(ChunkLenNative, sizeof(ftChunk32) == sizeof(ftChunk));
 #else
-SK_ASSERTCOMP(ChunkLenNative, sizeof(ftFile::Chunk64) == sizeof(ftFile::Chunk));
+SK_ASSERTCOMP(ChunkLenNative, sizeof(ftChunk64) == sizeof(ftChunk));
 #endif
 
 
 
-struct MemoryChunk
+struct ftMemoryChunk
 {
     enum Flag
     {
         BLK_MODIFIED = (1 << 0),
     };
 
-    MemoryChunk *m_next, *m_prev;
+    ftMemoryChunk *m_next, *m_prev;
 
-    Chunk    m_chunk;
+    ftChunk  m_chunk;
     void*    m_fblock;
     void*    m_mblock;
     FBTuint8 m_flag;
@@ -86,18 +88,18 @@ struct MemoryChunk
 
 
 
-struct ftChunk
+struct ftChunkUtils
 {
     enum Size
     {
-        BlockSize = sizeof(Chunk),
-        Block32   = sizeof(Chunk32),
-        Block64   = sizeof(Chunk64),
+        BlockSize = sizeof(ftChunk),
+        Block32   = sizeof(ftChunk32),
+        Block64   = sizeof(ftChunk64),
     };
-    static FBTsize read(Chunk* dest, skStream* stream, int flags);
-    static FBTsize write(Chunk* src, skStream* stream);
+    static FBTsize read(ftChunk* dest, skStream* stream, int flags);
+    static FBTsize write(ftChunk* src, skStream* stream);
 
-    static const Chunk BLANK_CHUNK;
+    static const ftChunk BLANK_CHUNK;
 };
 
 

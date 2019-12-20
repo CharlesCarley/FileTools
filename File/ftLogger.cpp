@@ -115,7 +115,7 @@ void ftLogger_writeSeperator()
 }
 
 
-void ftLogger::log(const Chunk &chunk)
+void ftLogger::log(const ftChunk &chunk)
 {
     char *cp = (char *)&chunk.m_code;
     char  buf[5];
