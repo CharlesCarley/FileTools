@@ -243,13 +243,19 @@ int ftFile::parseHeader(skStream* stream)
     else if (FT_VOID8)
         m_headerFlags |= FH_VAR_BITS;
 
-    if (*(magic++) == FM_BIG_ENDIAN)
+    ftEndian current = ftGetEndian();
+    char     endian  = *(magic++);
+
+    if (endian == FM_BIG_ENDIAN)
     {
-        if (FT_ENDIAN_IS_LITTLE)
+        if (current == FT_ENDIAN_IS_LITTLE)
             m_headerFlags |= FH_ENDIAN_SWAP;
     }
-    else if (FT_ENDIAN_IS_BIG)
-        m_headerFlags |= FH_ENDIAN_SWAP;
+    else if (endian == FM_LITTLE_ENDIAN)
+    {
+        if (current == FT_ENDIAN_IS_BIG)
+            m_headerFlags |= FH_ENDIAN_SWAP;
+    }
 
 
     m_fileVersion = atoi(magic);
@@ -415,31 +421,28 @@ void ftFile::handleTable(skStream* stream, void* block, const Chunk& chunk, int&
 
 void ftFile::handleChunk(skStream* stream, void* block, const Chunk& chunk, int& status)
 {
-    if (m_map.find(chunk.m_old) != m_map.npos)
-    {
-        status = FS_DUPLICATE_BLOCK;
-        ::free(block);
-        block = 0;
-    }
+    MemoryChunk* bin = (MemoryChunk*)(::malloc(sizeof(MemoryChunk)));
+    if (!bin)
+        status = FS_BAD_ALLOC;
     else
     {
-        MemoryChunk* bin = (MemoryChunk*)(::malloc(sizeof(MemoryChunk)));
-        if (!bin)
-            status = FS_BAD_ALLOC;
-        else
-        {
-            ::memset(bin, 0, sizeof(MemoryChunk));
-            ::memcpy(&bin->m_chunk, &chunk, sizeof(Chunk));
+        ::memset(bin, 0, sizeof(MemoryChunk));
+        ::memcpy(&bin->m_chunk, &chunk, sizeof(Chunk));
 
+        ftPointerHashKey phk(bin->m_chunk.m_old);
+
+        if (m_map.insert(phk, bin))
+        {
             bin->m_fblock = block;
             m_chunks.push_back(bin);
-
-            if (m_map.insert(bin->m_chunk.m_old, bin) == false)
-                status = FS_INV_INSERT;
+        }
+        else
+        {
+            ftLogger::logF("print (0x%08X)", bin->m_chunk.m_old);
+            free(bin);
         }
     }
 }
-
 
 
 ftStruct* ftFile::findInTable(ftStruct* findStruct, ftBinTables* sourceTable, ftBinTables* findInTable)
@@ -845,7 +848,11 @@ void ftFile::castPointerToPointer(ftMember* dst,
         }
     }
     else
-        ftLogger::logF("Failed to find corresponding chunk for address (0x%08X)\n", (FBTsize)(*srcPtr));
+    {
+        ftLogger::logF("Failed to find corresponding chunk for address (0x%08X)",
+            (FBTsize)(*srcPtr));
+    
+    }
 }
 
 
@@ -995,20 +1002,24 @@ void ftFile::serialize(skStream*   stream,
     if (m_memory == 0)
         getMemoryTable();
 
-    if (writeData == nullptr || len <= 0)
-    {
-        printf("Invalid write data\n");
-        return;
-    }
-
     FBTuint32 ft = m_memory->findTypeId(id);
     if (ft == SK_NPOS32)
     {
         printf("writeStruct: %s - not found", id);
         return;
     }
-
     serialize(stream, ft, code, len, writeData);
+}
+
+
+bool ftFile::isValidWriteData(void* writeData, FBTsize len)
+{
+    if (writeData == nullptr || len == SK_NPOS || len == 0)
+    {
+        printf("Invalid write data\n");
+        return false;
+    }
+    return true;
 }
 
 
@@ -1018,20 +1029,16 @@ void ftFile::serialize(skStream* stream,
                        FBTsize   len,
                        void*     writeData)
 {
-    if (writeData == nullptr || len < sizeof(void*))
+    if (isValidWriteData(writeData, len))
     {
-        printf("Invalid write data\n");
-        return;
+        Chunk ch;
+        ch.m_code   = code;
+        ch.m_len    = len;
+        ch.m_nr     = 1;
+        ch.m_old    = (FBTsize)writeData;
+        ch.m_typeid = index;
+        ftChunk::write(&ch, stream);
     }
-
-    Chunk ch;
-    ch.m_code   = code;
-    ch.m_len    = len;
-    ch.m_nr     = 1;
-    ch.m_old    = (FBTsize)writeData;
-    ch.m_typeid = index;
-
-    ftChunk::write(&ch, stream);
 }
 
 void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
@@ -1039,19 +1046,16 @@ void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
     if (m_memory == 0)
         getMemoryTable();
 
-    if (writeData == nullptr || len < sizeof(void*))
+    if (isValidWriteData(writeData, len))
     {
-        printf("Invalid write data\n");
-        return;
+        Chunk ch;
+        ch.m_code   = DATA;
+        ch.m_len    = len;
+        ch.m_nr     = nr;
+        ch.m_old    = (FBTsize)writeData;
+        ch.m_typeid = 0;
+        ftChunk::write(&ch, stream);
     }
-
-    Chunk ch;
-    ch.m_code   = DATA;
-    ch.m_len    = len;
-    ch.m_nr     = nr;
-    ch.m_old    = (FBTsize)writeData;
-    ch.m_typeid = 0;
-    ftChunk::write(&ch, stream);
 }
 
 

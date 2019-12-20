@@ -121,9 +121,8 @@ public:
         FBTtype      m_newTypeId;
     };
 
-    typedef skHashTable<SKuintPtr, MemoryChunk*> ChunkMap;
-    typedef ftList                               MemoryChunks;
-
+    typedef skHashTable<ftPointerHashKey, MemoryChunk*> ChunkMap;
+    typedef ftList                                      MemoryChunks;
 
 private:
     int               m_headerFlags;
@@ -190,6 +189,9 @@ public:
 
 
 protected:
+    
+    bool isValidWriteData(void* writeData, FBTsize len);
+    
     int initializeTables(ftBinTables* tables);
     int initializeMemory(void);
 

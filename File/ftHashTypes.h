@@ -110,7 +110,82 @@ public:
 };
 
 
+class ftPointerHashKey
+{
+protected:
+    void*           m_key;
+    mutable FBThash m_hash;
+
+public:
+    ftPointerHashKey() :
+        m_key(0),
+        m_hash(SK_NPOS)
+    {
+    }
+
+
+    ftPointerHashKey(void* k) :
+        m_key(k),
+        m_hash(SK_NPOS)
+    {
+        hash();
+    }
+
+    ftPointerHashKey(FBTsize k) :
+        m_key((void*)k),
+        m_hash(SK_NPOS)
+    {
+        hash();
+    }
+
+    ftPointerHashKey(const ftPointerHashKey& k) :
+        m_key(k.m_key),
+        m_hash(k.m_hash)
+    {
+    }
+
+
+    SKhash hash(void) const
+    {
+        if (m_key == nullptr)
+            return SK_NPOS;
+
+        // it has already been calculated
+        if (m_hash != SK_NPOS)
+            return m_hash;
+
+        m_hash = skHash((void*)m_key);
+        return m_hash;
+    }
+
+    inline const void* key() const
+    {
+        return m_key;
+    }
+
+    inline bool operator==(const ftCharHashKey& v) const
+    {
+        return hash() == v.hash();
+    }
+
+    inline bool operator!=(const ftCharHashKey& v) const
+    {
+        return hash() != v.hash();
+    }
+
+    inline bool operator==(const SKhash& v) const
+    {
+        return hash() == v;
+    }
+
+    inline bool operator!=(const SKhash& v) const
+    {
+        return hash() != v;
+    }
+};
+
 extern FBThash skHash(const ftCharHashKey& hk);
+extern FBThash skHash(const ftPointerHashKey& hk);
 
 
 #endif  //_ftHashTypes_h_

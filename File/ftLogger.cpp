@@ -90,7 +90,7 @@ void ftLogger::logF(const char *msg, ...)
 {
     if (msg)
     {
-        char buf[513];
+        char    buf[513] = {};
 
         va_list lst;
         va_start(lst, msg);
