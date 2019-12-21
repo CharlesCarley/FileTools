@@ -23,19 +23,15 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "ftLogger.h"
 #include <iomanip>
 #include <iostream>
-#include "Utils/skHexPrint.h"
-#include "Utils/skPlatformHeaders.h"
+#include "ftLogger.h"
 #include "ftMember.h"
 #include "ftTables.h"
+#include "Utils/skHexPrint.h"
+#include "Utils/skPlatformHeaders.h"
 
 using namespace std;
-
-#define FT_INVALID_CHUNK_READ printf("Failed to read chunk.\n");
-#define FT_TABLE_FAILED printf("Failed to initialize tables.\n");
-#define FT_DUPLICATE_BLOCK printf("Duplicate memory block.\n");
 
 void ftLogger::log(int status)
 {
@@ -62,6 +58,9 @@ void ftLogger::log(int status)
     case ftFile::FS_DUPLICATE_BLOCK:
         printf("Duplicate block read.\n");
         break;
+    case ftFile::FS_TABLE_INIT_FAILED:
+        printf("Table initialization filed.\n");
+        break;
     default:
         break;
     }
@@ -72,19 +71,19 @@ void ftLogger::log(int status, const char *msg, ...)
     log(status);
     if (msg)
     {
-        char    buf[513];
+        char buf[513];
+
         va_list lst;
         va_start(lst, msg);
         int size = skp_printf(buf, 512, msg, lst);
         va_end(lst);
         if (size < 0)
             size = 0;
-
         buf[size] = 0;
-        printf("%s\n", buf);
+
+        printf("\t%s\n", buf);
     }
 }
-
 
 
 void ftLogger::logF(const char *msg, ...)
@@ -106,7 +105,7 @@ void ftLogger::logF(const char *msg, ...)
 }
 
 
-void ftLogger_writeSeperator()
+void ftLogger::seperator()
 {
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << setfill('-') << setw(FT_VOID8 ? 87 : 79) << '-';
@@ -114,24 +113,12 @@ void ftLogger_writeSeperator()
     skHexPrint::writeColor(CS_WHITE);
 }
 
-void ftLogger_writeDivider()
+void ftLogger::divider()
 {
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << setfill('-') << setw(FT_VOID8 ? 47 : 39) << '-';
     cout << setfill(' ') << endl;
     skHexPrint::writeColor(CS_WHITE);
-}
-
-
-
-void ftLogger::seperator()
-{
-    ftLogger_writeSeperator();
-}
-
-void ftLogger::divider()
-{
-    ftLogger_writeDivider();
 }
 
 void ftLogger::log(const ftChunk &chunk)
@@ -141,7 +128,7 @@ void ftLogger::log(const ftChunk &chunk)
     memcpy(buf, cp, 4);
     buf[4] = '\0';
 
-    ftLogger_writeSeperator();
+    seperator();
 
     skHexPrint::writeColor(CS_DARKYELLOW);
     cout << "Chunk" << endl;
@@ -167,19 +154,22 @@ void ftLogger::width(FBTsize w)
     cout << setw(w);
 }
 
-void ftLogger::newline()
+void ftLogger::newline(int nr)
 {
-    cout << endl;
+    int i;
+    for (i=0; i<nr; ++i)
+        cout << endl;
 }
 
 
 void ftLogger::log(ftStruct *strc)
 {
-    ftLogger_writeSeperator();
+    seperator();
     skHexPrint::writeColor(CS_GREEN);
+
     cout << "Struct : " << strc->getName() << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
-    cout << "-----------------------" << endl;
+    divider();
 
     skHexPrint::writeColor(CS_WHITE);
     cout << "Type          : " << strc->getTypeIndex() << endl;
@@ -195,11 +185,10 @@ void ftLogger::log(ftMember *member)
     ftStruct *parent = member->getParent();
     if (parent != nullptr)
     {
-        ftLogger_writeSeperator();
+        seperator();
         skHexPrint::writeColor(CS_GREEN);
         cout << "Struct        : " << parent->getName() << endl;
-        ftLogger_writeDivider();
-
+        divider();
         cout << "Type          : " << member->getType() << endl;
         cout << "Name          : " << member->getName() << endl;
         cout << "Pointer Count : " << member->getPointerCount() << endl;
@@ -212,7 +201,7 @@ void ftLogger::log(ftMember *member)
 void ftLogger_logStructTable(ftStruct *strc)
 {
     cout << "Struct        : " << strc->getName() << endl;
-    ftLogger_writeDivider();
+    ftLogger::divider();
 
     int                         nr = 0;
     ftStruct::Members::Iterator it = strc->getMemberIterator();
@@ -238,12 +227,12 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
 
     cout << setw(30) << ' ';
     cout << fstrc->getName() << endl;
-    ftLogger_writeSeperator();
+    seperator();
+ 
     cout << left;
     for (D = 0; D < C; ++D)
     {
         ftMember *fmbr = 0, *mmbr = 0;
-
         if (D < A)
             fmbr = fstrc->getMember(D);
         if (D < B)
@@ -267,6 +256,6 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
 
         cout << endl;
     }
-    ftLogger_writeSeperator();
+    seperator();
     cout << endl;
 }

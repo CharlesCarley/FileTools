@@ -23,9 +23,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include <stdio.h>
-
 #include "ftChunk.h"
+#include <stdio.h>
 #include "ftEndianUtils.h"
 #include "ftFile.h"
 #include "ftLogger.h"
@@ -55,52 +54,31 @@ FBTsize ftChunkUtils::write(ftChunk* src, skStream* stream)
 
 FBTsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
 {
-    FBTsize bytesRead  = 0;
-    
+    FBTsize bytesRead = 0;
+    FBTsize blockLen  = BlockSize;
+
     if (FT_VOID8)
     {
         if (flags & ftFile::FH_VAR_BITS)
-        {
-            if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
-                return ftFile::FS_INV_READ;
-
-            bytesRead += Block32 - BlockScan;
-            stream->seek(Block32 - BlockScan, SEEK_CUR);
-        }
-        else
-        {
-            if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
-                return ftFile::FS_INV_READ;
-
-            bytesRead += BlockSize - BlockScan;
-            stream->seek(BlockSize - BlockScan, SEEK_CUR);
-        }
+            blockLen = Block32;
     }
     else
     {
         if (flags & ftFile::FH_VAR_BITS)
-        {
-            if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
-                return ftFile::FS_INV_READ;
-
-            bytesRead += Block64 - BlockScan;
-            stream->seek(Block64 - BlockScan, SEEK_CUR);
-        }
-        else
-        {
-            if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
-                return ftFile::FS_INV_READ;
-
-            bytesRead += BlockSize - BlockScan;
-            stream->seek(BlockSize - BlockScan, SEEK_CUR);
-        }
+            blockLen = Block64;
     }
+
+    if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
+        return ftFile::FS_INV_READ;
+
+    bytesRead += blockLen - BlockScan;
+    if (stream->seek(blockLen - BlockScan, SEEK_CUR))
+        return ftFile::FS_INV_READ;
 
     if (flags & ftFile::FH_ENDIAN_SWAP)
     {
         if ((dest->m_code & 0xFFFF) == 0)
             dest->m_code >>= 16;
-
         dest->m_len = swap32(dest->m_len);
     }
     return bytesRead;

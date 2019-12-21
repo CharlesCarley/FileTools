@@ -165,6 +165,10 @@ public:
         return 0;
     }
 
+
+
+    bool testDuplicateKeys();
+
 private:
 
     friend class ftStruct;

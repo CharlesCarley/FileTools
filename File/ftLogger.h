@@ -37,7 +37,7 @@ public:
 
     static void seperator();
     static void divider();
-    static void newline();
+    static void newline(int nr=1);
     static void width(FBTsize w);
 
     static void log(const ftChunk &chunk);

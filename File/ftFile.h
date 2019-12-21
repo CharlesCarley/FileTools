@@ -48,13 +48,15 @@ public:
 
     enum FileStatus
     {
-        FS_LINK_FAILED = -8,
-        FS_INV_INSERT,
+        FS_LINK_FAILED = -10,
+        FS_INV_INSERT, 
         FS_BAD_ALLOC,
         FS_DUPLICATE_BLOCK,
         FS_INV_READ,
         FS_INV_LENGTH,
         FS_INV_HEADER_STR,
+        FS_TABLE_INIT_FAILED,
+        FS_OVERFLOW,
         FS_FAILED,
         FS_OK,              // should always be zero
     };
@@ -201,7 +203,7 @@ private:
     int  parseHeader(skStream* stream);
     int  parseStreamImpl(skStream* stream);
     int  preScan(skStream* stream);
-    int  rebuildBlocks();
+    int  rebuildStructures();
 
     void castMember(ftMember* dst, FBTsize*& dstPtr, ftMember* src, FBTsize*& srcPtr);
 

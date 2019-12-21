@@ -405,6 +405,13 @@ void ftTables::compile(FBTtype    i,
     }
 }
 
+
+bool ftTables::testDuplicateKeys()
+{
+    bool TODO = false;
+    return TODO;
+}
+
 void ftTables::compile(void)
 {
     m_structures.reserve(FT_MAX_TABLE);

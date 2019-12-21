@@ -175,12 +175,12 @@ int ftFile::parseHeader(skStream* stream)
 {
     FBTbyte *hp, *magic;
 
-    m_header.resize(12);
     m_headerFlags = 0;
     m_fileVersion = 0;
 
     hp = m_header.ptr();
     stream->read(hp, 12);
+    m_header.resize(12);
 
     if (!ftCharNEq(hp, m_uhid, 6))
     {
@@ -220,12 +220,12 @@ int ftFile::parseHeader(skStream* stream)
 
 int ftFile::preScan(skStream* stream)
 {
-    // The idea if the pre-scan is to jump to the
-    // DNA1 block first, extract the table data
+    // The idea of the pre-scan is to jump to the
+    // DNA1 block first, extract the table data,
     // then seek back to the file header offset
-    // and read the chunks up to the DNA1 block
-    // associating structure and member declarations
-    // along with every chunk.
+    // and read the chunks up to the DNA1 block.
+    // Then, create associations with the structure
+    // and member declarations along with every chunk.
 
     int         status = FS_OK;
     FBTsize     bytesRead;
@@ -242,7 +242,7 @@ int ftFile::preScan(skStream* stream)
             if (scan.m_code == DNA1)
             {
                 // This block needs to stay alive as long as m_file is valid.
-                // The names of the types, and the names of the type-name
+                // The names of the types and the names of the type-name
                 // declarations are referenced out of this block.
                 m_fileTableData = ::malloc(scan.m_len);
 
@@ -256,18 +256,20 @@ int ftFile::preScan(skStream* stream)
                     {
                         m_file = new ftTables();
                         if (!m_file->read(m_fileTableData, scan.m_len, m_headerFlags))
-                            status = FS_INV_READ;
+                            status = FS_TABLE_INIT_FAILED;
                     }
                 }
             }
             else
             {
                 if (scan.m_len > 0 && scan.m_len != SK_NPOS32)
-                    stream->seek(scan.m_len, SEEK_CUR);
+                {
+                    if (!stream->seek(scan.m_len, SEEK_CUR))
+                        status = FS_INV_READ;
+                }
             }
         }
     }
-
     return status;
 }
 
@@ -286,7 +288,7 @@ int ftFile::parseStreamImpl(skStream* stream)
     if (status != FS_OK)
     {
         if (m_loggerFlags != LF_NONE)
-            ftLogger::log(status, "Failed to extract file header.");
+            ftLogger::log(status, "Failed to extract the file header.");
         return status;
     }
 
@@ -294,7 +296,7 @@ int ftFile::parseStreamImpl(skStream* stream)
     if (status != FS_OK)
     {
         if (m_loggerFlags != LF_NONE)
-            ftLogger::log(status, "Failed to initialize memory tables.");
+            ftLogger::log(status, "Failed to initialize the memory tables.");
         return status;
     }
 
@@ -306,7 +308,12 @@ int ftFile::parseStreamImpl(skStream* stream)
         return status;
     }
 
-    stream->seek(HEADER_OFFSET, SEEK_SET);
+    if (!stream->seek(HEADER_OFFSET, SEEK_SET))
+    {
+        status = FS_INV_READ;
+        ftLogger::log(status, "Failed to seek back to the header.");
+    }
+
 
     // pre allocate the pointer lookup table
     m_map.reserve(FT_DEF_ALLOC);
@@ -344,14 +351,14 @@ int ftFile::parseStreamImpl(skStream* stream)
     }
 
     if (status == FS_OK)
-        status = rebuildBlocks();
+        status = rebuildStructures();
 
     if (m_loggerFlags != LF_NONE)
     {
         if (status != FS_OK)
             ftLogger::log(status, "File read failed.");
         else if (chunk.m_code != DNA1)
-            ftLogger::logF("Failed to read end byte.");
+            ftLogger::logF("Failed to reach the end byte.");
     }
     return status;
 }
@@ -372,12 +379,14 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
             if (m_loggerFlags & LF_DIAGNOSTICS)
                 ftLogger::logF("print (0x%08X)", bin->m_chunk.m_old);
             free(bin);
+            status = FS_DUPLICATE_BLOCK;
         }
         else if (!m_map.insert(phk, bin))
         {
             if (m_loggerFlags & LF_DIAGNOSTICS)
                 ftLogger::logF("print (0x%08X)", bin->m_chunk.m_old);
             free(bin);
+
             status = FS_INV_INSERT;
         }
         else
@@ -401,7 +410,6 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                 if (bin->m_fstrc)
                     bin->m_mstrc = findInMemoryTable(bin->m_fstrc);
 
-
                 if (bin->m_fstrc && bin->m_mstrc)
                 {
                     bin->m_newTypeId = bin->m_mstrc->getStructIndex();
@@ -413,7 +421,6 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                         const FBTuint32 totSize = (chunk.m_nr * bin->m_mstrc->getSizeInBytes());
                         bin->m_chunk.m_len      = totSize;
                         bin->m_mblock           = ::malloc(totSize);
-
                         if (!bin->m_mblock)
                             status = FS_BAD_ALLOC;
                         else
@@ -427,12 +434,12 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                 {
                     if (m_loggerFlags & LF_DIAGNOSTICS)
                     {
+                        ftLogger::seperator();
                         ftLogger::logF("Failed to resolve both file and memory declarations for chunk:");
                         ftLogger::log(bin->m_chunk);
-
                         ftLogger::logF("File   : %s", bin->m_fstrc ? "Valid" : "Invalid");
                         ftLogger::logF("Memory : %s", bin->m_mstrc ? "Valid" : "Invalid");
-                        ftLogger::logF("\n");
+                        ftLogger::newline(2);
                     }
 
                     free(bin);
@@ -446,20 +453,22 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 
 
 
-int ftFile::rebuildBlocks()
+int ftFile::rebuildStructures()
 {
     FBTuint32 n;
+
+    int status = FS_OK;
 
     FBTbyte * src, *dst;
     FBTsize * srcPtr, *dstPtr;
     ftStruct *fstrc, *mstrc;
 
-    bool diagnostics = m_loggerFlags & LF_DIAGNOSTICS != 0;
+    bool diagnostics = (m_loggerFlags & LF_DIAGNOSTICS) != 0;
 
 
 
     ftMemoryChunk* node;
-    for (node = (ftMemoryChunk*)m_chunks.first; node; node = node->m_next)
+    for (node = (ftMemoryChunk*)m_chunks.first; node && status == FS_OK; node = node->m_next)
     {
         const ftChunk& chunk = node->m_chunk;
         if (m_loggerFlags & LF_WRITE_LINK)
@@ -484,12 +493,10 @@ int ftFile::rebuildBlocks()
             ftLogger::log(fstrc, mstrc);
         }
 
-        for (n = 0; n < chunk.m_nr; ++n)
+        for (n = 0; n < chunk.m_nr && status == FS_OK; ++n)
         {
             dst = mstrc->getBlock(node->m_mblock, n, chunk.m_nr);
             src = fstrc->getBlock(node->m_fblock, n, chunk.m_nr);
-
-
 
             ftStruct::Members::Iterator it = mstrc->getMemberIterator();
             while (it.hasMoreElements())
@@ -497,19 +504,15 @@ int ftFile::rebuildBlocks()
                 ftMember* dstmbr = it.getNext();
                 ftMember* srcmbr = findInFileTable(fstrc, dstmbr);
 
-
                 if (srcmbr)
                 {
                     dstPtr = dstmbr->jumpToOffset(dst);
                     srcPtr = srcmbr->jumpToOffset(src);
 
-
-
                     castMember(dstmbr,
                                dstPtr,
                                srcmbr,
                                srcPtr);
-
 
                     if (diagnostics)
                     {
@@ -528,22 +531,30 @@ int ftFile::rebuildBlocks()
                 }
                 else
                 {
-                    // The memory in destination pointer is already zeroed,
-                    // so data at that offset should already be initialized.
-                    // (needs confirmed)
+                    // The memory in destination pointer is already zeroed, and
+                    // the data at that offset should already be initialized.
+                    // But if it's not it should be zeroed, and its probably
+                    // a bug somewhere because something overflowed into it.
+                    dstPtr = dstmbr->jumpToOffset(dst);
 
-                    if (diagnostics)
+                    void* test = malloc(dstmbr->getSizeInBytes());
+                    memset(test, 0, dstmbr->getSizeInBytes());
+                    if (::memcmp(dstPtr, test, dstmbr->getSizeInBytes()) != 0)
+                        status = FS_OVERFLOW;
+                    else
                     {
-                        dstPtr = dstmbr->jumpToOffset(dst);
-
-                        ftLogger::seperator();
-                        ftLogger::logF("MISSING %s %s",
-                                       dstmbr->getType(),
-                                       dstmbr->getName());
-                        ftLogger::divider();
-                        ftLogger::log(dstPtr, dstmbr->getSizeInBytes());
-                        ftLogger::newline();
+                        if (diagnostics)
+                        {
+                            ftLogger::seperator();
+                            ftLogger::logF("MISSING %s %s",
+                                           dstmbr->getType(),
+                                           dstmbr->getName());
+                            ftLogger::divider();
+                            ftLogger::log(dstPtr, dstmbr->getSizeInBytes());
+                            ftLogger::newline();
+                        }
                     }
+                    free(test);
                 }
             }
         }
@@ -551,8 +562,10 @@ int ftFile::rebuildBlocks()
         if (node->m_mblock)
             notifyDataRead(node->m_mblock, node->m_chunk);
     }
-    return FS_OK;
+
+    return status;
 }
+
 
 void ftFile::castMember(ftMember* mstrc,
                         FBTsize*& dstPtr,
@@ -584,7 +597,7 @@ void ftFile::castPointerToPointer(ftMember* dst,
                                   ftMember* src,
                                   FBTsize*& srcPtr)
 {
-    ftMemoryChunk* bin = findBlock((FBTsize)(srcPtr));
+    ftMemoryChunk* bin = findBlock((FBTsize)(*srcPtr));
     if (bin)
     {
         if (bin->m_flag & ftMemoryChunk::BLK_MODIFIED)
@@ -628,9 +641,7 @@ void ftFile::castPointerToPointer(ftMember* dst,
                 bin->m_mblock = nptr;
             }
             else if (m_loggerFlags != LF_NONE)
-            {
                 ftLogger::logF("Unknown pointer length(%d). Pointers should be either 4 or 8 bytes", fps);
-            }
         }
     }
     else if (m_loggerFlags != LF_NONE)
@@ -646,7 +657,6 @@ void ftFile::castPointerToPointer(ftMember* dst,
     }
 }
 
-
 void ftFile::castPointer(ftMember* mstrc,
                          FBTsize*& dstPtr,
                          ftMember* fstrc,
@@ -659,13 +669,13 @@ void ftFile::castPointer(ftMember* mstrc,
     {
         int        i;
         FBTuint32* sptr = (FBTuint32*)srcPtr;
-
         for (i = 0; i < arrayLen; ++i, sptr += (fps == 4 ? 1 : 2))
             dstPtr[i] = (FBTsize)findPtr((FBTsize)(*sptr));
     }
     else if (m_loggerFlags != LF_NONE)
         ftLogger::logF("Invalid size of pointer.");
 }
+
 
 void ftFile::castMemberVariable(ftMember* dst,
                                 FBTsize*& dstPtr,
