@@ -67,6 +67,8 @@ public:
     static bool     isReal(FBThash typeKey);
     static bool     isNumeric(FBThash typeKey);
 
+    static bool     canCast(FBThash typeKeyA, FBThash typeKeyB);
+
     static void cast(char*    source,
                      char*    destination,
                      ftAtomic sourceType,
@@ -81,6 +83,7 @@ public:
                      ftAtomic sourceType,
                      ftAtomic destinationType,
                      FBTsize  length);
+
 
     static const ftAtomicType Types[];
     static const size_t        NumberOfTypes;

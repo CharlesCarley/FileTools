@@ -100,6 +100,13 @@ bool ftMember::isArray()
     return false;
 }
 
+
+bool ftMember::isCharacter()
+{
+    return ftAtomicUtils::getPrimitiveType(m_hashedType) == ftAtomic::FT_ATOMIC_CHAR;
+}
+
+
 int ftMember::getArraySize()
 {
     if (m_parent && m_parent->m_table)
@@ -161,12 +168,12 @@ void ftMember::setTypeIndex(const FBTuint16& idx)
 bool ftMember::compare(ftMember* rhs)
 {
     // This will loosly compair the two members for equality.
-    // If the initial test fails, the fall back test is to 
+    // If the initial test fails, the fall back test is to
     // see if the two types are similar enough to cast.
-    // For example: 
+    // For example:
     //  The member was initially declared to be a double,
-    //  but then later it was changed to a long. But, since 
-    //  the types are similar enough to cast together, some, 
+    //  but then later it was changed to a long. But, since
+    //  the types are similar enough to cast together, some,
     //  if not all of the data can be preserved.
     if (!rhs)
         return false;
@@ -176,8 +183,7 @@ bool ftMember::compare(ftMember* rhs)
     {
         if (m_hashedName == rhs->m_hashedName)
         {
-            if (ftAtomicUtils::isNumeric(m_hashedType) &&
-                ftAtomicUtils::isNumeric(rhs->m_hashedType))
+            if (ftAtomicUtils::canCast(m_hashedType, rhs->m_hashedType))
                 result = true;
         }
     }
@@ -192,7 +198,7 @@ void* ftMember::getChunk()
 
 FBTsize* ftMember::jumpToOffset(void* base)
 {
-    if (m_offset < m_parent->m_sizeInBytes)
-        return (FBTsize*)((FBTbyte*)(base) + m_offset);
+    if (base && m_offset < m_parent->m_sizeInBytes)
+        return (FBTsize*)(reinterpret_cast<FBTbyte*>(base) + m_offset);
     return nullptr;
 }

@@ -100,6 +100,8 @@ public:
 
     ftStruct* findStructByName(const ftCharHashKey& kvp);
     ftStruct* findStructByType(const FBTuint16& type);
+    FBTuint32 findStructIdByType(const FBTuint16& type);
+
     bool      isLinkedToMemory(const FBTuint16& type);
 
     inline FBTuint32 getNumberOfNames() const

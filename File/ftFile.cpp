@@ -51,6 +51,7 @@ ftFile::ftFile(const char* uhid) :
     m_fileVersion(0),
     m_headerFlags(0),
     m_loggerFlags(LF_ONLY_ERR),
+    m_fileFlags(FF_NONE),
     m_uhid(uhid),
     m_curFile(0),
     m_memory(0),
@@ -60,6 +61,7 @@ ftFile::ftFile(const char* uhid) :
     m_chunks.clear();
 }
 
+
 ftFile::~ftFile()
 {
     if (m_curFile)
@@ -67,7 +69,6 @@ ftFile::~ftFile()
         ::free(m_curFile);
         m_curFile = 0;
     }
-
     clearStorage();
 }
 
@@ -373,77 +374,82 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         ::memset(bin, 0, sizeof(ftMemoryChunk));
         ::memcpy(&bin->m_chunk, &chunk, sizeof(ftChunk));
 
+        // Used for calculating the number of pointers to pointers 
+        bin->m_fileLen = chunk.m_len;
+
         ftPointerHashKey phk(chunk.m_old);
         if (m_map.find(phk) != m_map.npos)
         {
             if (m_loggerFlags & LF_DIAGNOSTICS)
                 ftLogger::logF("print (0x%08X)", bin->m_chunk.m_old);
-            free(bin);
-            status = FS_DUPLICATE_BLOCK;
-        }
-        else if (!m_map.insert(phk, bin))
-        {
-            if (m_loggerFlags & LF_DIAGNOSTICS)
-                ftLogger::logF("print (0x%08X)", bin->m_chunk.m_old);
-            free(bin);
 
-            status = FS_INV_INSERT;
+            freeChunk(bin);
+            status = FS_DUPLICATE_BLOCK;
         }
         else
         {
             bin->m_fblock = block;
+            ftStruct *fstrc, *mstrc = nullptr;
 
-            if (chunk.m_code == DATA || chunk.m_typeid == 0)
-            {
-                bin->m_mblock = ::malloc(chunk.m_len);
-                if (!bin->m_mblock)
-                    status = FS_BAD_ALLOC;
-                /*
-                else
-                    ::memcpy(bin->m_mblock, bin->m_fblock, chunk.m_len);
-                */
-                memset(bin->m_mblock, 0, chunk.m_len);
-            }
-            else
-            {
-                bin->m_fstrc = m_file->findStructByType(bin->m_chunk.m_typeid);
-                if (bin->m_fstrc)
-                    bin->m_mstrc = findInMemoryTable(bin->m_fstrc);
+            fstrc = m_file->findStructByType(bin->m_chunk.m_typeid);
+            if (fstrc)
+                mstrc = findInMemoryTable(fstrc);
 
-                if (bin->m_fstrc && bin->m_mstrc)
+            if (fstrc && mstrc)
+            {
+                bin->m_fstrc     = fstrc;
+                bin->m_mstrc     = mstrc;
+                bin->m_newTypeId = bin->m_mstrc->getStructIndex();
+
+                if (!skip(fstrc->getHashedType()))
                 {
-                    bin->m_newTypeId = bin->m_mstrc->getStructIndex();
-
-                    if (!skip(bin->m_fstrc->getHashedType()))
+                    // Change the length of the file structure's memory
+                    // to account for the memory structures size.
+                    const FBTuint32 totSize = (chunk.m_nr * mstrc->getSizeInBytes());
+                    if (totSize > 0 && totSize != SK_NPOS32)
                     {
-                        // Change the length of the file structure's memory
-                        // to account for the memory structures size.
-                        const FBTuint32 totSize = (chunk.m_nr * bin->m_mstrc->getSizeInBytes());
-                        bin->m_chunk.m_len      = totSize;
-                        bin->m_mblock           = ::malloc(totSize);
+                        bin->m_chunk.m_len = totSize;
+                        bin->m_mblock      = ::malloc(totSize);
                         if (!bin->m_mblock)
                             status = FS_BAD_ALLOC;
                         else
                             ::memset(bin->m_mblock, 0, totSize);
 
                         if (status == FS_OK)
-                            m_chunks.push_back(bin);
+                            insertChunk(phk, bin, status);
                     }
+                    else
+                        status = FS_BAD_ALLOC;
                 }
-                else
+            }
+            else
+            {
+                if (m_loggerFlags & LF_DIAGNOSTICS)
                 {
-                    if (m_loggerFlags & LF_DIAGNOSTICS)
+                    ftLogger::seperator();
+                    ftLogger::logF("Failed to resolve both file and memory declarations for chunk:");
+                    ftLogger::log(bin->m_chunk);
+                    ftLogger::logF("File   : %s", fstrc ? "Valid" : "Invalid");
+                    ftLogger::logF("Memory : %s", mstrc ? "Valid" : "Invalid");
+
+                    if (fstrc)
                     {
+                        ftLogger::log(fstrc);
                         ftLogger::seperator();
-                        ftLogger::logF("Failed to resolve both file and memory declarations for chunk:");
-                        ftLogger::log(bin->m_chunk);
-                        ftLogger::logF("File   : %s", bin->m_fstrc ? "Valid" : "Invalid");
-                        ftLogger::logF("Memory : %s", bin->m_mstrc ? "Valid" : "Invalid");
-                        ftLogger::newline(2);
+                        ftLogger::log(bin->m_fblock, fstrc->getSizeInBytes());
                     }
 
-                    free(bin);
+                    if (mstrc)
+                    {
+                        ftLogger::log(mstrc);
+                        ftLogger::seperator();
+                        ftLogger::log(bin->m_mblock, mstrc->getSizeInBytes());
+                    }
+
+                    ftLogger::newline(2);
                 }
+
+                freeChunk(bin);
             }
         }
     }
@@ -453,19 +459,46 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 
 
 
+void ftFile::insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, int& status)
+{
+    if (!m_map.insert(phk, chunk))
+    {
+        if (m_loggerFlags & LF_DIAGNOSTICS)
+            ftLogger::logF("print (0x%08X)", chunk->m_chunk.m_old);
+
+        freeChunk(chunk);
+        status = FS_INV_INSERT;
+    }
+    else
+    {
+        m_chunks.push_back(chunk);
+    }
+}
+
+void ftFile::freeChunk(ftMemoryChunk*& chunk)
+{
+    if (chunk)
+    {
+        if (chunk->m_fblock)
+            free(chunk->m_fblock);
+        if (chunk->m_mblock)
+            free(chunk->m_mblock);
+        free(chunk);
+        chunk = nullptr;
+    }
+}
+
+
 int ftFile::rebuildStructures()
 {
     FBTuint32 n;
-
-    int status = FS_OK;
+    int       status = FS_OK;
 
     FBTbyte * src, *dst;
     FBTsize * srcPtr, *dstPtr;
     ftStruct *fstrc, *mstrc;
 
     bool diagnostics = (m_loggerFlags & LF_DIAGNOSTICS) != 0;
-
-
 
     ftMemoryChunk* node;
     for (node = (ftMemoryChunk*)m_chunks.first; node && status == FS_OK; node = node->m_next)
@@ -484,16 +517,15 @@ int ftFile::rebuildStructures()
         fstrc = node->m_fstrc;
         mstrc = node->m_mstrc;
 
-        if (diagnostics)
+        if (diagnostics && fstrc && mstrc)
         {
             ftLogger::logF("casting struct %s -> %s",
                            fstrc->getName(),
                            mstrc->getName());
-            ftLogger::newline();
             ftLogger::log(fstrc, mstrc);
         }
 
-        for (n = 0; n < chunk.m_nr && status == FS_OK; ++n)
+        for (n = 0; n < chunk.m_nr && status == FS_OK && fstrc && mstrc; ++n)
         {
             dst = mstrc->getBlock(node->m_mblock, n, chunk.m_nr);
             src = fstrc->getBlock(node->m_fblock, n, chunk.m_nr);
@@ -509,24 +541,49 @@ int ftFile::rebuildStructures()
                     dstPtr = dstmbr->jumpToOffset(dst);
                     srcPtr = srcmbr->jumpToOffset(src);
 
-                    castMember(dstmbr,
-                               dstPtr,
-                               srcmbr,
-                               srcPtr);
-
-                    if (diagnostics)
+                    if (dstPtr && srcPtr)
                     {
-                        ftLogger::seperator();
-                        ftLogger::width(25);
-                        ftLogger::logF("%s %s ==> %s %s",
-                                       srcmbr->getType(),
-                                       srcmbr->getName(),
-                                       dstmbr->getType(),
-                                       dstmbr->getName());
-                        ftLogger::log(srcPtr, srcmbr->getSizeInBytes());
-                        ftLogger::newline();
-                        ftLogger::log(dstPtr, dstmbr->getSizeInBytes());
-                        ftLogger::newline();
+                        if (diagnostics)
+                        {
+                            ftLogger::newline();
+                            ftLogger::logF("%s %s ==> %s %s",
+                                           srcmbr->getType(),
+                                           srcmbr->getName(),
+                                           dstmbr->getType(),
+                                           dstmbr->getName());
+                        }
+
+                        castMember(dstmbr,
+                                   dstPtr,
+                                   srcmbr,
+                                   srcPtr);
+
+                        if (diagnostics)
+                        {
+                            ftLogger::seperator();
+                            ftLogger::log(srcPtr, srcmbr->getSizeInBytes());
+                            ftLogger::newline();
+                            ftLogger::log(dstPtr, dstmbr->getSizeInBytes());
+                            ftLogger::newline();
+                        }
+                    }
+                    else if (m_loggerFlags != LF_NONE)
+                    {
+                        ftLogger::logF("Failed to offset to the member location.");
+                        
+                        if (!dstPtr)
+                        {
+                            ftLogger::logF("For destination buffer '%s' @ offset (%d).", 
+                                dstmbr->getName(), 
+                                dstmbr->getOffset());
+                        }
+
+                        if (!dstPtr)
+                        {
+                            ftLogger::logF("For source buffer '%s' @ offset (%d).",
+                                           dstmbr->getName(),
+                                           dstmbr->getOffset());
+                        }
                     }
                 }
                 else
@@ -537,29 +594,40 @@ int ftFile::rebuildStructures()
                     // a bug somewhere because something overflowed into it.
                     dstPtr = dstmbr->jumpToOffset(dst);
 
-                    void* test = malloc(dstmbr->getSizeInBytes());
-                    memset(test, 0, dstmbr->getSizeInBytes());
-                    if (::memcmp(dstPtr, test, dstmbr->getSizeInBytes()) != 0)
-                        status = FS_OVERFLOW;
-                    else
+                    if (m_fileFlags & FF_DO_CHECKS)
+                    {
+                        void* zeroedMemoryCmp = ::malloc(dstmbr->getSizeInBytes());
+                        if (!zeroedMemoryCmp)
+                            status = FS_BAD_ALLOC;
+                        else
+                        {
+                            ::memset(zeroedMemoryCmp, 0, dstmbr->getSizeInBytes());
+
+                            if (::memcmp(dstPtr, zeroedMemoryCmp, dstmbr->getSizeInBytes()) != 0)
+                                status = FS_OVERFLOW;
+
+                            free(zeroedMemoryCmp);
+                        }
+                    }
+
+                    if (status == FS_OK)
                     {
                         if (diagnostics)
                         {
-                            ftLogger::seperator();
+                            ftLogger::newline();
                             ftLogger::logF("MISSING %s %s",
                                            dstmbr->getType(),
                                            dstmbr->getName());
-                            ftLogger::divider();
+                            ftLogger::seperator();
                             ftLogger::log(dstPtr, dstmbr->getSizeInBytes());
                             ftLogger::newline();
                         }
                     }
-                    free(test);
                 }
             }
         }
 
-        if (node->m_mblock)
+        if (node->m_mblock && status == FS_OK)
             notifyDataRead(node->m_mblock, node->m_chunk);
     }
 
@@ -608,37 +676,15 @@ void ftFile::castPointerToPointer(ftMember* dst,
             if (fps == 4 || fps == 8)
             {
                 FBTsize i;
-                FBTsize total  = bin->m_chunk.m_len / fps;
-                FBTsize mptrsz = total * sizeof(FBTsize);
-
-                FBTsize* nptr = (FBTsize*)::calloc(total, sizeof(FBTuintPtr));
-
-                if (nptr == nullptr)
-                {
-                    if (m_loggerFlags != LF_NONE)
-                    {
-                        ftLogger::log(FS_BAD_ALLOC,
-                                      "Failed to allocate new block");
-                    }
-                    return;
-                }
-                ::memset(nptr, 0, mptrsz);
+                FBTsize total  = bin->m_fileLen / fps;
 
                 // Always use a 32 bit integer,
                 // then offset + 2 for a 64 bit pointer.
-                FBTuint32* optr = (FBTuint32*)bin->m_fblock;
+                FBTuint32* optr = (FBTuint32*)srcPtr;
 
-                for (i = 0; i < total; i++,
-                    optr += (fps == 4 ? 1 : 2))
-                    nptr[i] = (FBTsize)findPtr((FBTsize)*optr);
+                for (i = 0; i < total; i++, optr += (fps == 4 ? 1 : 2))
+                    dstPtr[i] = (FBTsize)findPtr((FBTsize)*optr);
 
-                (*dstPtr) = (FBTsize)(nptr);
-
-                bin->m_chunk.m_len = mptrsz;
-                bin->m_flag |= ftMemoryChunk::BLK_MODIFIED;
-
-                ::free(bin->m_mblock);
-                bin->m_mblock = nptr;
             }
             else if (m_loggerFlags != LF_NONE)
                 ftLogger::logF("Unknown pointer length(%d). Pointers should be either 4 or 8 bytes", fps);
@@ -651,9 +697,13 @@ void ftFile::castPointerToPointer(ftMember* dst,
 
         ftLogger::logF("Source");
         ftLogger::log(src);
-
         ftLogger::logF("Destination");
         ftLogger::log(dst);
+        ftLogger::log(srcPtr, src->getSizeInBytes());
+        ftLogger::newline();
+        ftLogger::log(dstPtr, dst->getSizeInBytes());
+
+        (*dstPtr) = 0;
     }
 }
 
@@ -682,40 +732,86 @@ void ftFile::castMemberVariable(ftMember* dst,
                                 ftMember* src,
                                 FBTsize*& srcPtr)
 {
-    FBTsize dstElmSize = dst->getSizeInBytes();
-    FBTsize srcElmSize = src->getSizeInBytes();
+    FBTsize dstElmSize   = dst->getSizeInBytes();
+    FBTsize srcElmSize   = src->getSizeInBytes();
+    FBTsize maxAvailable = skMin(srcElmSize, dstElmSize);
 
-    bool endianSwap = (m_headerFlags & FH_ENDIAN_SWAP) != 0;
-    bool needCast   = false;  //dst->hasFlag(ftStruct::NEED_CAST);
-    bool needSwap   = endianSwap && srcElmSize > 1;
+    if (maxAvailable <= 0 || maxAvailable > FT_MAX_MBR_RANGE)
+    {
+        ftLogger::logF("Element size is out of range src(%d), dst(%d), max(%d)",
+                       srcElmSize,
+                       dstElmSize,
+                       FT_MAX_MBR_RANGE);
+        return;
+    }
 
-    FBThash dhash = dst->getTypeName();
-    FBThash shash = src->getTypeName();
 
-    if (!needCast && !needSwap && dhash == shash)
-        ::memcpy(dstPtr, srcPtr, skMin(srcElmSize, dstElmSize));
+    bool needsSwapped = (m_headerFlags & FH_ENDIAN_SWAP) != 0 && srcElmSize > 1;
+
+    bool needsCast;
+    needsCast = src->getHashedType() != dst->getHashedType();
+    if (needsCast)
+    {
+        needsCast = ftAtomicUtils::canCast(
+            src->getHashedType(),
+            dst->getHashedType());
+
+        if (!needsCast)
+        {
+            if (m_loggerFlags != LF_NONE)
+            {
+                ftLogger::logF("Warning: The types supplied to castMemberVariable");
+                ftLogger::logF("         are too different to be cast together.");
+                ftLogger::logF("         Source:      %s %s", src->getType(), src->getName());
+                ftLogger::logF("         Destination: %s %s", dst->getType(), dst->getName());
+                ftLogger::logF("%d bytes will be copied into the destination", maxAvailable);
+            }
+        }
+    }
+
+    if (!needsCast && !needsSwapped)
+    {
+        if (m_loggerFlags & LF_DIAGNOSTICS)
+        {
+            if (srcElmSize > dstElmSize)
+            {
+                ftLogger::logF("The source member is larger than the destination member.");
+                ftLogger::logF("    %d bytes of data will be truncated.", srcElmSize - dstElmSize);
+            }
+        }
+
+        if (dst->isCharacter())
+        {
+            // Allow for null terminated strings.
+            // In the case there is extra information in the source buffer,
+            // this will copy up to the first null terminator, and the extra
+            // info in the buffer will be discarded.
+            ::strncpy((FBTbyte*)dstPtr, (FBTbyte*)srcPtr, maxAvailable);
+        }
+        else
+            ::memcpy(dstPtr, srcPtr, maxAvailable);
+    }
     else
     {
         FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
         FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
 
         ftAtomic stp = ftAtomic::FT_ATOMIC_UNKNOWN, dtp = ftAtomic::FT_ATOMIC_UNKNOWN;
-        if (needCast || needSwap)
+        if (needsCast)
         {
             stp = src->getAtomicType();
-            dtp = src->getAtomicType();
+            dtp = dst->getAtomicType();
         }
 
         FBTsize alen = skMin(dst->getArraySize(), src->getArraySize());
-        FBTsize elen = skMin(srcElmSize, dstElmSize);
+        FBTsize elen = maxAvailable;
 
         FBTbyte tmpBuf[8] = {};
-
         FBTsize i;
         for (i = 0; i < alen; i++)
         {
             FBTbyte* tmp = srcBPtr;
-            if (needSwap)
+            if (needsSwapped)
             {
                 tmp = tmpBuf;
                 ::memcpy(tmpBuf, srcBPtr, srcElmSize);
@@ -730,7 +826,7 @@ void ftFile::castMemberVariable(ftMember* dst,
                     ::memset(tmpBuf, 0, sizeof(tmpBuf));  //unknown type
             }
 
-            if (needCast)
+            if (needsCast)
                 ftAtomicUtils::cast((char*)tmp, (char*)dstBPtr, stp, dtp, 1);
             else
                 ::memcpy(dstBPtr, tmp, elen);
@@ -752,6 +848,7 @@ ftStruct* ftFile::findInTable(ftStruct* findStruct, ftTables* sourceTable, ftTab
         FBTbyte*  searchKey;
         strcType  = findStruct->getTypeIndex();
         searchKey = sourceTable->getTypeNameAt(strcType);
+
         if (searchKey != nullptr)
             fstrc = findInTable->findStructByName(searchKey);
     }

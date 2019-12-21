@@ -23,13 +23,14 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "ftLogger.h"
 #include <iomanip>
 #include <iostream>
-#include "ftLogger.h"
-#include "ftMember.h"
-#include "ftTables.h"
+#include <string>
 #include "Utils/skHexPrint.h"
 #include "Utils/skPlatformHeaders.h"
+#include "ftMember.h"
+#include "ftTables.h"
 
 using namespace std;
 
@@ -80,8 +81,7 @@ void ftLogger::log(int status, const char *msg, ...)
         if (size < 0)
             size = 0;
         buf[size] = 0;
-
-        printf("\t%s\n", buf);
+        cout << setw(4) << ' ' << buf << endl;
     }
 }
 
@@ -100,7 +100,7 @@ void ftLogger::logF(const char *msg, ...)
             size = 0;
 
         buf[size] = 0;
-        printf("%s\n", buf);
+        cout << buf << endl;
     }
 }
 
@@ -146,8 +146,8 @@ void ftLogger::log(const ftChunk &chunk)
 void ftLogger::log(void *ptr, FBTsize len)
 {
     skHexPrint::dumpHex((char *)ptr, 0, len, skHexPrint::PF_DEFAULT, -1);
+    fflush(stdout);
 }
-
 
 void ftLogger::width(FBTsize w)
 {
@@ -157,20 +157,16 @@ void ftLogger::width(FBTsize w)
 void ftLogger::newline(int nr)
 {
     int i;
-    for (i=0; i<nr; ++i)
+    for (i = 0; i < nr; ++i)
         cout << endl;
 }
 
 
 void ftLogger::log(ftStruct *strc)
 {
-    seperator();
     skHexPrint::writeColor(CS_GREEN);
-
     cout << "Struct : " << strc->getName() << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
-    divider();
-
     skHexPrint::writeColor(CS_WHITE);
     cout << "Type          : " << strc->getTypeIndex() << endl;
     cout << "Hash          : " << strc->getHashedType() << endl;
@@ -218,18 +214,41 @@ void ftLogger_logStructTable(ftStruct *strc)
 
 
 
+string makeName(const char *name, size_t max)
+{
+    string rv = name;
+    if (rv.size() > max - 2)
+    {
+        string nrv;
+        for (size_t i = 0; i < max - 5; ++i)
+            nrv.push_back(rv[i]);
+        nrv += "...";
+        rv = nrv;
+    }
+    return rv;
+}
+
+
+
 void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
 {
     int A = fstrc->getMemberCount();
     int B = mstrc->getMemberCount();
     int C = skMax(A, B);
     int D = 0;
-
-    cout << setw(30) << ' ';
-    cout << fstrc->getName() << endl;
     seperator();
- 
     cout << left;
+
+    cout << ' ';
+    cout << setw(15) << "Type";
+    cout << setw(15) << "Name";
+    cout << setw(10) << "Offset";
+    cout << setw(15) << "Type";
+    cout << setw(15) << "Name";
+    cout << setw(10) << "Offset";
+    cout << endl;
+    seperator();
+
     for (D = 0; D < C; ++D)
     {
         ftMember *fmbr = 0, *mmbr = 0;
@@ -238,21 +257,24 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
         if (D < B)
             mmbr = mstrc->getMember(D);
 
+        cout << ' ';
         if (fmbr != 0)
         {
-            cout << setw(15) << fmbr->getType();
-            cout << setw(25) << fmbr->getName();
+            cout << setw(15) << makeName(fmbr->getType(), 15);
+            cout << setw(15) << makeName(fmbr->getName(), 15);
+            cout << setw(10) << fmbr->getOffset();
         }
         else
-            cout << setw(40) << "Missing";
+            cout << setw(40) << ' ';
 
         if (mmbr != 0)
         {
-            cout << setw(15) << mmbr->getType();
-            cout << setw(25) << mmbr->getName();
+            cout << setw(15) << makeName(mmbr->getType(), 15);
+            cout << setw(15) << makeName(mmbr->getName(), 15);
+            cout << setw(10) << mmbr->getOffset();
         }
         else
-            cout << setw(40) << "Missing";
+            cout << setw(40) << ' ';
 
         cout << endl;
     }

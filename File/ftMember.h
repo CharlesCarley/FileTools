@@ -44,6 +44,7 @@ public:
     bool     isStructure();
     bool     isPointer();
     bool     isArray();
+    bool     isCharacter();
 
     int      getArraySize();
     int      getPointerCount();
@@ -52,6 +53,7 @@ public:
     ftAtomic getAtomicType();
 
     bool     compare(ftMember* rhs);
+
 
     FBTsize* jumpToOffset(void* base);
     void*    getChunk();
@@ -62,7 +64,12 @@ public:
         return m_sizeInBytes;
     }
 
-    inline const FBThash& getTypeName() const
+    inline FBTsize getOffset()
+    {
+        return m_offset;
+    }
+
+    inline const FBThash& getHashedType() const
     {
         return m_hashedType;
     }

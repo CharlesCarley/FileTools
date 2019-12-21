@@ -42,7 +42,7 @@ ftAtomic ftAtomicUtils::getPrimitiveType(FBThash typeKey)
 {
     ftAtomic res = ftAtomic::FT_ATOMIC_UNKNOWN;
     size_t   i;
-    for (i = 0; i < NumberOfTypes && res != ftAtomic::FT_ATOMIC_UNKNOWN; ++i)
+    for (i = 0; i < NumberOfTypes && res == ftAtomic::FT_ATOMIC_UNKNOWN; ++i)
     {
         if (Types[i].m_hash == typeKey)
             res = Types[i].m_type;
@@ -50,6 +50,11 @@ ftAtomic ftAtomicUtils::getPrimitiveType(FBThash typeKey)
     return res;
 }
 
+
+bool ftAtomicUtils::canCast(FBThash typeKeyA, FBThash typeKeyB)
+{
+    return isNumeric(typeKeyA) && isNumeric(typeKeyB);
+}
 
 ftAtomic ftAtomicUtils::getPrimitiveType(const char* typeName)
 {

@@ -73,12 +73,9 @@ ftMember* ftStruct::getMember(Members::SizeType idx)
 
 FBTbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max)
 {
-    FBTbyte* val = 0;
+    FBTbyte* val = nullptr;
     if (base && idx < max)
-    {
-        val = ((FBTbyte*)base);
-        val += (m_sizeInBytes * idx);
-    }
+        val = reinterpret_cast<FBTbyte*>(base) + (m_sizeInBytes * idx);
     return val;
 }
 

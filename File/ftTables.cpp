@@ -559,6 +559,16 @@ FBThash ftTables::getTypeHash(const FBTuint16& type) const
     return SK_NPOS;
 }
 
+FBTuint32 ftTables::findStructIdByType(const FBTuint16& type)
+{
+    if (type < m_typeCount)
+        return m_types[type].m_strcId;
+    return SK_NPOS;
+}
+
+
+
+
 const ftName& ftTables::getStructNameByIdx(const FBTuint16& idx) const
 {
     if (idx < m_nameCount)

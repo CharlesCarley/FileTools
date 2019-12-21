@@ -86,11 +86,12 @@ struct ftMemoryChunk
 
     ftMemoryChunk *m_next, *m_prev;
 
-    ftChunk  m_chunk;
-    void*    m_fblock;
-    void*    m_mblock;
-    FBTuint8 m_flag;
-    FBTtype  m_newTypeId;
+    ftChunk   m_chunk;
+    void*     m_fblock;
+    void*     m_mblock;
+    FBTuint8  m_flag;
+    FBTtype   m_newTypeId;
+    FBTuint32 m_fileLen;
 
     ftStruct* m_fstrc;
     ftStruct* m_mstrc;

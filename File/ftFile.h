@@ -86,18 +86,26 @@ public:
         LF_DIAGNOSTICS  = (1 << 4)
     };
 
+    enum FileFlags
+    {
+        FF_NONE      = 0,
+        FF_DO_CHECKS = (1 << 0)
+    };
+
     typedef skHashTable<ftPointerHashKey, ftMemoryChunk*> ChunkMap;
     typedef ftList                                        MemoryChunks;
 
 private:
-    int               m_headerFlags, m_loggerFlags;
+    int               m_headerFlags;
+    int               m_loggerFlags;
+    int               m_fileFlags;
     const char*       m_uhid;
     ftFixedString<12> m_header;
     char*             m_curFile;
 
-
 protected:
-    int          m_version, m_fileVersion;
+    int          m_version;
+    int          m_fileVersion;
     MemoryChunks m_chunks;
     ChunkMap     m_map;
     ftTables*    m_memory;
@@ -106,6 +114,7 @@ protected:
 
 
 public:
+
     ftFile(const char* uid);
     virtual ~ftFile();
 
@@ -168,6 +177,21 @@ public:
         m_loggerFlags |= v;
     }
 
+    inline int getFileFlags()
+    {
+        return m_fileFlags;
+    }
+
+    inline void setFileFlags(int v)
+    {
+        m_fileFlags = v;
+    }
+
+    inline void addFileFlag(int v)
+    {
+        m_fileFlags |= v;
+    }
+
 
 protected:
     bool isValidWriteData(void* writeData, FBTsize len);
@@ -197,6 +221,8 @@ private:
                         FBTsize   len,
                         void*     writeData);
     void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
+    void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, int& status);
+    void freeChunk(ftMemoryChunk*& chunk);
 
 
     void clearStorage(void);

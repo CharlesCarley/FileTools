@@ -185,6 +185,9 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
     if (cpy->m_len == SK_NPOS32)
         return ftFile::FS_INV_LENGTH;
 
+    if (cpy->m_nr < 1 || cpy->m_nr == SK_NPOS32)
+        return ftFile::FS_INV_LENGTH;
+
     ::memcpy(dest, cpy, BlockSize);
     return bytesRead;
 }
