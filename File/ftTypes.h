@@ -57,6 +57,7 @@ typedef SKuintPtr FBTsize;
 typedef FBTsize   FBThash;
 typedef FBTuint16 FBTtype;
 
+
 #ifdef ftSCALAR_DOUBLE
 #define scalar_t double
 #else
@@ -145,11 +146,11 @@ public:
 
 class skStream;
 class ftMemoryStream;
-class ftBinTables;
+class ftTables;
 class ftStruct;
 struct ftName;
 class ftMember;
-class ftBinTables;
+class ftTables;
 class ftStruct;
 
 

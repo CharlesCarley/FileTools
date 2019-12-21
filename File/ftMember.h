@@ -95,7 +95,7 @@ public:
 
 
 private:
-    friend class ftBinTables;
+    friend class ftTables;
     friend class ftStruct;
 
     ftStruct* m_parent;

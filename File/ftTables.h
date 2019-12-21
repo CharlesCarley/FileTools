@@ -48,15 +48,15 @@ namespace ftIdNames
 extern ftFixedString<4> ftByteToString(FBTuint32 i);
 
 
-class ftBinTables
+class ftTables
 {
 public:
     typedef ftName*            Names;  // < FT_MAX_TABLE
     typedef ftType*            Types;  // < FT_MAX_TABLE
     typedef FBTtype*           TypeL;  // < FT_MAX_TABLE
     typedef FBTtype**          Strcs;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
-    typedef skArray<SKsize>    NameB;
-    typedef skArray<ftStruct*> OffsM;
+    typedef skArray<SKsize>    NameHash;
+    typedef skArray<ftStruct*> Structures;
 
     typedef skHashTable<ftCharHashKey, ftType> TypeFinder;
 
@@ -65,12 +65,10 @@ public:
     static const ftType INVALID_TYPE;
 
 public:
-    ftBinTables();
-    ftBinTables(void* ptr, FBTsize len, FBTuint8 ptrSize);
-    ~ftBinTables();
+    ftTables();
+    ~ftTables();
 
-    bool read(bool swap);
-    bool read(const void* ptr, const FBTsize& len, bool swap);
+    bool read(const void* ptr, const FBTsize& len, int flags);
 
     FBTuint32     findTypeId(const ftCharHashKey& cp);
     ftCharHashKey getStructHashByType(const FBTuint16& type);
@@ -81,16 +79,14 @@ public:
 
 
 
-    inline OffsM::Iterator getOffsetIterator()
+    inline Structures::Iterator getStructIterator()
     {
         return m_structures.iterator();
     }
 
-    OffsM::PointerType getOffsetPtr();
-    OffsM::SizeType    getOffsetCount();
 
     // Access to the size of a pointer when it was saved in the table.
-    // Which this is cheating a bit here, it depends on the correct flag
+    // This is cheating a bit here, it depends on the correct flag
     // being set when loaded it's not actually being computed.
     inline FBTuint8 getSizeofPointer()
     {
@@ -99,102 +95,92 @@ public:
 
     inline bool isValidType(const FBTuint32& typeidx) const
     {
-        return typeidx < m_strcNr && typeidx < m_structures.size();
+        return typeidx < m_strcCount && typeidx < m_structures.size();
     }
 
     ftStruct* findStructByName(const ftCharHashKey& kvp);
     ftStruct* findStructByType(const FBTuint16& type);
     bool      isLinkedToMemory(const FBTuint16& type);
 
-
-
-    // Direct access to the table
-
     inline FBTuint32 getNumberOfNames() const
     {
-        return m_nameNr;
+        return m_nameCount;
     }
 
     inline const ftName& getNameAt(FBTuint32 idx) const
     {
-        if (idx < m_nameNr)
-            return m_name[idx];
+        if (idx < m_nameCount)
+            return m_names[idx];
         return INVALID_NAME;
     }
 
     inline const char* getStringNameAt(FBTuint32 idx) const
     {
-        if (idx < m_nameNr)
-            return m_name[idx].m_name;
+        if (idx < m_nameCount)
+            return m_names[idx].m_name;
         return "";
     }
 
 
     inline FBTuint32 getNumberOfTypes() const
     {
-        return m_typeNr;
+        return m_typeCount;
     }
 
     inline const ftType& getTypeAt(FBTuint32 idx) const
     {
-        if (idx < m_typeNr)
-            return m_type[idx];
+        if (idx < m_typeCount)
+            return m_types[idx];
         return INVALID_TYPE;
     }
 
     inline char* getTypeNameAt(FBTuint32 idx) const
     {
-        if (idx < m_typeNr)
-            return m_type[idx].m_name;
+        if (idx < m_typeCount)
+            return m_types[idx].m_name;
         return nullptr;
     }
 
-
-
     inline FBTuint32 getNumberOfTypeLengths() const
     {
-        return m_typeNr;
+        return m_typeCount;
     }
 
     inline const FBTtype& getTypeLengthAt(FBTuint32 idx) const
     {
-        if (idx < m_typeNr)
-            return m_tlen[idx];
+        if (idx < m_typeCount)
+            return m_tlens[idx];
         return SK_NPOS16;
     }
 
     inline FBTuint32 getNumberOfStructs() const
     {
-        return m_strcNr;
+        return m_strcCount;
     }
 
     inline FBTtype* getStructAt(FBTuint32 idx) const
     {
-        if (idx < m_strcNr)
-            return m_strc[idx];
+        if (idx < m_strcCount)
+            return m_strcs[idx];
         return 0;
     }
-
 
 private:
 
     friend class ftStruct;
     friend class ftMember;
 
-    Names m_name;
-    Types m_type;
-    TypeL m_tlen;
-    Strcs m_strc;
-    NameB m_base;
+    Names m_names;
+    Types m_types;
+    TypeL m_tlens;
+    Strcs m_strcs;
 
-    FBTuint16 m_nameNr;
-    FBTuint16 m_typeNr;
-    FBTuint16 m_strcNr;
-    void*     m_block;
-    FBTsize   m_blockLen;
-    FBTuint16 m_firstStruct;
-
-    OffsM      m_structures;
+    NameHash   m_hashedNames;
+    FBTuint16  m_nameCount;
+    FBTuint16  m_typeCount;
+    FBTuint16  m_strcCount;
+    FBTuint16  m_firstStruct;
+    Structures m_structures;
     FBTuint8   m_ptrLength;
     TypeFinder m_typeFinder;
 

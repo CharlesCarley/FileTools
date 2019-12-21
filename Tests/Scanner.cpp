@@ -70,5 +70,23 @@ TEST_CASE("Basic Struct Test")
     EXPECT_EQ(tok, FT_TERM);
 
     tok = sc.lex(tp);
+    EXPECT_EQ(tok, FT_VOID);
+
+    tok = sc.lex(tp);
+    EXPECT_EQ(tok, FT_LPARN);
+
+    tok = sc.lex(tp);
+    EXPECT_EQ(tok, FT_POINTER);
+
+    tok = sc.lex(tp);
+    EXPECT_EQ(tok, FT_ID);
+
+    tok = sc.lex(tp);
+    EXPECT_EQ(tok, FT_RPARN);
+
+    tok = sc.lex(tp);
+    EXPECT_EQ(tok, FT_TERM);
+
+    tok = sc.lex(tp);
     EXPECT_EQ(tok, FT_RBRACKET);
 }

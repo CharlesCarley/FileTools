@@ -29,7 +29,7 @@
 #include "ftAtomic.h"
 #include "ftTypes.h"
 
-class ftBinTables;
+class ftTables;
 class ftStruct;
 class ftMember;
 
@@ -37,7 +37,7 @@ class ftMember;
 struct ftName
 {
     char*   m_name;
-    FBThash m_hashedName;
+    FBThash m_hash;
     int     m_ptrCount;
     int     m_numDimensions;
     int     m_isFunctionPointer;
@@ -45,27 +45,12 @@ struct ftName
     int     m_dimensions[FT_ARR_DIM_MAX];
 };
 
-
 struct ftType
 {
     char*     m_name;    // note: memory is in the main table.
-    FBThash   m_typeId;  // ftCharHashKey(typeName)
+    FBThash   m_hash;    // ftCharHashKey(typeName)
     FBTuint32 m_strcId;  // [0-NumberOfBuiltin] = SK_NPOS32
                          // (NumberOfBuiltin, NumberOfStructs]
-};
-
-
-
-union ftKey32 {
-    FBTint16 k16[2];
-    FBTint32 k32;
-};
-
-
-struct ftKey64
-{
-    FBThash m_type;
-    FBThash m_name;
 };
 
 class ftStruct
@@ -83,7 +68,7 @@ public:
     };
 
 public:
-    ftStruct(ftBinTables* parent);
+    ftStruct(ftTables* parent);
     ~ftStruct();
 
     // String type name
@@ -104,7 +89,7 @@ public:
     // Returns the base address as byte pointer of the nth block of base.
     FBTbyte* getBlock(void* base, SKsize n, const SKsize max);
 
-    inline ftBinTables* getParent()
+    inline ftTables* getParent()
     {
         return m_table;
     }
@@ -175,7 +160,7 @@ public:
 
 
 private:
-    friend class ftBinTables;
+    friend class ftTables;
     friend class ftMember;
 
     ftMember* createMember();
@@ -187,10 +172,9 @@ private:
     FBTint32     m_strcId;
     FBTint32     m_flag;
     Members      m_members;
-    ftBinTables* m_table;
+    ftTables* m_table;
     ftStruct*    m_link;
 };
-
 
 
 #endif  //_ftStruct_h_

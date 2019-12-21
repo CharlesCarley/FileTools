@@ -253,9 +253,9 @@ void ftCompiler::parseClass(int& TOK, ftToken& tp)
                             case FT_ID:
                                 cur.m_name = tp.getValue();
                                 break;
-                            case FT_LPARAN:
+                            case FT_LPARN:
                                 cur.m_isFunctionPointer = 1;
-                                cur.m_ptrCount++;
+                                cur.m_ptrCount = 0;
                                 cur.m_name = tp.getValue();
                                 break;
                             case FT_RPARN:

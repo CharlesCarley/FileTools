@@ -38,7 +38,7 @@ enum ftTokenID
     FT_LBRACE   = '[',
     FT_COLON    = ':',
     FT_RBRACE   = ']',
-    FT_LPARAN   = '(',
+    FT_LPARN   = '(',
     FT_RPARN    = ')',
     FT_LBRACKET = '{',
     FT_RBRACKET = '}',

@@ -43,7 +43,7 @@ TEST_CASE("ftAtomic ftCharHashKey")
             if (j != i)  // excluding the same idx
             {
                 const ftAtomicType& type2 = ftAtomicUtils::Types[j];
-                printf("CMP (0x%08X, 0x%08X)\n", type1.m_hash, type2.m_hash);
+                printf("ftAtomicType (0x%08X, 0x%08X)\n", type1.m_hash, type2.m_hash);
                 EXPECT_NE(type1.m_hash, type2.m_hash);
             }
         }

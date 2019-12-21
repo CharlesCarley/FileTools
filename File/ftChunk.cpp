@@ -23,11 +23,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include <stdio.h>
+
 #include "ftChunk.h"
+#include "ftEndianUtils.h"
 #include "ftFile.h"
 #include "ftLogger.h"
 #include "ftStreams.h"
-#include "ftEndianUtils.h"
 
 using namespace ftEndianUtils;
 
@@ -48,6 +50,62 @@ FBTsize ftChunkUtils::write(ftChunk* src, skStream* stream)
     size += stream->write((void*)src->m_old, src->m_len);
     return size;
 }
+
+
+
+FBTsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
+{
+    FBTsize bytesRead  = 0;
+    
+    if (FT_VOID8)
+    {
+        if (flags & ftFile::FH_VAR_BITS)
+        {
+            if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
+                return ftFile::FS_INV_READ;
+
+            bytesRead += Block32 - BlockScan;
+            stream->seek(Block32 - BlockScan, SEEK_CUR);
+        }
+        else
+        {
+            if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
+                return ftFile::FS_INV_READ;
+
+            bytesRead += BlockSize - BlockScan;
+            stream->seek(BlockSize - BlockScan, SEEK_CUR);
+        }
+    }
+    else
+    {
+        if (flags & ftFile::FH_VAR_BITS)
+        {
+            if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
+                return ftFile::FS_INV_READ;
+
+            bytesRead += Block64 - BlockScan;
+            stream->seek(Block64 - BlockScan, SEEK_CUR);
+        }
+        else
+        {
+            if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
+                return ftFile::FS_INV_READ;
+
+            bytesRead += BlockSize - BlockScan;
+            stream->seek(BlockSize - BlockScan, SEEK_CUR);
+        }
+    }
+
+    if (flags & ftFile::FH_ENDIAN_SWAP)
+    {
+        if ((dest->m_code & 0xFFFF) == 0)
+            dest->m_code >>= 16;
+
+        dest->m_len = swap32(dest->m_len);
+    }
+    return bytesRead;
+}
+
 
 
 FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
@@ -152,6 +210,3 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
     ::memcpy(dest, cpy, BlockSize);
     return bytesRead;
 }
-
-
-

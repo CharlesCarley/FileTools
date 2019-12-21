@@ -29,6 +29,13 @@
 #include "ftTypes.h"
 
 
+struct ftChunkScan
+{
+    FBTuint32 m_code;
+    FBTuint32 m_len;
+};
+
+
 
 struct ftChunk32
 {
@@ -84,6 +91,9 @@ struct ftMemoryChunk
     void*    m_mblock;
     FBTuint8 m_flag;
     FBTtype  m_newTypeId;
+
+    ftStruct* m_fstrc;
+    ftStruct* m_mstrc;
 };
 
 
@@ -95,9 +105,12 @@ struct ftChunkUtils
         BlockSize = sizeof(ftChunk),
         Block32   = sizeof(ftChunk32),
         Block64   = sizeof(ftChunk64),
+        BlockScan = sizeof(ftChunkScan),
     };
     static FBTsize read(ftChunk* dest, skStream* stream, int flags);
     static FBTsize write(ftChunk* src, skStream* stream);
+
+    static FBTsize scan(ftChunkScan* dest, skStream* stream, int flags);
 
     static const ftChunk BLANK_CHUNK;
 };

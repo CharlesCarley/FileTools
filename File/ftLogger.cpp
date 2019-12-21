@@ -108,12 +108,31 @@ void ftLogger::logF(const char *msg, ...)
 
 void ftLogger_writeSeperator()
 {
-    skHexPrint::writeColor(CS_GREY);
+    skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << setfill('-') << setw(FT_VOID8 ? 87 : 79) << '-';
     cout << setfill(' ') << endl;
     skHexPrint::writeColor(CS_WHITE);
 }
 
+void ftLogger_writeDivider()
+{
+    skHexPrint::writeColor(CS_LIGHT_GREY);
+    cout << setfill('-') << setw(FT_VOID8 ? 47 : 39) << '-';
+    cout << setfill(' ') << endl;
+    skHexPrint::writeColor(CS_WHITE);
+}
+
+
+
+void ftLogger::seperator()
+{
+    ftLogger_writeSeperator();
+}
+
+void ftLogger::divider()
+{
+    ftLogger_writeDivider();
+}
 
 void ftLogger::log(const ftChunk &chunk)
 {
@@ -121,24 +140,36 @@ void ftLogger::log(const ftChunk &chunk)
     char  buf[5];
     memcpy(buf, cp, 4);
     buf[4] = '\0';
+
     ftLogger_writeSeperator();
 
-
-    skHexPrint::writeColor(CS_LIGHT_GREY);
+    skHexPrint::writeColor(CS_DARKYELLOW);
     cout << "Chunk" << endl;
+    skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << "Code   : " << buf << endl;
-    cout << "Len    : " << chunk.m_len << endl;
-    cout << "Old    : " << chunk.m_old << endl;
-    cout << "TypeId : " << chunk.m_typeid << endl;
-    cout << "Count  : " << chunk.m_nr << endl;
+    cout << "Len    : " << dec << chunk.m_len << endl;
+    cout << "Old    : 0x" << hex << chunk.m_old << endl;
+    cout << "TypeId : " << dec << chunk.m_typeid << endl;
+    cout << "Count  : " << dec << chunk.m_nr << endl;
     skHexPrint::writeColor(CS_WHITE);
 }
 
 
+
 void ftLogger::log(void *ptr, FBTsize len)
 {
-    ftLogger_writeSeperator();
     skHexPrint::dumpHex((char *)ptr, 0, len, skHexPrint::PF_DEFAULT, -1);
+}
+
+
+void ftLogger::width(FBTsize w)
+{
+    cout << setw(w);
+}
+
+void ftLogger::newline()
+{
+    cout << endl;
 }
 
 
@@ -151,7 +182,6 @@ void ftLogger::log(ftStruct *strc)
     cout << "-----------------------" << endl;
 
     skHexPrint::writeColor(CS_WHITE);
-
     cout << "Type          : " << strc->getTypeIndex() << endl;
     cout << "Hash          : " << strc->getHashedType() << endl;
     cout << "Size In Bytes : " << strc->getSizeInBytes() << endl;
@@ -167,16 +197,76 @@ void ftLogger::log(ftMember *member)
     {
         ftLogger_writeSeperator();
         skHexPrint::writeColor(CS_GREEN);
-
         cout << "Struct        : " << parent->getName() << endl;
-        skHexPrint::writeColor(CS_LIGHT_GREY);
-        cout << "-----------------------" << endl;
-        skHexPrint::writeColor(CS_WHITE);
+        ftLogger_writeDivider();
 
         cout << "Type          : " << member->getType() << endl;
         cout << "Name          : " << member->getName() << endl;
         cout << "Pointer Count : " << member->getPointerCount() << endl;
         cout << "Array Size    : " << member->getArraySize() << endl;
     }
+}
 
+
+
+void ftLogger_logStructTable(ftStruct *strc)
+{
+    cout << "Struct        : " << strc->getName() << endl;
+    ftLogger_writeDivider();
+
+    int                         nr = 0;
+    ftStruct::Members::Iterator it = strc->getMemberIterator();
+    while (it.hasMoreElements())
+    {
+        ftMember *mbr = it.getNext();
+        cout << setw(10) << nr;
+        cout << setw(20) << mbr->getType();
+        cout << setw(20) << mbr->getName();
+        cout << endl;
+        ++nr;
+    }
+}
+
+
+
+void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
+{
+    int A = fstrc->getMemberCount();
+    int B = mstrc->getMemberCount();
+    int C = skMax(A, B);
+    int D = 0;
+
+    cout << setw(30) << ' ';
+    cout << fstrc->getName() << endl;
+    ftLogger_writeSeperator();
+    cout << left;
+    for (D = 0; D < C; ++D)
+    {
+        ftMember *fmbr = 0, *mmbr = 0;
+
+        if (D < A)
+            fmbr = fstrc->getMember(D);
+        if (D < B)
+            mmbr = mstrc->getMember(D);
+
+        if (fmbr != 0)
+        {
+            cout << setw(15) << fmbr->getType();
+            cout << setw(25) << fmbr->getName();
+        }
+        else
+            cout << setw(40) << "Missing";
+
+        if (mmbr != 0)
+        {
+            cout << setw(15) << mmbr->getType();
+            cout << setw(25) << mmbr->getName();
+        }
+        else
+            cout << setw(40) << "Missing";
+
+        cout << endl;
+    }
+    ftLogger_writeSeperator();
+    cout << endl;
 }

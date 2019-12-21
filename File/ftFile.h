@@ -39,10 +39,11 @@ class ftFile
 public:
     enum FileMagic
     {
-        FM_BIG_ENDIAN    = 'V',
-        FM_LITTLE_ENDIAN = 'v',
-        FM_32_BIT        = '_',
-        FM_64_BIT        = '-',
+        FM_BIG_ENDIAN    = 0x56,
+        FM_LITTLE_ENDIAN = 0x76,
+        FM_32_BIT        = 0x5F,
+        FM_64_BIT        = 0x2D,
+        HEADER_OFFSET    = 0x0C,
     };
 
     enum FileStatus
@@ -55,7 +56,7 @@ public:
         FS_INV_LENGTH,
         FS_INV_HEADER_STR,
         FS_FAILED,
-        FS_OK,  // should always be zero
+        FS_OK,              // should always be zero
     };
 
     enum ParseMode
@@ -78,7 +79,9 @@ public:
         LF_NONE         = 0,         // No logging
         LF_ONLY_ERR     = (1 << 0),  // Errors only (default)
         LF_READ_CHUNKS  = (1 << 1),
-        LF_WRITE_CHUNKS = (1 << 2)
+        LF_WRITE_CHUNKS = (1 << 2),
+        LF_WRITE_LINK   = (1 << 3),
+        LF_DIAGNOSTICS  = (1 << 4)
     };
 
     typedef skHashTable<ftPointerHashKey, ftMemoryChunk*> ChunkMap;
@@ -89,25 +92,26 @@ private:
     const char*       m_uhid;
     ftFixedString<12> m_header;
     char*             m_curFile;
-    void*             m_fileData;
+
 
 protected:
     int          m_version, m_fileVersion;
     MemoryChunks m_chunks;
     ChunkMap     m_map;
-    ftBinTables* m_memory;
-    ftBinTables* m_file;
+    ftTables*    m_memory;
+    ftTables*    m_file;
+    void*        m_fileTableData;
+
 
 public:
     ftFile(const char* uid);
     virtual ~ftFile();
 
-
     int load(const char* path, int mode = PM_UNCOMPRESSED);
     int load(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
     int save(const char* path, const int mode = PM_UNCOMPRESSED);
 
-    ftBinTables* getMemoryTable(void);
+    ftTables* getMemoryTable(void);
 
     inline const ftFixedString<12>& getHeader(void) const
     {
@@ -124,7 +128,7 @@ public:
         return m_curFile;
     }
 
-    inline ftBinTables* getFileTable(void)
+    inline ftTables* getFileTable(void)
     {
         return m_file;
     }
@@ -166,7 +170,7 @@ public:
 protected:
     bool isValidWriteData(void* writeData, FBTsize len);
 
-    int initializeTables(ftBinTables* tables);
+    int initializeTables(ftTables* tables);
     int initializeMemory(void);
 
     virtual bool skip(const FBThash& id)
@@ -190,21 +194,15 @@ private:
                         FBTuint32 typeIndex,
                         FBTsize   len,
                         void*     writeData);
-
-
-    void handleTable(skStream* stream, void* block, const ftChunk& chunk, int& status);
     void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
 
 
     void clearStorage(void);
-    int  allocNewBlocks(void);
     int  parseHeader(skStream* stream);
     int  parseStreamImpl(skStream* stream);
-    int  crossLink(void);
+    int  preScan(skStream* stream);
+    int  rebuildBlocks();
 
-
-    int  link(void);
-    void castMembers(ftMemoryChunk* chunk, ftStruct* cur);
     void castMember(ftMember* dst, FBTsize*& dstPtr, ftMember* src, FBTsize*& srcPtr);
 
     void castMemberPointer(
@@ -220,26 +218,24 @@ private:
         FBTsize*& srcPtr);
 
     void castPointerToPointer(
-        ftMember* dst,
+        ftMember*   dst,
         FBTsize*& dstPtr,
-        ftMember* src,
+        ftMember*   src,
         FBTsize*& srcPtr);
 
 
     void castMemberVariable(
-        ftMember* dst,
+        ftMember*   dst,
         FBTsize*& dstPtr,
-        ftMember* src,
+        ftMember*   src,
         FBTsize*& srcPtr);
 
-    ftStruct* findInTable(ftStruct* fileStruct, ftBinTables* sourceTable, ftBinTables* findInTable);
+    ftStruct* findInTable(ftStruct* fileStruct, ftTables* sourceTable, ftTables* findInTable);
 
     ftStruct* findInMemoryTable(ftStruct* fileStruct);
     ftStruct* findInFileTable(ftStruct* memoryStruct);
     ftMember* findInFileTable(ftStruct* fileStruct,
-                              ftMember* memoryMember,
-                              bool      isPointer,
-                              bool&     needCast);
+                              ftMember* memoryMember);
 };
 
 

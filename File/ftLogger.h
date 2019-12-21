@@ -35,10 +35,16 @@ public:
     static void log(int status, const char *msg, ...);
     static void logF(const char *msg, ...);
 
+    static void seperator();
+    static void divider();
+    static void newline();
+    static void width(FBTsize w);
+
     static void log(const ftChunk &chunk);
     static void log(void *ptr, FBTsize len);
     static void log(ftStruct *strc);
     static void log(ftMember *strc);
+    static void log(ftStruct *fstrc, ftStruct *mstrc);
 };
 
 

@@ -11171,7 +11171,7 @@ namespace Floating {
         ret << "])";
 
         return ret.str();
-        //return "is within " + Catch::to_string(m_ulps) + " ULPs of " + ::Catch::Detail::stringify(m_target) + ((m_type == FloatingPointKind::Float)? "f" : "");
+        //return "is within " + Catch::to_string(m_ulps) + " ULPs of " + ::Catch::Detail::stringify(m_target) + ((m_types == FloatingPointKind::Float)? "f" : "");
     }
 
 }// namespace Floating

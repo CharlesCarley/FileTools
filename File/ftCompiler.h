@@ -156,7 +156,7 @@ public:
     void writeFile(const ftId& id, const ftPath& path);
     void writeStream(class skStream* fp);
 
-    // ftBinTables* write(void);
+    // ftTables* write(void);
 
 private:
     int  parse(void);

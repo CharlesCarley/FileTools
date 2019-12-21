@@ -53,8 +53,8 @@ const char* ftMember::getName()
 {
     if (m_parent && m_parent->m_table)
     {
-        if (m_name < m_parent->m_table->m_nameNr)
-            return m_parent->m_table->m_name[m_name].m_name;
+        if (m_name < m_parent->m_table->m_nameCount)
+            return m_parent->m_table->m_names[m_name].m_name;
     }
     return "";
 }
@@ -64,8 +64,8 @@ const char* ftMember::getType()
 {
     if (m_parent && m_parent->m_table)
     {
-        if (m_type < m_parent->m_table->m_typeNr)
-            return m_parent->m_table->m_type[m_type].m_name;
+        if (m_type < m_parent->m_table->m_typeCount)
+            return m_parent->m_table->m_types[m_type].m_name;
     }
     return "";
 }
@@ -94,8 +94,8 @@ bool ftMember::isArray()
 {
     if (m_parent && m_parent->m_table)
     {
-        if (m_name < m_parent->m_table->m_nameNr)
-            return m_parent->m_table->m_name[m_name].m_arraySize > 1;
+        if (m_name < m_parent->m_table->m_nameCount)
+            return m_parent->m_table->m_names[m_name].m_arraySize > 1;
     }
     return false;
 }
@@ -104,8 +104,8 @@ int ftMember::getArraySize()
 {
     if (m_parent && m_parent->m_table)
     {
-        if (m_name < m_parent->m_table->m_nameNr)
-            return m_parent->m_table->m_name[m_name].m_arraySize;
+        if (m_name < m_parent->m_table->m_nameCount)
+            return m_parent->m_table->m_names[m_name].m_arraySize;
     }
     return 0;
 }
@@ -128,8 +128,8 @@ int ftMember::getPointerCount()
 {
     if (m_parent && m_parent->m_table)
     {
-        if (m_name < m_parent->m_table->m_nameNr)
-            return m_parent->m_table->m_name[m_name].m_ptrCount;
+        if (m_name < m_parent->m_table->m_nameCount)
+            return m_parent->m_table->m_names[m_name].m_ptrCount;
     }
     return 0;
 }
@@ -141,8 +141,8 @@ void ftMember::setNameIndex(const FBTuint16& idx)
     m_name = idx;
     if (m_parent && m_parent->m_table)
     {
-        if (m_name < (FBTuint16)m_parent->m_table->m_base.size())
-            m_hashedName = m_parent->m_table->m_base.at(m_name);
+        if (m_name < (FBTuint16)m_parent->m_table->m_hashedNames.size())
+            m_hashedName = m_parent->m_table->m_hashedNames[m_name];
     }
 }
 
@@ -152,25 +152,23 @@ void ftMember::setTypeIndex(const FBTuint16& idx)
 
     if (m_parent && m_parent->m_table)
     {
-        if (m_name < (FBTint16)m_parent->m_table->m_base.size())
-            m_hashedType = m_parent->m_table->m_type[m_type].m_typeId;
+        if (m_type < (FBTint16)m_parent->m_table->m_typeCount)
+            m_hashedType = m_parent->m_table->m_types[m_type].m_hash;
     }
 }
+
 
 bool ftMember::compare(ftMember* rhs)
 {
     if (!rhs)
         return false;
 
-    bool result;
-    result = m_recursiveDepth <= rhs->m_recursiveDepth;
-    if (result)
-    {
-        result = m_hashedName == rhs->m_hashedName;
-        if (result)
-            result = m_hashedType == rhs->m_hashedType;
-    }
-    return result;
+    return m_hashedType == rhs->m_hashedType &&
+           m_hashedName == rhs->m_hashedName;
+           
+
+    //return strcmp(getType(), rhs->getType()) == 0 &&
+    //       strcmp(getName(), rhs->getName()) == 0;
 }
 
 void* ftMember::getChunk()
@@ -181,6 +179,6 @@ void* ftMember::getChunk()
 FBTsize* ftMember::jumpToOffset(void* base)
 {
     if (m_offset < m_parent->m_sizeInBytes)
-        return reinterpret_cast<FBTsize*>(reinterpret_cast<FBTbyte*>(base) + m_offset);
+        return (FBTsize*)((FBTbyte*)(base) + m_offset);
     return nullptr;
 }

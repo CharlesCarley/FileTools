@@ -23,6 +23,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include <iostream>
 #include "Templates.h"
 #include "Utils/skHexPrint.h"
 #include "Utils/skMemoryStream.h"
@@ -30,6 +31,7 @@
 #include "ftAtomic.h"
 #include "ftCompiler.h"
 #include "ftLogger.h"
+#include "ftMember.h"
 #include "ftScanner.h"
 
 
@@ -55,7 +57,7 @@ TEST_CASE("CompilerTest")
     ftLogger::log(stream.ptr(), stream.size());
 
 
-    ftBinTables tbl;
+    ftTables tbl;
     tbl.read(stream.ptr(), stream.size(), false);
 
     FBTuint32 nr, i, j, mnr;
@@ -69,7 +71,7 @@ TEST_CASE("CompilerTest")
         const ftType& type = tbl.getTypeAt(i);
 
         EXPECT_NE(nullptr, type.m_name);
-        EXPECT_NE(SK_NPOS, type.m_typeId);
+        EXPECT_NE(SK_NPOS, type.m_hash);
 
         // builtin types do not point to a structure
         if (i < compiler.getNumberOfBuiltinTypes())
@@ -90,30 +92,54 @@ TEST_CASE("CompilerTest")
         EXPECT_NE(nullptr, name.m_name);
 
         ftCharHashKey hk(name.m_name);
-        EXPECT_EQ(name.m_hashedName, hk.hash());
+        EXPECT_EQ(name.m_hash, hk.hash());
         ++i;
     }
+}
 
 
-    nr = tbl.getOffsetCount();
-    i  = 0;
-    while (i < nr)
+using namespace std;
+
+TEST_CASE("RebuildTest")
+{
+    int        status;
+    ftCompiler compiler;
+    status = compiler.parseBuffer("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
+    EXPECT_GE(status, 0);
+
+    status = compiler.buildTypes();
+
+    EXPECT_EQ(LNK_OK, status);
+    EXPECT_EQ(compiler.getNumberOfBuiltinTypes(), ftAtomicUtils::NumberOfTypes);
+
+
+    compiler.setWriteMode(ftCompiler::WRITE_STREAM);
+    skMemoryStream stream;
+    compiler.writeStream(&stream);
+    ftLogger::log(stream.ptr(), stream.size());
+
+
+    ftTables tbl;
+    tbl.read(stream.ptr(), stream.size(), false);
+
+
+    ftTables::Structures::Iterator it = tbl.getStructIterator();
+    while (it.hasMoreElements())
     {
-        ftStruct* src = tbl.getOffsetPtr()[i];
-        mnr           = src->getMemberCount();
+        ftStruct* strc = it.getNext();
 
-        ftLogger::log(src);
 
-        j = 0;
-        while (j < mnr)
+        cout << "struct " << strc->getName() << endl;
+        cout << "{" << endl;
+
+
+        ftStruct::Members::Iterator mit = strc->getMemberIterator();
+        while (mit.hasMoreElements())
         {
-
-
-            //ftLogger::log(&tbl, mbr);
-
-            ++j;
+            ftMember* mbr = mit.getNext();
+            cout << "    ";
+            cout << mbr->getType() << " " << mbr->getName() << endl;
         }
-
-        ++i;
+        cout << "}" << endl;
     }
 }

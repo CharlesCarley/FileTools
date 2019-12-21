@@ -77,7 +77,7 @@ struct StructTest6
 };
 
 
-struct StructTest6
+struct StructTest7
 {
     // multi dimensional  -> FT_ARR_DIM_MAX
     double multi[4][4][4];

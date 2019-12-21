@@ -436,7 +436,7 @@ void ftScanner::makeLeftParen(ftToken& ct)
     ftToken::String& ref = ct.getRef();
     ref.clear();
     ref.push_back('(');
-    ct.setToken(FT_LPARAN);
+    ct.setToken(FT_LPARN);
     m_pos++;
 }
 
@@ -447,6 +447,13 @@ void ftScanner::makeRightParen(ftToken& ct)
     ref.push_back(')');
     ct.setToken(FT_RPARN);
     m_pos++;
+
+    // Scan till the first statement terminator.
+    // If this ever needs to serialize the parameter list,
+    // then copy this to an extra storage string in the token.
+    // ... For now just skip over it.
+    while (m_pos < m_len && m_buffer[m_pos] != ';')
+        ++m_pos;
 }
 
 void ftScanner::makeDigit(ftToken& ct)

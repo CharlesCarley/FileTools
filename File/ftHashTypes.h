@@ -154,7 +154,9 @@ public:
         if (m_hash != SK_NPOS)
             return m_hash;
 
-        m_hash = skHash((void*)m_key);
+        //std::hash<void*> hk;
+        //m_hash = hk((void*)m_key);
+        m_hash = skHash(m_key);
         return m_hash;
     }
 

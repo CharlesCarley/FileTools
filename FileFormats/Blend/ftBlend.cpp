@@ -104,17 +104,14 @@ int ftBlend::notifyDataRead(void* p, const ftChunk& id)
 
 int ftBlend::serializeData(skStream* stream)
 {
-    ftBinTables::OffsM::PointerType md = m_memory->getOffsetPtr();
-
     for (ftMemoryChunk* node = (ftMemoryChunk*)m_chunks.first; node; node = node->m_next)
     {
-        if (node->m_newTypeId > m_memory->getNumberOfStructs())
+        if (node->m_newTypeId > m_memory->getNumberOfTypes())
             continue;
         if (!node->m_mblock)
             continue;
 
         void* wd = node->m_mblock;
-
         ftChunk ch;
         ch.m_code   = node->m_chunk.m_code;
         ch.m_nr     = node->m_chunk.m_nr;
