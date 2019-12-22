@@ -144,6 +144,16 @@ public:
 
 #define ftFixedString skFixedString
 
+typedef skFixedString<12> ftHeader;
+
+
+typedef union FBTByteInteger {
+    FBTuint64 m_ptr;
+    FBTuint32 m_int[2];
+    FBTuint16 m_short[4];
+    FBTuint8  m_byte[8];
+} FBTByteInteger;
+
 class skStream;
 class ftMemoryStream;
 class ftTables;

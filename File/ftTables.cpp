@@ -53,7 +53,7 @@ const ftType ftTables::INVALID_TYPE = {
 
 
 
-ftTables::ftTables() :
+ftTables::ftTables(int pointerLength) :
     m_names(0),
     m_types(0),
     m_tlens(0),
@@ -61,9 +61,12 @@ ftTables::ftTables() :
     m_nameCount(0),
     m_typeCount(0),
     m_strcCount(0),
-    m_ptrLength(FT_VOIDP),
-    m_firstStruct(0)
+    m_ptrLength(0),
+    m_firstStruct(0),
+    m_typeFinder()
 {
+    // This needs to be calculated from the table.
+    m_ptrLength = pointerLength;
 }
 
 
@@ -102,246 +105,248 @@ ftStruct* ftTables::findStructByName(const ftCharHashKey& kvp)
     return nullptr;
 }
 
-bool ftTables::read(const void* ptr, const FBTsize& len, int flags)
+
+int ftTables::allocateTable(void**  destination,
+                            FBTsize numberOfEntries,
+                            FBTsize sizeOfEntry,
+                            int     fileFlags)
 {
-    FBTuint32 *ip = 0, i, j, k, nl;
-    FBTtype*   tp = 0;
-
-    if (!ptr)
-        return false;
-
-    bool swap   = (flags & ftFile::FH_ENDIAN_SWAP) != 0;
-    m_ptrLength = (flags & ftFile::FH_CHUNK_64) != 0 ? 8 : 4;
-
-
-    char* cp = (char*)ptr;
-    if (!ftCharNEq(cp, ftIdNames::FT_SDNA, 4))
+    if (!destination)
     {
-        ftLogger::logF("Table is missing the SDNA code.");
-        return false;
+        if (fileFlags != ftFile::LF_NONE)
+            ftLogger::logF("Invalid storage pointer.");
+        return ftFile::RS_LIMIT_REACHED;
     }
 
-    cp += 4;
-    if (!ftCharNEq(cp, ftIdNames::FT_NAME, 4))
+    if (numberOfEntries > FT_MAX_TABLE || numberOfEntries <= 0)
     {
-        ftLogger::logF("Table is missing the NAME code.");
-        return false;
-    }
-    cp += 4;
-    FBTintPtr opad;
-
-
-    ip = (FBTuint32*)cp;
-    nl = *ip++;
-    cp = (char*)ip;
-
-    if (swap)
-        nl = swap32(nl);
-
-
-    if (nl > FT_MAX_TABLE)
-    {
-        ftLogger::logF("Table max names exceeded(%d)", FT_MAX_TABLE);
-        return false;
+        if (fileFlags != ftFile::LF_NONE)
+        {
+            ftLogger::logF(
+                "Invalid table entry count(%d): "
+                "valid count should be [1, %d]",
+                numberOfEntries,
+                FT_MAX_TABLE);
+        }
+        return ftFile::RS_LIMIT_REACHED;
     }
     else
-        m_names = (Names)::malloc((nl * sizeof(ftName)) + 1);
-
-
-
-    i = 0;
-    while (i < nl && i < FT_MAX_TABLE)
     {
-        ftName name = {cp, ftCharHashKey(cp).hash(), 0, 0, 0, 1};
-
-        ftFixedString<64> bn;
-
-        // re-lex
-        while (*cp)
+        FBTsize allocLen = numberOfEntries * sizeOfEntry;
+        if (allocLen > 0 && allocLen < SK_NPOS32)
         {
-            switch (*cp)
+            *destination = (Names)::malloc(allocLen);
+            if (!(*destination))
             {
-            default:
-            {
-                bn.push_back(*cp);
-                ++cp;
-                break;
+                if (fileFlags != ftFile::LF_NONE)
+                    ftLogger::logF("Failed to allocate table.");
+                return ftFile::RS_BAD_ALLOC;
             }
-            case ')':
-            case ']':
-                ++cp;
-                break;
-            case '(':
+            else
             {
-                ++cp;
-                name.m_isFunctionPointer = 1;
-                break;
-            }
-            case '*':
-            {
-                ++cp;
-                name.m_ptrCount++;
-                break;
-            }
-            case '[':
-            {
-                while ((*++cp) != ']')
-                    name.m_dimensions[name.m_numDimensions] = (name.m_dimensions[name.m_numDimensions] * 10) + ((*cp) - '0');
-                name.m_arraySize *= name.m_dimensions[name.m_numDimensions++];
-            }
-            break;
+                // This doesn't explicitly need to be zeroed. 
+                // The memory will be initialized after this 
+                // call. Therefore, This should only used be to 
+                // weed out any possible bugs.
+                memset(*destination, 0, allocLen);
             }
         }
-        ++cp;
-        m_names[m_nameCount++] = name;
-        m_hashedNames.push_back(name.m_hash);
-        ++i;
+        else
+        {
+            if (fileFlags != ftFile::LF_NONE)
+            {
+                ftLogger::logF(
+                    "The sizeOfEntry(%d) parameter caused the "
+                    "allocation limit to be exceeded (%d)",
+                    sizeOfEntry,
+                    allocLen);
+            }
+            return ftFile::RS_BAD_ALLOC;
+        }
     }
+    return ftFile::FS_OK;
+}
 
 
-    opad = (FBTintPtr)cp;
-    opad = ((opad + 3) & ~3) - opad;
-    while (opad--)
-        cp++;
+int ftTables::read(const void* ptr, const FBTsize& len, int headerFlags, int fileFlags)
+{
+    FBTuint32* ip = 0;
+    FBTtype*   tp = 0;
+    FBTsize    allocLen;
+    FBTintPtr  opad;
+    FBTuint32  count, i, j, k;
 
+    int status = ftFile::FS_OK;
 
-    if (!ftCharNEq(cp, ftIdNames::FT_TYPE, 4))
+    if (!ptr)
+        return ftFile::RS_INVALID_PTR;
+
+    bool swap = (headerFlags & ftFile::FH_ENDIAN_SWAP) != 0;
+
+    // save the size of the file ptr size
+    // TODO For correctness this needs to use an extracted
+    //      structure from the table to compute the real size
+    bool  diagnostics = (fileFlags & ftFile::LF_DIAGNOSTICS) != 0;
+
+    char* cp = (char*)ptr;
+
+    ///////////////////////////////////////////
+    if (!ftCharNEq(cp, ftIdNames::FT_SDNA, 4))
     {
-        ftLogger::logF("Table is missing the TYPE code.");
-        return false;
-    }
-
-    cp += 4;
-
-    ip = (FBTuint32*)cp;
-    nl = *ip++;
-    cp = (char*)ip;
-
-    if (swap)
-        nl = swap32(nl);
-
-    if (nl > FT_MAX_TABLE)
-    {
-        ftLogger::logF("Table max names exceeded(%d)", FT_MAX_TABLE);
-        return false;
+        if (fileFlags != ftFile::LF_NONE)
+            ftLogger::logF("Table is missing the SDNA code.");
+        return ftFile::RS_INVALID_CODE;
     }
     else
-    {
-        m_types = (Types)::malloc((nl * sizeof(ftType) + 1));
-        m_tlens = (TypeL)::malloc((nl * sizeof(FBTtype) + 1));
-    }
+        cp += 4;
 
-    i = 0;
-    while (i < nl)
+    ///////////////////////////////////////////
+    if (!ftCharNEq(cp, ftIdNames::FT_NAME, 4))
     {
-        ftType typeData        = {cp, ftCharHashKey(cp).hash(), SK_NPOS32};
-        m_types[m_typeCount++] = typeData;
-        while (*cp)
-            ++cp;
+        if (fileFlags != ftFile::LF_NONE)
+            ftLogger::logF("Table is missing the NAME code.");
+        return ftFile::RS_INVALID_CODE;
+    }
+    else
+        cp += 4;
+
+    ip    = (FBTuint32*)cp;
+    count = (*ip++);
+    cp    = (char*)ip;
+    if (swap)
+        count = swap32(count);
+
+    status = allocateTable((void**)&m_names,
+                           count,
+                           sizeof(ftName),
+                           fileFlags);
+    if (status != ftFile::FS_OK)
+        return status;
+
+    ftName name;
+    m_hashedNames.reserve(count);
+    for (m_nameCount = 0; m_nameCount < count; ++m_nameCount)
+    {
+        convertName(name, cp);
         ++cp;
-        ++i;
+
+        m_names[m_nameCount] = name;
+        m_hashedNames.push_back(name.m_hash);
     }
 
     opad = (FBTintPtr)cp;
     opad = ((opad + 3) & ~3) - opad;
     while (opad--)
         cp++;
-    if (!ftCharNEq(cp, ftIdNames::FT_TLEN, 4))
+
+
+    ///////////////////////////////////////////
+    if (!ftCharNEq(cp, ftIdNames::FT_TYPE, 4))
     {
-        ftLogger::logF("Table is missing the TLEN code.");
-        return false;
+        if (fileFlags != ftFile::LF_NONE)
+            ftLogger::logF("Table is missing the TYPE code.");
+        return ftFile::RS_INVALID_CODE;
+    }
+    else
+        cp += 4;
+
+    ip    = (FBTuint32*)cp;
+    count = (*ip++);
+    cp    = (char*)ip;
+    if (swap)
+        count = swap32(count);
+
+    status = allocateTable((void**)&m_types,
+                           count,
+                           sizeof(ftType),
+                           fileFlags);
+    if (status != ftFile::FS_OK)
+        return status;
+
+    for (m_typeCount = 0; m_typeCount < count; ++m_typeCount, ++cp)
+    {
+        m_types[m_typeCount].m_name   = cp;
+        m_types[m_typeCount].m_hash   = skHash(cp);
+        m_types[m_typeCount].m_strcId = SK_NPOS32;
+
+        while (*cp)
+            ++cp;
     }
 
-    cp += 4;
-    tp = (FBTtype*)cp;
+    opad = (FBTintPtr)cp;
+    opad = ((opad + 3) & ~3) - opad;
+    while (opad--)
+        cp++;
 
-    i = 0;
-    while (i < m_typeCount && i < SK_NPOS16)
+    ///////////////////////////////////////////
+    if (!ftCharNEq(cp, ftIdNames::FT_TLEN, 4))
     {
-        FBTtype& type = m_tlens[i];
-        type          = (*tp++);
+        if (fileFlags != ftFile::LF_NONE)
+            ftLogger::logF("Table is missing the TLEN code.");
+        return ftFile::RS_INVALID_CODE;
+    }
+    else
+        cp += 4;
 
+    // the count is the same as the type table
+    status = allocateTable((void**)&m_tlens,
+                           count,
+                           sizeof(FBTtype),
+                           fileFlags);
+    if (status != ftFile::FS_OK)
+        return status;
+
+    tp = (FBTtype*)cp;
+    for (i = 0; i < m_typeCount; ++i)
+    {
+        m_tlens[i] = (*tp++);
         if (swap)
             m_tlens[i] = swap16(m_tlens[i]);
-        ++i;
     }
 
     if (m_typeCount & 1)
         ++tp;
 
     cp = (char*)tp;
+
+
+    ///////////////////////////////////////////
     if (!ftCharNEq(cp, ftIdNames::FT_STRC, 4))
     {
-        ftLogger::logF("Table is missing the STRC code.");
-        return false;
-    }
-
-    cp += 4;
-
-    ip = (FBTuint32*)cp;
-    nl = *ip++;
-    tp = (FBTtype*)ip;
-
-    if (swap)
-        nl = swap32(nl);
-
-    if (nl > FT_MAX_TABLE)
-    {
-        ftLogger::logF("Max name table size exceeded(%d).", FT_MAX_TABLE);
-        return false;
+        if (fileFlags != ftFile::LF_NONE)
+            ftLogger::logF("Table is missing the STRC code.");
+        return ftFile::RS_INVALID_CODE;
     }
     else
-        m_strcs = (Strcs)::malloc(nl * FT_MAX_MEMBERS * sizeof(FBTtype) + 1);
+        cp += 4;
 
+    ip    = (FBTuint32*)cp;
+    count = (*ip++);
+    tp    = (FBTtype*)ip;
+    if (swap)
+        count = swap32(count);
 
+    status = allocateTable((void**)&m_strcs,
+                           count,
+                           sizeof(FBTtype) * FT_MAX_MEMBERS,
+                           fileFlags);
+    if (status != ftFile::FS_OK)
+        return status;
+
+    // Find out why there are misaligned types!
     m_typeFinder.reserve(m_typeCount);
-
-    i = 0;
-    while (i < nl)
+    for (m_strcCount = 0; m_strcCount < count && status == ftFile::FS_OK;
+         ++m_strcCount)
     {
-        m_strcs[m_strcCount++] = tp;
-        if (swap)
-        {
-            tp[0] = swap16(tp[0]);
-            tp[1] = swap16(tp[1]);
-
-            m_types[tp[0]].m_strcId = m_strcCount - 1;
-            m_typeFinder.insert(m_types[tp[0]].m_name, m_types[tp[0]]);
-
-            k = tp[1];
-            if (k < FT_MAX_MEMBERS)
-            {
-                j = 0;
-                tp += 2;
-                while (j < k)
-                {
-                    tp[0] = swap16(tp[0]);
-                    tp[1] = swap16(tp[1]);
-
-                    ++j;
-                    tp += 2;
-                }
-            }
-            else
-                ftLogger::logF("Max members exceeded(%d).", FT_MAX_MEMBERS);
-        }
-        else
-        {
-            if (tp[1] < FT_MAX_MEMBERS)
-            {
-                m_types[tp[0]].m_strcId = m_strcCount - 1;
-                m_typeFinder.insert(m_types[tp[0]].m_name, m_types[tp[0]]);
-
-                tp += (2 * tp[1]) + 2;
-            }
-            else
-                ftLogger::logF("Max members exceeded(%d).", FT_MAX_MEMBERS);
-        }
-        ++i;
+        m_strcs[m_strcCount] = tp;
+        status = buildStruct(tp, m_strcCount, headerFlags, fileFlags);
     }
 
-    if (m_strcCount == 0)
+    ///////////////////////////////////////////
+    if (status != ftFile::FS_OK)
     {
+        m_typeFinder.clear();
+
         ::free(m_names);
         ::free(m_types);
         ::free(m_tlens);
@@ -351,12 +356,193 @@ bool ftTables::read(const void* ptr, const FBTsize& len, int flags)
         m_types = 0;
         m_tlens = 0;
         m_strcs = 0;
+    }
+    else
+        status = compile(fileFlags);
+    return status;
+}
 
-        return false;
+void ftTables::convertName(ftName& dest, char*& cp)
+{
+    dest             = INVALID_NAME;
+    dest.m_arraySize = 1;
+
+    // All of the names are a reference to the block of data
+    // that houses the tables. This is storing the address
+    // of the current name's location in the buffer
+    // of null terminated strings.
+    dest.m_name = cp;
+    dest.m_hash = skHash(dest.m_name);
+
+    int i = 0;
+
+    while (*cp)
+    {
+        int ival = 0;
+
+        switch (*cp)
+        {
+        default:
+            ++cp;
+            break;
+        case ')':
+        case ']':
+            ++cp;
+            break;
+        case '(':
+            ++cp;
+            dest.m_isFunctionPointer = 1;
+            break;
+        case '*':
+            ++cp;
+            dest.m_ptrCount++;
+            break;
+        case '[':
+            while ((*++cp) != ']')
+            {
+                if ((*cp) >= ' ' && (*cp) <= '9')
+                    ival = (ival * 10) + ((*cp) - '0');
+            }
+            dest.m_dimensions[i] = ival;
+            dest.m_arraySize *= dest.m_dimensions[i++];
+            break;
+        }
+    }
+    dest.m_numDimensions = i;
+}
+
+
+
+int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, int fileFlags)
+{
+    int j, k, status = ftFile::FS_OK;
+
+    if (!m_strcs || !strc)
+    {
+        if (fileFlags != ftFile::LF_NONE)
+            ftLogger::logF("Invalid structure table");
+        return ftFile::RS_BAD_ALLOC;
     }
 
-    compile();
-    return true;
+    if (headerFlags & ftFile::FH_ENDIAN_SWAP)
+    {
+        strc[0] = swap16(strc[0]);
+        strc[1] = swap16(strc[1]);
+
+        status = isValidTypeName(strc[0], strc[1], fileFlags);
+        if (status == ftFile::FS_OK)
+        {
+            // Reassign the current id to the type
+            // so it can be referenced later.
+            m_types[strc[0]].m_strcId = current;
+
+            if (!m_typeFinder.insert(m_types[strc[0]].m_name, m_types[strc[0]]))
+            {
+                if (fileFlags != ftFile::LF_NONE)
+                    ftLogger::logF("Failed to insert the type name for structure(%d).", strc[0]);
+                status = ftFile::RS_LIMIT_REACHED;
+            }
+            else
+            {
+                k = strc[1];
+                if (k < FT_MAX_MEMBERS)
+                {
+                    j = 0;
+                    strc += 2;
+                    while (j < k && status == ftFile::FS_OK)
+                    {
+                        strc[0] = swap16(strc[0]);
+                        strc[1] = swap16(strc[1]);
+
+                        status = isValidTypeName(strc[0], strc[1], fileFlags);
+                        if (status == ftFile::FS_OK)
+                        {
+                            ++j;
+                            strc += 2;
+                        }
+                    }
+                }
+                else
+                {
+                    if (fileFlags != ftFile::LF_NONE)
+                        ftLogger::logF("Max members exceeded(%d).", FT_MAX_MEMBERS);
+                    status = ftFile::RS_LIMIT_REACHED;
+                }
+            }
+        }
+    }
+    else
+    {
+        if (strc[1] < FT_MAX_MEMBERS)
+        {
+            // Reassign the current id to the type
+            // so it can be referenced later.
+            m_types[strc[0]].m_strcId = current;
+
+            if (!m_typeFinder.insert(m_types[strc[0]].m_name, m_types[strc[0]]))
+            {
+                if (fileFlags != ftFile::LF_NONE)
+                    ftLogger::logF("Failed to insert the type name for structure(%d).", strc[0]);
+                status = ftFile::RS_LIMIT_REACHED;
+            }
+            else if (fileFlags & ftFile::LF_DO_CHECKS)
+            {
+                // Check all members for consistent values.
+
+                k = strc[1];
+                j = 0;
+                strc += 2;
+                while (j < k && status == ftFile::FS_OK)
+                {
+                    status = isValidTypeName(strc[0], strc[1], fileFlags);
+                    if (status == ftFile::FS_OK)
+                    {
+                        ++j;
+                        strc += 2;
+                    }
+                }
+            }
+            else
+            {
+                // skip past the members
+                strc += (2 * strc[1]) + 2;
+            }
+        }
+        else
+        {
+            if (fileFlags != ftFile::LF_NONE)
+                ftLogger::logF("Max members exceeded(%d).", FT_MAX_MEMBERS);
+            status = ftFile::RS_LIMIT_REACHED;
+        }
+    }
+    return status;
+}
+
+int ftTables::isValidTypeName(const FBTuint16& type, const FBTuint16& name, int flags)
+{
+    if (type > m_typeCount)
+    {
+        if (flags != ftFile::LF_NONE)
+        {
+            ftLogger::logF(
+                "The parsed structure type (%d) exceeds the number of types(%d)",
+                type,
+                m_typeCount);
+        }
+        return ftFile::RS_LIMIT_REACHED;
+    }
+    else if (name > m_nameCount)
+    {
+        if (flags != ftFile::LF_NONE)
+        {
+            ftLogger::logF(
+                "The parsed structure name (%d) exceeds the number of names(%d)",
+                name,
+                m_nameCount);
+        }
+        return ftFile::RS_LIMIT_REACHED;
+    }
+    return ftFile::FS_OK;
 }
 
 
@@ -364,7 +550,8 @@ void ftTables::compile(FBTtype    i,
                        FBTtype    nr,
                        ftStruct*  off,
                        FBTuint32& cof,
-                       FBTuint32  depth)
+                       FBTuint32  depth,
+                       int&       status)
 {
     FBTuint32 e, l, a, oof, ol;
     FBTuint16 f = m_strcs[0][0];
@@ -392,10 +579,11 @@ void ftTables::compile(FBTtype    i,
                         m_names[strc[1]].m_arraySize,
                         off,
                         cof,
-                        depth + 1);
+                        depth + 1,
+                        status);
             }
             else
-                putMember(strc, off, a, cof, depth);
+                putMember(strc, off, a, cof, depth, status);
         }
 
         if ((cof - oof) != ol)
@@ -406,7 +594,7 @@ void ftTables::compile(FBTtype    i,
 
 bool ftTables::testDuplicateKeys()
 {
-    bool testResult = true;
+    bool      testResult = true;
     FBTuint32 i, j;
 
     for (i = 0; i < m_typeCount && testResult; ++i)
@@ -428,71 +616,114 @@ bool ftTables::testDuplicateKeys()
     return testResult;
 }
 
-void ftTables::compile(void)
-{
-    m_structures.reserve(FT_MAX_TABLE);
 
+
+int ftTables::compile(int fileFlags)
+{
     if (!m_strcs || m_strcCount <= 0)
     {
-        printf("No structures to compile.");
-        return;
+        if (fileFlags != ftFile::LF_NONE)
+            ftLogger::logF("No structures to compile.");
+        return ftFile::FS_TABLE_INIT_FAILED;
     }
 
-    FBTuint32 i, cof = 0, depth;
+    m_structures.reserve(m_strcCount);
+    int status = ftFile::FS_OK;
+
+    FBTuint32 i, cof, depth;
     FBTuint16 e, memberCount;
 
+
+    // Save the first structure type index
+    // So the isBuiltin test can determine
+    // from a type index whether or not
+    // the supplied type represents a struct.
+    // Types in the type table are stored with
+    // atomic types first.
     m_firstStruct = m_strcs[0][0];
 
-    for (i = 0; i < m_strcCount; i++)
+
+    for (i = 0; i < m_strcCount && status == ftFile::FS_OK; i++)
     {
-        FBTtype* strc     = m_strcs[i];
-        FBTtype  strcType = strc[0];
+        FBTtype* strc = m_strcs[i];
+        FBTtype  type = strc[0];
 
-        depth = 0;
-        cof   = 0;
-
-        ftStruct* nstrc;
-        nstrc                = new ftStruct(this);
-        nstrc->m_type        = strcType;
-        nstrc->m_hashedType  = m_types[strcType].m_hash;
-        nstrc->m_strcId      = i;
-        nstrc->m_sizeInBytes = m_tlens[strcType];
-        nstrc->m_link        = 0;
-        nstrc->m_flag        = ftStruct::CAN_LINK;
-        m_structures.push_back(nstrc);
-
-        memberCount = strc[1];
-
-        strc += 2;
-        nstrc->m_members.reserve(FT_MEMBERS_RESERVE);
-
-        for (e = 0; e < memberCount; ++e, strc += 2)
+        if (type > m_typeCount)
         {
-            const short& type = strc[0];
-            const short& name = strc[1];
-
-            if (type >= m_firstStruct && m_names[name].m_ptrCount == 0)
+            status = ftFile::RS_LIMIT_REACHED;
+            if (fileFlags != ftFile::LF_NONE)
             {
-                compile(m_types[type].m_strcId,
-                        m_names[name].m_arraySize,
-                        nstrc,
-                        cof,
-                        depth + 1);
+                ftLogger::logF(
+                    "The parsed structure type (%d) exceeds the number of types(%d)",
+                    type,
+                    m_typeCount);
+            }
+        }
+        else
+        {
+            if (m_types[type].m_hash == SK_NPOS)
+            {
+                status = ftFile::RS_MIS_ALIGNED;
+                if (fileFlags != ftFile::LF_NONE)
+                {
+                    ftLogger::logF(
+                        "The current structure (%d) is out of alignment with the type table.",
+                        type);
+                }
             }
             else
-                putMember(strc, nstrc, 0, cof, 0);
-        }
+            {
+                depth = 0;
+                cof   = 0;
 
-        if (cof != nstrc->m_sizeInBytes)
-        {
-            nstrc->m_flag |= ftStruct::MISALIGNED;
-            ftLogger::logF("Misaligned struct %s:%i:%i:%i\n",
-                           m_types[nstrc->m_type].m_name,
-                           i,
-                           cof,
-                           nstrc->m_sizeInBytes);
+                ftStruct* nstrc;
+                nstrc                = new ftStruct(this);
+                nstrc->m_type        = type;
+                nstrc->m_hashedType  = m_types[type].m_hash;
+                nstrc->m_strcId      = i;
+                nstrc->m_sizeInBytes = m_tlens[type];
+                nstrc->m_link        = 0;
+                nstrc->m_flag        = ftStruct::CAN_LINK;
+                m_structures.push_back(nstrc);
+
+                memberCount = strc[1];
+                strc += 2;
+                nstrc->m_members.reserve(memberCount);
+
+                for (e = 0; e < memberCount && status == ftFile::FS_OK;
+                     ++e, strc += 2)
+                {
+                    const short& type = strc[0];
+                    const short& name = strc[1];
+
+                    if (type >= m_firstStruct && m_names[name].m_ptrCount == 0)
+                    {
+                        compile(m_types[type].m_strcId,
+                                m_names[name].m_arraySize,
+                                nstrc,
+                                cof,
+                                depth + 1,
+                                status);
+                    }
+                    else
+                        putMember(strc, nstrc, 0, cof, 0, status);
+                }
+
+                if (cof != nstrc->m_sizeInBytes)
+                {
+                    nstrc->m_flag |= ftStruct::MISALIGNED;
+
+                    ftLogger::logF("Misaligned struct %s:%i:%i:%i\n",
+                                   m_types[nstrc->m_type].m_name,
+                                   i,
+                                   cof,
+                                   nstrc->m_sizeInBytes);
+                    status = ftFile::RS_MIS_ALIGNED;
+                }
+            }
         }
     }
+    return status;
 }
 
 
@@ -500,40 +731,34 @@ void ftTables::putMember(FBTtype*   cp,
                          ftStruct*  parent,
                          FBTtype    nr,
                          FBTuint32& cof,
-                         FBTuint32  depth)
+                         FBTuint32  depth,
+                         int&       status)
 {
     const FBTuint16& type = cp[0];
     const FBTuint16& name = cp[1];
 
     if (type < 0 || type >= m_typeCount)
-    {
-        ftLogger::logF("Invalid type index");
-        return;
-    }
-
-    if (name < 0 || name >= m_nameCount)
-    {
-        ftLogger::logF("Invalid name index");
-        return;
-    }
-
-
-
-    ftMember* member = parent->createMember();
-    member->setTypeIndex(type);
-    member->setNameIndex(name);
-
-    member->m_offset         = cof;
-    member->m_location       = nr;
-    member->m_recursiveDepth = depth;
-    member->m_link           = nullptr;
-
-    if (m_names[name].m_ptrCount > 0)
-        member->m_sizeInBytes = m_ptrLength * m_names[name].m_arraySize;
+        status = ftFile::RS_LIMIT_REACHED;
+    else if (name < 0 || name >= m_nameCount)
+        status = ftFile::RS_LIMIT_REACHED;
     else
-        member->m_sizeInBytes = m_tlens[type] * m_names[name].m_arraySize;
+    {
+        ftMember* member = parent->createMember();
+        member->setTypeIndex(type);
+        member->setNameIndex(name);
 
-    cof += member->m_sizeInBytes;
+        member->m_offset         = cof;
+        member->m_location       = nr;
+        member->m_recursiveDepth = depth;
+        member->m_link           = nullptr;
+
+        if (m_names[name].m_ptrCount > 0)
+            member->m_sizeInBytes = m_ptrLength * m_names[name].m_arraySize;
+        else
+            member->m_sizeInBytes = m_tlens[type] * m_names[name].m_arraySize;
+
+        cof += member->m_sizeInBytes;
+    }
 }
 
 
@@ -589,21 +814,4 @@ const ftName& ftTables::getStructNameByIdx(const FBTuint16& idx) const
     if (idx < m_nameCount)
         return m_names[idx];
     return INVALID_NAME;
-}
-
-
-ftFixedString<4> ftByteToString(FBTuint32 i)
-{
-    union {
-        char      ids[4];
-        FBTuint32 idi;
-    } IDU;
-    IDU.idi = i;
-
-    ftFixedString<4> cp;
-    cp.push_back(IDU.ids[0]);
-    cp.push_back(IDU.ids[1]);
-    cp.push_back(IDU.ids[2]);
-    cp.push_back(IDU.ids[3]);
-    return cp;
 }

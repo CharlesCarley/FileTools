@@ -36,35 +36,58 @@ using namespace std;
 
 void ftLogger::log(int status)
 {
+    cout << "Exit status: ";
     switch (status)
     {
     case ftFile::FS_INV_HEADER_STR:
-        printf("Invalid header string.\n");
+        cout << "FS_INV_HEADER_STR";
         break;
     case ftFile::FS_INV_LENGTH:
-        printf("Invalid block length.\n");
+        cout << "FS_INV_LENGTH";
         break;
     case ftFile::FS_INV_READ:
-        printf("Invalid read.\n");
+        cout << "FS_INV_READ";
         break;
     case ftFile::FS_LINK_FAILED:
-        printf("Linking failed.\n");
+        cout << "FS_LINK_FAILED";
         break;
     case ftFile::FS_BAD_ALLOC:
-        printf("Failed to allocate memory.\n");
+        cout << "FS_BAD_ALLOC";
         break;
     case ftFile::FS_INV_INSERT:
-        printf("Map insertion failed.\n");
+        cout << "FS_INV_INSERT";
         break;
     case ftFile::FS_DUPLICATE_BLOCK:
-        printf("Duplicate block read.\n");
+        cout << "FS_DUPLICATE_BLOCK";
         break;
     case ftFile::FS_TABLE_INIT_FAILED:
-        printf("Table initialization filed.\n");
+        cout << "FS_TABLE_INIT_FAILED";
+        break;
+    case ftFile::FS_OVERFLOW:
+        cout << "FS_OVERFLOW";
+        break;
+    case ftFile::FS_FAILED:
+        cout << "FS_FAILED";
+        break;
+    case ftFile::RS_INVALID_PTR:
+        cout << "RS_INVALID_PTR";
+        break;
+    case ftFile::RS_INVALID_CODE:
+        cout << "RS_INVALID_CODE";
+        break;
+    case ftFile::RS_LIMIT_REACHED:
+        cout << "RS_LIMIT_REACHED";
+        break;
+    case ftFile::RS_BAD_ALLOC:
+        cout << "RS_BAD_ALLOC";
+        break;
+    case ftFile::RS_MIS_ALIGNED:
+        cout << "RS_MIS_ALIGNED";
         break;
     default:
         break;
     }
+    cout << endl;
 }
 
 void ftLogger::log(int status, const char *msg, ...)
@@ -73,7 +96,6 @@ void ftLogger::log(int status, const char *msg, ...)
     if (msg)
     {
         char buf[513];
-
         va_list lst;
         va_start(lst, msg);
         int size = skp_printf(buf, 512, msg, lst);
@@ -81,7 +103,7 @@ void ftLogger::log(int status, const char *msg, ...)
         if (size < 0)
             size = 0;
         buf[size] = 0;
-        cout << setw(4) << ' ' << buf << endl;
+        cout << buf << endl;
     }
 }
 
@@ -148,10 +170,6 @@ void ftLogger::log(void *ptr, FBTsize len)
     skHexPrint::dumpHex((char *)ptr, 0, len, skHexPrint::PF_DEFAULT, -1);
 }
 
-void ftLogger::width(FBTsize w)
-{
-    cout << setw(w);
-}
 
 void ftLogger::newline(int nr)
 {
@@ -265,7 +283,6 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
         }
         else
             cout << setw(40) << ' ';
-
         if (mmbr != 0)
         {
             cout << setw(15) << makeName(mmbr->getType(), 15);
@@ -278,5 +295,35 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
         cout << endl;
     }
     seperator();
+
+    cout << "Size in bytes:";
+    cout << right;
+    cout << setw(25) << fstrc->getSizeInBytes();
+    cout << setw(40) << mstrc->getSizeInBytes();
     cout << endl;
+    cout << left;
+}
+
+
+void ftLogger::log(const ftName &name)
+{
+    seperator();
+    skHexPrint::writeColor(CS_GREEN);
+    cout << "Name                 : " << name.m_name << endl;
+    skHexPrint::writeColor(CS_LIGHT_GREY);
+    cout << "Hash                 : " << name.m_hash << endl;
+    cout << "Pointer Count        : " << name.m_ptrCount << endl;
+    cout << "Function pointer     : " << name.m_isFunctionPointer << endl;
+    cout << "Number Of Dimensions : " << name.m_numDimensions << endl;
+    cout << "Dimension Size       : ";
+
+    int i;
+    for (i = 0; i < skMax(name.m_numDimensions, 1); ++i)
+    {
+        if (i > 0)
+            cout << ',' << ' ';
+        cout << name.m_dimensions[i];
+    }
+    cout << endl;
+    skHexPrint::writeColor(CS_WHITE);
 }

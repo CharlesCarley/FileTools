@@ -48,30 +48,26 @@ namespace ftIdNames
     const FBTuint32 DATA = ftID('D', 'A', 'T', 'A');
 }  // namespace ftIdNames
 
-extern ftFixedString<4> ftByteToString(FBTuint32 i);
-
 
 class ftTables
 {
 public:
-    typedef ftName*            Names;  // < FT_MAX_TABLE
-    typedef ftType*            Types;  // < FT_MAX_TABLE
-    typedef FBTtype*           TypeL;  // < FT_MAX_TABLE
-    typedef FBTtype**          Strcs;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
-    typedef skArray<SKsize>    NameHash;
-    typedef skArray<ftStruct*> Structures;
-
+    typedef ftName*                            Names;  // < FT_MAX_TABLE
+    typedef ftType*                            Types;  // < FT_MAX_TABLE
+    typedef FBTtype*                           TypeL;  // < FT_MAX_TABLE
+    typedef FBTtype**                          Strcs;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
+    typedef skArray<SKsize>                    NameHash;
+    typedef skArray<ftStruct*>                 Structures;
     typedef skHashTable<ftCharHashKey, ftType> TypeFinder;
-
 
     static const ftName INVALID_NAME;
     static const ftType INVALID_TYPE;
 
 public:
-    ftTables();
+    ftTables(int pointerLength);
     ~ftTables();
 
-    bool read(const void* ptr, const FBTsize& len, int flags);
+    int read(const void* ptr, const FBTsize& len, int headerFlags, int fileFlags);
 
     FBTuint32     findTypeId(const ftCharHashKey& cp);
     ftCharHashKey getStructHashByType(const FBTuint16& type);
@@ -105,7 +101,7 @@ public:
     ftStruct* findStructByType(const FBTuint16& type);
     FBTuint32 findStructIdByType(const FBTuint16& type);
 
-    bool      isLinkedToMemory(const FBTuint16& type);
+    bool isLinkedToMemory(const FBTuint16& type);
 
     inline FBTuint32 getNumberOfNames() const
     {
@@ -176,6 +172,7 @@ public:
 
 private:
 
+
     friend class ftStruct;
     friend class ftMember;
 
@@ -193,18 +190,35 @@ private:
     FBTuint8   m_ptrLength;
     TypeFinder m_typeFinder;
 
-    void putMember(FBTtype*        cp,
-                   ftStruct*       off,
-                   FBTtype         nr,
-                   FBTuint32&      cof,
-                   FBTuint32       depth);
 
-    void compile(FBTtype         i,
-                 FBTtype         nr,
-                 ftStruct*       off,
-                 FBTuint32&      cof,
-                 FBTuint32       depth);
 
-    void compile(void);
+    int allocateTable(void**  dest,
+                      FBTsize numberOfEntries,
+                      FBTsize sizeofEntry,
+                      int     fileFlags); 
+
+
+    void convertName(ftName& destName, char*& convString);
+    int  buildStruct(FBTuint16*& buf, FBTuint16 current, int headerFlags, int fileFlags);
+
+    int isValidTypeName(const FBTuint16& type, const FBTuint16& name, int fileFlags);
+
+
+    void putMember(FBTtype*   cp,
+                   ftStruct*  off,
+                   FBTtype    nr,
+                   FBTuint32& cof,
+                   FBTuint32  depth,
+                   int&       status);
+
+    void compile(FBTtype    i,
+                 FBTtype    nr,
+                 ftStruct*  off,
+                 FBTuint32& cof,
+                 FBTuint32  depth,
+                 int&       status);
+    int compile(int fileFlags);
 };
+
+
 #endif  //_ftTables_h_

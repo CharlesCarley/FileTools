@@ -48,7 +48,8 @@ public:
 
     enum FileStatus
     {
-        FS_LINK_FAILED = -10,
+        FS_STATUS_MIN = -16,
+        FS_LINK_FAILED,
         FS_INV_INSERT, 
         FS_BAD_ALLOC,
         FS_DUPLICATE_BLOCK,
@@ -58,7 +59,18 @@ public:
         FS_TABLE_INIT_FAILED,
         FS_OVERFLOW,
         FS_FAILED,
-        FS_OK,              // should always be zero
+
+        // Table codes
+        RS_INVALID_PTR,
+        RS_INVALID_CODE,
+        RS_LIMIT_REACHED,
+        RS_BAD_ALLOC,
+        RS_MIS_ALIGNED,
+
+        // This should always be zero
+        // until < 0 tests are removed
+        // and replaced with != FS_OK
+        FS_OK, 
     };
 
     enum ParseMode
@@ -71,50 +83,45 @@ public:
 
     enum FileHeader
     {
-        FH_ENDIAN_SWAP = (1 << 0),
-        FH_CHUNK_64    = (1 << 1),
-        FH_VAR_BITS    = (1 << 2),
+        FH_ENDIAN_SWAP = 1 << 0,
+        FH_CHUNK_64    = 1 << 1,
+        FH_VAR_BITS    = 1 << 2,
     };
 
     enum LogFlags
     {
-        LF_NONE         = 0,         // No logging
-        LF_ONLY_ERR     = (1 << 0),  // Errors only (default)
-        LF_READ_CHUNKS  = (1 << 1),
-        LF_WRITE_CHUNKS = (1 << 2),
-        LF_WRITE_LINK   = (1 << 3),
-        LF_DIAGNOSTICS  = (1 << 4)
-    };
-
-    enum FileFlags
-    {
-        FF_NONE      = 0,
-        FF_DO_CHECKS = (1 << 0)
+        LF_NONE         = 0,        
+        LF_ONLY_ERR     = 1 << 0,  
+        LF_READ_CHUNKS  = 1 << 1,
+        LF_WRITE_CHUNKS = 1 << 2,
+        LF_WRITE_LINK   = 1 << 3,
+        LF_DIAGNOSTICS  = 1 << 4,
+        LF_DO_CHECKS    = 1 << 5
     };
 
     typedef skHashTable<ftPointerHashKey, ftMemoryChunk*> ChunkMap;
     typedef ftList                                        MemoryChunks;
 
 private:
-    int               m_headerFlags;
-    int               m_loggerFlags;
-    int               m_fileFlags;
-    const char*       m_uhid;
-    ftFixedString<12> m_header;
-    char*             m_curFile;
+
+    int         m_headerFlags;
+    int         m_fileFlags;
+    const char* m_uhid;
+    ftHeader    m_header;
+    char*       m_curFile;
+    void*       m_fileTableData;
 
 protected:
-    int          m_version;
+    int          m_memoryVersion;
     int          m_fileVersion;
+
     MemoryChunks m_chunks;
     ChunkMap     m_map;
     ftTables*    m_memory;
     ftTables*    m_file;
-    void*        m_fileTableData;
 
 
 public:
-
     ftFile(const char* uid);
     virtual ~ftFile();
 
@@ -124,7 +131,7 @@ public:
 
     ftTables* getMemoryTable(void);
 
-    inline const ftFixedString<12>& getHeader(void) const
+    inline const ftHeader& getHeader(void) const
     {
         return m_header;
     }
@@ -162,20 +169,7 @@ public:
     void serialize(skStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
     void serialize(skStream* stream, FBTsize len, void* writeData, int nr = 1);
 
-    inline int getLogFlags()
-    {
-        return m_loggerFlags;
-    }
 
-    inline void setLogFlags(int v)
-    {
-        m_loggerFlags = v;
-    }
-
-    inline void addLogFlag(int v)
-    {
-        m_loggerFlags |= v;
-    }
 
     inline int getFileFlags()
     {
@@ -219,13 +213,14 @@ private:
                         FBTuint32 nr,
                         FBTuint32 typeIndex,
                         FBTsize   len,
-                        void*     writeData);
+                        void*     writeData,
+                        bool      noOldData = false);
+
     void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
     void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, int& status);
     void freeChunk(ftMemoryChunk*& chunk);
 
-    void runTableChecks(ftTables* tbltochk);
-
+    int runTableChecks(ftTables* tbltochk);
 
     void clearStorage(void);
     int  parseHeader(skStream* stream);

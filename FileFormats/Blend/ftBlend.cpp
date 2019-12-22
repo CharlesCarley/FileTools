@@ -172,7 +172,7 @@ void ftBlend::setFilterList(FBTuint32* filter, bool inclusive)
 
 int ftBlend::save(const char* path, const int mode)
 {
-    m_version = m_fileVersion;
+    m_memoryVersion = m_fileVersion;
     return ftFile::save(path, mode);
 }
 

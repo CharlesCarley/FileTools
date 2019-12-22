@@ -38,13 +38,13 @@ public:
     static void seperator();
     static void divider();
     static void newline(int nr=1);
-    static void width(FBTsize w);
 
     static void log(const ftChunk &chunk);
     static void log(void *ptr, FBTsize len);
     static void log(ftStruct *strc);
     static void log(ftMember *strc);
     static void log(ftStruct *fstrc, ftStruct *mstrc);
+    static void log(const ftName &strc);
 };
 
 

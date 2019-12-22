@@ -89,29 +89,22 @@ FBTsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
 FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 {
     FBTsize bytesRead  = 0;
-    bool    bitsVary   = (flags & ftFile::FH_VAR_BITS) != 0;
-    bool    swapEndian = (flags & ftFile::FH_ENDIAN_SWAP) != 0;
+    ftChunk* tmp;
 
-    ftChunk* cpy;
     if (FT_VOID8)
     {
         ftChunk64 c64;
-
-        if (bitsVary)
+        if (flags & ftFile::FH_VAR_BITS)
         {
             ftChunk32 src;
             if ((bytesRead = stream->read(&src, Block32)) <= 0)
                 return ftFile::FS_INV_READ;
 
+            FBTByteInteger ptr = {0};
+
             c64.m_code = src.m_code;
             c64.m_len  = src.m_len;
-            union {
-                FBTuint64 m_ptr;
-                FBTuint32 m_doublePtr[2];
-            } ptr;
-            ptr.m_doublePtr[0] = src.m_old;
-            ptr.m_doublePtr[1] = 0;
-
+            ptr.m_int[0] = src.m_old;
             c64.m_old    = ptr.m_ptr;
             c64.m_typeid = src.m_typeid;
             c64.m_nr     = src.m_nr;
@@ -122,45 +115,28 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
                 return ftFile::FS_INV_READ;
         }
 
-        if (swapEndian)
-        {
-            if ((c64.m_code & 0xFFFF) == 0)
-                c64.m_code >>= 16;
-            c64.m_len    = swap32(c64.m_len);
-            c64.m_nr     = swap32(c64.m_nr);
-            c64.m_typeid = swap32(c64.m_typeid);
-        }
-        cpy = (ftChunk*)(&c64);
+        tmp = (ftChunk*)(&c64);
     }
     else
     {
         ftChunk32 c32;
-
-        if (bitsVary)
+        if (flags & ftFile::FH_VAR_BITS)
         {
             ftChunk64 src;
             if ((bytesRead = stream->read(&src, Block64)) <= 0)
                 return ftFile::FS_INV_READ;
 
+            FBTByteInteger ptr = {0};
             c32.m_code   = src.m_code;
             c32.m_len    = src.m_len;
             c32.m_typeid = src.m_typeid;
             c32.m_nr     = src.m_nr;
 
-            union {
-                FBTuint64 m_ptr;
-                FBTuint32 m_doublePtr[2];
-            } ptr;
-
-            ptr.m_doublePtr[0] = 0;
-            ptr.m_doublePtr[1] = 0;
-
             ptr.m_ptr = src.m_old;
-
-            if (ptr.m_doublePtr[0] != 0)
-                c32.m_old = ptr.m_doublePtr[0];
+            if (ptr.m_int[0] != 0)
+                c32.m_old = ptr.m_int[0];
             else
-                c32.m_old = ptr.m_doublePtr[1];
+                c32.m_old = ptr.m_int[1];
         }
         else
         {
@@ -168,26 +144,25 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
                 return ftFile::FS_INV_READ;
         }
 
-
-        if (swapEndian)
-        {
-            if ((c32.m_code & 0xFFFF) == 0)
-                c32.m_code >>= 16;
-
-            c32.m_len    = swap32(c32.m_len);
-            c32.m_nr     = swap32(c32.m_nr);
-            c32.m_typeid = swap32(c32.m_typeid);
-        }
-
-        cpy = (ftChunk*)(&c32);
+        tmp = (ftChunk*)(&c32);
     }
 
-    if (cpy->m_len == SK_NPOS32)
+    if (flags & ftFile::FH_ENDIAN_SWAP)
+    {
+        if ((tmp->m_code & 0xFFFF) == 0)
+            tmp->m_code >>= 16;
+
+        tmp->m_len    = swap32(tmp->m_len);
+        tmp->m_nr     = swap32(tmp->m_nr);
+        tmp->m_typeid = swap32(tmp->m_typeid);
+    }
+
+    if (tmp->m_len == SK_NPOS32)
         return ftFile::FS_INV_LENGTH;
 
-    if (cpy->m_nr < 1 || cpy->m_nr == SK_NPOS32)
+    if (tmp->m_nr < 1 || tmp->m_nr == SK_NPOS32)
         return ftFile::FS_INV_LENGTH;
 
-    ::memcpy(dest, cpy, BlockSize);
+    ::memcpy(dest, tmp, BlockSize);
     return bytesRead;
 }
