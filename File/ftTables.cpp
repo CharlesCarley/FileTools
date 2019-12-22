@@ -375,13 +375,11 @@ void ftTables::compile(FBTtype    i,
         return;
     }
 
-
     for (a = 0; a < nr; ++a)
     {
         FBTtype* strc = m_strcs[i];
-
-        oof = cof;
-        ol  = m_tlens[strc[0]];
+        oof           = cof;
+        ol            = m_tlens[strc[0]];
 
         l = strc[1];
         strc += 2;
@@ -408,8 +406,26 @@ void ftTables::compile(FBTtype    i,
 
 bool ftTables::testDuplicateKeys()
 {
-    bool TODO = false;
-    return TODO;
+    bool testResult = true;
+    FBTuint32 i, j;
+
+    for (i = 0; i < m_typeCount && testResult; ++i)
+    {
+        for (j = 0; j < m_typeCount && testResult; ++j)
+            if (i != j)
+                testResult = m_types[i].m_hash != m_types[j].m_hash;
+    }
+
+    if (testResult)
+    {
+        for (i = 0; i < m_nameCount && testResult; ++i)
+        {
+            for (j = 0; j < m_nameCount && testResult; ++j)
+                if (i != j)
+                    testResult = m_names[i].m_hash != m_names[j].m_hash;
+        }
+    }
+    return testResult;
 }
 
 void ftTables::compile(void)
@@ -565,7 +581,6 @@ FBTuint32 ftTables::findStructIdByType(const FBTuint16& type)
         return m_types[type].m_strcId;
     return SK_NPOS;
 }
-
 
 
 

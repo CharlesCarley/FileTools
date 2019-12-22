@@ -41,10 +41,13 @@ typedef union ftEndianTest {
     FBTint32 test;
 } ftEndianTest;
 
-
-
 namespace ftEndianUtils
 {
+    // Swap64 needs 8 bytes to switch endian.
+    // If there is ever a need to swap more than eight bytes
+    // at a time this will have to change
+    const FBTsize MaxSwapSpace = 8; 
+
     extern ftEndian  getEndian(void);
     extern bool      isEndian(const ftEndian& endian);
     extern FBTuint16 swap16(FBTuint16 in);

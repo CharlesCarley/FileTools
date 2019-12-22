@@ -85,18 +85,32 @@ struct ftMemoryChunk
     };
 
     ftMemoryChunk *m_next, *m_prev;
+    ftChunk        m_chunk;
+    
+    // fblock: is the block of memory that was allocated 
+    // and read from the file. It contains the memory of 
+    // structure at the time of saving. 
+    void* m_fblock;
 
-    ftChunk   m_chunk;
-    void*     m_fblock;
-    void*     m_mblock;
+    // mblock: is the block of memory that was allocated for conversion.
+    // Its length is the size of the corresponding structure in its current state.
+    // The memory from fblock is cast into mblock one member at a time. 
+    void* m_mblock;
+
+    // pblock: is the storage location for pointers to pointers.
+    // When casting fblock into mblock, if the current member is 
+    // a pointer to a pointer. This block provides the storage 
+    // location for each of the pointers. The address of pblock 
+    // is assigned to mblock at the offset for the pointer to pointer member.
+    void*     m_pblock;
+    FBTuint32 m_pblockLen;
+
     FBTuint8  m_flag;
     FBTtype   m_newTypeId;
-    FBTuint32 m_fileLen;
 
     ftStruct* m_fstrc;
     ftStruct* m_mstrc;
 };
-
 
 
 struct ftChunkUtils

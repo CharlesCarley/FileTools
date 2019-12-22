@@ -60,7 +60,7 @@ public:
     Test()
     {
         x = y = z = 0, p = 0;
-        d         = 0;
+        d = 0;
     }
 
     int getX()
@@ -131,3 +131,51 @@ TEST_CASE("ftAtomic Cast")
     EXPECT_EQ(t->getZ(), 3);
     EXPECT_EQ(t->getD(), 3.14);
 }
+
+#include "ftEndianUtils.h"
+
+
+
+ typedef union Split {
+    FBTuint8   lohi8[8];
+    FBTuint16  lohi16[4];
+    FBTuint32  lohi32[2];
+    FBTuint64  space;
+ } Split;
+
+
+ 
+ TEST_CASE("Swap")
+ {
+     FBTsize srcElmSize = 8;
+     FBTsize dstElmSize = 8;
+
+
+     Split seed;
+     seed.lohi8[0] = 51;
+     seed.lohi8[1] = 26;
+     seed.lohi8[2] = 37;
+     seed.lohi8[3] = 98;
+     seed.lohi8[4] = 89;
+     seed.lohi8[5] = 73;
+     seed.lohi8[6] = 62;
+     seed.lohi8[7] = 15;
+
+     FBTuint64 i64 = seed.space;
+
+     FBTbyte  dstBuffer[ftEndianUtils::MaxSwapSpace];
+     FBTbyte* srcBPtr = (FBTbyte*)&i64;
+
+     ::memcpy(dstBuffer, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
+     Split before, after;
+     before.space = i64;
+
+     ftEndianUtils::swap64((FBTuint64*)dstBuffer, 1);
+
+     after.space = *((FBTuint64*)dstBuffer);
+
+     EXPECT_EQ(before.lohi8[0], after.lohi8[7]);
+     EXPECT_EQ(before.lohi8[1], after.lohi8[6]);
+     EXPECT_EQ(before.lohi8[2], after.lohi8[5]);
+     EXPECT_EQ(before.lohi8[3], after.lohi8[4]);
+ }

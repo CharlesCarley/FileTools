@@ -34,15 +34,7 @@
 #include "ftStreams.h"
 #include "ftTables.h"
 
-
 using namespace ftEndianUtils;
-
-
-const FBTuint32 ENDB      = ftID('E', 'N', 'D', 'B');
-const FBTuint32 DNA1      = ftID('D', 'N', 'A', '1');
-const FBTuint32 DATA      = ftID('D', 'A', 'T', 'A');
-const FBTuint32 SDNA      = ftID('S', 'D', 'N', 'A');
-const FBThash   DATABLOCK = ftCharHashKey("Link").hash();
 
 
 
@@ -71,6 +63,7 @@ ftFile::~ftFile()
     }
     clearStorage();
 }
+
 
 int ftFile::load(const char* path, int mode)
 {
@@ -168,9 +161,9 @@ int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
         }
         return FS_FAILED;
     }
-
     return parseStreamImpl(&ms);
 }
+
 
 int ftFile::parseHeader(skStream* stream)
 {
@@ -183,7 +176,7 @@ int ftFile::parseHeader(skStream* stream)
     stream->read(hp, 12);
     m_header.resize(12);
 
-    if (!ftCharNEq(hp, m_uhid, 6))
+    if (!ftCharNEq(hp, m_uhid, 7))
     {
         return FS_INV_HEADER_STR;
     }
@@ -232,15 +225,15 @@ int ftFile::preScan(skStream* stream)
     FBTsize     bytesRead;
     ftChunkScan scan = {0, 0};
 
-    while (scan.m_code != ENDB &&
-           scan.m_code != DNA1 &&
+    while (scan.m_code != ftIdNames::ENDB &&
+           scan.m_code != ftIdNames::DNA1 &&
            status == FS_OK && !stream->eof())
     {
         if ((bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags)) <= 0)
             status = FS_INV_READ;
-        else if (scan.m_code != ENDB)
+        else if (scan.m_code != ftIdNames::ENDB)
         {
-            if (scan.m_code == DNA1)
+            if (scan.m_code == ftIdNames::DNA1)
             {
                 // This block needs to stay alive as long as m_file is valid.
                 // The names of the types and the names of the type-name
@@ -258,6 +251,11 @@ int ftFile::preScan(skStream* stream)
                         m_file = new ftTables();
                         if (!m_file->read(m_fileTableData, scan.m_len, m_headerFlags))
                             status = FS_TABLE_INIT_FAILED;
+                        else
+                        {
+                            if (m_fileFlags & FF_DO_CHECKS)
+                                runTableChecks(m_file);
+                        }
                     }
                 }
             }
@@ -273,6 +271,18 @@ int ftFile::preScan(skStream* stream)
     }
     return status;
 }
+
+
+
+void ftFile::runTableChecks(ftTables* tbltochk)
+{
+    if (tbltochk)
+    {
+        if (!tbltochk->testDuplicateKeys())
+            ftLogger::logF("Table check failed. There are duplicate names in the table.");
+    }
+}
+
 
 
 int ftFile::parseStreamImpl(skStream* stream)
@@ -319,13 +329,13 @@ int ftFile::parseStreamImpl(skStream* stream)
     // pre allocate the pointer lookup table
     m_map.reserve(FT_DEF_ALLOC);
 
-    while (chunk.m_code != ENDB &&
-           chunk.m_code != DNA1 &&
+    while (chunk.m_code != ftIdNames::ENDB &&
+           chunk.m_code != ftIdNames::DNA1 &&
            status == FS_OK && !stream->eof())
     {
         if ((bytesRead = ftChunkUtils::read(&chunk, stream, m_headerFlags)) <= 0)
             status = FS_INV_READ;
-        else if (chunk.m_code != ENDB && chunk.m_code != DNA1)
+        else if (chunk.m_code != ftIdNames::ENDB && chunk.m_code != ftIdNames::DNA1)
         {
             if (chunk.m_len > 0 && chunk.m_len != SK_NPOS32)
             {
@@ -358,7 +368,7 @@ int ftFile::parseStreamImpl(skStream* stream)
     {
         if (status != FS_OK)
             ftLogger::log(status, "File read failed.");
-        else if (chunk.m_code != DNA1)
+        else if (chunk.m_code != ftIdNames::DNA1)
             ftLogger::logF("Failed to reach the end byte.");
     }
     return status;
@@ -374,8 +384,8 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         ::memset(bin, 0, sizeof(ftMemoryChunk));
         ::memcpy(&bin->m_chunk, &chunk, sizeof(ftChunk));
 
-        // Used for calculating the number of pointers to pointers 
-        bin->m_fileLen = chunk.m_len;
+        // Used for calculating the number of pointers to pointers
+        bin->m_pblockLen = chunk.m_len;
 
         ftPointerHashKey phk(chunk.m_old);
         if (m_map.find(phk) != m_map.npos)
@@ -479,6 +489,8 @@ void ftFile::freeChunk(ftMemoryChunk*& chunk)
 {
     if (chunk)
     {
+        if (chunk->m_pblock)
+            free(chunk->m_pblock);
         if (chunk->m_fblock)
             free(chunk->m_fblock);
         if (chunk->m_mblock)
@@ -570,12 +582,12 @@ int ftFile::rebuildStructures()
                     else if (m_loggerFlags != LF_NONE)
                     {
                         ftLogger::logF("Failed to offset to the member location.");
-                        
+
                         if (!dstPtr)
                         {
-                            ftLogger::logF("For destination buffer '%s' @ offset (%d).", 
-                                dstmbr->getName(), 
-                                dstmbr->getOffset());
+                            ftLogger::logF("For destination buffer '%s' @ offset (%d).",
+                                           dstmbr->getName(),
+                                           dstmbr->getOffset());
                         }
 
                         if (!dstPtr)
@@ -668,23 +680,37 @@ void ftFile::castPointerToPointer(ftMember* dst,
     ftMemoryChunk* bin = findBlock((FBTsize)(*srcPtr));
     if (bin)
     {
-        if (bin->m_flag & ftMemoryChunk::BLK_MODIFIED)
-            (*dstPtr) = (FBTsize)bin->m_mblock;
+        if (bin->m_flag & ftMemoryChunk::BLK_MODIFIED && bin->m_pblock)
+            (*dstPtr) = (FBTsize)bin->m_pblock;
         else
         {
             FBTsize fps = m_file->getSizeofPointer();
             if (fps == 4 || fps == 8)
             {
                 FBTsize i;
-                FBTsize total  = bin->m_fileLen / fps;
+                FBTsize total = bin->m_pblockLen / fps;
 
-                // Always use a 32 bit integer,
-                // then offset + 2 for a 64 bit pointer.
-                FBTuint32* optr = (FBTuint32*)srcPtr;
+                FBTsize* newBlock = (FBTsize*)::calloc(total, sizeof(FBTsize));
+                if (newBlock != nullptr)
+                {
+                    // Always use a 32 bit integer,
+                    // then offset + 2 for a 64 bit pointer.
+                    FBTuint32* optr = (FBTuint32*)bin->m_fblock;
+                    FBTsize*   mptr = (FBTsize*)newBlock;
 
-                for (i = 0; i < total; i++, optr += (fps == 4 ? 1 : 2))
-                    dstPtr[i] = (FBTsize)findPtr((FBTsize)*optr);
+                    for (i = 0; i < total; i++, optr += (fps == 4 ? 1 : 2))
+                        mptr[i] = (FBTsize)findPtr((FBTsize)(*optr));
 
+                    free(bin->m_pblock);
+                    bin->m_pblock = newBlock;
+                    bin->m_flag |= ftMemoryChunk::BLK_MODIFIED;
+
+                    (*dstPtr) = (FBTsize)newBlock;
+                }
+                else
+                {
+                    //todo pass status down the chain
+                }
             }
             else if (m_loggerFlags != LF_NONE)
                 ftLogger::logF("Unknown pointer length(%d). Pointers should be either 4 or 8 bytes", fps);
@@ -702,8 +728,6 @@ void ftFile::castPointerToPointer(ftMember* dst,
         ftLogger::log(srcPtr, src->getSizeInBytes());
         ftLogger::newline();
         ftLogger::log(dstPtr, dst->getSizeInBytes());
-
-        (*dstPtr) = 0;
     }
 }
 
@@ -783,9 +807,9 @@ void ftFile::castMemberVariable(ftMember* dst,
         if (dst->isCharacter())
         {
             // Allow for null terminated strings.
-            // In the case there is extra information in the source buffer,
-            // this will copy up to the first null terminator, and the extra
-            // info in the buffer will be discarded.
+            // This will handle the case when there is extra information in the
+            // source buffer. strncpy will copy up to the first null terminator
+            // and the extra info in the buffer will be left untouched.
             ::strncpy((FBTbyte*)dstPtr, (FBTbyte*)srcPtr, maxAvailable);
         }
         else
@@ -796,25 +820,32 @@ void ftFile::castMemberVariable(ftMember* dst,
         FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
         FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
 
-        ftAtomic stp = ftAtomic::FT_ATOMIC_UNKNOWN, dtp = ftAtomic::FT_ATOMIC_UNKNOWN;
-        if (needsCast)
+        ftAtomic stp, dtp;
+        stp = src->getAtomicType();
+        dtp = dst->getAtomicType();
+
+        FBTsize alen = skMax(skMin(dst->getArraySize(), src->getArraySize()), 1);
+        FBTsize olen = alen;
+
+        alen = skMin(alen, (FBTsize)FT_MAX_MBR_RANGE);
+
+        if (olen == FT_MAX_MBR_RANGE)
         {
-            stp = src->getAtomicType();
-            dtp = dst->getAtomicType();
+            if (m_fileFlags != LF_NONE)
+                ftLogger::logF("Warning: Array length exceeds FT_MAX_MBR_RANGE(%s)",
+                               olen);
         }
 
-        FBTsize alen = skMin(dst->getArraySize(), src->getArraySize());
+        FBTbyte tmpBuf[ftEndianUtils::MaxSwapSpace] = {};
+
+        FBTsize i;
         FBTsize elen = maxAvailable;
 
-        FBTbyte tmpBuf[8] = {};
-        FBTsize i;
         for (i = 0; i < alen; i++)
         {
-            FBTbyte* tmp = srcBPtr;
             if (needsSwapped)
             {
-                tmp = tmpBuf;
-                ::memcpy(tmpBuf, srcBPtr, srcElmSize);
+                ::memcpy(tmpBuf, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
 
                 if (stp == ftAtomic::FT_ATOMIC_SHORT || stp == ftAtomic::FT_ATOMIC_USHORT)
                     swap16((FBTuint16*)tmpBuf, 1);
@@ -823,13 +854,12 @@ void ftFile::castMemberVariable(ftMember* dst,
                 else if (stp == ftAtomic::FT_ATOMIC_DOUBLE)
                     swap64((FBTuint64*)tmpBuf, 1);
                 else
-                    ::memset(tmpBuf, 0, sizeof(tmpBuf));  //unknown type
-            }
+                    ::memset(tmpBuf, 0, ftEndianUtils::MaxSwapSpace);  //unknown type
 
-            if (needsCast)
-                ftAtomicUtils::cast((char*)tmp, (char*)dstBPtr, stp, dtp, 1);
+                ::memcpy(dstBPtr, tmpBuf, skMin(ftEndianUtils::MaxSwapSpace, elen));
+            }
             else
-                ::memcpy(dstBPtr, tmp, elen);
+                ftAtomicUtils::cast((char*)srcBPtr, (char*)dstBPtr, stp, dtp, 1);
 
             dstBPtr += dstElmSize;
             srcBPtr += srcElmSize;
@@ -915,6 +945,11 @@ int ftFile::initializeMemory(void)
         status = initializeTables(m_memory);
         if (status != FS_OK)
             ftLogger::log(status);
+        else
+        {
+            if (m_fileFlags & FF_DO_CHECKS)
+                runTableChecks(m_memory);
+        }
     }
     return status;
 }
@@ -942,22 +977,10 @@ void ftFile::clearStorage(void)
     ftMemoryChunk* tmp;
     while (node)
     {
-        if (node->m_fblock)
-        {
-            ::free(node->m_fblock);
-            node->m_fblock = 0;
-        }
-        if (node->m_mblock)
-        {
-            ::free(node->m_mblock);
-            node->m_mblock = 0;
-        }
         tmp  = node;
         node = node->m_next;
-
-        ::free(tmp);
+        freeChunk(tmp);
     }
-
 
     if (m_fileTableData)
     {
@@ -1010,7 +1033,7 @@ int ftFile::save(const char* path, const int mode)
 
     // write DNA1
     ftChunk ch;
-    ch.m_code   = DNA1;
+    ch.m_code   = ftIdNames::DNA1;
     ch.m_len    = getTableSize();
     ch.m_nr     = 1;
     ch.m_old    = 0;
@@ -1019,7 +1042,7 @@ int ftFile::save(const char* path, const int mode)
     fs->write(getTables(), ch.m_len);
 
     // write ENDB (End Byte | EOF )
-    ch.m_code   = ENDB;
+    ch.m_code   = ftIdNames::ENDB;
     ch.m_len    = 0;
     ch.m_nr     = 0;
     ch.m_old    = 0;
@@ -1098,5 +1121,5 @@ void ftFile::serialize(skStream* stream,
 
 void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
 {
-    serializeChunk(stream, DATA, 1, 0, len, writeData);
+    serializeChunk(stream, ftIdNames::DATA, 1, 0, len, writeData);
 }

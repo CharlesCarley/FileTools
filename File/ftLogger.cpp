@@ -146,7 +146,6 @@ void ftLogger::log(const ftChunk &chunk)
 void ftLogger::log(void *ptr, FBTsize len)
 {
     skHexPrint::dumpHex((char *)ptr, 0, len, skHexPrint::PF_DEFAULT, -1);
-    fflush(stdout);
 }
 
 void ftLogger::width(FBTsize w)

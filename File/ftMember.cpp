@@ -114,7 +114,7 @@ int ftMember::getArraySize()
         if (m_name < m_parent->m_table->m_nameCount)
             return m_parent->m_table->m_names[m_name].m_arraySize;
     }
-    return 0;
+    return 1;
 }
 
 

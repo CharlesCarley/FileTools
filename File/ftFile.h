@@ -224,6 +224,8 @@ private:
     void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, int& status);
     void freeChunk(ftMemoryChunk*& chunk);
 
+    void runTableChecks(ftTables* tbltochk);
+
 
     void clearStorage(void);
     int  parseHeader(skStream* stream);
