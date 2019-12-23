@@ -21,6 +21,9 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
+set(TargetName ${FileTools_TARGET_NAME})
+
+
 
 set(File_SRC
     ftAtomic.cpp
@@ -35,9 +38,6 @@ set(File_SRC
     ftStruct.cpp
     ftTables.cpp
     ftTypes.cpp
-)
-
-set(File_HDR
     ftAtomic.h
     ftChunk.h
     ftCompiler.h
@@ -60,10 +60,6 @@ if (ftUSE_ZLIB)
     link_libraries(${ftZLIB_LIBRARY})
 endif()
 
-include_directories(${SID_UTILS_DIR})
-link_libraries(${SID_UTILS_LIB})
+include_directories(${FileTools_Utils_INCLUDE})
+add_library(${TargetName} ${File_SRC})
 
-add_library(ftFile ${File_SRC} ${File_HDR})
-if (ft_FOLDER)
-    set_target_properties(ftFile PROPERTIES FOLDER "${ft_FOLDER}")
-endif()

@@ -1,9 +1,15 @@
-#------------------------------------------------------------------------------
-# This software is provided 'as-is', without any express or implied
+# -----------------------------------------------------------------------------
+#
+#   Copyright (c) 2019 Charles Carley.
+#
+#   Contributor(s): none yet
+#
+# ------------------------------------------------------------------------------
+#   This software is provided 'as-is', without any express or implied
 # warranty. In no event will the authors be held liable for any damages
 # arising from the use of this software.
 #
-# Permission is granted to anyone to use this software for any purpose,
+#   Permission is granted to anyone to use this software for any purpose,
 # including commercial applications, and to alter it and redistribute it
 # freely, subject to the following restrictions:
 #
@@ -14,42 +20,112 @@
 # 2. Altered source versions must be plainly marked as such, and must not be
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
-#------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.4)
+# ------------------------------------------------------------------------------
+cmake_minimum_required(VERSION 3.0)
 project(FileTools)
-list(APPEND CMAKE_MODULE_PATH ${FileTools_SOURCE_DIR}/CMake)
+
+set(FileTools_BLD_TESTS         FALSE           CACHE BOOL      "Build tests.")
+set(FileTools_BLD_BLEND_FILE    FALSE           CACHE BOOL      "Blend file ")
 
 
-set(ftINCLUDE ${FileTools_SOURCE_DIR}/File)
+
+if (NOT FileTools_UTILS_EXTERNAL)
+
+    set(FileTools_Utils_ROOT ${FileTools_SOURCE_DIR}/External/Utils)
+    set(FileTools_Utils_INCLUDE ${FileTools_Utils_ROOT}/../)
+    set(FileTools_Utils_LIBRARY Utils)
+    set(FileTools_Utils_CMAKE   ${FileTools_Utils_ROOT}/CMake)
 
 
-if (NOT ftUSE_OWN_ZLIB)
-    set(ftUSE_ZLIB 1)
-    set(ftZLIB_INCLUDE ${FileTools_SOURCE_DIR}/File/zlib)
-    set(ftZLIB_LIBRARY zlib)	
+    if (NOT IS_DIRECTORY ${FileTools_Utils_CMAKE})
+        message(STATUS "Attempting to cloning Utils into ${FileTools_Utils_ROOT}")
 
-    if (ftUSE_ZLIB )
-        add_definitions(-DftUSE_GZ_FILE=1)
-        subdirs(File/zlib)
+        execute_process( 
+            WORKING_DIRECTORY ${FileTools_SOURCE_DIR} 
+            COMMAND git submodule update --init --checkout
+            ERROR_FILE ${FileTools_BINARY_DIR}/GetSubmoduleUpdate.txt
+            OUTPUT_QUIET
+            ERROR_QUIET
+        )
+        if (NOT IS_DIRECTORY ${FileTools_Utils_CMAKE})
+            message("Failed to clone Utils. See ${FileTools_BINARY_DIR}/GetSubmoduleUpdate.txt for more information.")
+        endif()
     endif()
+
+    subdirs(${FileTools_Utils_ROOT})
+
 else()
-    if (ftUSE_ZLIB )
-        add_definitions(-DftUSE_GZ_FILE=1)
-    endif()
+   
+    # These must be explicitly set before calling this script
+
+    set(FileTools_Utils_INCLUDE ${Utils_INCLUDE})
+    set(FileTools_Utils_LIBRARY ${Utils_LIB})
+    set(FileTools_Utils_CMAKE   ${Utils_INCLUDE}/CMake)
+
+endif()
+
+
+if (NOT FileTools_USE_OWN_ZLIB)
+
 endif()
 
 
 
-#add_definitions(-DFftUSE_COMPILER_CHECKS=0)
-#add_definitions(-DftUSE_DEBUG_ASSERTS=0)
-add_definitions("-DftSCALAR_DOUBLE")
+list(APPEND CMAKE_MODULE_PATH 
+    ${FileTools_SOURCE_DIR}/CMake
+    ${FileTools_Utils_CMAKE}
+)
+
+# This is the main include definition 
+# to use the file classes.
+set(FileTools_INCLUDE 
+    ${FileTools_SOURCE_DIR}/File
+    ${FileTools_Utils_INCLUDE}
+)
+
+set(FileTools_TARGET_NAME   FileTools)
+set(FileTools_COMPILER_NAME TableCompiler)
+set(FileTools_LIBRARY      ${FileTools_TARGET_NAME} ${FileTools_Utils_LIBRARY})
+
+
 
 subdirs(File Compiler)
-#subdirs(FileFormats/Blend)
 
-if (NOT ftNO_EXAMPLES)
-    subdirs(FileFormats/Example)
-    subdirs(FileTest)
-    subdirs(Example)
+
+if (FileToolsBLD_BLEND_FILE)
+    subdirs(FileFormats/Blend)
 endif()
+
+
+if (FileToolsBLD_TESTS)
+
+    # The test files depend on Data2Array 
+    # to build parsable source   
+    list(APPEND CMAKE_MODULE_PATH 
+        ${FileTools_SOURCE_DIR}/External/Data2Array/CMake
+    )  
+    subdirs(External/Data2Array)
+    subdirs(Tests)
+endif()
+
+
+#if (NOT ftUSE_OWN_ZLIB)
+#    set(ftUSE_ZLIB 0)
+#    set(ftZLIB_INCLUDE ${FileTools_SOURCE_DIR}/File/zlib)
+#    set(ftZLIB_LIBRARY zlib)	
+#    if (ftUSE_ZLIB )
+#        add_definitions(-DftUSE_GZ_FILE=1)
+#        subdirs(File/zlib)
+#    endif()
+#else()
+#    if (ftUSE_ZLIB )
+#        add_definitions(-DftUSE_GZ_FILE=1)
+#    endif()
+#endif()
+#subdirs(FileFormats/Blend)
+#if (NOT ftNO_EXAMPLES)
+#    subdirs(FileFormats/Example)
+#    subdirs(FileTest)
+#    subdirs(Example)
+#endif()
 

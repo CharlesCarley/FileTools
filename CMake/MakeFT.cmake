@@ -15,7 +15,12 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 #------------------------------------------------------------------------------
-set(FT_EXECUTABLE makeft)
+if (FileTools_COMPILER_NAME)
+    set(FT_EXECUTABLE ${FileTools_COMPILER_NAME})
+else()
+    set(FT_EXECUTABLE makeft)
+endif()
+
 # ----------------------------------------------------------------------------#
 #                                                                             #
 # Get a list of absolute paths                                                #
@@ -46,24 +51,28 @@ endmacro(FT_BASE_SRC)
 #                                                                             #
 # ----------------------------------------------------------------------------#
 macro(ADD_FT TARGET)
-    
     set(SRC_FILES )
     set(BASE_FILES )
     set(OUTFILE )
 
     ft_absolute_src(SRC_FILES ${ARGN})
     ft_base_src(BASE_FILES ${ARGN})
-
     get_filename_component(TARNAME ${TARGET} NAME)
+   
     set(OUTFILE ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}.inl)
 
+    # Add the output directory to the current include 
+    # list since it needs to be included in-order to use it
+    include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
     add_custom_command(
 	    OUTPUT ${OUTFILE}
 	    COMMAND ${FT_EXECUTABLE} ${TARNAME} ${OUTFILE} ${SRC_FILES}
 	    DEPENDS ${FT_EXECUTABLE} ${SRC_FILES}
 	    )
+
     set(${TARGET} ${OUTFILE})
+
 endmacro(ADD_FT)
 
 # ----------------------------------------------------------------------------#

@@ -1,15 +1,9 @@
-# -----------------------------------------------------------------------------
-#
-#   Copyright (c) 2019 Charles Carley.
-#
-#   Contributor(s): none yet
-#
-# ------------------------------------------------------------------------------
-#   This software is provided 'as-is', without any express or implied
+#------------------------------------------------------------------------------
+# This software is provided 'as-is', without any express or implied
 # warranty. In no event will the authors be held liable for any damages
 # arising from the use of this software.
 #
-#   Permission is granted to anyone to use this software for any purpose,
+# Permission is granted to anyone to use this software for any purpose,
 # including commercial applications, and to alter it and redistribute it
 # freely, subject to the following restrictions:
 #
@@ -20,13 +14,13 @@
 # 2. Altered source versions must be plainly marked as such, and must not be
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
-# ------------------------------------------------------------------------------
-set(TargetName ${FileTools_COMPILER_NAME})
+#------------------------------------------------------------------------------
+set(TargetName BlendFileTest)
 
-include_directories(${FileTools_INCLUDE})
-link_libraries(${FileTools_LIBRARY} ${FileTools_Utils_LIBRARY})
 
-add_executable(${TargetName}  makeft.cpp)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ ${BlendFile_INCLUDE})
+add_executable(${TargetName} main.cpp)
 
 if (MSVC)
     set_target_properties(
@@ -36,3 +30,8 @@ if (MSVC)
         ${CMAKE_CURRENT_SOURCE_DIR}
     )
 endif()
+
+target_link_libraries(
+    ${TargetName}
+    ${BlendFile_LIBRARY}
+)

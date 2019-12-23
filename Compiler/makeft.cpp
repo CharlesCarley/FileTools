@@ -26,11 +26,61 @@
 #include <stdio.h>
 #include "ftCompiler.h"
 
+
+void usage(const char* prog);
+int basename(const char* inp);
+
+
 int main(int argc, char** argv)
 {
+    char *base = argv[0] + basename(argv[0]);
     if (argc < 4)
     {
-        printf("makeft <tablename> <outfile> <infile>[0] ... <infile>[n]\n");
+        usage(base);
+        return 1;
+    }
+
+    printf("%s, Building table %s\n", base, argv[1]);
+    ftCompiler tables;
+    for (int i = 3; i < argc; ++i)
+    {
+        if (tables.parseFile(argv[i]) < 0)
+        {
+            printf("%s -> Parse Error: When compiling file %s\n", base, argv[i]);
+            return 1;
+        }
+    }
+
+    int code = tables.buildTypes();
+    if (code != LNK_OK)
+    {
+        printf("%s -> Link Error(%08X): When compiling table %s\n", base, code, argv[1]);
+        return code;
+    }
+    tables.writeFile(argv[1], argv[2]);
+    return 0;
+}
+
+
+int basename(const char* input)
+{
+    int offs = 0;
+    if (input)
+    {
+        int len = ((int)strlen(input)), i;
+        for (i = len - 1; i >= 0 && offs == 0; --i)
+            if (input[i] == '/' || input[i] == '\\')
+                offs = i+1;
+    }
+    return offs;
+}
+
+
+void usage(const char* prog)
+{
+    if (prog)
+    {
+        printf("%s\n\t<tablename> <outfile> <infile>[0] ... <infile>[n]\n", prog);
         printf("\n");
         printf("       tablename - A prefix on the generated table.  \n");
         printf("                   Eg: 'File' would be generated as:\n");
@@ -40,27 +90,8 @@ int main(int argc, char** argv)
         printf("\n");
         printf("       outfile   - The name of the output file that will be used to store the tables.\n");
         printf("       infile    - a space separated list of file names to compile.\n");
-        return 1;
-    }
-    printf("makeft -> Building table %s\n", argv[1]);
 
-    ftCompiler tables;
-    for (int i = 3; i < argc; ++i)
-    {
-        if (tables.parseFile(argv[i]) < 0)
-        {
-            printf("makeft -> Parse Error: When compiling file %s\n", argv[i]);
-            return 1;
-        }
     }
-
-    int code = tables.buildTypes();
-    if (code != LNK_OK)
-    {
-        printf("makeft -> Link Error(%08X): When compiling table %s\n", code, argv[1]);
-        return code;
-    }
-
-    tables.writeFile(argv[1], argv[2]);
-    return 0;
+    else
+        printf("Invalid program name supplied to usage.\n");
 }
