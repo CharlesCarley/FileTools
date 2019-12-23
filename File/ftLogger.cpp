@@ -95,7 +95,7 @@ void ftLogger::log(int status, const char *msg, ...)
     log(status);
     if (msg)
     {
-        char buf[513];
+        char    buf[513];
         va_list lst;
         va_start(lst, msg);
         int size = skp_printf(buf, 512, msg, lst);
@@ -324,6 +324,28 @@ void ftLogger::log(const ftName &name)
             cout << ',' << ' ';
         cout << name.m_dimensions[i];
     }
+    cout << endl;
+    skHexPrint::writeColor(CS_WHITE);
+}
+
+
+void ftLogger::log(const ftType &type)
+{
+    seperator();
+    skHexPrint::writeColor(CS_GREEN);
+    cout << "Name                 : " << type.m_name << endl;
+    skHexPrint::writeColor(CS_LIGHT_GREY);
+    cout << "Hash                 : " << type.m_hash << endl;
+    cout << "Structure ID         : " << type.m_strcId << endl;
+}
+
+
+void ftLogger::log(const ftType &type, FBTtype size)
+{
+    cout << right << setw(10) << size << ' ';
+    skHexPrint::writeColor(CS_LIGHT_GREY);
+    cout << left << type.m_name;
+
     cout << endl;
     skHexPrint::writeColor(CS_WHITE);
 }

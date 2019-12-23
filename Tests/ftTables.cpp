@@ -56,9 +56,8 @@ TEST_CASE("CompilerTest")
 
     ftLogger::log(stream.ptr(), stream.size());
 
-
-    ftTables tbl;
-    tbl.read(stream.ptr(), stream.size(), false);
+    ftTables tbl(sizeof(void*));
+    tbl.read(stream.ptr(), stream.size(), 0,0);
 
     FBTuint32 nr, i, j, mnr;
 
@@ -119,8 +118,8 @@ TEST_CASE("RebuildTest")
     ftLogger::log(stream.ptr(), stream.size());
 
 
-    ftTables tbl;
-    tbl.read(stream.ptr(), stream.size(), false);
+    ftTables tbl(sizeof(void*));
+    tbl.read(stream.ptr(), stream.size(), 0, 0);
 
 
     ftTables::Structures::Iterator it = tbl.getStructIterator();

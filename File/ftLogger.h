@@ -27,6 +27,8 @@
 #define _ftLogger_h_
 
 #include "ftFile.h"
+#include "ftTables.h"
+
 
 class ftLogger
 {
@@ -44,7 +46,9 @@ public:
     static void log(ftStruct *strc);
     static void log(ftMember *strc);
     static void log(ftStruct *fstrc, ftStruct *mstrc);
-    static void log(const ftName &strc);
+    static void log(const ftName &name);
+    static void log(const ftType &type);
+    static void log(const ftType &type, FBTtype size);
 };
 
 

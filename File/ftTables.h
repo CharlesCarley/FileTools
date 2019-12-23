@@ -31,6 +31,9 @@
 #include "ftHashTypes.h"
 #include "ftStruct.h"
 #include "ftTypes.h"
+#include "ftStreams.h"
+
+
 
 
 namespace ftIdNames
@@ -191,14 +194,39 @@ private:
     TypeFinder m_typeFinder;
 
 
+    int readTableHeader(
+        ftMemoryStream& stream,
+        const char*     headerName,
+        int             fileFlags);
 
-    int allocateTable(void**  dest,
-                      FBTsize numberOfEntries,
-                      FBTsize sizeofEntry,
-                      int     fileFlags); 
+    int readNameTable(
+        ftMemoryStream& stream,
+        int             headerFlags,
+        int             fileFlags);
 
+    int readTypeTable(
+        ftMemoryStream& stream,
+        int             headerFlags,
+        int             fileFlags);
 
-    void convertName(ftName& destName, char*& convString);
+    int readSizeTable(
+        ftMemoryStream& stream,
+        int             headerFlags,
+        int             fileFlags);
+
+    int readStructureTable(
+        ftMemoryStream& stream,
+        int             headerFlags,
+        int             fileFlags);
+
+    int allocateTable(
+        void**  dest,
+        FBTsize numberOfEntries,
+        FBTsize sizeofEntry,
+        int     fileFlags); 
+
+    void convertName(ftName& destName, char* convString);
+
     int  buildStruct(FBTuint16*& buf, FBTuint16 current, int headerFlags, int fileFlags);
 
     int isValidTypeName(const FBTuint16& type, const FBTuint16& name, int fileFlags);

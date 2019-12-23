@@ -155,7 +155,6 @@ typedef union FBTByteInteger {
 } FBTByteInteger;
 
 class skStream;
-class ftMemoryStream;
 class ftTables;
 class ftStruct;
 struct ftName;

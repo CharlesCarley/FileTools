@@ -62,6 +62,7 @@ protected:
 
 #else
 typedef skFileStream ftGzStream;
+typedef skMemoryStream ftMemoryStream;
 #endif
 
 
