@@ -1,10 +1,10 @@
-## CMake Build Utilities
+# CMake Build Utilities
 
+## MakeFT
 
-### MakeFT
-can be used to add a custom build target.
+The MakeFT.cmake file can be used to add a custom build targets.
 
-#### macro(ADD_FT TARGET ARGN)
+### macro(ADD_FT TARGET ARGN)
 
 ```CMake
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/DirectoryContainingMakeFT)
@@ -21,18 +21,17 @@ add_ft(OutputVar ${ApiFiles})
 
 set(Source
    Implementation.h
-   Implementation.cpp   
+   Implementation.cpp
    ${OutputVar}
    ${ApiFiles}
 )
 add_library(LibName ${Source})
 ```
 
+### macro(ADD_FT_VALIDATOR TARGET ARGN)
 
+ADD_FT_VALIDATOR generates two output files
 
-
-#### macro(ADD_FT_VALIDATOR TARGET ARGN)
-Generates two output files
 1. The same tables as above.
 2. A validation program that asserts the computed structure sizes. If validation fails a compile error will be generated.
 
@@ -51,12 +50,9 @@ add_ft_validator(OutputVar ${ApiFiles})
 
 set(Source
    Implementation.h
-   Implementation.cpp   
+   Implementation.cpp 
    ${OutputVar}
    ${ApiFiles}
 )
 add_library(LibName ${Source})
 ```
-
-
-
