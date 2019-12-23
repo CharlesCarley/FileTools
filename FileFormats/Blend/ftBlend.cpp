@@ -67,9 +67,6 @@ const ftIdDB ftData[] =
 
 ftBlend::ftBlend() :
     ftFile("BLENDER"),
-    m_filterList(0),
-    m_filterListLen(0),
-    m_inclusive(false),
     m_fg()
 {
 }
@@ -124,51 +121,6 @@ int ftBlend::serializeData(skStream* stream)
     }
     return FS_OK;
 }
-
-bool ftBlend::skip(const FBTuint32& id)
-{
-    if (!m_filterList)
-        return false;
-
-    int f = 0, l = m_filterListLen - 1, m;
-    while (f <= l)
-    {
-        m = (f + l) / 2;
-        if (m_filterList[m] == id)
-            return !m_inclusive;
-        else if (m_filterList[m] > id)
-            l = m - 1;
-        else
-            f = m + 1;
-    }
-    return m_inclusive;
-}
-
-void ftBlend::setFilterList(FBTuint32* filter, bool inclusive)
-{
-    m_filterList = filter;
-    if (!m_filterList)
-        return;
-
-    m_inclusive = inclusive;
-    int i       = 0, j, k;
-    while (m_filterList[i++] != 0)
-        ;
-
-    m_filterListLen = i;
-    for (i = 0; i < m_filterListLen - 2; i++)
-    {
-        k = i;
-        for (j = i + 1; j < m_filterListLen - 1; ++j)
-        {
-            if (m_filterList[j] < m_filterList[k])
-                k = j;
-        }
-        if (k != i)
-            skSwap(m_filterList[i], m_filterList[k]);
-    }
-}
-
 
 int ftBlend::save(const char* path, const int mode)
 {

@@ -38,12 +38,12 @@
 
 namespace ftIdNames
 {
-    const char FT_SDNA[4] = {'S', 'D', 'N', 'A'};
-    const char FT_NAME[4] = {'N', 'A', 'M', 'E'};  // Name array
-    const char FT_TYPE[4] = {'T', 'Y', 'P', 'E'};  // Type Array
-    const char FT_TLEN[4] = {'T', 'L', 'E', 'N'};  // Type length array
-    const char FT_STRC[4] = {'S', 'T', 'R', 'C'};  // Struct/Class Array
-    const char FT_OFFS[4] = {'O', 'F', 'F', 'S'};  // Offset map (Optional & TODO)
+    const char FT_SDNA[5] = {'S', 'D', 'N', 'A', '\0'};
+    const char FT_NAME[5] = {'N', 'A', 'M', 'E', '\0'};  // Name array
+    const char FT_TYPE[5] = {'T', 'Y', 'P', 'E', '\0'};  // Type Array
+    const char FT_TLEN[5] = {'T', 'L', 'E', 'N', '\0'};  // Type length array
+    const char FT_STRC[5] = {'S', 'T', 'R', 'C', '\0'};  // Struct/Class Array
+    const char FT_OFFS[5] = {'O', 'F', 'F', 'S', '\0'};  // Offset map (Optional & TODO)
 
     const FBTuint32 SDNA = ftID('S', 'D', 'N', 'A');
     const FBTuint32 DNA1 = ftID('D', 'N', 'A', '1');
@@ -224,6 +224,8 @@ private:
         FBTsize numberOfEntries,
         FBTsize sizeofEntry,
         int     fileFlags); 
+
+    void clearTables(void);
 
     void convertName(ftName& destName, char* convString);
 

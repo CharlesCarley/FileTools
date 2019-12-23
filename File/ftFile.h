@@ -78,7 +78,6 @@ public:
         PM_UNCOMPRESSED,
         PM_COMPRESSED,
         PM_READTOMEMORY,
-
     };
 
     enum FileHeader
@@ -91,45 +90,54 @@ public:
     enum LogFlags
     {
         LF_NONE            = 0,
-        LF_ONLY_ERR          = 1 << 0,
-        LF_READ_CHUNKS       = 1 << 1,
-        LF_WRITE_CHUNKS      = 1 << 2,
-        LF_WRITE_LINK        = 1 << 3,
-        LF_DIAGNOSTICS       = 1 << 4,
-        LF_DO_CHECKS         = 1 << 5,
-        LF_DUMP_NAME_TABLE   = 1 << 6,
-        LF_DUMP_TYPE_TABLE   = 1 << 7,
+        LF_ONLY_ERR        = 1 << 0,
+        LF_READ_CHUNKS     = 1 << 1,
+        LF_WRITE_CHUNKS    = 1 << 2,
+        LF_WRITE_LINK      = 1 << 3,
+        LF_DO_CHECKS       = 1 << 4,
+
+        LF_DIAGNOSTICS     = 1 << 5,
+        // Specific to diagnostics
+        LF_DUMP_NAME_TABLE = 1 << 6,
+        LF_DUMP_TYPE_TABLE = 1 << 7,
         LF_DUMP_SIZE_TABLE = 1 << 8,
+        LF_DUMP_SKIP       = 1 << 9,
+        LF_DUMP_CAST       = 1 << 10,
+        LF_UNRESOLVED      = 1 << 11,
     };
 
     typedef skHashTable<ftPointerHashKey, ftMemoryChunk*> ChunkMap;
     typedef ftList                                        MemoryChunks;
 
 private:
-
     int         m_headerFlags;
     int         m_fileFlags;
     const char* m_uhid;
     ftHeader    m_header;
     char*       m_curFile;
     void*       m_fileTableData;
+    FBThash*    m_filterList;
+    FBTint32    m_filterListLen;
+    bool        m_inclusive;
+
 
 protected:
     int          m_memoryVersion;
     int          m_fileVersion;
-
     MemoryChunks m_chunks;
     ChunkMap     m_map;
     ftTables*    m_memory;
     ftTables*    m_file;
 
-
 public:
     ftFile(const char* uid);
     virtual ~ftFile();
 
+
     int load(const char* path, int mode = PM_UNCOMPRESSED);
     int load(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
+
+
     int save(const char* path, const int mode = PM_UNCOMPRESSED);
 
     ftTables* getMemoryTable(void);
@@ -159,21 +167,6 @@ public:
         return m_chunks;
     }
 
-
-    // Enable a filter for structures
-    // inclusive - true:  Filter everything except what is in the list.
-    // inclusive - false: Filter everything not but list.
-    virtual void setFilterList(FBTuint32* filter, bool inclusive = false)
-    {
-        // override to handle
-    }
-
-    void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
-    void serialize(skStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
-    void serialize(skStream* stream, FBTsize len, void* writeData, int nr = 1);
-
-
-
     inline int getFileFlags()
     {
         return m_fileFlags;
@@ -190,16 +183,33 @@ public:
     }
 
 
+    // This enables a filter for structures. 
+    // inclusive - true:  Filter everything except what is in the list.
+    // inclusive - false: Filter everything not in list.
+    //
+    // Internally struct types are stored by a hash of their unique type name.
+    //
+    // The filter list needs to be a zero terminated FBThash [] array.
+    //
+    // The hash function resides in the ftCharHashKey class
+    // Usage:
+    // FBThash filterList[] = {
+    //      ftCharHashKey("StructToFilter").hash(),
+    //      0
+    // };
+    void setFilterList(FBThash* filter, FBTsize length, bool inclusive = false);
+
+
+    void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
+    void serialize(skStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
+    void serialize(skStream* stream, FBTsize len, void* writeData, int nr = 1);
+
 protected:
     bool isValidWriteData(void* writeData, FBTsize len);
+    int  initializeTables(ftTables* tables);
+    int  initializeMemory(void);
 
-    int initializeTables(ftTables* tables);
-    int initializeMemory(void);
 
-    virtual bool skip(const FBThash& id)
-    {
-        return false;
-    }
 
     virtual void*   getTables(void)                            = 0;
     virtual FBTsize getTableSize(void)                         = 0;
@@ -210,6 +220,7 @@ private:
     void*          findPtr(const FBTsize& iptr);
     ftMemoryChunk* findBlock(const FBTsize& iptr);
     skStream*      openStream(const char* path, int mode);
+    bool           skip(const FBThash& id);
 
     void serializeChunk(skStream* stream,
                         FBTuint32 code,

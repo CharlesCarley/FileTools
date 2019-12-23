@@ -47,6 +47,9 @@ ftFile::ftFile(const char* uhid) :
     m_curFile(0),
     m_memory(0),
     m_file(0),
+    m_filterList(0),
+    m_filterListLen(0),
+    m_inclusive(false),
     m_fileTableData(0)
 {
     m_chunks.clear();
@@ -390,12 +393,9 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         // number of elements in a pointer array.
         bin->m_pblockLen = chunk.m_len;
 
-
         ftPointerHashKey phk(chunk.m_old);
         if (m_map.find(phk) != m_map.npos)
         {
-            if (m_fileFlags & LF_DIAGNOSTICS)
-                ftLogger::logF("print (0x%08X)", bin->m_chunk.m_old);
             freeChunk(bin);
             status = FS_DUPLICATE_BLOCK;
         }
@@ -434,10 +434,22 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                     else
                         status = FS_BAD_ALLOC;
                 }
+                else
+                {
+                    if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_DUMP_SKIP)
+                    {
+                        ftLogger::seperator();
+                        ftLogger::logF("Skipping Chunk for %s", fstrc->getName());
+                        ftLogger::log(bin->m_chunk);
+                        ftLogger::seperator();
+                        ftLogger::log(bin->m_fblock, bin->m_chunk.m_len);
+                    }
+                    freeChunk(bin);
+                }
             }
             else
             {
-                if (m_fileFlags & LF_DIAGNOSTICS)
+                if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_UNRESOLVED)
                 {
                     ftLogger::seperator();
                     ftLogger::logF("Failed to resolve both file and memory declarations for chunk:");
@@ -459,7 +471,6 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                     }
                     ftLogger::newline(2);
                 }
-
                 freeChunk(bin);
             }
         }
@@ -468,14 +479,18 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         status = FS_BAD_ALLOC;
 }
 
-
-
 void ftFile::insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, int& status)
 {
     if (!m_map.insert(phk, chunk))
     {
-        if (m_fileFlags & LF_DIAGNOSTICS)
-            ftLogger::logF("print (0x%08X)", chunk->m_chunk.m_old);
+        if (m_fileFlags != LF_NONE)
+        {
+            ftLogger::seperator();
+            ftLogger::logF("Failed to insert chunk");
+            ftLogger::log(chunk->m_chunk);
+            ftLogger::seperator();
+            ftLogger::log(chunk->m_fblock, chunk->m_chunk.m_len);
+        }
 
         freeChunk(chunk);
         status = FS_INV_INSERT;
@@ -511,7 +526,8 @@ int ftFile::rebuildStructures()
     FBTsize * srcPtr, *dstPtr;
     ftStruct *fstrc, *mstrc;
 
-    bool diagnostics = (m_fileFlags & LF_DIAGNOSTICS) != 0;
+    bool diagnostics = (m_fileFlags & LF_DIAGNOSTICS) != 0 && (m_fileFlags & LF_DUMP_CAST) != 0;
+
 
     ftMemoryChunk* node;
     for (node = (ftMemoryChunk*)m_chunks.first; node && status == FS_OK; node = node->m_next)
@@ -717,11 +733,10 @@ void ftFile::castPointerToPointer(ftMember* dst,
                 ftLogger::logF("Unknown pointer length(%d). Pointers should be either 4 or 8 bytes", fps);
         }
     }
-    else if (m_fileFlags != LF_NONE)
+    else if (m_fileFlags & LF_UNRESOLVED)
     {
         ftLogger::logF("Failed to find corresponding chunk for address (0x%08X)",
                        (FBTsize)(*srcPtr));
-
         ftLogger::logF("Source");
         ftLogger::log(src);
         ftLogger::logF("Destination");
@@ -867,6 +882,54 @@ void ftFile::castMemberVariable(ftMember* dst,
         }
     }
 }
+
+
+
+bool ftFile::skip(const FBThash& id)
+{
+    if (!m_filterList)
+        return false;
+
+    int f = 0, l = m_filterListLen - 1, m;
+    while (f <= l)
+    {
+        m = (f + l) / 2;
+        if (m_filterList[m] == id)
+            return !m_inclusive;
+        else if (m_filterList[m] > id)
+            l = m - 1;
+        else
+            f = m + 1;
+    }
+    return m_inclusive;
+}
+
+void ftFile::setFilterList(FBThash* filter, FBTsize length, bool inclusive)
+{
+    m_filterList = filter;
+    if (!m_filterList)
+        return;
+
+    int i       = 0, j, k;
+    m_inclusive = inclusive;
+
+    while (i < length && m_filterList[i] != 0)
+        i++;
+
+    m_filterListLen = i;
+    for (i = 0; i < m_filterListLen - 2; i++)
+    {
+        k = i;
+        for (j = i + 1; j < m_filterListLen - 1; ++j)
+        {
+            if (m_filterList[j] < m_filterList[k])
+                k = j;
+        }
+        if (k != i)
+            skSwap(m_filterList[i], m_filterList[k]);
+    }
+}
+
 
 
 ftStruct* ftFile::findInTable(ftStruct* findStruct, ftTables* sourceTable, ftTables* findInTable)
@@ -1025,7 +1088,7 @@ int ftFile::save(const char* path, const int mode)
         ce = FM_LITTLE_ENDIAN;
 
     ftHeader header;
-    char version[33];
+    char     version[33];
     sprintf(version, "%i", m_memoryVersion);
 
     strncpy(header.ptr(), m_uhid, 7);  // The first 7 bytes of the header

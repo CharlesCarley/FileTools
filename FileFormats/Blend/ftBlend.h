@@ -62,17 +62,9 @@ public:
 
     int save(const char* path, const int mode = PM_UNCOMPRESSED);
 
-    void setFilterList(FBTuint32* filter, bool inclusive = false);
-
 protected:
-    virtual bool skip(const FBTuint32& id);
-
     virtual int notifyDataRead(void* p, const ftChunk& id);
     virtual int serializeData(skStream* stream);
-
-    FBTuint32*      m_filterList;
-    FBTint32        m_filterListLen;
-    bool            m_inclusive;
 
     virtual void*   getTables(void);
     virtual FBTsize getTableSize(void);
