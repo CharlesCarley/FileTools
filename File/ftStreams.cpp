@@ -27,13 +27,12 @@
 #include "ftStreams.h"
 #include "ftPlatformHeaders.h"
 
-
-#if ftUSE_GZ_FILE == 1
-    #include "zlib.h"
-    #include "zconf.h"
+#if FT_USE_ZLIB == 1
+#include "zlib.h"
+#include "zconf.h"
 #endif
 
-#if ftUSE_GZ_FILE == 1
+#if FT_USE_ZLIB == 1
 
 ftGzStream::ftGzStream() :
     m_handle(0),
@@ -46,20 +45,21 @@ ftGzStream::~ftGzStream()
     close();
 }
 
-void ftGzStream::open(const char* p, ftStream::StreamMode mode)
+void ftGzStream::open(const char* p, skStream::Mode mode)
 {
     if (m_handle != 0 && p != 0)
         gzclose((gzFile)m_handle);
 
     char fm[3] = {};
     char* mp = &fm[0];
-    if (mode & ftStream::SM_READ)
+    if (mode & READ)
         *mp++ = 'r';
-    else if (mode & ftStream::SM_WRITE)
+    else if (mode & WRITE)
         *mp++ = 'w';
     *mp++ = 'b';
     m_handle = gzopen(p, fm);
 }
+
 
 void ftGzStream::close(void)
 {
@@ -72,7 +72,7 @@ void ftGzStream::close(void)
 
 FBTsize ftGzStream::read(void* dest, FBTsize nr) const
 {
-    if (m_mode == ftStream::SM_WRITE) return -1;
+    if (m_mode == WRITE) return -1;
     if (!dest || !m_handle)
         return -1;
 
@@ -82,7 +82,7 @@ FBTsize ftGzStream::read(void* dest, FBTsize nr) const
 
 FBTsize ftGzStream::write(const void* src, FBTsize nr)
 {
-    if (m_mode == ftStream::SM_READ) return -1;
+    if (m_mode == READ) return -1;
     if (!src || !m_handle) return -1;
     return gzwrite((gzFile)m_handle, src, nr);
 }

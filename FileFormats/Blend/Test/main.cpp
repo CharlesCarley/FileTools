@@ -24,6 +24,9 @@
 using namespace Blender;
 using namespace ftFlags;
 
+
+
+
 // Unneeded structures
 static FBThash skipList[] =
 {
@@ -46,7 +49,9 @@ int main(int argc, char** argv)
         return 1;
 
     ftBlend fp;
-    fp.setFilterList(skipList, true);
+    fp.addFileFlag(LF_DIAGNOSTICS | LF_DUMP_SKIP);
+    //fp.setFilterList(skipList, sizeof(skipList)/sizeof(FBThash), true);
+
     if (fp.load(argv[argc - 1], PM_COMPRESSED) != FS_OK)
         return 1;
 

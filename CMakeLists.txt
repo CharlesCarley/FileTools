@@ -24,9 +24,10 @@
 cmake_minimum_required(VERSION 3.0)
 project(FileTools)
 
-set(FileTools_BLD_TESTS         FALSE           CACHE BOOL      "Build tests.")
-set(FileTools_BLD_BLEND_FILE    FALSE           CACHE BOOL      "Blend file ")
-
+set(FileTools_BLD_TESTS         FALSE           CACHE BOOL      "Build basic tests.")
+set(FileTools_BLD_BLEND_FILE    FALSE           CACHE BOOL      "Build the blend file version.")
+set(FileTools_USE_ZLIB          FALSE           CACHE BOOL      "Allow GZ compressed files to be read.")
+set(FileTools_USE_OWN_ZLIB      FALSE           CACHE BOOL      "Define this if zlib is used as part of a larger project.")
 
 
 if (NOT FileTools_UTILS_EXTERNAL)
@@ -65,16 +66,13 @@ else()
 endif()
 
 
-if (NOT FileTools_USE_OWN_ZLIB)
-
-endif()
-
-
 
 list(APPEND CMAKE_MODULE_PATH 
     ${FileTools_SOURCE_DIR}/CMake
     ${FileTools_Utils_CMAKE}
 )
+set(FileTools_TARGET_NAME   FileTools)
+set(FileTools_COMPILER_NAME TableCompiler)
 
 # This is the main include definition 
 # to use the file classes.
@@ -82,22 +80,54 @@ set(FileTools_INCLUDE
     ${FileTools_SOURCE_DIR}/File
     ${FileTools_Utils_INCLUDE}
 )
-
-set(FileTools_TARGET_NAME   FileTools)
-set(FileTools_COMPILER_NAME TableCompiler)
 set(FileTools_LIBRARY      ${FileTools_TARGET_NAME} ${FileTools_Utils_LIBRARY})
+
+
+
+
+
+if (FileTools_USE_ZLIB)
+
+    if (FileTools_USE_OWN_ZLIB)
+        set(FileTools_ZLIB_INCLUDE  ${FileTools_SOURCE_DIR}/File/zlib)
+        set(FileTools_ZLIB_LIBRARY  zlib)
+        set(FileTools_ZLIB_DEFINITIONS "-DFT_USE_ZLIB=1")
+
+        subdirs(${FileTools_ZLIB_INCLUDE})
+
+    else()
+        # These must defined in a higher scope
+
+        if (NOT FileTools_ZLIB_INCLUDE)
+            message(STATUS "FileTools_ZLIB_INCLUDE=<undefined>")
+        endif()
+
+        if (NOT FileTools_ZLIB_LIBRARY)
+            message(STATUS "FileTools_ZLIB_LIBRARY=<undefined>")
+        endif()
+
+   endif()
+
+
+   list(APPEND FileTools_INCLUDE
+       ${FileTools_ZLIB_INCLUDE} )
+   list(APPEND FileTools_LIBRARY
+       ${FileTools_ZLIB_LIBRARY} )
+
+endif()
+
 
 
 
 subdirs(File Compiler)
 
 
-if (FileToolsBLD_BLEND_FILE)
+if (FileTools_BLD_BLEND_FILE)
     subdirs(FileFormats/Blend)
 endif()
 
 
-if (FileToolsBLD_TESTS)
+if (FileTools_BLD_TESTS)
 
     # The test files depend on Data2Array 
     # to build parsable source   
@@ -106,6 +136,7 @@ if (FileToolsBLD_TESTS)
     )  
     subdirs(External/Data2Array)
     subdirs(Tests)
+
 endif()
 
 

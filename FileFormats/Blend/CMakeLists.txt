@@ -21,21 +21,16 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.0)
-project(BlendFile)
-set(BlendFile_TARGET BlendFile)
+set(FileTools_BLEND_BUILD_TEST FALSE CACHE BOOL "Builds a test .blend program.")
 
-set(BlendFile_BUILD_TEST FALSE CACHE BOOL "Builds a test .blend program.")
+set(BlendFile_TARGET BlendFile)
 set(BlendFile_TOOLS_INCLUDE ${FileTools_INCLUDE})
 set(BlendFile_TOOLS_LIBRARY ${FileTools_LIBRARY})
 
-
-set(BlendFile_INCLUDE ${BlendFile_CURRENT_SOURCE_DIR} ${BlendFile_TOOLS_INCLUDE})
+set(BlendFile_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} ${BlendFile_TOOLS_INCLUDE})
 set(BlendFile_LIBRARY ${BlendFile_TARGET} ${BlendFile_TOOLS_LIBRARY})
 
 include(MakeFT)
-
-
 add_ft(bfBlender Blender.h)
 
 set(BlendFile_SRC
@@ -54,9 +49,6 @@ add_library(
 
 link_libraries(${BlendFile_TOOLS_LIBRARY})
 
-
-if (BlendFile_BUILD_TEST)
+if (FileTools_BLEND_BUILD_TEST)
     subdirs(Test)
 endif()
-
-

@@ -32,7 +32,7 @@
 #include "Utils/skMemoryStream.h"
 
 
-#if ftUSE_GZ_FILE == 1
+#if FT_USE_ZLIB == 1
 
 class ftGzStream : public skStream
 {
@@ -40,7 +40,7 @@ public:
     ftGzStream();
     ~ftGzStream();
 
-    void open(const char* path, ftStream::StreamMode mode);
+    void   open(const char* path, Mode mode);
     void close(void);
 
     bool isOpen(void)   const {return m_handle != 0;}
@@ -50,17 +50,22 @@ public:
     FBTsize  write(const void* src, FBTsize nr);
     FBTsize  writef(const char* buf, ...);
 
-
     FBTsize  position(void) const;
     FBTsize size(void) const;
+    
+    bool   seek(SKint64 offset, SKsize dir) { return false; }
 
-    // no size / seek
 protected:
-    ftFileHandle        m_handle;
-    int                 m_mode;
+
+    void* m_handle;
+    int   m_mode;
 };
 
+
+typedef skMemoryStream ftMemoryStream;
+
 #else
+
 typedef skFileStream ftGzStream;
 typedef skMemoryStream ftMemoryStream;
 #endif

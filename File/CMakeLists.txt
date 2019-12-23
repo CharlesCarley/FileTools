@@ -55,11 +55,12 @@ set(File_SRC
     ftTypes.h
 )
 
-if (ftUSE_ZLIB)
-    include_directories(${ftZLIB_INCLUDE})
-    link_libraries(${ftZLIB_LIBRARY})
+if (FileTools_USE_ZLIB)
+    include_directories(${FileTools_ZLIB_INCLUDE})
+    add_definitions(${FileTools_ZLIB_DEFINITIONS})
+    link_libraries(${FileTools_ZLIB_LIBRARY})
 endif()
+
 
 include_directories(${FileTools_Utils_INCLUDE})
 add_library(${TargetName} ${File_SRC})
-
