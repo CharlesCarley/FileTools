@@ -31,6 +31,8 @@
 #include "ftStreams.h"
 
 using namespace ftEndianUtils;
+using namespace ftFlags;
+
 
 
 const ftChunk ftChunkUtils::BLANK_CHUNK = {
@@ -59,23 +61,23 @@ FBTsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
 
     if (FT_VOID8)
     {
-        if (flags & ftFile::FH_VAR_BITS)
+        if (flags & FH_VAR_BITS)
             blockLen = Block32;
     }
     else
     {
-        if (flags & ftFile::FH_VAR_BITS)
+        if (flags & FH_VAR_BITS)
             blockLen = Block64;
     }
 
     if ((bytesRead = stream->read(dest, BlockScan)) <= 0)
-        return ftFile::FS_INV_READ;
+        return FS_INV_READ;
 
     bytesRead += blockLen - BlockScan;
     if (stream->seek(blockLen - BlockScan, SEEK_CUR))
-        return ftFile::FS_INV_READ;
+        return FS_INV_READ;
 
-    if (flags & ftFile::FH_ENDIAN_SWAP)
+    if (flags & FH_ENDIAN_SWAP)
     {
         if ((dest->m_code & 0xFFFF) == 0)
             dest->m_code >>= 16;
@@ -94,11 +96,11 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
     if (FT_VOID8)
     {
         ftChunk64 c64;
-        if (flags & ftFile::FH_VAR_BITS)
+        if (flags & FH_VAR_BITS)
         {
             ftChunk32 src;
             if ((bytesRead = stream->read(&src, Block32)) <= 0)
-                return ftFile::FS_INV_READ;
+                return FS_INV_READ;
 
             FBTByteInteger ptr = {0};
 
@@ -112,7 +114,7 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
         else
         {
             if ((bytesRead = stream->read(&c64, BlockSize)) <= 0)
-                return ftFile::FS_INV_READ;
+                return FS_INV_READ;
         }
 
         tmp = (ftChunk*)(&c64);
@@ -120,11 +122,11 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
     else
     {
         ftChunk32 c32;
-        if (flags & ftFile::FH_VAR_BITS)
+        if (flags & FH_VAR_BITS)
         {
             ftChunk64 src;
             if ((bytesRead = stream->read(&src, Block64)) <= 0)
-                return ftFile::FS_INV_READ;
+                return FS_INV_READ;
 
             FBTByteInteger ptr = {0};
             c32.m_code   = src.m_code;
@@ -141,13 +143,13 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
         else
         {
             if ((bytesRead = stream->read(&c32, BlockSize)) <= 0)
-                return ftFile::FS_INV_READ;
+                return FS_INV_READ;
         }
 
         tmp = (ftChunk*)(&c32);
     }
 
-    if (flags & ftFile::FH_ENDIAN_SWAP)
+    if (flags & FH_ENDIAN_SWAP)
     {
         if ((tmp->m_code & 0xFFFF) == 0)
             tmp->m_code >>= 16;
@@ -158,10 +160,10 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
     }
 
     if (tmp->m_len == SK_NPOS32)
-        return ftFile::FS_INV_LENGTH;
+        return FS_INV_LENGTH;
 
     if (tmp->m_nr < 1 || tmp->m_nr == SK_NPOS32)
-        return ftFile::FS_INV_LENGTH;
+        return FS_INV_LENGTH;
 
     ::memcpy(dest, tmp, BlockSize);
     return bytesRead;

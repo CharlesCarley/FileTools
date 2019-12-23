@@ -37,75 +37,6 @@
 class ftFile
 {
 public:
-    enum FileMagic
-    {
-        FM_BIG_ENDIAN    = 0x56,
-        FM_LITTLE_ENDIAN = 0x76,
-        FM_32_BIT        = 0x5F,
-        FM_64_BIT        = 0x2D,
-        HEADER_OFFSET    = 0x0C,
-    };
-
-    enum FileStatus
-    {
-        FS_STATUS_MIN = -16,
-        FS_LINK_FAILED,
-        FS_INV_INSERT, 
-        FS_BAD_ALLOC,
-        FS_DUPLICATE_BLOCK,
-        FS_INV_READ,
-        FS_INV_LENGTH,
-        FS_INV_HEADER_STR,
-        FS_TABLE_INIT_FAILED,
-        FS_OVERFLOW,
-        FS_FAILED,
-
-        // Table codes
-        RS_INVALID_PTR,
-        RS_INVALID_CODE,
-        RS_LIMIT_REACHED,
-        RS_BAD_ALLOC,
-        RS_MIS_ALIGNED,
-
-        // This should always be zero
-        // until < 0 tests are removed
-        // and replaced with != FS_OK
-        FS_OK, 
-    };
-
-    enum ParseMode
-    {
-        PM_UNCOMPRESSED,
-        PM_COMPRESSED,
-        PM_READTOMEMORY,
-    };
-
-    enum FileHeader
-    {
-        FH_ENDIAN_SWAP = 1 << 0,
-        FH_CHUNK_64    = 1 << 1,
-        FH_VAR_BITS    = 1 << 2,
-    };
-
-    enum LogFlags
-    {
-        LF_NONE            = 0,
-        LF_ONLY_ERR        = 1 << 0,
-        LF_READ_CHUNKS     = 1 << 1,
-        LF_WRITE_CHUNKS    = 1 << 2,
-        LF_WRITE_LINK      = 1 << 3,
-        LF_DO_CHECKS       = 1 << 4,
-
-        LF_DIAGNOSTICS     = 1 << 5,
-        // Specific to diagnostics
-        LF_DUMP_NAME_TABLE = 1 << 6,
-        LF_DUMP_TYPE_TABLE = 1 << 7,
-        LF_DUMP_SIZE_TABLE = 1 << 8,
-        LF_DUMP_SKIP       = 1 << 9,
-        LF_DUMP_CAST       = 1 << 10,
-        LF_UNRESOLVED      = 1 << 11,
-    };
-
     typedef skHashTable<ftPointerHashKey, ftMemoryChunk*> ChunkMap;
     typedef ftList                                        MemoryChunks;
 
@@ -134,11 +65,9 @@ public:
     virtual ~ftFile();
 
 
-    int load(const char* path, int mode = PM_UNCOMPRESSED);
-    int load(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
-
-
-    int save(const char* path, const int mode = PM_UNCOMPRESSED);
+    int load(const char* path, int mode = 0);
+    int load(const void* memory, FBTsize sizeInBytes, int mode = 0);
+    int save(const char* path, const int mode = 0);
 
     ftTables* getMemoryTable(void);
 
@@ -227,8 +156,7 @@ private:
                         FBTuint32 nr,
                         FBTuint32 typeIndex,
                         FBTsize   len,
-                        void*     writeData,
-                        bool      noOldData = false);
+                        void*     writeData);
 
     void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
     void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, int& status);

@@ -33,6 +33,7 @@
 #include "ftStreams.h"
 
 using namespace ftEndianUtils;
+using namespace ftFlags;
 
 
 const ftName ftTables::INVALID_NAME = {
@@ -147,14 +148,14 @@ int ftTables::allocateTable(void**  destination,
 {
     if (!destination)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("Invalid storage pointer.");
-        return ftFile::RS_LIMIT_REACHED;
+        return RS_LIMIT_REACHED;
     }
 
     if (numberOfEntries > FT_MAX_TABLE || numberOfEntries <= 0)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
         {
             ftLogger::logF(
                 "Invalid table entry count(%d): "
@@ -162,7 +163,7 @@ int ftTables::allocateTable(void**  destination,
                 numberOfEntries,
                 FT_MAX_TABLE);
         }
-        return ftFile::RS_LIMIT_REACHED;
+        return RS_LIMIT_REACHED;
     }
     else
     {
@@ -172,9 +173,9 @@ int ftTables::allocateTable(void**  destination,
             *destination = (Names)::malloc(allocLen);
             if (!(*destination))
             {
-                if (fileFlags != ftFile::LF_NONE)
+                if (fileFlags != LF_NONE)
                     ftLogger::logF("Failed to allocate table.");
-                return ftFile::RS_BAD_ALLOC;
+                return RS_BAD_ALLOC;
             }
             else
             {
@@ -187,7 +188,7 @@ int ftTables::allocateTable(void**  destination,
         }
         else
         {
-            if (fileFlags != ftFile::LF_NONE)
+            if (fileFlags != LF_NONE)
             {
                 ftLogger::logF(
                     "The sizeOfEntry(%d) parameter caused the "
@@ -195,10 +196,10 @@ int ftTables::allocateTable(void**  destination,
                     sizeOfEntry,
                     allocLen);
             }
-            return ftFile::RS_BAD_ALLOC;
+            return RS_BAD_ALLOC;
         }
     }
-    return ftFile::FS_OK;
+    return FS_OK;
 }
 
 
@@ -207,52 +208,52 @@ int ftTables::read(const void*    tableSource,
                    int            headerFlags,
                    int            fileFlags)
 {
-    int status = ftFile::FS_OK;
+    int status = FS_OK;
     if (!tableSource)
-        return ftFile::RS_INVALID_PTR;
+        return RS_INVALID_PTR;
 
     ftMemoryStream stream;
     stream.open((FBTbyte*)tableSource, tableLength, 0, true);
 
     status = readTableHeader(stream, ftIdNames::FT_SDNA, fileFlags);
-    if (status != ftFile::FS_OK)
+    if (status != FS_OK)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("Failed to read the table header.");
         return status;
     }
 
     status = readNameTable(stream, headerFlags, fileFlags);
-    if (status != ftFile::FS_OK)
+    if (status != FS_OK)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("Failed to read the name table.");
         clearTables();
         return status;
     }
 
     status = readTypeTable(stream, headerFlags, fileFlags);
-    if (status != ftFile::FS_OK)
+    if (status != FS_OK)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("Failed to read the type table.");
         clearTables();
         return status;
     }
 
     status = readSizeTable(stream, headerFlags, fileFlags);
-    if (status != ftFile::FS_OK)
+    if (status != FS_OK)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("Failed to read the size table.");
         clearTables();
         return status;
     }
 
     status = readStructureTable(stream, headerFlags, fileFlags);
-    if (status != ftFile::FS_OK)
+    if (status != FS_OK)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("Failed to read the structure table.");
         clearTables();
         return status;
@@ -260,25 +261,25 @@ int ftTables::read(const void*    tableSource,
 
 
     status = compile(fileFlags);
-    if (status == ftFile::FS_OK)
+    if (status == FS_OK)
     {
-        if (fileFlags & ftFile::LF_DIAGNOSTICS)
+        if (fileFlags & LF_DIAGNOSTICS)
         {
-            if (fileFlags & ftFile::LF_DUMP_NAME_TABLE)
+            if (fileFlags & LF_DUMP_NAME_TABLE)
             {
                 FBTuint32 i;
                 for (i = 0; i < m_nameCount; ++i)
                     ftLogger::log(m_names[i]);
             }
 
-            if (fileFlags & ftFile::LF_DUMP_TYPE_TABLE)
+            if (fileFlags & LF_DUMP_TYPE_TABLE)
             {
                 FBTuint32 i;
                 for (i = 0; i < m_typeCount; ++i)
                     ftLogger::log(m_types[i]);
             }
 
-            if (fileFlags & ftFile::LF_DUMP_SIZE_TABLE)
+            if (fileFlags & LF_DUMP_SIZE_TABLE)
             {
                 FBTuint32 i;
                 for (i = 0; i < m_typeCount; ++i)
@@ -297,11 +298,11 @@ int ftTables::readTableHeader(ftMemoryStream& stream, const char* headerName, in
 
     if (!ftCharNEq(cp, headerName, 4))
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("Table is missing the %s code.", headerName);
-        return ftFile::RS_INVALID_CODE;
+        return RS_INVALID_CODE;
     }
-    return ftFile::FS_OK;
+    return FS_OK;
 }
 
 
@@ -311,15 +312,15 @@ int ftTables::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFla
     FBTuint32 status, count = 0;
 
     status = readTableHeader(stream, ftIdNames::FT_NAME, fileFlags);
-    if (status == ftFile::FS_OK)
+    if (status == FS_OK)
     {
         stream.readInt32(count);
-        if (headerFlags & ftFile::FH_ENDIAN_SWAP)
+        if (headerFlags & FH_ENDIAN_SWAP)
             count = swap32(count);
 
 
         status = allocateTable((void**)&m_names, count, sizeof(ftName), fileFlags);
-        if (status == ftFile::FS_OK)
+        if (status == FS_OK)
         {
             m_hashedNames.reserve(count);
 
@@ -349,15 +350,15 @@ int ftTables::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFla
     ftName    name;
 
     status = readTableHeader(stream, ftIdNames::FT_TYPE, fileFlags);
-    if (status == ftFile::FS_OK)
+    if (status == FS_OK)
     {
         stream.readInt32(count);
-        if (headerFlags & ftFile::FH_ENDIAN_SWAP)
+        if (headerFlags & FH_ENDIAN_SWAP)
             count = swap32(count);
 
 
         status = allocateTable((void**)&m_types, count, sizeof(ftType), fileFlags);
-        if (status == ftFile::FS_OK)
+        if (status == FS_OK)
         {
             FBTbyte* cp;
             for (m_typeCount = 0; m_typeCount < count; ++m_typeCount)
@@ -386,10 +387,10 @@ int ftTables::readSizeTable(ftMemoryStream& stream, int headerFlags, int fileFla
 {
     FBTuint32 status;
     status = readTableHeader(stream, ftIdNames::FT_TLEN, fileFlags);
-    if (status == ftFile::FS_OK)
+    if (status == FS_OK)
     {
         status = allocateTable((void**)&m_tlens, m_typeCount, sizeof(FBTtype), fileFlags);
-        if (status == ftFile::FS_OK)
+        if (status == FS_OK)
         {
             FBTuint16 type;
             FBTuint32 i;
@@ -397,7 +398,7 @@ int ftTables::readSizeTable(ftMemoryStream& stream, int headerFlags, int fileFla
             for (i = 0; i < m_typeCount; ++i)
             {
                 stream.readInt16(type);
-                if (headerFlags & ftFile::FH_ENDIAN_SWAP)
+                if (headerFlags & FH_ENDIAN_SWAP)
                     type = swap16(type);
                 m_tlens[i] = type;
             }
@@ -415,10 +416,10 @@ int ftTables::readStructureTable(ftMemoryStream& stream, int headerFlags, int fi
     FBTuint32 status, count = 0;
 
     status = readTableHeader(stream, ftIdNames::FT_STRC, fileFlags);
-    if (status == ftFile::FS_OK)
+    if (status == FS_OK)
     {
         stream.readInt32(count);
-        if (headerFlags & ftFile::FH_ENDIAN_SWAP)
+        if (headerFlags & FH_ENDIAN_SWAP)
             count = swap32(count);
 
         status = allocateTable((void**)&m_strcs,
@@ -426,13 +427,13 @@ int ftTables::readStructureTable(ftMemoryStream& stream, int headerFlags, int fi
                                sizeof(FBTtype) * FT_MAX_MEMBERS,
                                fileFlags);
 
-        if (status == ftFile::FS_OK)
+        if (status == FS_OK)
         {
             m_typeFinder.reserve(m_typeCount);
             FBTuint16* tp = (FBTuint16*)stream.addressAtPosition();
 
             m_strcCount = 0;
-            while (m_strcCount < count && status == ftFile::FS_OK)
+            while (m_strcCount < count && status == FS_OK)
             {
                 status = buildStruct(tp, m_strcCount, headerFlags, fileFlags);
                 m_strcCount++;
@@ -495,24 +496,24 @@ void ftTables::convertName(ftName& dest, char* cp)
 
 int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, int fileFlags)
 {
-    int j, k, status = ftFile::FS_OK;
+    int j, k, status = FS_OK;
 
     if (!m_strcs || !strc)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("Invalid structure table");
-        return ftFile::RS_BAD_ALLOC;
+        return RS_BAD_ALLOC;
     }
 
     m_strcs[current] = strc;
 
-    if (headerFlags & ftFile::FH_ENDIAN_SWAP)
+    if (headerFlags & FH_ENDIAN_SWAP)
     {
         strc[0] = swap16(strc[0]);
         strc[1] = swap16(strc[1]);
 
         status = isValidTypeName(strc[0], strc[1], fileFlags);
-        if (status == ftFile::FS_OK)
+        if (status == FS_OK)
         {
             // Reassign the current id to the type
             // so it can be referenced later.
@@ -520,9 +521,9 @@ int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, 
 
             if (!m_typeFinder.insert(m_types[strc[0]].m_name, m_types[strc[0]]))
             {
-                if (fileFlags != ftFile::LF_NONE)
+                if (fileFlags != LF_NONE)
                     ftLogger::logF("Failed to insert the type name for structure(%d).", strc[0]);
-                status = ftFile::RS_LIMIT_REACHED;
+                status = RS_LIMIT_REACHED;
             }
             else
             {
@@ -531,13 +532,13 @@ int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, 
                 {
                     j = 0;
                     strc += 2;
-                    while (j < k && status == ftFile::FS_OK)
+                    while (j < k && status == FS_OK)
                     {
                         strc[0] = swap16(strc[0]);
                         strc[1] = swap16(strc[1]);
 
                         status = isValidTypeName(strc[0], strc[1], fileFlags);
-                        if (status == ftFile::FS_OK)
+                        if (status == FS_OK)
                         {
                             ++j;
                             strc += 2;
@@ -546,9 +547,9 @@ int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, 
                 }
                 else
                 {
-                    if (fileFlags != ftFile::LF_NONE)
+                    if (fileFlags != LF_NONE)
                         ftLogger::logF("Max members exceeded(%d).", FT_MAX_MEMBERS);
-                    status = ftFile::RS_LIMIT_REACHED;
+                    status = RS_LIMIT_REACHED;
                 }
             }
         }
@@ -563,21 +564,21 @@ int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, 
 
             if (!m_typeFinder.insert(m_types[strc[0]].m_name, m_types[strc[0]]))
             {
-                if (fileFlags != ftFile::LF_NONE)
+                if (fileFlags != LF_NONE)
                     ftLogger::logF("Failed to insert the type name for structure(%d).", strc[0]);
-                status = ftFile::RS_LIMIT_REACHED;
+                status = RS_LIMIT_REACHED;
             }
-            else if (fileFlags & ftFile::LF_DO_CHECKS)
+            else if (fileFlags & LF_DO_CHECKS)
             {
                 // Check all members for consistent values.
 
                 k = strc[1];
                 j = 0;
                 strc += 2;
-                while (j < k && status == ftFile::FS_OK)
+                while (j < k && status == FS_OK)
                 {
                     status = isValidTypeName(strc[0], strc[1], fileFlags);
-                    if (status == ftFile::FS_OK)
+                    if (status == FS_OK)
                     {
                         ++j;
                         strc += 2;
@@ -592,9 +593,9 @@ int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, 
         }
         else
         {
-            if (fileFlags != ftFile::LF_NONE)
+            if (fileFlags != LF_NONE)
                 ftLogger::logF("Max members exceeded(%d).", FT_MAX_MEMBERS);
-            status = ftFile::RS_LIMIT_REACHED;
+            status = RS_LIMIT_REACHED;
         }
     }
     return status;
@@ -604,27 +605,27 @@ int ftTables::isValidTypeName(const FBTuint16& type, const FBTuint16& name, int 
 {
     if (type > m_typeCount)
     {
-        if (flags != ftFile::LF_NONE)
+        if (flags != LF_NONE)
         {
             ftLogger::logF(
                 "The parsed structure type (%d) exceeds the number of types(%d)",
                 type,
                 m_typeCount);
         }
-        return ftFile::RS_LIMIT_REACHED;
+        return RS_LIMIT_REACHED;
     }
     else if (name > m_nameCount)
     {
-        if (flags != ftFile::LF_NONE)
+        if (flags != LF_NONE)
         {
             ftLogger::logF(
                 "The parsed structure name (%d) exceeds the number of names(%d)",
                 name,
                 m_nameCount);
         }
-        return ftFile::RS_LIMIT_REACHED;
+        return RS_LIMIT_REACHED;
     }
-    return ftFile::FS_OK;
+    return FS_OK;
 }
 
 
@@ -704,13 +705,13 @@ int ftTables::compile(int fileFlags)
 {
     if (!m_strcs || m_strcCount <= 0)
     {
-        if (fileFlags != ftFile::LF_NONE)
+        if (fileFlags != LF_NONE)
             ftLogger::logF("No structures to compile.");
-        return ftFile::FS_TABLE_INIT_FAILED;
+        return FS_TABLE_INIT_FAILED;
     }
 
     m_structures.reserve(m_strcCount);
-    int status = ftFile::FS_OK;
+    int status = FS_OK;
 
     FBTuint32 i, cof, depth;
     FBTuint16 e, memberCount;
@@ -724,15 +725,15 @@ int ftTables::compile(int fileFlags)
     m_firstStruct = m_strcs[0][0];
 
 
-    for (i = 0; i < m_strcCount && status == ftFile::FS_OK; i++)
+    for (i = 0; i < m_strcCount && status == FS_OK; i++)
     {
         FBTtype* strc = m_strcs[i];
         FBTtype  type = strc[0];
 
         if (type > m_typeCount)
         {
-            status = ftFile::RS_LIMIT_REACHED;
-            if (fileFlags != ftFile::LF_NONE)
+            status = RS_LIMIT_REACHED;
+            if (fileFlags != LF_NONE)
             {
                 ftLogger::logF(
                     "The parsed structure type (%d) exceeds the number of types(%d)",
@@ -744,8 +745,8 @@ int ftTables::compile(int fileFlags)
         {
             if (m_types[type].m_hash == SK_NPOS)
             {
-                status = ftFile::RS_MIS_ALIGNED;
-                if (fileFlags != ftFile::LF_NONE)
+                status = RS_MIS_ALIGNED;
+                if (fileFlags != LF_NONE)
                 {
                     ftLogger::logF(
                         "The current structure (%d) is out of alignment with the type table.",
@@ -771,7 +772,7 @@ int ftTables::compile(int fileFlags)
                 strc += 2;
                 nstrc->m_members.reserve(memberCount);
 
-                for (e = 0; e < memberCount && status == ftFile::FS_OK;
+                for (e = 0; e < memberCount && status == FS_OK;
                      ++e, strc += 2)
                 {
                     const short& type = strc[0];
@@ -799,7 +800,7 @@ int ftTables::compile(int fileFlags)
                                    i,
                                    cof,
                                    nstrc->m_sizeInBytes);
-                    status = ftFile::RS_MIS_ALIGNED;
+                    status = RS_MIS_ALIGNED;
                 }
             }
         }
@@ -819,9 +820,9 @@ void ftTables::putMember(FBTtype*   cp,
     const FBTuint16& name = cp[1];
 
     if (type < 0 || type >= m_typeCount)
-        status = ftFile::RS_LIMIT_REACHED;
+        status = RS_LIMIT_REACHED;
     else if (name < 0 || name >= m_nameCount)
-        status = ftFile::RS_LIMIT_REACHED;
+        status = RS_LIMIT_REACHED;
     else
     {
         ftMember* member = parent->createMember();

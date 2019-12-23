@@ -80,7 +80,7 @@ int ftBlend::notifyDataRead(void* p, const ftChunk& id)
     if (id.m_code == GLOB)
     {
         m_fg = (Blender::FileGlobal*)p;
-        return FS_OK;
+        return ftFlags::FS_OK;
     }
 
     if ((id.m_code <= 0xFFFF))
@@ -96,7 +96,7 @@ int ftBlend::notifyDataRead(void* p, const ftChunk& id)
             ++i;
         }
     }
-    return FS_OK;
+    return ftFlags::FS_OK;
 }
 
 int ftBlend::serializeData(skStream* stream)
@@ -119,7 +119,7 @@ int ftBlend::serializeData(skStream* stream)
         stream->write(&ch, sizeof(ftChunk));
         stream->write(wd, ch.m_len);
     }
-    return FS_OK;
+    return ftFlags::FS_OK;
 }
 
 int ftBlend::save(const char* path, const int mode)

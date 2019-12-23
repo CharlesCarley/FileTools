@@ -60,7 +60,7 @@ public:
 
     Blender::FileGlobal* m_fg;
 
-    int save(const char* path, const int mode = PM_UNCOMPRESSED);
+    int save(const char* path, const int mode = 0);
 
 protected:
     virtual int notifyDataRead(void* p, const ftChunk& id);

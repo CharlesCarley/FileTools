@@ -33,55 +33,57 @@
 #include "ftTables.h"
 
 using namespace std;
+using namespace ftFlags;
+
 
 void ftLogger::log(int status)
 {
     cout << "Exit status: ";
     switch (status)
     {
-    case ftFile::FS_INV_HEADER_STR:
+    case FS_INV_HEADER_STR:
         cout << "FS_INV_HEADER_STR";
         break;
-    case ftFile::FS_INV_LENGTH:
+    case FS_INV_LENGTH:
         cout << "FS_INV_LENGTH";
         break;
-    case ftFile::FS_INV_READ:
+    case FS_INV_READ:
         cout << "FS_INV_READ";
         break;
-    case ftFile::FS_LINK_FAILED:
+    case FS_LINK_FAILED:
         cout << "FS_LINK_FAILED";
         break;
-    case ftFile::FS_BAD_ALLOC:
+    case FS_BAD_ALLOC:
         cout << "FS_BAD_ALLOC";
         break;
-    case ftFile::FS_INV_INSERT:
+    case FS_INV_INSERT:
         cout << "FS_INV_INSERT";
         break;
-    case ftFile::FS_DUPLICATE_BLOCK:
+    case FS_DUPLICATE_BLOCK:
         cout << "FS_DUPLICATE_BLOCK";
         break;
-    case ftFile::FS_TABLE_INIT_FAILED:
+    case FS_TABLE_INIT_FAILED:
         cout << "FS_TABLE_INIT_FAILED";
         break;
-    case ftFile::FS_OVERFLOW:
+    case FS_OVERFLOW:
         cout << "FS_OVERFLOW";
         break;
-    case ftFile::FS_FAILED:
+    case FS_FAILED:
         cout << "FS_FAILED";
         break;
-    case ftFile::RS_INVALID_PTR:
+    case RS_INVALID_PTR:
         cout << "RS_INVALID_PTR";
         break;
-    case ftFile::RS_INVALID_CODE:
+    case RS_INVALID_CODE:
         cout << "RS_INVALID_CODE";
         break;
-    case ftFile::RS_LIMIT_REACHED:
+    case RS_LIMIT_REACHED:
         cout << "RS_LIMIT_REACHED";
         break;
-    case ftFile::RS_BAD_ALLOC:
+    case RS_BAD_ALLOC:
         cout << "RS_BAD_ALLOC";
         break;
-    case ftFile::RS_MIS_ALIGNED:
+    case RS_MIS_ALIGNED:
         cout << "RS_MIS_ALIGNED";
         break;
     default:

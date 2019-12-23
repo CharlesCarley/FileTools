@@ -112,7 +112,7 @@ public:
         last = link;
     }
 
-    bool erase(void *vp)
+    bool erase(void* vp)
     {
         Link* link = ((Link*)vp);
         if (!link)
@@ -161,6 +161,80 @@ struct ftName;
 class ftMember;
 class ftTables;
 class ftStruct;
+
+
+
+namespace ftFlags
+{
+    enum FileMagic
+    {
+        FM_BIG_ENDIAN    = 0x56,
+        FM_LITTLE_ENDIAN = 0x76,
+        FM_32_BIT        = 0x5F,
+        FM_64_BIT        = 0x2D,
+        HEADER_OFFSET    = 0x0C,
+    };
+
+    enum FileStatus
+    {
+        FS_STATUS_MIN = -16,
+        FS_LINK_FAILED,
+        FS_INV_INSERT,
+        FS_BAD_ALLOC,
+        FS_DUPLICATE_BLOCK,
+        FS_INV_READ,
+        FS_INV_LENGTH,
+        FS_INV_HEADER_STR,
+        FS_TABLE_INIT_FAILED,
+        FS_OVERFLOW,
+        FS_FAILED,
+
+        // Table codes
+        RS_INVALID_PTR,
+        RS_INVALID_CODE,
+        RS_LIMIT_REACHED,
+        RS_BAD_ALLOC,
+        RS_MIS_ALIGNED,
+
+        // This should always be zero
+        // until < 0 tests are removed
+        // and replaced with != FS_OK
+        FS_OK,
+    };
+
+    enum ParseMode
+    {
+        PM_UNCOMPRESSED = 0,
+        PM_COMPRESSED,
+        PM_READTOMEMORY,
+    };
+
+    enum FileHeader
+    {
+        FH_ENDIAN_SWAP = 1 << 0,
+        FH_CHUNK_64    = 1 << 1,
+        FH_VAR_BITS    = 1 << 2,
+    };
+
+    enum LogFlags
+    {
+        LF_NONE         = 0,
+        LF_ONLY_ERR     = 1 << 0,
+        LF_READ_CHUNKS  = 1 << 1,
+        LF_WRITE_CHUNKS = 1 << 2,
+        LF_WRITE_LINK   = 1 << 3,
+        LF_DO_CHECKS    = 1 << 4,
+
+        LF_DIAGNOSTICS = 1 << 5,
+        // Specific to diagnostics
+        LF_DUMP_NAME_TABLE = 1 << 6,
+        LF_DUMP_TYPE_TABLE = 1 << 7,
+        LF_DUMP_SIZE_TABLE = 1 << 8,
+        LF_DUMP_SKIP       = 1 << 9,
+        LF_DUMP_CAST       = 1 << 10,
+        LF_UNRESOLVED      = 1 << 11,
+    };
+}
 
 
 #endif  //_ftTypes_h_

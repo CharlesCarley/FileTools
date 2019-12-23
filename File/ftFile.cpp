@@ -35,6 +35,7 @@
 #include "ftTables.h"
 
 using namespace ftEndianUtils;
+using namespace ftFlags;
 
 
 
@@ -253,6 +254,11 @@ int ftFile::preScan(skStream* stream)
                         {
                             if (m_fileFlags & LF_DO_CHECKS)
                                 status = runTableChecks(m_file);
+                        }
+                        else
+                        {
+                            if (m_fileFlags != LF_NONE)
+                                ftLogger::logF("File table initialization failed.");
                         }
                     }
                 }
@@ -1101,15 +1107,16 @@ int ftFile::save(const char* path, const int mode)
     // happens in the  derived classes.
     serializeData(fs);
 
-    serializeChunk(fs,
-                   ftIdNames::DNA1,
-                   1,
-                   0,
-                   getTableSize(),
-                   getTables(),
-                   true);
-
     ftChunk ch;
+    ch.m_code   = ftIdNames::DNA1;
+    ch.m_len    = getTableSize();
+    ch.m_nr     = 1;
+    ch.m_old    = 0; // cannot be looked back up
+    ch.m_typeid = 0;
+    fs->write(&ch, ftChunkUtils::BlockSize);
+    fs->write(getTables(), ch.m_len);
+
+
     ch.m_code   = ftIdNames::ENDB;
     ch.m_len    = 0;
     ch.m_nr     = 0;
@@ -1158,8 +1165,7 @@ void ftFile::serializeChunk(skStream* stream,
                             FBTuint32 nr,
                             FBTuint32 typeIndex,
                             FBTsize   len,
-                            void*     writeData,
-                            bool      noOldData)
+                            void*     writeData)
 {
     if (isValidWriteData(writeData, len))
     {
@@ -1167,7 +1173,7 @@ void ftFile::serializeChunk(skStream* stream,
         ch.m_code   = code;
         ch.m_len    = len;
         ch.m_nr     = nr;
-        ch.m_old    = noOldData ? 0 : (FBTsize)writeData;
+        ch.m_old    = (FBTsize)writeData;
         ch.m_typeid = typeIndex;
         ftChunkUtils::write(&ch, stream);
 
