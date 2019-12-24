@@ -49,16 +49,16 @@ int main(int argc, char** argv)
         return 1;
 
     ftBlend fp;
-    fp.addFileFlag(LF_DIAGNOSTICS | LF_DUMP_SKIP);
-    //fp.setFilterList(skipList, sizeof(skipList)/sizeof(FBThash), true);
-
+    fp.addFileFlag(LF_DIAGNOSTICS);
+    fp.setFilterList(skipList, sizeof(skipList)/sizeof(FBThash), true);
     if (fp.load(argv[argc - 1], PM_COMPRESSED) != FS_OK)
         return 1;
 
     Blender::FileGlobal* fg = fp.m_fg;
-    //printf("Blender file version %i\n", fg->minversion);
 
-    // printf("Objects:\n");
+    printf("Blender file version %i\n", fg->minversion);
+    printf("Objects:\n");
+
     ftList& objects = fp.m_object;
     for (Object* ob = (Object*)objects.first; ob; ob = (Object*)ob->id.next)
     {
@@ -70,6 +70,7 @@ int main(int argc, char** argv)
     }
 
     printf("Mesh:\n");
+
     ftList& mesh = fp.m_mesh;
     for (Mesh* me = (Mesh*)mesh.first; me; me = (Mesh*)me->id.next)
     {
@@ -86,7 +87,7 @@ int main(int argc, char** argv)
                          (fp[0]), (fp[1]), (fp[2]));
             }
         }
-        else if (me->mpoly)
+        else if (me->mpoly && me->mloop)
         {
             for (int f = 0; f < me->totpoly; ++f)
             {

@@ -229,7 +229,8 @@ int ftFile::preScan(skStream* stream)
            scan.m_code != ftIdNames::DNA1 &&
            status == FS_OK && !stream->eof())
     {
-        if ((bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags)) <= 0)
+        bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags);
+        if (bytesRead <= 0 || bytesRead == SK_NPOS)
             status = FS_INV_READ;
         else if (scan.m_code != ftIdNames::ENDB)
         {
@@ -403,7 +404,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         if (m_map.find(phk) != m_map.npos)
         {
             freeChunk(bin);
-            status = FS_DUPLICATE_BLOCK;
+            //status = FS_DUPLICATE_BLOCK;
         }
         else
         {
@@ -758,9 +759,8 @@ void ftFile::castPointer(ftMember* mstrc,
                          ftMember* fstrc,
                          FBTsize*& srcPtr)
 {
-    int arrayLen = skMin(mstrc->getArraySize(), fstrc->getArraySize());
-
-    FBTsize fps = m_file->getSizeofPointer();
+    int     arrayLen = skMin(mstrc->getArraySize(), fstrc->getArraySize());
+    FBTsize fps      = m_file->getSizeofPointer();
     if (fps == 4 || fps == 8)
     {
         int        i;
@@ -793,9 +793,12 @@ void ftFile::castMemberVariable(ftMember* dst,
 
 
     bool needsSwapped = (m_headerFlags & FH_ENDIAN_SWAP) != 0 && srcElmSize > 1;
+    if (needsSwapped)
+        needsSwapped = !src->isCharacterArray();
 
     bool needsCast;
     needsCast = src->getHashedType() != dst->getHashedType();
+
     if (needsCast)
     {
         needsCast = ftAtomicUtils::canCast(
@@ -856,29 +859,50 @@ void ftFile::castMemberVariable(ftMember* dst,
             if (m_fileFlags != LF_NONE)
                 ftLogger::logF("Warning: Array length exceeds FT_MAX_MBR_RANGE(%s)",
                                olen);
+            // This should be an error...
         }
 
-        FBTbyte tmpBuf[ftEndianUtils::MaxSwapSpace] = {};
+        FBTbyte tmpBuf[ftEndianUtils::MaxSwapSpace + 1] = {};
 
         FBTsize i;
         FBTsize elen = maxAvailable;
+
+        FBTsize cslen = skMin(ftEndianUtils::MaxSwapSpace, srcElmSize / alen);
+        FBTsize cdlen = skMin(ftEndianUtils::MaxSwapSpace, maxAvailable / alen);
+
+
+        int sc;
+        if (src->isInteger16())
+            sc = 1;
+        else if (src->isInteger32())
+            sc = 2;
+        else if (src->isInteger64())
+            sc = 3;
+        else
+            sc = 0;
 
         for (i = 0; i < alen; i++)
         {
             if (needsSwapped)
             {
-                ::memcpy(tmpBuf, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
-
-                if (stp == ftAtomic::FT_ATOMIC_SHORT || stp == ftAtomic::FT_ATOMIC_USHORT)
+                ::memcpy(tmpBuf, srcBPtr, cslen);
+                switch (sc)
+                {
+                case 1:
                     swap16((FBTuint16*)tmpBuf, 1);
-                else if (stp >= ftAtomic::FT_ATOMIC_INT && stp <= ftAtomic::FT_ATOMIC_FLOAT)
+                    break;
+                case 2:
                     swap32((FBTuint32*)tmpBuf, 1);
-                else if (stp == ftAtomic::FT_ATOMIC_DOUBLE)
+                    break;
+                case 3:
                     swap64((FBTuint64*)tmpBuf, 1);
-                else
-                    ::memset(tmpBuf, 0, ftEndianUtils::MaxSwapSpace);  //unknown type
+                    break;
+                default:
+                    ::memset(tmpBuf, 0, cdlen);
+                    break;
+                }
 
-                ::memcpy(dstBPtr, tmpBuf, skMin(ftEndianUtils::MaxSwapSpace, elen));
+                ::memcpy(dstBPtr, tmpBuf, cdlen);
             }
             else
                 ftAtomicUtils::cast((char*)srcBPtr, (char*)dstBPtr, stp, dtp, 1);
@@ -916,9 +940,9 @@ void ftFile::setFilterList(FBThash* filter, FBTsize length, bool inclusive)
     if (!m_filterList)
         return;
 
-    int i       = 0, j, k;
-    m_inclusive = inclusive;
+    int i = 0, j, k;
 
+    m_inclusive = inclusive;
     while (i < length && m_filterList[i] != 0)
         i++;
 
@@ -927,16 +951,12 @@ void ftFile::setFilterList(FBThash* filter, FBTsize length, bool inclusive)
     {
         k = i;
         for (j = i + 1; j < m_filterListLen - 1; ++j)
-        {
             if (m_filterList[j] < m_filterList[k])
                 k = j;
-        }
         if (k != i)
             skSwap(m_filterList[i], m_filterList[k]);
     }
 }
-
-
 
 ftStruct* ftFile::findInTable(ftStruct* findStruct, ftTables* sourceTable, ftTables* findInTable)
 {
@@ -1031,7 +1051,7 @@ int ftFile::initializeTables(ftTables* tables)
     FBTsize tableSize = getTableSize();
 
     if (tableData != 0 && tableSize > 0 && tableSize != SK_NPOS)
-        return tables->read(tableData, tableSize, m_headerFlags, m_fileFlags);
+        return tables->read(tableData, tableSize, 0, m_fileFlags);
     return FS_FAILED;
 }
 
@@ -1111,7 +1131,7 @@ int ftFile::save(const char* path, const int mode)
     ch.m_code   = ftIdNames::DNA1;
     ch.m_len    = getTableSize();
     ch.m_nr     = 1;
-    ch.m_old    = 0; // cannot be looked back up
+    ch.m_old    = 0;  // cannot be looked back up
     ch.m_typeid = 0;
     fs->write(&ch, ftChunkUtils::BlockSize);
     fs->write(getTables(), ch.m_len);

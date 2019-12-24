@@ -75,7 +75,6 @@ public:
                      ftAtomic destinationType,
                      FBTsize  length);
 
-    
     static void cast(char*    source,
                      FBTsize  srcoffs,
                      char*    destination,

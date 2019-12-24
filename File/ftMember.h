@@ -38,26 +38,35 @@ public:
     const char* getName();
     const char* getType();
 
-    void     setNameIndex(const FBTuint16& idx);
-    void     setTypeIndex(const FBTuint16& idx);
-    bool     isBuiltinType();
-    bool     isStructure();
-    bool     isPointer();
-    bool     isArray();
-    bool     isCharacter();
+    void setNameIndex(const FBTuint16& idx);
+    void setTypeIndex(const FBTuint16& idx);
+    bool isBuiltinType();
+    bool isStructure();
+    bool isPointer();
+    bool isArray();
+    bool isCharacter();
 
-    int      getArraySize();
-    int      getPointerCount();
-    int      getArrayElementSize();
+    bool isInteger16();
+    bool isInteger32();
+    bool isInteger64();
+
+    int getArraySize();
+    int getPointerCount();
+    int getArrayElementSize();
 
     ftAtomic getAtomicType();
 
-    bool     compare(ftMember* rhs);
+    bool compare(ftMember* rhs);
 
 
     FBTsize* jumpToOffset(void* base);
     void*    getChunk();
 
+
+    bool isCharacterArray()
+    {
+        return isCharacter() && isArray();
+    }
 
     inline FBTsize getSizeInBytes()
     {
@@ -108,10 +117,17 @@ private:
     ftStruct* m_parent;
     ftMember* m_link;
 
+    // TODO: Look at this these should all be unsigned.
+    // Find all references, and look for specific reasons 
+    // as to why they are declared signed.
     FBTint32 m_location;
     FBTint32 m_offset;
     FBTint32 m_recursiveDepth;
     FBTint32 m_sizeInBytes;
+
+    // Keep this signed.
+    FBTint32 m_atomic;
+
 
     FBTint16 m_type;
     FBTint16 m_name;

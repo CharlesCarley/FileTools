@@ -40,9 +40,11 @@ ftMember::ftMember(ftStruct* owner) :
     m_link(0),
     m_location(0),
     m_recursiveDepth(0),
-    m_sizeInBytes(0)
+    m_sizeInBytes(0),
+    m_atomic(-1)
 {
 }
+
 
 ftMember::~ftMember()
 {
@@ -103,7 +105,30 @@ bool ftMember::isArray()
 
 bool ftMember::isCharacter()
 {
-    return ftAtomicUtils::getPrimitiveType(m_hashedType) == ftAtomic::FT_ATOMIC_CHAR;
+    return getAtomicType() == ftAtomic::FT_ATOMIC_CHAR;
+}
+
+
+bool ftMember::isInteger16()
+{
+    ftAtomic atomic = getAtomicType();
+    return atomic == ftAtomic::FT_ATOMIC_SHORT || atomic == ftAtomic::FT_ATOMIC_USHORT;
+}
+
+
+bool ftMember::isInteger32()
+{
+    // TODO: ftSCALAR_DOUBLE
+    ftAtomic atomic = getAtomicType();
+    return atomic >= ftAtomic::FT_ATOMIC_INT && atomic <= ftAtomic::FT_ATOMIC_FLOAT;
+}
+
+
+bool ftMember::isInteger64()
+{
+    // TODO: ftSCALAR_DOUBLE
+    ftAtomic atomic = getAtomicType();
+    return atomic >= ftAtomic::FT_ATOMIC_DOUBLE && atomic <= ftAtomic::FT_ATOMIC_UINT64_T;
 }
 
 
@@ -125,11 +150,13 @@ int ftMember::getArrayElementSize()
 }
 
 
+
 ftAtomic ftMember::getAtomicType()
 {
-    return ftAtomicUtils::getPrimitiveType(m_hashedType);
+    if (m_atomic == -1)
+        m_atomic = (FBTint32)ftAtomicUtils::getPrimitiveType(m_hashedType);
+    return (ftAtomic)m_atomic;
 }
-
 
 int ftMember::getPointerCount()
 {

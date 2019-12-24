@@ -74,7 +74,7 @@ FBTsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
         return FS_INV_READ;
 
     bytesRead += blockLen - BlockScan;
-    if (stream->seek(blockLen - BlockScan, SEEK_CUR))
+    if (!stream->seek(blockLen - BlockScan, SEEK_CUR))
         return FS_INV_READ;
 
     if (flags & FH_ENDIAN_SWAP)

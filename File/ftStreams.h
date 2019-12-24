@@ -38,27 +38,28 @@ class ftGzStream : public skStream
 {
 public:
     ftGzStream();
-    ~ftGzStream();
+    virtual ~ftGzStream();
 
-    void   open(const char* path, Mode mode);
-    void close(void);
 
-    bool isOpen(void)   const {return m_handle != 0;}
-    bool eof(void)      const;
+    void open(const char* path, int mode);
 
-    FBTsize  read(void* dest, FBTsize nr) const;
-    FBTsize  write(const void* src, FBTsize nr);
-    FBTsize  writef(const char* buf, ...);
-
-    FBTsize  position(void) const;
+    FBTsize read(void* dest, FBTsize nr) const;
+    FBTsize write(const void* src, FBTsize nr);
+    FBTsize writef(const char* buf, ...);
+    FBTsize position(void) const;
     FBTsize size(void) const;
-    
-    bool   seek(SKint64 offset, SKsize dir) { return false; }
+    void    close(void);
+    bool    eof(void) const;
+    bool    seek(SKint64 offset, SKsize dir);
+
+
+    inline bool isOpen(void) const
+    {
+        return m_handle != 0;
+    }
 
 protected:
-
     void* m_handle;
-    int   m_mode;
 };
 
 
@@ -66,8 +67,9 @@ typedef skMemoryStream ftMemoryStream;
 
 #else
 
-typedef skFileStream ftGzStream;
+typedef skFileStream   ftGzStream;
 typedef skMemoryStream ftMemoryStream;
+
 #endif
 
 
