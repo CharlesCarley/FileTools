@@ -25,7 +25,7 @@
 */
 #include <string>
 #include <vector>
-#include "Templates/LargeStringArray.h"
+#include "templates/LargeStringArray.h"
 #include "Utils/skMap.h"
 #include "catch/Macro.h"
 #include "ftAtomic.h"
@@ -33,6 +33,7 @@
 
 typedef skHashTable<ftCharHashKey, SKuint32> TypeFinder;
 typedef skHashTable<SKuintPtr, SKuintPtr>    PointerFinder;
+
 
 
 TEST_CASE("ftCharHash")
