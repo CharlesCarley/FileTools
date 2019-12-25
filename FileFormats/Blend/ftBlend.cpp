@@ -21,7 +21,7 @@
 #include "ftStreams.h"
 #include "ftTables.h"
 
-const FBTuint32 GLOB = ftID('G', 'L', 'O', 'B');
+const FBTuint32 GLOB = FT_TYPEID('G', 'L', 'O', 'B');
 
 
 struct ftIdDB
@@ -33,34 +33,34 @@ struct ftIdDB
 
 const ftIdDB ftData[] =
     {
-        {ftID2('S', 'C'), &ftBlend::m_scene},
-        {ftID2('L', 'I'), &ftBlend::m_library},
-        {ftID2('O', 'B'), &ftBlend::m_object},
-        {ftID2('M', 'E'), &ftBlend::m_mesh},
-        {ftID2('C', 'U'), &ftBlend::m_curve},
-        {ftID2('M', 'B'), &ftBlend::m_mball},
-        {ftID2('M', 'A'), &ftBlend::m_mat},
-        {ftID2('T', 'E'), &ftBlend::m_tex},
-        {ftID2('I', 'M'), &ftBlend::m_image},
-        {ftID2('L', 'T'), &ftBlend::m_latt},
-        {ftID2('L', 'A'), &ftBlend::m_lamp},
-        {ftID2('C', 'A'), &ftBlend::m_camera},
-        {ftID2('I', 'P'), &ftBlend::m_ipo},
-        {ftID2('K', 'E'), &ftBlend::m_key},
-        {ftID2('W', 'O'), &ftBlend::m_world},
-        {ftID2('S', 'N'), &ftBlend::m_screen},
-        {ftID2('P', 'Y'), &ftBlend::m_script},
-        {ftID2('V', 'F'), &ftBlend::m_vfont},
-        {ftID2('T', 'X'), &ftBlend::m_text},
-        {ftID2('S', 'O'), &ftBlend::m_sound},
-        {ftID2('G', 'R'), &ftBlend::m_group},
-        {ftID2('A', 'R'), &ftBlend::m_armature},
-        {ftID2('A', 'C'), &ftBlend::m_action},
-        {ftID2('N', 'T'), &ftBlend::m_nodetree},
-        {ftID2('B', 'R'), &ftBlend::m_brush},
-        {ftID2('P', 'A'), &ftBlend::m_particle},
-        {ftID2('G', 'D'), &ftBlend::m_gpencil},
-        {ftID2('W', 'M'), &ftBlend::m_wm},
+        {FT_TYPEID2('S', 'C'), &ftBlend::m_scene},
+        {FT_TYPEID2('L', 'I'), &ftBlend::m_library},
+        {FT_TYPEID2('O', 'B'), &ftBlend::m_object},
+        {FT_TYPEID2('M', 'E'), &ftBlend::m_mesh},
+        {FT_TYPEID2('C', 'U'), &ftBlend::m_curve},
+        {FT_TYPEID2('M', 'B'), &ftBlend::m_mball},
+        {FT_TYPEID2('M', 'A'), &ftBlend::m_mat},
+        {FT_TYPEID2('T', 'E'), &ftBlend::m_tex},
+        {FT_TYPEID2('I', 'M'), &ftBlend::m_image},
+        {FT_TYPEID2('L', 'T'), &ftBlend::m_latt},
+        {FT_TYPEID2('L', 'A'), &ftBlend::m_lamp},
+        {FT_TYPEID2('C', 'A'), &ftBlend::m_camera},
+        {FT_TYPEID2('I', 'P'), &ftBlend::m_ipo},
+        {FT_TYPEID2('K', 'E'), &ftBlend::m_key},
+        {FT_TYPEID2('W', 'O'), &ftBlend::m_world},
+        {FT_TYPEID2('S', 'N'), &ftBlend::m_screen},
+        {FT_TYPEID2('P', 'Y'), &ftBlend::m_script},
+        {FT_TYPEID2('V', 'F'), &ftBlend::m_vfont},
+        {FT_TYPEID2('T', 'X'), &ftBlend::m_text},
+        {FT_TYPEID2('S', 'O'), &ftBlend::m_sound},
+        {FT_TYPEID2('G', 'R'), &ftBlend::m_group},
+        {FT_TYPEID2('A', 'R'), &ftBlend::m_armature},
+        {FT_TYPEID2('A', 'C'), &ftBlend::m_action},
+        {FT_TYPEID2('N', 'T'), &ftBlend::m_nodetree},
+        {FT_TYPEID2('B', 'R'), &ftBlend::m_brush},
+        {FT_TYPEID2('P', 'A'), &ftBlend::m_particle},
+        {FT_TYPEID2('G', 'D'), &ftBlend::m_gpencil},
+        {FT_TYPEID2('W', 'M'), &ftBlend::m_wm},
         {0, 0}};
 
 

@@ -35,8 +35,10 @@
 #include "memory.h"
 #include "string.h"
 
-#define ftID(a, b, c, d) SK_ID(a, b, c, d)
-#define ftID2(a, b) SK_ID2(a, b)
+#define FT_TYPEID(a, b, c, d) SK_ID(a, b, c, d)
+#define FT_TYPEID2(a, b) SK_ID2(a, b)
+
+
 #define FT_INLINE SK_INLINE
 
 typedef SKlong    FBTlong;

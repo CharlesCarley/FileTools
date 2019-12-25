@@ -133,11 +133,15 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
     v.m_name = newName;
 }
 
-int ftCompiler::parseBuffer(const ftId& name, const char* ms, size_t len)
+int ftCompiler::parse(const ftPath& name, const char* data, size_t len)
 {
-    ftScanner scanner(ms, len);
+    ftScanner scanner(data, len);
+
+    // Only enable the scanner  
+    // in the scope of parsing.
     m_scanner = &scanner;
     m_includes.push_back(name.c_str());
+
 
     int ret = parse();
 
@@ -146,7 +150,7 @@ int ftCompiler::parseBuffer(const ftId& name, const char* ms, size_t len)
 }
 
 
-int ftCompiler::parseFile(const ftPath& id)
+int ftCompiler::parse(const ftPath& id)
 {
     FILE* fp = fopen(id.c_str(), "rb");
     if (!fp)
@@ -165,7 +169,7 @@ int ftCompiler::parseFile(const ftPath& id)
     buffer[br] = 0;
     fclose(fp);
 
-    int ret = parseBuffer(id.c_str(), buffer, len + 1);
+    int ret = parse(id.c_str(), buffer, len + 1);
     delete[] buffer;
     return ret;
 }

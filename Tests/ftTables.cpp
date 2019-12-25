@@ -40,7 +40,7 @@ TEST_CASE("CompilerTest")
 {
     int        status;
     ftCompiler compiler;
-    status = compiler.parseBuffer("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
+    status = compiler.parse("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
     EXPECT_GE(status, 0);
 
     status = compiler.buildTypes();
@@ -103,7 +103,9 @@ TEST_CASE("RebuildTest")
 {
     int        status;
     ftCompiler compiler;
-    status = compiler.parseBuffer("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
+  
+    
+    status = compiler.parse("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
     EXPECT_GE(status, 0);
 
     status = compiler.buildTypes();

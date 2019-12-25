@@ -45,10 +45,10 @@ namespace ftIdNames
     const char FT_STRC[5] = {'S', 'T', 'R', 'C', '\0'};  // Struct/Class Array
     const char FT_OFFS[5] = {'O', 'F', 'F', 'S', '\0'};  // Offset map (Optional & TODO)
 
-    const FBTuint32 SDNA = ftID('S', 'D', 'N', 'A');
-    const FBTuint32 DNA1 = ftID('D', 'N', 'A', '1');
-    const FBTuint32 ENDB = ftID('E', 'N', 'D', 'B');
-    const FBTuint32 DATA = ftID('D', 'A', 'T', 'A');
+    const FBTuint32 SDNA = FT_TYPEID('S', 'D', 'N', 'A');
+    const FBTuint32 DNA1 = FT_TYPEID('D', 'N', 'A', '1');
+    const FBTuint32 ENDB = FT_TYPEID('E', 'N', 'D', 'B');
+    const FBTuint32 DATA = FT_TYPEID('D', 'A', 'T', 'A');
 }  // namespace ftIdNames
 
 
