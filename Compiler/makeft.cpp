@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     ftCompiler tables;
     for (int i = 3; i < argc; ++i)
     {
-        if (tables.parseFile(argv[i]) < 0)
+        if (tables.parse(argv[i]) < 0)
         {
             printf("%s -> Parse Error: When compiling file %s\n", base, argv[i]);
             return 1;
