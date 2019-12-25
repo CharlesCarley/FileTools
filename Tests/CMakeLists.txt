@@ -31,7 +31,7 @@ file(GLOB CH catch/*.h)
 file(GLOB CS catch/*.cpp)
 file(GLOB TMPL Templates/*.h)
 
-add_templates(Templates.h ${TMPL})
+#add_templates(Templates.h ${TMPL})
 
 set(SRC
     Templates.h

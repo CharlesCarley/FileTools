@@ -31,7 +31,10 @@
 
 TEST_CASE("Basic Struct Test")
 {
-    ftScanner sc((const char*)TEST, TEST_SIZE);
+    const unsigned char* testCode = (const unsigned char*)TEST;
+    const unsigned int   testCodeLen = TEST_SIZE;
+
+    ftScanner sc((char*)testCode, testCodeLen);
 
     ftToken tp;
     int     tok;
