@@ -7,9 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: initialize 
-        run: mkdir build
-      - name: chage_dir      
-        run: cd build
-      - name: configure
-        run: ls ..
+    - name: Configure
+      run: cmake .
+    - name: Make
+      run: make
