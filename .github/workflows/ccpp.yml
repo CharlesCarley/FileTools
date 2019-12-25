@@ -12,6 +12,6 @@ jobs:
       - name: chage_dir      
         run: cd build
       - name: configure
-        run: cmake ../
+        run: cmake ..
       - name: make
         run: make        
