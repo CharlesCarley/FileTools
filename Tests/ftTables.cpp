@@ -57,7 +57,7 @@ TEST_CASE("CompilerTest")
     ftLogger::log(stream.ptr(), stream.size());
 
     ftTables tbl(sizeof(void*));
-    tbl.read(stream.ptr(), stream.size(), 0,0);
+    tbl.read(stream.ptr(), stream.size(), 0, 0);
 
     FBTuint32 nr, i, j, mnr;
 
@@ -113,13 +113,16 @@ TEST_CASE("RebuildTest")
 
 
     compiler.setWriteMode(ftCompiler::WRITE_STREAM);
-    skMemoryStream stream;
+    skMemoryStream stream(skStream::WRITE);
+
     compiler.writeStream(&stream);
     ftLogger::log(stream.ptr(), stream.size());
 
 
     ftTables tbl(sizeof(void*));
-    tbl.read(stream.ptr(), stream.size(), 0, 0);
+    status  = tbl.read(stream.ptr(), stream.size(), 0, ftFlags::LF_DIAGNOSTICS);
+    EXPECT_EQ(ftFlags::FS_OK, status);
+
 
 
     ftTables::Structures::Iterator it = tbl.getStructIterator();

@@ -55,14 +55,14 @@ struct StructTest4
 };
 
 
-struct StructTest4
+struct StructTest5
 {
     // function pointer.. 
     void (*fp)();
 };
 
 
-struct StructTest5
+struct StructTest6
 {
     // multi dimensional 
     double multi[4][4];
@@ -70,14 +70,14 @@ struct StructTest5
 
 
 
-struct StructTest6
+struct StructTest7
 {
     // multi dimensional  -> FT_ARR_DIM_MAX
     double multi[4][4][4];
 };
 
 
-struct StructTest7
+struct StructTest8
 {
     // multi dimensional  -> FT_ARR_DIM_MAX
     double multi[4][4][4];

@@ -566,7 +566,9 @@ int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, 
             if (!m_typeFinder.insert(m_types[strc[0]].m_name, m_types[strc[0]]))
             {
                 if (fileFlags != LF_NONE)
-                    ftLogger::logF("Failed to insert the type name for structure(%d).", strc[0]);
+                    ftLogger::logF("Failed to insert the type name for structure(%d) '%s'.",
+                                   strc[0],
+                                   m_types[strc[0]].m_name);
                 status = RS_LIMIT_REACHED;
             }
             else if (fileFlags & LF_DO_CHECKS)
