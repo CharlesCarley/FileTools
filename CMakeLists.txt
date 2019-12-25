@@ -24,6 +24,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(FileTools)
 
+
+
 set(FileTools_BLD_TESTS         FALSE           CACHE BOOL      "Build basic tests.")
 set(FileTools_BLD_BLEND_FILE    FALSE           CACHE BOOL      "Build the blend file version.")
 set(FileTools_USE_ZLIB          FALSE           CACHE BOOL      "Allow GZ compressed files to be read.")

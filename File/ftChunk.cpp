@@ -33,8 +33,6 @@
 using namespace ftEndianUtils;
 using namespace ftFlags;
 
-
-
 const ftChunk ftChunkUtils::BLANK_CHUNK = {
     0,  // m_code
     0,  // m_sizeInBytes

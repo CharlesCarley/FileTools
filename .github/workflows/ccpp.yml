@@ -9,6 +9,8 @@ jobs:
     steps:
      - uses: actions/checkout@v1
      - name: Configure
-       run: cmake .
+       run: cmake -DFileTools_BLD_BLEND_FILE=ON -DFileTools_BLEND_BUILD_TEST=ON  -DFileTools_BLD_TESTS=ON .
      - name: Make
        run: make
+     - name: RunTests
+       run: ./Tests/Tests
