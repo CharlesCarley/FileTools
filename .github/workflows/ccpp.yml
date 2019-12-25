@@ -1,0 +1,17 @@
+name: Build With CMake
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: initialize 
+        run: mkdir build
+      - name: chage_dir      
+        run: cd build
+      - name: configure
+        run: cmake ../
+      - name: make
+        run: make        
