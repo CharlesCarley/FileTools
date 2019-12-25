@@ -22,7 +22,7 @@
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
 set(TargetName Tests)
-include (Data2Array)
+#include (Data2Array)
 
 
 file(GLOB LS *.cpp)
@@ -40,7 +40,8 @@ set(SRC
     ${TMPL}
 )
 
-include_directories(. ../File)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ../File)
 include_directories(${FileTools_INCLUDE})
+
 add_executable(${TargetName} ${SRC})
 target_link_libraries(${TargetName} ${FileTools_LIBRARY})
