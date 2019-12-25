@@ -170,32 +170,55 @@ private:
     int  preScan(skStream* stream);
     int  rebuildStructures();
 
-    void castMember(ftMember* dst, FBTsize*& dstPtr, ftMember* src, FBTsize*& srcPtr);
+    void castMember(
+        ftMember* dst,
+        FBTsize*& dstPtr,
+        ftMember* src,
+        FBTsize*& srcPtr,
+        int&      status);
 
     void castMemberPointer(
         ftMember* dst,
         FBTsize*& dstPtr,
         ftMember* src,
-        FBTsize*& srcPtr);
+        FBTsize*& srcPtr,
+        int&      status);
 
     void castPointer(
         ftMember* dst,
         FBTsize*& dstPtr,
         ftMember* src,
-        FBTsize*& srcPtr);
+        FBTsize*& srcPtr,
+        int&      status);
 
     void castPointerToPointer(
         ftMember*   dst,
         FBTsize*& dstPtr,
         ftMember*   src,
-        FBTsize*& srcPtr);
-
+        FBTsize*& srcPtr,
+        int&      status);
 
     void castMemberVariable(
         ftMember*   dst,
         FBTsize*& dstPtr,
         ftMember*   src,
-        FBTsize*& srcPtr);
+        FBTsize*& srcPtr,
+        int&      status);
+
+    void castAtomicMemberArray(
+        ftMember* dst,
+        FBTbyte*& dstPtr,
+        ftMember* src,
+        FBTbyte*& srcPtr,
+        int&      status);
+
+    void castAtomicMember(
+        ftMember* dst,
+        FBTbyte*& dstPtr,
+        ftMember* src,
+        FBTbyte*& srcPtr,
+        int&      status);
+
 
     ftStruct* findInTable(ftStruct* fileStruct, ftTables* sourceTable, ftTables* findInTable);
 

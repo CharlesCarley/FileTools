@@ -63,6 +63,8 @@ public:
     void*    getChunk();
 
 
+    bool isValidAtomicType();
+
     bool isCharacterArray()
     {
         return isCharacter() && isArray();

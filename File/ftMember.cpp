@@ -149,7 +149,10 @@ int ftMember::getArrayElementSize()
     return m_sizeInBytes / arraySize;
 }
 
-
+bool ftMember::isValidAtomicType()
+{
+    return getAtomicType() < ftAtomic::FT_ATOMIC_VOID;
+}
 
 ftAtomic ftMember::getAtomicType()
 {

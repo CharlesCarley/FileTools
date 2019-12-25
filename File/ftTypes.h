@@ -177,10 +177,12 @@ namespace ftFlags
 
     enum FileStatus
     {
-        FS_STATUS_MIN = -16,
+        FS_STATUS_MIN = -18,
         FS_LINK_FAILED,
         FS_INV_INSERT,
         FS_BAD_ALLOC,
+        FS_INV_VALUE,
+        FS_INV_SIZE,
         FS_DUPLICATE_BLOCK,
         FS_INV_READ,
         FS_INV_LENGTH,

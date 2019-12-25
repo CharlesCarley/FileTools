@@ -42,6 +42,9 @@ enum class ftAtomic
     FT_ATOMIC_INT64_T,   // 9
     FT_ATOMIC_UINT64_T,  // 10
     FT_ATOMIC_SCALAR_T,  // 11
+
+    // Placement order matters 
+    // valid types are < FT_ATOMIC_VOID
     FT_ATOMIC_VOID,      // 13
     FT_ATOMIC_UNKNOWN    // 14
 };

@@ -40,6 +40,7 @@ static FBThash skipList[] =
     ftCharHashKey("MFace").hash(),
     ftCharHashKey("MPoly").hash(),
     ftCharHashKey("MLoop").hash(),
+    ftCharHashKey("Link").hash(),
     0,
 };
 
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
         return 1;
 
     ftBlend fp;
-    fp.addFileFlag(LF_DIAGNOSTICS);
+    fp.addFileFlag(LF_DIAGNOSTICS | LF_DO_CHECKS);
     fp.setFilterList(skipList, sizeof(skipList)/sizeof(FBThash), true);
     if (fp.load(argv[argc - 1], PM_COMPRESSED) != FS_OK)
         return 1;

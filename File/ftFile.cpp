@@ -137,21 +137,20 @@ skStream* ftFile::openStream(const char* path, int mode)
             stream = new ftGzStream();
         else
             stream = new skFileStream();
-
-        stream->open(path, skStream::READ);
     }
     else
-    {
         stream = new skMemoryStream();
-        stream->open(path, skStream::READ);
-    }
 
+    stream->open(path, skStream::READ);
     return stream;
 }
 
 
 int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
 {
+    // Fix this, perhaps move zlib to utils
+    // if the gzStream ever materializes..
+    // and if there is really every enough use
     skMemoryStream ms;
     ms.open(memory, sizeInBytes, skStream::READ);  //, mode == PM_COMPRESSED);
 
@@ -240,7 +239,6 @@ int ftFile::preScan(skStream* stream)
                 // The names of the types and the names of the type-name
                 // declarations are referenced out of this block.
                 m_fileTableData = ::malloc(scan.m_len);
-
                 if (!m_fileTableData)
                     status = FS_BAD_ALLOC;
                 else
@@ -535,7 +533,6 @@ int ftFile::rebuildStructures()
 
     bool diagnostics = (m_fileFlags & LF_DIAGNOSTICS) != 0 && (m_fileFlags & LF_DUMP_CAST) != 0;
 
-
     ftMemoryChunk* node;
     for (node = (ftMemoryChunk*)m_chunks.first; node && status == FS_OK; node = node->m_next)
     {
@@ -592,7 +589,8 @@ int ftFile::rebuildStructures()
                         castMember(dstmbr,
                                    dstPtr,
                                    srcmbr,
-                                   srcPtr);
+                                   srcPtr,
+                                   status);
 
                         if (diagnostics)
                         {
@@ -601,6 +599,12 @@ int ftFile::rebuildStructures()
                             ftLogger::newline();
                             ftLogger::log(dstPtr, dstmbr->getSizeInBytes());
                             ftLogger::newline();
+                        }
+
+                        if (status != FS_OK)
+                        {
+                            if (m_fileFlags != LF_NONE)
+                                ftLogger::logF("Cast member failed.");
                         }
                     }
                     else if (m_fileFlags != LF_NONE)
@@ -674,24 +678,26 @@ int ftFile::rebuildStructures()
 void ftFile::castMember(ftMember* mstrc,
                         FBTsize*& dstPtr,
                         ftMember* fstrc,
-                        FBTsize*& srcPtr)
+                        FBTsize*& srcPtr,
+                        int&      status)
 {
     if (mstrc->isPointer())
-        castMemberPointer(mstrc, dstPtr, fstrc, srcPtr);
+        castMemberPointer(mstrc, dstPtr, fstrc, srcPtr, status);
     else
-        castMemberVariable(mstrc, dstPtr, fstrc, srcPtr);
+        castMemberVariable(mstrc, dstPtr, fstrc, srcPtr, status);
 }
 
 
 void ftFile::castMemberPointer(ftMember* mstrc,
                                FBTsize*& dstPtr,
                                ftMember* fstrc,
-                               FBTsize*& srcPtr)
+                               FBTsize*& srcPtr,
+                               int&      status)
 {
     if (mstrc->getPointerCount() > 1)
-        castPointerToPointer(mstrc, dstPtr, fstrc, srcPtr);
+        castPointerToPointer(mstrc, dstPtr, fstrc, srcPtr, status);
     else
-        castPointer(mstrc, dstPtr, fstrc, srcPtr);
+        castPointer(mstrc, dstPtr, fstrc, srcPtr, status);
 }
 
 
@@ -699,13 +705,19 @@ void ftFile::castMemberPointer(ftMember* mstrc,
 void ftFile::castPointerToPointer(ftMember* dst,
                                   FBTsize*& dstPtr,
                                   ftMember* src,
-                                  FBTsize*& srcPtr)
+                                  FBTsize*& srcPtr,
+                                  int&      status)
 {
     ftMemoryChunk* bin = findBlock((FBTsize)(*srcPtr));
     if (bin)
     {
         if (bin->m_flag & ftMemoryChunk::BLK_MODIFIED && bin->m_pblock)
+        {
             (*dstPtr) = (FBTsize)bin->m_pblock;
+ 
+            if (m_fileFlags != LF_NONE)
+                ftLogger::logF("Reusing block %p", bin->m_pblock);
+        }
         else
         {
             FBTsize fps = m_file->getSizeofPointer();
@@ -732,12 +744,14 @@ void ftFile::castPointerToPointer(ftMember* dst,
                     (*dstPtr) = (FBTsize)newBlock;
                 }
                 else
-                {
-                    //todo pass status down the chain
-                }
+                    status = FS_BAD_ALLOC;
             }
-            else if (m_fileFlags != LF_NONE)
-                ftLogger::logF("Unknown pointer length(%d). Pointers should be either 4 or 8 bytes", fps);
+            else
+            {
+                if (m_fileFlags != LF_NONE)
+                    ftLogger::logF("Unknown pointer length(%d). Pointers should be either 4 or 8 bytes", fps);
+                status = FS_INV_VALUE;
+            }
         }
     }
     else if (m_fileFlags & LF_UNRESOLVED)
@@ -757,160 +771,190 @@ void ftFile::castPointerToPointer(ftMember* dst,
 void ftFile::castPointer(ftMember* mstrc,
                          FBTsize*& dstPtr,
                          ftMember* fstrc,
-                         FBTsize*& srcPtr)
+                         FBTsize*& srcPtr,
+                         int&      status)
 {
-    int     arrayLen = skMin(mstrc->getArraySize(), fstrc->getArraySize());
-    FBTsize fps      = m_file->getSizeofPointer();
+    int arrayLen = skMin(mstrc->getArraySize(), fstrc->getArraySize());
+
+    FBTsize fps = m_file->getSizeofPointer();
     if (fps == 4 || fps == 8)
     {
-        int        i;
+        int i;
+
         FBTuint32* sptr = (FBTuint32*)srcPtr;
         for (i = 0; i < arrayLen; ++i, sptr += (fps == 4 ? 1 : 2))
             dstPtr[i] = (FBTsize)findPtr((FBTsize)(*sptr));
     }
-    else if (m_fileFlags != LF_NONE)
-        ftLogger::logF("Invalid size of pointer.");
+    else
+    {
+        if (m_fileFlags != LF_NONE)
+            ftLogger::logF("Unknown pointer length(%d). Pointers should be either 4 or 8 bytes", fps);
+        status = FS_INV_VALUE;
+    }
 }
 
 
 void ftFile::castMemberVariable(ftMember* dst,
                                 FBTsize*& dstPtr,
                                 ftMember* src,
-                                FBTsize*& srcPtr)
+                                FBTsize*& srcPtr,
+                                int&      status)
 {
     FBTsize dstElmSize   = dst->getSizeInBytes();
     FBTsize srcElmSize   = src->getSizeInBytes();
     FBTsize maxAvailable = skMin(srcElmSize, dstElmSize);
+    FBTsize alen         = skMax(skMin(dst->getArraySize(), src->getArraySize()), 1);
 
-    if (maxAvailable <= 0 || maxAvailable > FT_MAX_MBR_RANGE)
+    // FT_MAX_MBR_RANGE
+    // Provides an upper boundary for the number of array
+    // elements that can be used
+    // for instance: int member_variable[FT_MAX_MBR_RANGE];
+
+
+    if (maxAvailable <= 0 || alen > FT_MAX_MBR_RANGE)
     {
-        ftLogger::logF("Element size is out of range src(%d), dst(%d), max(%d)",
-                       srcElmSize,
-                       dstElmSize,
-                       FT_MAX_MBR_RANGE);
-        return;
+        // re examine this, it should already be ruled out
+        // when the table is compiled
+
+        if (m_fileFlags != LF_NONE)
+            ftLogger::logF("Element size is out of range src(%d), dst(%d), max(%d)",
+                           srcElmSize,
+                           dstElmSize,
+                           FT_MAX_MBR_RANGE);
+        status = FS_INV_SIZE;
     }
-
-
-    bool needsSwapped = (m_headerFlags & FH_ENDIAN_SWAP) != 0 && srcElmSize > 1;
-    if (needsSwapped)
-        needsSwapped = !src->isCharacterArray();
-
-    bool needsCast;
-    needsCast = src->getHashedType() != dst->getHashedType();
-
-    if (needsCast)
+    else if (!src->isValidAtomicType() || !dst->isValidAtomicType())
     {
-        needsCast = ftAtomicUtils::canCast(
-            src->getHashedType(),
-            dst->getHashedType());
+        // re examine this, it should already be ruled out
+        // when the table is compiled
 
-        if (!needsCast)
-        {
-            if (m_fileFlags != LF_NONE)
-            {
-                ftLogger::logF("Warning: The types supplied to castMemberVariable");
-                ftLogger::logF("         are too different to be cast together.");
-                ftLogger::logF("         Source:      %s %s", src->getType(), src->getName());
-                ftLogger::logF("         Destination: %s %s", dst->getType(), dst->getName());
-                ftLogger::logF("%d bytes will be copied into the destination", maxAvailable);
-            }
-        }
-    }
-
-    if (!needsCast && !needsSwapped)
-    {
-        if (m_fileFlags & LF_DIAGNOSTICS)
-        {
-            if (srcElmSize > dstElmSize)
-            {
-                ftLogger::logF("The source member is larger than the destination member.");
-                ftLogger::logF("    %d bytes of data will be truncated.", srcElmSize - dstElmSize);
-            }
-        }
-
-        if (dst->isCharacter())
-        {
-            // Allow for null terminated strings.
-            // This will handle the case when there is extra information in the
-            // source buffer. strncpy will copy up to the first null terminator
-            // and the extra info in the buffer will be left untouched.
-            ::strncpy((FBTbyte*)dstPtr, (FBTbyte*)srcPtr, maxAvailable);
-        }
-        else
-            ::memcpy(dstPtr, srcPtr, maxAvailable);
+        if (m_fileFlags != LF_NONE)
+            ftLogger::logF("Invalid atomic type src(%d), dst(%d)",
+                           src->getAtomicType(),
+                           dst->getAtomicType());
+        status = FS_INV_SIZE;
     }
     else
     {
-        FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
-        FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
+        bool needsSwapped = (m_headerFlags & FH_ENDIAN_SWAP) != 0 && srcElmSize > 1;
+        if (needsSwapped)
+            needsSwapped = !src->isCharacterArray();
 
-        ftAtomic stp, dtp;
-        stp = src->getAtomicType();
-        dtp = dst->getAtomicType();
+        bool needsCast, canCopy;
+        needsCast = src->getHashedType() != dst->getHashedType();
 
-        FBTsize alen = skMax(skMin(dst->getArraySize(), src->getArraySize()), 1);
-        FBTsize olen = alen;
-
-        alen = skMin(alen, (FBTsize)FT_MAX_MBR_RANGE);
-
-        if (olen == FT_MAX_MBR_RANGE)
+        canCopy = !needsCast && !needsSwapped;
+        if (canCopy)
         {
-            if (m_fileFlags != LF_NONE)
-                ftLogger::logF("Warning: Array length exceeds FT_MAX_MBR_RANGE(%s)",
-                               olen);
-            // This should be an error...
-        }
-
-        FBTbyte tmpBuf[ftEndianUtils::MaxSwapSpace + 1] = {};
-
-        FBTsize i;
-        FBTsize elen = maxAvailable;
-
-        FBTsize cslen = skMin(ftEndianUtils::MaxSwapSpace, srcElmSize / alen);
-        FBTsize cdlen = skMin(ftEndianUtils::MaxSwapSpace, maxAvailable / alen);
-
-
-        int sc;
-        if (src->isInteger16())
-            sc = 1;
-        else if (src->isInteger32())
-            sc = 2;
-        else if (src->isInteger64())
-            sc = 3;
-        else
-            sc = 0;
-
-        for (i = 0; i < alen; i++)
-        {
-            if (needsSwapped)
+            if (m_fileFlags & LF_DIAGNOSTICS)
             {
-                ::memcpy(tmpBuf, srcBPtr, cslen);
-                switch (sc)
+                if (srcElmSize > dstElmSize)
                 {
-                case 1:
-                    swap16((FBTuint16*)tmpBuf, 1);
-                    break;
-                case 2:
-                    swap32((FBTuint32*)tmpBuf, 1);
-                    break;
-                case 3:
-                    swap64((FBTuint64*)tmpBuf, 1);
-                    break;
-                default:
-                    ::memset(tmpBuf, 0, cdlen);
-                    break;
+                    ftLogger::logF("The source member is larger than the destination member.");
+                    ftLogger::logF("    %d bytes of data will be truncated.", srcElmSize - dstElmSize);
                 }
+            }
 
-                ::memcpy(dstBPtr, tmpBuf, cdlen);
+            if (dst->isCharacter())
+            {
+                // Allow for null terminated strings.
+                // This will handle the case when there is extra information in the
+                // source buffer. strncpy will copy up to the first null terminator
+                // and the extra info in the buffer will be left untouched.
+                ::strncpy((FBTbyte*)dstPtr, (FBTbyte*)srcPtr, maxAvailable);
             }
             else
-                ftAtomicUtils::cast((char*)srcBPtr, (char*)dstBPtr, stp, dtp, 1);
+                ::memcpy(dstPtr, srcPtr, maxAvailable);
+        }
+        else
+        {
+            FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
+            FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
 
-            dstBPtr += dstElmSize;
-            srcBPtr += srcElmSize;
+
+            //if (alen > 1)
+            //{
+            //    castAtomicMemberArray(dst, dstBPtr, src, srcBPtr, status);
+            //}
+            //else
+            //{
+            //    castAtomicMember(dst, dstBPtr, src, srcBPtr, status);
+            //}
+
+
+            ftAtomic stp, dtp;
+            stp = src->getAtomicType();
+            dtp = dst->getAtomicType();
+
+            FBTbyte tmpBuf[ftEndianUtils::MaxSwapSpace + 1] = {};
+
+            FBTsize i;
+            FBTsize elen  = maxAvailable;
+            FBTsize cslen = skMin(ftEndianUtils::MaxSwapSpace, srcElmSize / alen);
+            FBTsize cdlen = skMin(ftEndianUtils::MaxSwapSpace, maxAvailable / alen);
+
+
+            int sc;
+            if (src->isInteger16())
+                sc = 1;
+            else if (src->isInteger32())
+                sc = 2;
+            else if (src->isInteger64())
+                sc = 3;
+            else
+                sc = 0;
+
+            for (i = 0; i < alen; i++)
+            {
+                if (needsSwapped)
+                {
+                    ::memcpy(tmpBuf, srcBPtr, cslen);
+
+                    switch (sc)
+                    {
+                    case 1:
+                        swap16((FBTuint16*)tmpBuf, 1);
+                        break;
+                    case 2:
+                        swap32((FBTuint32*)tmpBuf, 1);
+                        break;
+                    case 3:
+                        swap64((FBTuint64*)tmpBuf, 1);
+                        break;
+                    default:
+                        ::memset(tmpBuf, 0, cdlen);
+                        break;
+                    }
+                }
+                else
+                {
+                    ftAtomicUtils::cast((char*)srcBPtr, (char*)dstBPtr, stp, dtp, 1);
+                }
+
+                dstBPtr += dstElmSize;
+                srcBPtr += srcElmSize;
+            }
         }
     }
+}
+
+
+void ftFile::castAtomicMemberArray(ftMember* dst,
+                                   FBTbyte*& dstPtr,
+                                   ftMember* src,
+                                   FBTbyte*& srcPtr,
+                                   int&      status)
+{
+    // TODO
+}
+
+void ftFile::castAtomicMember(ftMember* dst,
+                              FBTbyte*& dstPtr,
+                              ftMember* src,
+                              FBTbyte*& srcPtr,
+                              int&      status)
+{
+    // TODO
 }
 
 

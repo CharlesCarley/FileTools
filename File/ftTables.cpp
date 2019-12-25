@@ -183,7 +183,8 @@ int ftTables::allocateTable(void**  destination,
                 // The memory will be initialized after this
                 // call. This should only used be to
                 // weed out any possible bugs.
-                memset(*destination, 0, allocLen);
+                if (fileFlags & LF_DO_CHECKS)
+                    memset(*destination, 0, allocLen);
             }
         }
         else

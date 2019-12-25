@@ -52,12 +52,12 @@ void ftGzStream::open(const char* path, int mode)
     {
         close();
 
+        m_mode = mode;
         if (m_mode == READ || m_mode == READ_TEXT)
             m_handle = gzopen(path, "rb");
         else if (mode == WRITE || m_mode == WRITE_TEXT)
             m_handle = fopen(path, "wb");
-        else
-            m_mode = SK_NPOS32;
+        else m_mode  = SK_NPOS32;
     }
     else
         printf("Invalid path name.\n");
@@ -75,7 +75,7 @@ void ftGzStream::close(void)
 
 FBTsize ftGzStream::read(void* dest, FBTsize nr) const
 {
-    if (!canRead()|| !isOpen())
+    if (!canRead() || !isOpen())
         return SK_NPOS;
 
     return gzread((gzFile)m_handle, dest, nr);
@@ -118,7 +118,7 @@ bool ftGzStream::seek(SKint64 offset, SKsize dir)
 
     long way;
     if (dir == SEEK_END)
-        way = SEEK_SET;  // need not be supported (Untested)
+        way = SEEK_SET;  // supported ? 
     else if (dir == SEEK_CUR)
         way = SEEK_CUR;
     else
