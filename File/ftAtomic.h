@@ -53,12 +53,11 @@ enum class ftAtomic
 // Structure to manage the default data types
 struct ftAtomicType
 {
-    char*     m_name;
-    size_t    m_sizeof;
-    ftAtomic  m_type;
-    FBThash   m_hash;
+    const char* m_name;
+    size_t      m_sizeof;
+    ftAtomic    m_type;
+    FBThash     m_hash;
 };
-
 
 
 class ftAtomicUtils

@@ -887,7 +887,7 @@ FBTuint32 ftTables::findStructIdByType(const FBTuint16& type)
 {
     if (type < m_typeCount)
         return m_types[type].m_strcId;
-    return SK_NPOS;
+    return SK_NPOS32;
 }
 
 

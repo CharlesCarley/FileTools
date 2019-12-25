@@ -67,9 +67,9 @@ enum ftTokenID
 
 struct ftKeywordTable
 {
-    char* m_name;
-    int   m_len;
-    int   m_token;
+    const char* m_name;
+    int         m_len;
+    int         m_token;
 };
 
 

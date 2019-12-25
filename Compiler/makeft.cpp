@@ -28,12 +28,12 @@
 
 
 void usage(const char* prog);
-int basename(const char* inp);
+int getBaseName(const char* inp);
 
 
 int main(int argc, char** argv)
 {
-    char *base = argv[0] + basename(argv[0]);
+    char* base = argv[0] + getBaseName(argv[0]);
     if (argc < 4)
     {
         usage(base);
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 }
 
 
-int basename(const char* input)
+int getBaseName(const char* input)
 {
     int offs = 0;
     if (input)

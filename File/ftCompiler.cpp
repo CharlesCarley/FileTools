@@ -23,11 +23,12 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "Utils/skHash.h"
+#include "Utils/skArray.h"
 #include "ftCompiler.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Utils/skArray.h"
 #include "ftAtomic.h"
 #include "ftConfig.h"
 #include "ftLogger.h"
