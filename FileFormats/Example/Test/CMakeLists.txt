@@ -21,40 +21,9 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(FileTools_EXAMPLE_BUILD_TEST FALSE CACHE BOOL "Builds a test program for the example file format. ")
-
-set(ExampleFile_TARGET ExampleFile)
-set(ExampleFile_TOOLS_INCLUDE ${FileTools_INCLUDE})
-set(ExampleFile_TOOLS_LIBRARY ${FileTools_LIBRARY})
-
-set(ExampleFile_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} ${ExampleFile_TOOLS_INCLUDE})
-set(ExampleFile_LIBRARY ${ExampleFile_TARGET} ${ExampleFile_TOOLS_LIBRARY})
+set(TargetName ExampleFileTest)
 
 
-include(MakeFT)
-
-set(ApiFiles
-    API/FileInfo.h
-    API/Data1.h
-    API/Data2.h
-)
-
-add_ft(ExampleTables ${ApiFiles})
-
-set(SRC
-   Example.h
-   Example.cpp
-
-   ${ApiFiles}
-   ${ExampleTables}
-)
-
-include_directories(${ExampleFile_INCLUDE})
-
-add_library(${ExampleFile_TARGET} ${SRC})
-
-link_libraries(${ExampleFile_TOOLS_LIBRARY})
-
-if (FileTools_EXAMPLE_BUILD_TEST)
-    subdirs(Test)
-endif()
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ ${ExampleFile_INCLUDE})
+add_executable(${TargetName} Main.cpp)
+target_link_libraries(${TargetName} ${ExampleFile_LIBRARY})

@@ -1,5 +1,11 @@
 /*
 -------------------------------------------------------------------------------
+
+    Copyright (c) Charles Carley.
+
+    Contributor(s): none yet.
+
+-------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -17,8 +23,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "ftBlend.h"
 #include "Blender.h"
+#include "ftBlend.h"
 #include "stdio.h"
 
 using namespace Blender;
@@ -26,22 +32,21 @@ using namespace ftFlags;
 
 
 
-
 // Unneeded structures
 static FBThash skipList[] =
-{
-    ftCharHashKey("FileGlobal").hash(),
-    ftCharHashKey("Object").hash(),
-    ftCharHashKey("Camera").hash(),
-    ftCharHashKey("Lamp").hash(),
-    ftCharHashKey("Scene").hash(),
-    ftCharHashKey("Mesh").hash(),
-    ftCharHashKey("MVert").hash(),
-    ftCharHashKey("MFace").hash(),
-    ftCharHashKey("MPoly").hash(),
-    ftCharHashKey("MLoop").hash(),
-    ftCharHashKey("Link").hash(),
-    0,
+    {
+        ftCharHashKey("FileGlobal").hash(),
+        ftCharHashKey("Object").hash(),
+        ftCharHashKey("Camera").hash(),
+        ftCharHashKey("Lamp").hash(),
+        ftCharHashKey("Scene").hash(),
+        ftCharHashKey("Mesh").hash(),
+        ftCharHashKey("MVert").hash(),
+        ftCharHashKey("MFace").hash(),
+        ftCharHashKey("MPoly").hash(),
+        ftCharHashKey("MLoop").hash(),
+        ftCharHashKey("Link").hash(),
+        0,
 };
 
 int main(int argc, char** argv)
@@ -51,7 +56,7 @@ int main(int argc, char** argv)
 
     ftBlend fp;
     fp.addFileFlag(LF_DIAGNOSTICS | LF_DO_CHECKS);
-    fp.setFilterList(skipList, sizeof(skipList)/sizeof(FBThash), true);
+    fp.setFilterList(skipList, sizeof(skipList) / sizeof(FBThash), true);
     if (fp.load(argv[argc - 1], PM_COMPRESSED) != FS_OK)
         return 1;
 
@@ -64,8 +69,8 @@ int main(int argc, char** argv)
     for (Object* ob = (Object*)objects.first; ob; ob = (Object*)ob->id.next)
     {
         printf("     Name      : %s\n", ob->id.name + 2);
-        printf("     Location  : %.02f %.02f %.02f\n", ob->loc[0],  ob->loc[1],  ob->loc[2]);
-        printf("     Rotation  : %.02f %.02f %.02f\n", ob->rot[0],  ob->rot[1],  ob->rot[2]);
+        printf("     Location  : %.02f %.02f %.02f\n", ob->loc[0], ob->loc[1], ob->loc[2]);
+        printf("     Rotation  : %.02f %.02f %.02f\n", ob->rot[0], ob->rot[1], ob->rot[2]);
         printf("     Scale     : %.02f %.02f %.02f\n", ob->size[0], ob->size[1], ob->size[2]);
         printf("\n");
     }
@@ -85,7 +90,9 @@ int main(int argc, char** argv)
             {
                 float* fp = &me->mvert[v].co[0];
                 printf("         Coordinate %.02f, %.02f, %.02f \n",
-                         (fp[0]), (fp[1]), (fp[2]));
+                       (fp[0]),
+                       (fp[1]),
+                       (fp[2]));
             }
         }
         else if (me->mpoly && me->mloop)
@@ -98,7 +105,9 @@ int main(int argc, char** argv)
                 {
                     float* fp = &me->mvert[me->mloop[cp.loopstart + i].v].co[0];
                     printf("         Coordinate %.02f, %.02f, %.02f \n",
-                             (fp[0]), (fp[1]), (fp[2]));
+                           (fp[0]),
+                           (fp[1]),
+                           (fp[2]));
                 }
             }
         }

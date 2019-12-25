@@ -26,10 +26,16 @@ project(FileTools)
 
 
 
-set(FileTools_BLD_TESTS         FALSE           CACHE BOOL      "Build basic tests.")
-set(FileTools_BLD_BLEND_FILE    FALSE           CACHE BOOL      "Build the blend file version.")
-set(FileTools_USE_ZLIB          FALSE           CACHE BOOL      "Allow GZ compressed files to be read.")
-set(FileTools_USE_OWN_ZLIB      FALSE           CACHE BOOL      "Define this if zlib is used as part of a larger project.")
+option(FileTools_BLD_TESTS        "Build basic tests." OFF)
+option(FileTools_BLD_BLEND_FILE   "Build the blend file version." OFF)
+option(FileTools_USE_ZLIB         "Allow GZ compressed files to be read." OFF)
+option(FileTools_USE_OWN_ZLIB     "Define this if zlib is used as part of a larger project." OFF)
+option(FileTools_BLD_EXAMPLE_FILE "Build the example file version." OFF)
+
+if (FileTools_USE_OWN_ZLIB)
+    set(FileTools_USE_ZLIB FORCE ON)
+endif()
+
 
 
 if (NOT FileTools_UTILS_EXTERNAL)
@@ -82,10 +88,7 @@ set(FileTools_INCLUDE
     ${FileTools_SOURCE_DIR}/File
     ${FileTools_Utils_INCLUDE}
 )
-set(FileTools_LIBRARY      ${FileTools_TARGET_NAME} ${FileTools_Utils_LIBRARY})
-
-
-
+set(FileTools_LIBRARY ${FileTools_TARGET_NAME} ${FileTools_Utils_LIBRARY})
 
 
 if (FileTools_USE_ZLIB)
@@ -98,24 +101,28 @@ if (FileTools_USE_ZLIB)
         subdirs(${FileTools_ZLIB_INCLUDE})
 
     else()
-        # These must defined in a higher scope
-
+        SET(FileTools_ZLIB_FOUND 1)
         if (NOT FileTools_ZLIB_INCLUDE)
-            message(STATUS "FileTools_ZLIB_INCLUDE=<undefined>")
+            message("FileTools_ZLIB_INCLUDE=<undefined>")
+            SET(FileTools_ZLIB_FOUND 0)        
         endif()
 
         if (NOT FileTools_ZLIB_LIBRARY)
-            message(STATUS "FileTools_ZLIB_LIBRARY=<undefined>")
+            message("FileTools_ZLIB_LIBRARY=<undefined>")
+            SET(FileTools_ZLIB_FOUND 0)        
         endif()
 
-   endif()
+        if (FileTools_ZLIB_FOUND EQUAL 0)
+            message(FATAL_ERROR "FileTools_ZLIB_INCLUDE and FileTools_ZLIB_LIBRARY "
+            "must Be defined in a higher scope if the build is using an external source version.")
+        endif()
+    endif()
 
 
    list(APPEND FileTools_INCLUDE
        ${FileTools_ZLIB_INCLUDE} )
    list(APPEND FileTools_LIBRARY
        ${FileTools_ZLIB_LIBRARY} )
-
 endif()
 
 
@@ -126,6 +133,10 @@ subdirs(File Compiler)
 
 if (FileTools_BLD_BLEND_FILE)
     subdirs(FileFormats/Blend)
+endif()
+
+if (FileTools_BLD_EXAMPLE_FILE)
+    subdirs(FileFormats/Example)
 endif()
 
 
@@ -140,25 +151,3 @@ if (FileTools_BLD_TESTS)
     subdirs(Tests)
 
 endif()
-
-
-#if (NOT ftUSE_OWN_ZLIB)
-#    set(ftUSE_ZLIB 0)
-#    set(ftZLIB_INCLUDE ${FileTools_SOURCE_DIR}/File/zlib)
-#    set(ftZLIB_LIBRARY zlib)	
-#    if (ftUSE_ZLIB )
-#        add_definitions(-DftUSE_GZ_FILE=1)
-#        subdirs(File/zlib)
-#    endif()
-#else()
-#    if (ftUSE_ZLIB )
-#        add_definitions(-DftUSE_GZ_FILE=1)
-#    endif()
-#endif()
-#subdirs(FileFormats/Blend)
-#if (NOT ftNO_EXAMPLES)
-#    subdirs(FileFormats/Example)
-#    subdirs(FileTest)
-#    subdirs(Example)
-#endif()
-

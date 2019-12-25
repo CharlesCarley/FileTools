@@ -80,7 +80,8 @@ void usage(const char* prog)
 {
     if (prog)
     {
-        printf("%s\n\t<tablename> <outfile> <infile>[0] ... <infile>[n]\n", prog);
+        printf("%s\n", prog);
+        printf("       <tablename> <outfile> <infile>[0] ... <infile>[n]\n");
         printf("\n");
         printf("       tablename - A prefix on the generated table.  \n");
         printf("                   Eg: 'File' would be generated as:\n");
@@ -89,8 +90,7 @@ void usage(const char* prog)
         printf("                      const unsigned int  FileTableLen;\n");
         printf("\n");
         printf("       outfile   - The name of the output file that will be used to store the tables.\n");
-        printf("       infile    - a space separated list of file names to compile.\n");
-
+        printf("       infile    - a white space separated list of file names to compile.\n");
     }
     else
         printf("Invalid program name supplied to usage.\n");

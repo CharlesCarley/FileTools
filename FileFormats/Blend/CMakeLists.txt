@@ -22,7 +22,6 @@
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
 set(FileTools_BLEND_BUILD_TEST FALSE CACHE BOOL "Builds a test .blend program.")
-
 set(BlendFile_TARGET BlendFile)
 set(BlendFile_TOOLS_INCLUDE ${FileTools_INCLUDE})
 set(BlendFile_TOOLS_LIBRARY ${FileTools_LIBRARY})

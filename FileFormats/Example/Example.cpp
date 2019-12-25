@@ -21,8 +21,10 @@
 #include "ftTables.h"
 #include "ftStreams.h"
 
-#define ftIN_SOURCE
+#define FT_IN_SOURCE_FILE
 #include "ftPlatformHeaders.h"
+#include "ExampleTables.inl"
+
 
 
 namespace ExampleCodes
@@ -45,7 +47,7 @@ Example::Example() :
     ftp_sprintf(m_info.versionString, 32, "%i%i%i",
                 m_info.major, m_info.minor, m_info.build);
 
-    m_version = atoi(m_info.versionString);
+    m_memoryVersion = atoi(m_info.versionString);
 }
 
 
@@ -57,47 +59,45 @@ Example::~Example()
 
 void* Example::getTables(void)
 {
-    extern unsigned char ExampleTablesTable[];
-    return ExampleTablesTable;
+    return (void*)ExampleTablesTable;
 }
 
 FBTsize Example::getTableSize(void)
 {
-    extern int ExampleTablesLen;
     return ExampleTablesLen;
 }
 
 
-int Example::dataRead(void* p, const Chunk& id)
+int Example::notifyDataRead(void* p, const ftChunk& id)
 {
-    ftASSERT(p);
     if (id.m_code == ExampleCodes::INFO)
         m_info = *((FileInfo*)p);
     else if (id.m_code == ExampleCodes::DAT1)
         m_data.push_back((Data1*)p);
     else if (id.m_code == ExampleCodes::DAT2)
         m_data2.push_back(*(Data2*)p);
-    return 0;
+
+    return ftFlags::FS_OK;
 }
 
-int Example::writeData(ftStream* stream)
+int Example::serializeData(skStream* stream)
 {
-    writeStruct(stream, "FileInfo", ExampleCodes::INFO, sizeof(FileInfo), &m_info);
+    serialize(stream, "FileInfo", ExampleCodes::INFO, sizeof(FileInfo), &m_info);
 
     Data1Array::Iterator d1 = m_data.iterator();
     while (d1.hasMoreElements())
     {
         Data1* d1v = d1.getNext();
-        writeStruct(stream, "Data1", ExampleCodes::DAT1, sizeof(Data1), &d1v);
-        writeBuffer(stream, sizeof(Data1), d1v);
+        serialize(stream, "Data1", ExampleCodes::DAT1, sizeof(Data1), &d1v);
+        serialize(stream, sizeof(Data1), d1v);
     }
 
     Data2Array::Iterator d2 = m_data2.iterator();
     while (d2.hasMoreElements())
     {
         Data2& d2v = d2.getNext();
-        writeStruct(stream, "Data2", ExampleCodes::DAT2, sizeof(Data2), &d2v);
+        serialize(stream, "Data2", ExampleCodes::DAT2, sizeof(Data2), &d2v);
     }
 
-    return FS_OK;
+    return ftFlags::FS_OK;
 }

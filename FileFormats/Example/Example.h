@@ -30,8 +30,8 @@
 class Example : public ftFile
 {
 public:
-    typedef ftArray<Data1*> Data1Array;
-    typedef ftArray<Data2>  Data2Array;
+    typedef skArray<Data1*> Data1Array;
+    typedef skArray<Data2>  Data2Array;
 
 private:
     FileInfo  m_info;
@@ -48,8 +48,10 @@ public:
 protected:
     virtual void*       getTables(void);
     virtual FBTsize     getTableSize(void);
-    virtual int         dataRead(void* p, const Chunk& id);
-    virtual int         writeData(ftStream* stream);
+
+
+    virtual int notifyDataRead(void* p, const ftChunk& id);
+    virtual int serializeData(skStream* stream);
 };
 
 
