@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Configure
-      run: cmake ..
-    - name: Make
-      run: make
+     - uses: actions/checkout@v1
+     - name: Configure
+       run: cmake .
+     - name: Make
+       run: make
