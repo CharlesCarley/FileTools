@@ -8,6 +8,6 @@ jobs:
     
     steps:
     - name: Configure
-      run: ls .
+      run: cmake ..
     - name: Make
-      run: ls ..
+      run: make
