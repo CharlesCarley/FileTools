@@ -23,10 +23,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include <stdio.h>
+#define FT_IN_SOURCE_FILE
+#include "ftPlatformHeaders.h"
+
 #include "Utils/skString.h"
 #include "ftCompiler.h"
 #include "ftScanDNA.h"
+
 
 struct ProgramInfo
 {
