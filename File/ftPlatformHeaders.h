@@ -26,6 +26,8 @@
 #ifndef _ftPlatformHeaders_h_
 #define _ftPlatformHeaders_h_
 
+#include "ftTypes.h"
+
 #ifndef FT_IN_SOURCE_FILE
 #error source include only!
 #endif

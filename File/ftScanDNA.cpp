@@ -24,11 +24,12 @@
 -------------------------------------------------------------------------------
 */
 #define FT_IN_SOURCE_FILE
+#include "ftPlatformHeaders.h"
+
 #include "ftScanDNA.h"
 #include "ftChunk.h"
 #include "ftEndianUtils.h"
 #include "ftLogger.h"
-#include "ftPlatformHeaders.h"
 #include "ftTables.h"
 
 using namespace ftFlags;
