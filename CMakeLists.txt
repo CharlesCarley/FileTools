@@ -79,8 +79,10 @@ list(APPEND CMAKE_MODULE_PATH
     ${FileTools_SOURCE_DIR}/CMake
     ${FileTools_Utils_CMAKE}
 )
-set(FileTools_TARGET_NAME   FileTools)
-set(FileTools_COMPILER_NAME TableCompiler)
+set(FileTools_TARGET_NAME       FileTools)
+set(FileTools_COMPILER_NAME     TableCompiler)
+set(FileTools_DECOMPILER_NAME   TableDecompiler)
+
 
 # This is the main include definition 
 # to use the file classes.
@@ -128,8 +130,9 @@ endif()
 
 
 
-subdirs(File Compiler)
-
+subdirs(File)
+subdirs(Tools/Compiler)
+subdirs(Tools/Decompiler)
 
 if (FileTools_BLD_BLEND_FILE)
     subdirs(FileFormats/Blend)

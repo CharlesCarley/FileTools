@@ -29,10 +29,12 @@ set(File_SRC
     ftAtomic.cpp
     ftChunk.cpp
     ftCompiler.cpp
+    ftScanDNA.cpp
     ftEndianUtils.cpp
     ftFile.cpp
     ftLogger.cpp
     ftMember.cpp
+    ftScanDNA.cpp
     ftScanner.cpp
     ftStreams.cpp
     ftStruct.cpp
@@ -48,6 +50,7 @@ set(File_SRC
     ftLogger.h
     ftMember.h
     ftPlatformHeaders.h
+    ftScanDNA.h
     ftScanner.h
     ftStreams.h
     ftStruct.h

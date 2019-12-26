@@ -33,6 +33,7 @@
 #include "ftPlatformHeaders.h"
 #include "ftStreams.h"
 #include "ftTables.h"
+#include "ftScanDNA.h"
 
 using namespace ftEndianUtils;
 using namespace ftFlags;
@@ -213,67 +214,33 @@ int ftFile::parseHeader(skStream* stream)
 
 int ftFile::preScan(skStream* stream)
 {
-    // The idea of the pre-scan is to jump to the
-    // DNA1 block first, extract the table data,
-    // then seek back to the file header offset
-    // and read the chunks up to the DNA1 block.
-    // Then, create associations with the structure
-    // and member declarations along with every chunk.
+    int status = FS_OK;
 
-    int         status = FS_OK;
-    FBTsize     bytesRead;
-    ftChunkScan scan = {0, 0};
+    ftScanDNA scanner;
+    scanner.setFlags(m_headerFlags);
 
-    while (scan.m_code != ftIdNames::ENDB &&
-           scan.m_code != ftIdNames::DNA1 &&
-           status == FS_OK && !stream->eof())
+    status = scanner.scan(stream);
+    if (status == FS_OK)
     {
-        bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags);
-        if (bytesRead <= 0 || bytesRead == SK_NPOS)
-            status = FS_INV_READ;
-        else if (scan.m_code != ftIdNames::ENDB)
+
+        m_fileTableData = scanner.getDNA();
+        if (m_fileTableData && scanner.getLength() > 0)
         {
-            if (scan.m_code == ftIdNames::DNA1)
+            m_file = new ftTables((m_headerFlags & FH_CHUNK_64) != 0 ? 8 : 4);
+            status = m_file->read(m_fileTableData, scanner.getLength(), m_headerFlags, m_fileFlags);
+            if (status == FS_OK)
             {
-                // This block needs to stay alive as long as m_file is valid.
-                // The names of the types and the names of the type-name
-                // declarations are referenced out of this block.
-                m_fileTableData = ::malloc(scan.m_len);
-                if (!m_fileTableData)
-                    status = FS_BAD_ALLOC;
-                else
-                {
-                    if (stream->read(m_fileTableData, scan.m_len) <= 0)
-                        status = FS_INV_READ;
-                    else
-                    {
-                        m_file = new ftTables((m_headerFlags & FH_CHUNK_64) != 0 ? 8 : 4);
-                        status = m_file->read(m_fileTableData, scan.m_len, m_headerFlags, m_fileFlags);
-                        if (status == FS_OK)
-                        {
-                            if (m_fileFlags & LF_DO_CHECKS)
-                                status = runTableChecks(m_file);
-                        }
-                        else
-                        {
-                            if (m_fileFlags != LF_NONE)
-                                ftLogger::logF("File table initialization failed.");
-                        }
-                    }
-                }
+                if (m_fileFlags & LF_DO_CHECKS)
+                    status = runTableChecks(m_file);
             }
             else
             {
-                if (scan.m_len > 0 && scan.m_len != SK_NPOS32)
-                {
-                    if (!stream->seek(scan.m_len, SEEK_CUR))
-                        status = FS_INV_READ;
-                }
-                else
-                    status = FS_INV_LENGTH;
+                if (m_fileFlags != LF_NONE)
+                    ftLogger::logF("File table initialization failed.");
             }
         }
     }
+
     return status;
 }
 
