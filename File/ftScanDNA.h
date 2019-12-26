@@ -41,12 +41,12 @@ public:
     ftScanDNA();
     ~ftScanDNA();
 
-    // Extracts the needed flags from the file header 
+    // Extracts the needed flags from the file header
     // or an error status if the flags are not found.
     int findHeaderFlags(skStream *stream);
-    
-    // An option to set the required flags if they have 
-    // already been extracted from the file 
+
+    // An option to set the required flags if they have
+    // already been extracted from the file
     void setFlags(int headerFlags)
     {
         m_headerFlags = headerFlags;
@@ -55,20 +55,27 @@ public:
     int scan(skStream *stream);
 
     // Access to the found block
-    // Note: that this class does not manage the 
+    // Note: that this class does not manage the
     //       memory allocated for m_foundBlock
-    //       It was allocated with malloc, so the 
-    //       memory should be released with a call 
+    //       It was allocated with malloc, so the
+    //       memory should be released with a call
     //       to free
-    void *getDNA()
+    inline void *getDNA()
     {
         return m_foundBlock;
     }
 
-    FBTsize getLength()
+    inline FBTsize getLength()
     {
         return m_foundLen;
     }
+
+    inline int getFlags()
+    {
+        return m_headerFlags;
+    }
+
+    bool is64Bit();
 
 private:
     void *  m_foundBlock;

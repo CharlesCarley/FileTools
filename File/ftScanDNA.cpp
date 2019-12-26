@@ -27,6 +27,7 @@
 #include "ftScanDNA.h"
 #include "ftChunk.h"
 #include "ftEndianUtils.h"
+#include "ftLogger.h"
 #include "ftPlatformHeaders.h"
 #include "ftTables.h"
 
@@ -85,11 +86,17 @@ int ftScanDNA::findHeaderFlags(skStream *stream)
                         m_headerFlags |= FH_ENDIAN_SWAP;
                 }
                 else
+                {
+                    ftLogger::logF("The file header is missing the endian magic.");
                     status = FS_INV_HEADER_STR;
+                }
             }
         }
         else
+        {
+            ftLogger::logF("The file header is missing the chunk size magic.");
             status = FS_INV_HEADER_STR;
+        }
     }
     else
         status = FS_INV_READ;
@@ -146,4 +153,10 @@ int ftScanDNA::scan(skStream *stream)
         }
     }
     return status;
+}
+
+
+bool ftScanDNA::is64Bit()
+{
+    return (m_headerFlags & ftFlags::FH_CHUNK_64) != 0;
 }

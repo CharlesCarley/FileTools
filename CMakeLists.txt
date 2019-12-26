@@ -77,6 +77,7 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH 
     ${FileTools_SOURCE_DIR}/CMake
+    ${FileTools_SOURCE_DIR}/Tools/TableCompiler/CMake
     ${FileTools_Utils_CMAKE}
 )
 set(FileTools_TARGET_NAME       FileTools)
