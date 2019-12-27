@@ -348,8 +348,6 @@ int ftTables::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFla
 int ftTables::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
 {
     FBTuint32 status, count = 0;
-    ftName    name;
-
     status = readTableHeader(stream, ftIdNames::FT_TYPE, fileFlags);
     if (status == FS_OK)
     {
