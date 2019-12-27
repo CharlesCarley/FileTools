@@ -60,11 +60,11 @@ public:
 
     enum Flag
     {
-        CAN_LINK   = 0,
-        MISSING    = (1 << 0),
-        MISALIGNED = (1 << 1),
-        SKIP       = (1 << 2),
-        NEED_CAST  = (1 << 3)
+        CAN_LINK      = 0,
+        MISSING       = 1 << 0,
+        MISALIGNED    = 1 << 1,
+        NEED_CAST     = 1 << 2,
+        HAS_DEPENDANT = 1 << 3,
     };
 
 public:
@@ -138,6 +138,13 @@ public:
         return m_link != nullptr;
     }
 
+    // If this bit is set, it means that the struct contains 
+    // references to other structures that are not pointers.
+    inline bool hasDependantTypes()
+    {
+        return (m_flag & HAS_DEPENDANT) != 0;
+    }
+
     inline FBTint32 getFlag() const
     {
         return m_flag;
@@ -165,15 +172,15 @@ private:
 
     ftMember* createMember();
 
-    FBTuint16    m_type;
-    FBThash      m_hashedType;
-    void*        m_attached;
-    FBTint32     m_sizeInBytes;
-    FBTint32     m_strcId;
-    FBTint32     m_flag;
-    Members      m_members;
+    FBTuint16 m_type;
+    FBThash   m_hashedType;
+    void*     m_attached;
+    FBTint32  m_sizeInBytes;
+    FBTint32  m_strcId;
+    FBTint32  m_flag;
+    Members   m_members;
     ftTables* m_table;
-    ftStruct*    m_link;
+    ftStruct* m_link;
 };
 
 

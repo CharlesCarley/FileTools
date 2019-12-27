@@ -789,6 +789,8 @@ int ftTables::compile(int fileFlags)
                                 cof,
                                 depth + 1,
                                 status);
+
+                        nstrc->m_flag |= ftStruct::HAS_DEPENDANT;
                     }
                     else
                         putMember(strc, nstrc, 0, cof, 0, status);
@@ -828,6 +830,9 @@ void ftTables::putMember(FBTtype*   cp,
         status = RS_LIMIT_REACHED;
     else
     {
+        if (type >= m_firstStruct)
+            parent->m_flag |= ftStruct::HAS_DEPENDANT;
+ 
         ftMember* member = parent->createMember();
         member->setTypeIndex(type);
         member->setNameIndex(name);

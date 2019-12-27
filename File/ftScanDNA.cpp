@@ -43,7 +43,6 @@ ftScanDNA::ftScanDNA() :
 {
 }
 
-
 ftScanDNA::~ftScanDNA()
 {
 }

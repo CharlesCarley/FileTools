@@ -29,10 +29,9 @@
 #include "Utils/skArray.h"
 #include "Utils/skMap.h"
 #include "ftHashTypes.h"
+#include "ftStreams.h"
 #include "ftStruct.h"
 #include "ftTypes.h"
-#include "ftStreams.h"
-
 
 
 
@@ -80,6 +79,10 @@ public:
     bool          isPointer(const FBTuint16& name) const;
 
 
+    inline const Structures& getStructureArray() const
+    {
+        return m_structures;
+    }
 
     inline Structures::Iterator getStructIterator()
     {
@@ -162,7 +165,7 @@ public:
         return m_strcCount;
     }
 
-    inline FBTtype* getStructAt(FBTuint32 idx) const
+    FBTtype* getStructAt(FBTuint32 idx) const
     {
         if (idx < m_strcCount)
             return m_strcs[idx];
@@ -170,12 +173,14 @@ public:
     }
 
 
+    inline FBTuint16 getFirstStructType() const
+    {
+        return m_firstStruct;
+    }
 
     bool testDuplicateKeys();
 
 private:
-
-
     friend class ftStruct;
     friend class ftMember;
 
@@ -223,13 +228,13 @@ private:
         void**  dest,
         FBTsize numberOfEntries,
         FBTsize sizeofEntry,
-        int     fileFlags); 
+        int     fileFlags);
 
     void clearTables(void);
 
     void convertName(ftName& destName, char* convString);
 
-    int  buildStruct(FBTuint16*& buf, FBTuint16 current, int headerFlags, int fileFlags);
+    int buildStruct(FBTuint16*& buf, FBTuint16 current, int headerFlags, int fileFlags);
 
     int isValidTypeName(const FBTuint16& type, const FBTuint16& name, int fileFlags);
 
@@ -247,7 +252,7 @@ private:
                  FBTuint32& cof,
                  FBTuint32  depth,
                  int&       status);
-    int compile(int fileFlags);
+    int  compile(int fileFlags);
 };
 
 
