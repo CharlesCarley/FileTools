@@ -1,7 +1,8 @@
 # File Structure
 
-* [File Structure](#file-structure)
-  * [Header](#header)
+1. [File Structure](#file-structure)
+   1. [Header](#header)
+   2. [Chunks](#chunks)
 
 ## Header
 
@@ -22,4 +23,6 @@ Codes for bytes 7,8
 | '_'   | 0x5F | Byte 7 is 32 bits       |
 | 'V'   | 0x56 | Byte 8 is big endian    |
 | 'v'   | 0x76 | Byte 8 is little endian |
+
+## Chunks
 
