@@ -23,6 +23,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "ftCompiler.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -135,7 +137,7 @@ void ftCompiler::makeName(ftVariable& v, bool forceArray)
 
 int ftCompiler::parse(const ftPath& name, const char* data, size_t len)
 {
-    ftScanner scanner(data, len);
+    ftScanner scanner(data, (SKsize)len);
 
     // Only enable the scanner
     // in the scope of parsing.
@@ -440,8 +442,8 @@ void ftCompiler::writeStream(skStream* fp)
 void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
 {
     char    pad[4] = {'b', 'y', 't', 'e'};
-    FBTsize i = 0, s = ptrs.size();
-    int     t = 0;
+    SKuint32 i = 0, s = ptrs.size();
+    SKuint32 t = 0;
 
     while (i < s)
     {
@@ -457,7 +459,7 @@ void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
     if (len - t)
     {
         ftId id;
-        int  p;
+        SKuint32 p;
         for (p = 0; p < (len - t); p++)
             id.push_back(pad[p % 4]);
 
@@ -543,8 +545,8 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     {
         ftCompileStruct& bs = it.getNext();
 
-        ftId&   cur = m_build->m_typeLookup.at(bs.m_structId);
-        FBTtype len = m_build->m_tlen.at(bs.m_structId);
+        ftId&   cur = m_build->m_typeLookup.at((SKuint32)bs.m_structId);
+        FBTtype len = m_build->m_tlen.at((SKuint32)bs.m_structId);
 
         if (m_skip.find(cur) != m_skip.npos)
             continue;
@@ -613,7 +615,7 @@ void ftBuildInfo::makeBuiltinTypes(void)
     for (i = 0; i < ftAtomicUtils::NumberOfTypes; ++i)
     {
         const ftAtomicType& type = ftAtomicUtils::Types[i];
-        addType(type.m_name, type.m_sizeof);
+        addType(type.m_name, (SKuint32)type.m_sizeof);
     }
     m_numberOfBuiltIn = m_typeLookup.size();
 }
@@ -661,8 +663,8 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
         ftCompileStruct& bs = bit.getNext();
         bs.m_structId       = addType(bs.m_name, 0);
 
-        m_strc.push_back(bs.m_structId);
-        m_strc.push_back((FBTint16)bs.m_data.size());
+        m_strc.push_back((SKuint16)bs.m_structId);
+        m_strc.push_back((SKuint16)bs.m_data.size());
 
         m_alloc.m_strc += (sizeof(FBTtype) * 2);
 
@@ -671,8 +673,8 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
         {
             ftVariable& cvar = it.getNext();
 
-            cvar.m_typeId     = addType(cvar.m_type, 0);
-            cvar.m_hashedName = addName(cvar.m_name);
+            cvar.m_typeId     = (int)addType(cvar.m_type, 0);
+            cvar.m_hashedName = (FBTtype)addName(cvar.m_name);
 
             m_strc.push_back(cvar.m_typeId);
             m_strc.push_back(cvar.m_hashedName);
@@ -690,7 +692,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
     ftCompileStruct* strcs = struct_builders.ptr();
     FBTsize          tot   = struct_builders.size(), i, e;
 
-    int next = tot, prev = 0;
+    FBTsize next = tot, prev = 0;
 
     FBTtype*         tln64  = m_64ln.ptr();
     FBTtype*         tlens  = m_tlen.ptr();
@@ -713,7 +715,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
             ftCompileStruct& cur = strcs[i];
             if (tlens[cur.m_structId] != 0)
             {
-                FBTsize pos;
+                FBTuint32 pos;
                 if ((pos = m_missingReport.find(cur.m_name)) != m_missingReport.npos)
                     m_missingReport.remove(pos);
             }
@@ -814,8 +816,8 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                     }
                 }
 
-                tln64[cur.m_structId] = fake64;
-                tlens[cur.m_structId] = len;
+                tln64[cur.m_structId] = (FBTtype)fake64;
+                tlens[cur.m_structId] = (FBTtype)len;
 
                 if (len != 0)
                 {

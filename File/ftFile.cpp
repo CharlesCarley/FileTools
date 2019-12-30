@@ -1140,7 +1140,7 @@ int ftFile::save(const char* path, const int mode)
 
     ftChunk ch;
     ch.m_code   = ftIdNames::DNA1;
-    ch.m_len    = getTableSize();
+    ch.m_len    = (FBTuint32)getTableSize();
     ch.m_nr     = 1;
     ch.m_addr    = 0;  // cannot be looked back up
     ch.m_typeid = 0;
@@ -1202,7 +1202,7 @@ void ftFile::serializeChunk(skStream* stream,
     {
         ftChunk ch;
         ch.m_code   = code;
-        ch.m_len    = len;
+        ch.m_len     = (FBTuint32)len;
         ch.m_nr     = nr;
         ch.m_addr    = (FBTsize)writeData;
         ch.m_typeid = typeIndex;

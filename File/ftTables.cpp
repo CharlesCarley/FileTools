@@ -338,7 +338,7 @@ int ftTables::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFla
                 stream.seekString();
             }
 
-            count = stream.getVaryingInt();
+            count = (SKuint32)stream.getVaryingInt();
             count = ((count + 3) & ~3) - count;
             if (count)
                 stream.seek(count, SEEK_CUR);
@@ -373,7 +373,7 @@ int ftTables::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFla
                 stream.seekString();
             }
 
-            count = stream.getVaryingInt();
+            count = (SKuint32)stream.getVaryingInt();
             count = ((count + 3) & ~3) - count;
             if (count)
                 stream.seek(count, SEEK_CUR);

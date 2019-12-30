@@ -72,7 +72,7 @@ public:
     ftId         m_type;
     ftId         m_name;
     int          m_typeId;
-    int          m_hashedName;
+    FBTtype      m_hashedName;
     int          m_ptrCount;
     int          m_numDimensions;
     int          m_isFunctionPointer;

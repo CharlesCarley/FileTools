@@ -149,7 +149,7 @@ class ftScanner
 private:
     const char* m_buffer;
     int         m_pos;
-    int         m_len;
+    SKsize      m_len;
     int         m_state;
     int         m_lineNo;
 
@@ -158,7 +158,7 @@ private:
 
 public:
 
-    ftScanner(const char* ptr, int length) :
+    ftScanner(const char* ptr, SKsize length) :
         m_buffer(ptr),
         m_pos(0),
         m_len(length),
