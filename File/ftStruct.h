@@ -49,8 +49,12 @@ struct ftType
 {
     char*     m_name;    // note: memory is in the main table.
     FBThash   m_hash;    // ftCharHashKey(typeName)
-    FBTuint32 m_strcId;  // [0-NumberOfBuiltin] = SK_NPOS32
-                         // (NumberOfBuiltin, NumberOfStructs]
+
+    // This must be checked against ftTables::getFirstStructType
+    //
+    //  [0-NumberOfBuiltin] = SK_NPOS32
+    //  (NumberOfBuiltin, NumberOfStructs]
+    FBTuint32 m_strcId; 
 };
 
 class ftStruct
