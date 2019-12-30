@@ -13,4 +13,4 @@ jobs:
      - name: Make
        run: make
      - name: RunTests
-       run: ./Tests/Tests
+       run: ./Tests/FileToolsTests
