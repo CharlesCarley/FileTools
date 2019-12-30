@@ -26,3 +26,17 @@ Codes for bytes 7,8
 
 ## Chunks
 
+
+```c++
+struct Chunk
+{
+    unsigned int code;    // 4 bytes
+    unsigned int length;  // 4 bytes
+    size_t       address; // 4|8 bytes
+    unsigned int typeid;  // 4 bytes
+    unsigned int count;   // 4 bytes
+}; // 20 or 24 bytes total
+```
+
+The address member needs to be large enough to hold the base address of the pointer this chunk represents.
+

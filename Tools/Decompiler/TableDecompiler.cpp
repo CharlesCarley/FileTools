@@ -23,11 +23,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#define FT_IN_SOURCE_FILE
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#define FT_IN_SOURCE_FILE
 //#include "Blender.h"
+//#include "SID.h"
+#include "Utils/skList.h"
 #include "Utils/skStack.h"
 #include "Utils/skString.h"
 #include "Utils/skTimer.h"
@@ -53,8 +55,6 @@ struct ProgramInfo
     string m_outName;
 };
 
-
-
 using namespace ftFlags;
 
 
@@ -72,9 +72,7 @@ void writeFileHeader(ProgramInfo& ctx, ostream& out)
         << endl;
     out << "*/" << endl;
 
-
     ctx.m_outName = ctx.m_ofile.substr(0, ctx.m_ofile.find('.')).c_str();
-
     out << "#ifndef _" << ctx.m_outName << "_" << endl;
     out << "#define _" << ctx.m_outName << "_" << endl;
 }
@@ -138,12 +136,57 @@ void writeUnresolved(ProgramInfo& ctx, ostream& out, FBTtype* typeNotFound)
         out << "typedef size_t " << typeName << ";" << endl;
 }
 
-
-int ftStructCMP(ftStruct* a, ftStruct* b)
+int getNumberOfDependants(ftStruct* a)
 {
-    int ad = a->hasDependantTypes() ? 1 : 0;
-    int bd = b->hasDependantTypes() ? 1 : 0;
-    return a < b;
+    ftTables* tables = a->getParent();
+
+    int deps = 0;
+    if (tables)
+    {
+        FBTtype* strc = tables->getStructAt(a->getStructIndex());
+        if (strc)
+        {
+            FBTtype cnt = strc[1], i;
+            strc += 2;
+            for (i = 0; i < cnt; ++i, strc += 2)
+            {
+                if (strc[0] >= tables->getFirstStructType())
+                    ++deps;
+            }
+        }
+    }
+    return deps;
+}
+
+
+
+void getUnresolved(ftStruct* a, skArray<FBTtype*>& unresolved)
+{
+    ftTables* tables = a->getParent();
+
+    int deps = 0;
+    if (tables)
+    {
+        FBTtype* strc = tables->getStructAt(a->getStructIndex());
+        if (strc)
+        {
+            FBTtype cnt = strc[1], i;
+            strc += 2;
+            for (i = 0; i < cnt; ++i, strc += 2)
+            {
+                ftStruct* fstrc = tables->findStructByType(strc[0]);
+                if (fstrc)
+                {
+                }
+            }
+        }
+    }
+}
+
+
+int structCMP(ftStruct* a, ftStruct* b)
+{
+    return getNumberOfDependants(a) <= getNumberOfDependants(b);
 }
 
 
@@ -155,61 +198,10 @@ bool hasUnResolved(skArray<FBTtype*>& unresolved, FBTtype* inp)
     while (!found && it.hasMoreElements())
     {
         FBTtype* type = it.getNext();
-        found         = type[0] == inp[0] && type[1] == inp[1];
+
+        found = type[0] == inp[0] && type[1] == inp[1];
     }
     return found;
-}
-
-
-void resolveDependenciesRecursive(ProgramInfo&        ctx,
-                                  ftStruct*           strcWithDep,
-                                  skArray<FBTtype*>&  unresolved,
-                                  skArray<ftStruct*>& main,
-                                  skArray<ftStruct*>& arr)
-{
-    FBTtype* strc = ctx.m_tables->getStructAt(strcWithDep->getStructIndex());
-    if (strc)
-    {
-        FBTtype cnt = strc[1], i;
-        strc += 2;
-
-        for (i = 0; i < cnt; ++i, strc += 2)
-        {
-            FBTtype       type  = strc[0];
-            const ftName& name  = ctx.m_tables->getNameAt(strc[1]);
-            ftStruct*     fstrc = ctx.m_tables->findStructByType(type);
-
-            if (fstrc)
-            {
-                if (name.m_ptrCount > 0)
-                {
-                    SKuint32 pos = main.find(fstrc);
-                    if (pos != SK_NPOS32)
-                    {
-                        if (arr.find(fstrc) == SK_NPOS32)
-                            arr.push_back(fstrc);
-                    }
-                }
-                else if (type >= ctx.m_tables->getFirstStructType())
-                {
-                    SKuint32 pos = main.find(fstrc);
-                    if (pos != SK_NPOS32)
-                    {
-                        if (arr.find(fstrc) == SK_NPOS32)
-                        {
-                            arr.push_back(fstrc);
-                            resolveDependenciesRecursive(ctx, fstrc, unresolved, main, arr);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (!hasUnResolved(unresolved, strc))
-                    unresolved.push_back(strc);
-            }
-        }
-    }
 }
 
 
@@ -217,56 +209,14 @@ void sortStructs(ProgramInfo& ctx, skArray<FBTtype*>& unresolved, skArray<ftStru
 {
     skArray<ftStruct*> main = ctx.m_tables->getStructureArray();
 
-    skStack<ftStruct*> stack;
-    unresolved.clear();
 
     skArray<ftStruct*>::Iterator it = main.iterator();
     while (it.hasMoreElements())
     {
         ftStruct* strc = it.getNext();
-        if (strc->hasDependantTypes())
-            stack.push(strc);
-        else
-        {
-            arr.push_back(strc);
-            main.erase(strc);
-            it = main.iterator();
-        }
-    }
-
-
-    while (!stack.empty())
-    {
-        ftStruct* strc_with_dep = stack.top();
-        stack.pop();
-        resolveDependenciesRecursive(ctx, strc_with_dep, unresolved, main, arr);
-    }
-
-
-    if (!unresolved.empty())
-    {
-        skArray<FBTtype*>::Iterator typeIter = unresolved.iterator();
-        while (typeIter.hasMoreElements())
-        {
-            FBTtype* pair = typeIter.getNext();
-
-            printf("(%d %d) (%s %s)\n",
-                   pair[0],
-                   pair[1],
-                   ctx.m_tables->getTypeNameAt(pair[0]),
-                   ctx.m_tables->getNameAt(pair[1]).m_name);
-        }
-    }
-
-
-    it = main.iterator();
-    while (it.hasMoreElements())
-    {
-        ftStruct* strc = it.getNext();
         arr.push_back(strc);
-
-        printf("==> %s\n", strc->getName());
     }
+    arr.sort(structCMP);
 }
 
 
@@ -295,6 +245,7 @@ int extractToFile(ProgramInfo& ctx)
             ftStruct* strc = it.getNext();
             writeForward(ctx, sout, strc);
         }
+        sout << endl;
 
         skArray<FBTtype*>::Iterator uit = unresolved.iterator();
         while (uit.hasMoreElements())
@@ -302,6 +253,8 @@ int extractToFile(ProgramInfo& ctx)
             FBTtype* cur = uit.getNext();
             writeUnresolved(ctx, sout, cur);
         }
+
+        sout << endl;
 
         it = arr.iterator();
         while (it.hasMoreElements())

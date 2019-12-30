@@ -216,6 +216,8 @@ int ftTables::read(const void*    tableSource,
     ftMemoryStream stream;
     stream.open((FBTbyte*)tableSource, tableLength, 0, true);
 
+    // FIXME: there should be no guarantee on the order that the NAME codes come in. 
+
     status = readTableHeader(stream, ftIdNames::FT_SDNA, fileFlags);
     if (status != FS_OK)
     {

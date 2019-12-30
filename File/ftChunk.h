@@ -41,7 +41,7 @@ struct ftChunk32
 {
     FBTuint32 m_code;
     FBTuint32 m_len;
-    FBTuint32 m_old;
+    FBTuint32 m_addr;
     FBTuint32 m_typeid;
     FBTuint32 m_nr;
 };
@@ -52,7 +52,7 @@ struct ftChunk64
 {
     FBTuint32 m_code;
     FBTuint32 m_len;
-    FBTuint64 m_old;
+    FBTuint64 m_addr;
     FBTuint32 m_typeid;
     FBTuint32 m_nr;
 };
@@ -63,7 +63,7 @@ struct ftChunk
 {
     FBTuint32 m_code;
     FBTuint32 m_len;
-    FBTsize   m_old;
+    FBTsize   m_addr;
     FBTuint32 m_typeid;
     FBTuint32 m_nr;
 };
@@ -124,7 +124,6 @@ struct ftChunkUtils
     };
     static FBTsize read(ftChunk* dest, skStream* stream, int flags);
     static FBTsize write(ftChunk* src, skStream* stream);
-
     static FBTsize scan(ftChunkScan* dest, skStream* stream, int flags);
 
     static const ftChunk BLANK_CHUNK;

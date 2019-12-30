@@ -159,7 +159,7 @@ void ftLogger::log(const ftChunk &chunk)
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << "Code   : " << buf << endl;
     cout << "Len    : " << dec << chunk.m_len << endl;
-    cout << "Old    : 0x" << hex << chunk.m_old << endl;
+    cout << "Old    : 0x" << hex << chunk.m_addr << endl;
     cout << "TypeId : " << dec << chunk.m_typeid << endl;
     cout << "Count  : " << dec << chunk.m_nr << endl;
     skHexPrint::writeColor(CS_WHITE);

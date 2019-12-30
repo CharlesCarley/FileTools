@@ -23,12 +23,12 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "Utils/skHash.h"
-#include "Utils/skArray.h"
 #include "ftCompiler.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Utils/skArray.h"
+#include "Utils/skHash.h"
 #include "ftAtomic.h"
 #include "ftConfig.h"
 #include "ftLogger.h"
@@ -58,11 +58,11 @@ public:
     ftBuildInfo();
     ~ftBuildInfo();
 
-    void        reserve(void);
-    int         getLengths(ftCompileStruct::Array& struct_builders);
-    int         getTLengths(ftCompileStruct::Array& struct_builders);
-    void        makeBuiltinTypes(void);
-    bool        hasType(const ftId& type);
+    void    reserve(void);
+    int     getLengths(ftCompileStruct::Array& struct_builders);
+    int     getTLengths(ftCompileStruct::Array& struct_builders);
+    void    makeBuiltinTypes(void);
+    bool    hasType(const ftId& type);
     FBTsize addType(const ftId& type, const FBTuint32& len);
     FBTsize addName(const ftId& name);
 
@@ -137,7 +137,7 @@ int ftCompiler::parse(const ftPath& name, const char* data, size_t len)
 {
     ftScanner scanner(data, len);
 
-    // Only enable the scanner  
+    // Only enable the scanner
     // in the scope of parsing.
     m_scanner = &scanner;
     m_includes.push_back(name.c_str());
@@ -152,26 +152,36 @@ int ftCompiler::parse(const ftPath& name, const char* data, size_t len)
 
 int ftCompiler::parse(const ftPath& id)
 {
-    FILE* fp = fopen(id.c_str(), "rb");
-    if (!fp)
+    skFileStream fp;
+    fp.open(id.c_str(), skStream::READ);
+    if (!fp.isOpen())
     {
         printf("Error: File loading failed: %s\n", id.c_str());
         return -1;
     }
 
-    fseek(fp, 0L, SEEK_END);
-    size_t len = ftell(fp), br;
-    fseek(fp, 0L, SEEK_SET);
+    SKsize len = fp.size(), br;
+    int    rc  = -1;
 
-    char* buffer = new char[len + 1];
+    if (len == SK_NPOS)
+        printf("Error: Failed to determine the length of the file: %s\n", id.c_str());
+    else
+    {
+        char* buffer = new char[len + 1];
 
-    br         = fread(buffer, 1, len, fp);
-    buffer[br] = 0;
-    fclose(fp);
+        br = fp.read(buffer, len);
+        if (br != SK_NPOS)
+        {
+            buffer[br] = 0;
 
-    int ret = parse(id.c_str(), buffer, len + 1);
-    delete[] buffer;
-    return ret;
+            rc = parse(id.c_str(), buffer, len + 1);
+        }
+        else
+            printf("Error: Failed to read from the file: %s\n", id.c_str());
+
+        delete[] buffer;
+    }
+    return rc;
 }
 
 
@@ -260,8 +270,8 @@ void ftCompiler::parseClass(int& TOK, ftToken& tp)
                                 break;
                             case FT_LPARN:
                                 cur.m_isFunctionPointer = 1;
-                                cur.m_ptrCount = 0;
-                                cur.m_name = tp.getValue();
+                                cur.m_ptrCount          = 0;
+                                cur.m_name              = tp.getValue();
                                 break;
                             case FT_RPARN:
                             case FT_PRIVATE:
@@ -465,7 +475,7 @@ void ftCompiler::writeBinPtr(skStream* fp, void* ptr, int len)
         for (i = 0; i < len; ++i, ++m_curBuf)
         {
             if ((m_curBuf % 16) == 15)
-                fp->writef("\n");
+                fp->write("\n", 1);
             fp->writef("0x%02X,", (unsigned char)cb[i]);
         }
     }

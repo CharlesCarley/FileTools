@@ -114,7 +114,7 @@ int ftBlend::serializeData(skStream* stream)
         ch.m_nr     = node->m_chunk.m_nr;
         ch.m_len    = node->m_chunk.m_len;
         ch.m_typeid = node->m_newTypeId;
-        ch.m_old    = (FBTsize)wd;
+        ch.m_addr    = (FBTsize)wd;
 
         stream->write(&ch, sizeof(ftChunk));
         stream->write(wd, ch.m_len);

@@ -36,7 +36,7 @@ using namespace ftFlags;
 const ftChunk ftChunkUtils::BLANK_CHUNK = {
     0,  // m_code
     0,  // m_sizeInBytes
-    0,  // m_old
+    0,  // m_addr
     0,  // m_typeid
     0,  // m_nr
 };
@@ -46,7 +46,7 @@ FBTsize ftChunkUtils::write(ftChunk* src, skStream* stream)
 {
     FBTsize size = 0;
     size += stream->write(src, BlockSize);
-    size += stream->write((void*)src->m_old, src->m_len);
+    size += stream->write((void*)src->m_addr, src->m_len);
     return size;
 }
 
@@ -104,8 +104,8 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 
             c64.m_code = src.m_code;
             c64.m_len  = src.m_len;
-            ptr.m_int[0] = src.m_old;
-            c64.m_old    = ptr.m_ptr;
+            ptr.m_int[0] = src.m_addr;
+            c64.m_addr    = ptr.m_ptr;
             c64.m_typeid = src.m_typeid;
             c64.m_nr     = src.m_nr;
         }
@@ -132,11 +132,11 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
             c32.m_typeid = src.m_typeid;
             c32.m_nr     = src.m_nr;
 
-            ptr.m_ptr = src.m_old;
+            ptr.m_ptr = src.m_addr;
             if (ptr.m_int[0] != 0)
-                c32.m_old = ptr.m_int[0];
+                c32.m_addr = ptr.m_int[0];
             else
-                c32.m_old = ptr.m_int[1];
+                c32.m_addr = ptr.m_int[1];
         }
         else
         {

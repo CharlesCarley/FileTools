@@ -365,7 +365,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         // number of elements in a pointer array.
         bin->m_pblockLen = chunk.m_len;
 
-        ftPointerHashKey phk(chunk.m_old);
+        ftPointerHashKey phk(chunk.m_addr);
         if (m_map.find(phk) != m_map.npos)
         {
             freeChunk(bin);
@@ -1142,7 +1142,7 @@ int ftFile::save(const char* path, const int mode)
     ch.m_code   = ftIdNames::DNA1;
     ch.m_len    = getTableSize();
     ch.m_nr     = 1;
-    ch.m_old    = 0;  // cannot be looked back up
+    ch.m_addr    = 0;  // cannot be looked back up
     ch.m_typeid = 0;
     fs->write(&ch, ftChunkUtils::BlockSize);
     fs->write(getTables(), ch.m_len);
@@ -1151,7 +1151,7 @@ int ftFile::save(const char* path, const int mode)
     ch.m_code   = ftIdNames::ENDB;
     ch.m_len    = 0;
     ch.m_nr     = 0;
-    ch.m_old    = 0;
+    ch.m_addr    = 0;
     ch.m_typeid = 0;
     fs->write(&ch, ftChunkUtils::BlockSize);
     delete fs;
@@ -1204,7 +1204,7 @@ void ftFile::serializeChunk(skStream* stream,
         ch.m_code   = code;
         ch.m_len    = len;
         ch.m_nr     = nr;
-        ch.m_old    = (FBTsize)writeData;
+        ch.m_addr    = (FBTsize)writeData;
         ch.m_typeid = typeIndex;
         ftChunkUtils::write(&ch, stream);
 
