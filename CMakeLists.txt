@@ -24,6 +24,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(FileTools)
 
+
 option(FileTools_BLD_TESTS        "Build basic tests." OFF)
 option(FileTools_BLD_BLEND_FILE   "Build the blend file version." OFF)
 option(FileTools_USE_ZLIB         "Allow GZ compressed files to be read." OFF)
