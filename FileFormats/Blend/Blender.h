@@ -703,7 +703,7 @@ namespace Blender
         int missing;
     };
 
-    struct anim
+    struct Anim
     {
         int missing;
     };
@@ -1395,7 +1395,7 @@ namespace Blender
     {
         ImageAnim *next;
         ImageAnim *prev;
-        anim *     manim;
+        Anim *     anim;
     };
 
     struct ImageView
@@ -2871,7 +2871,7 @@ namespace Blender
     {
         StripAnim *next;
         StripAnim *prev;
-        anim *     anim;
+        Anim *     anim;
     };
 
     struct StripElem
@@ -2908,7 +2908,7 @@ namespace Blender
     {
         char  dir[768];
         char  file[256];
-        anim *anim;
+        Anim *anim;
         short tc;
         short quality;
         short build_size_flags;
@@ -11364,7 +11364,7 @@ namespace Blender
         int                            lastsize[2];
         float                          aspx;
         float                          aspy;
-        anim *                         anim;
+        Anim *                         anim;
         MovieClipCache *               cache;
         bGPdata *                      gpd;
         MovieTracking                  tracking;
