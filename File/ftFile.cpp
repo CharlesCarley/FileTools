@@ -31,9 +31,9 @@
 #include "ftLogger.h"
 #include "ftMember.h"
 #include "ftPlatformHeaders.h"
+#include "ftScanDNA.h"
 #include "ftStreams.h"
 #include "ftTables.h"
-#include "ftScanDNA.h"
 
 using namespace ftEndianUtils;
 using namespace ftFlags;
@@ -222,7 +222,6 @@ int ftFile::preScan(skStream* stream)
     status = scanner.scan(stream);
     if (status == FS_OK)
     {
-
         m_fileTableData = scanner.getDNA();
         if (m_fileTableData && scanner.getLength() > 0)
         {
@@ -668,6 +667,20 @@ void ftFile::castMemberPointer(ftMember* mstrc,
 }
 
 
+template <typename BaseType>
+void ftFile::castPointer(FBTsize*& dstPtr, FBTsize*& srcPtr, int arrayLen)
+{
+    int i;
+
+    BaseType* sptr = (BaseType*)srcPtr;
+    for (i = 0; i < arrayLen; ++i)
+    {
+        void* vp  = (void*)(*sptr++);
+        dstPtr[i] = (FBTsize)findPointer(ftPointerHashKey(vp));
+    }
+}
+
+
 
 void ftFile::castPointerToPointer(ftMember* dst,
                                   FBTsize*& dstPtr,
@@ -681,7 +694,7 @@ void ftFile::castPointerToPointer(ftMember* dst,
         if (bin->m_flag & ftMemoryChunk::BLK_MODIFIED && bin->m_pblock)
         {
             (*dstPtr) = (FBTsize)bin->m_pblock;
- 
+
             if (m_fileFlags != LF_NONE)
                 ftLogger::logF("Reusing block %p", bin->m_pblock);
         }
@@ -696,13 +709,11 @@ void ftFile::castPointerToPointer(ftMember* dst,
                 FBTsize* newBlock = (FBTsize*)::calloc(total, sizeof(FBTsize));
                 if (newBlock != nullptr)
                 {
-                    // Always use a 32 bit integer,
-                    // then offset + 2 for a 64 bit pointer.
-                    FBTuint32* optr = (FBTuint32*)bin->m_fblock;
-                    FBTsize*   mptr = (FBTsize*)newBlock;
-
-                    for (i = 0; i < total; i++, optr += (fps == 4 ? 1 : 2))
-                        mptr[i] = (FBTsize)findPtr((FBTsize)(*optr));
+                    FBTsize* optr = (FBTsize*)bin->m_fblock;
+                    if (fps == 4)
+                        castPointer<FBTuint32>(newBlock, optr, total);
+                    else
+                        castPointer<FBTuint64>(newBlock, optr, total);
 
                     free(bin->m_pblock);
                     bin->m_pblock = newBlock;
@@ -735,6 +746,7 @@ void ftFile::castPointerToPointer(ftMember* dst,
     }
 }
 
+
 void ftFile::castPointer(ftMember* mstrc,
                          FBTsize*& dstPtr,
                          ftMember* fstrc,
@@ -746,11 +758,10 @@ void ftFile::castPointer(ftMember* mstrc,
     FBTsize fps = m_file->getSizeofPointer();
     if (fps == 4 || fps == 8)
     {
-        int i;
-
-        FBTuint32* sptr = (FBTuint32*)srcPtr;
-        for (i = 0; i < arrayLen; ++i, sptr += (fps == 4 ? 1 : 2))
-            dstPtr[i] = (FBTsize)findPtr((FBTsize)(*sptr));
+        if (fps == 4)
+            castPointer<FBTuint32>(dstPtr, srcPtr, arrayLen);
+        else
+            castPointer<FBTuint64>(dstPtr, srcPtr, arrayLen);
     }
     else
     {
@@ -1012,7 +1023,15 @@ ftMember* ftFile::findInFileTable(ftStruct* fileStruct,
     return fstrc;
 }
 
-void* ftFile::findPtr(const FBTsize& iptr)
+void* ftFile::findPointer(const FBTsize& iptr)
+{
+    FBTsize i;
+    if ((i = m_map.find(iptr)) != m_map.npos)
+        return m_map.at(i)->m_mblock;
+    return 0;
+}
+
+void* ftFile::findPointer(const ftPointerHashKey& iptr)
 {
     FBTsize i;
     if ((i = m_map.find(iptr)) != m_map.npos)
@@ -1142,7 +1161,7 @@ int ftFile::save(const char* path, const int mode)
     ch.m_code   = ftIdNames::DNA1;
     ch.m_len    = (FBTuint32)getTableSize();
     ch.m_nr     = 1;
-    ch.m_addr    = 0;  // cannot be looked back up
+    ch.m_addr   = 0;  // cannot be looked back up
     ch.m_typeid = 0;
     fs->write(&ch, ftChunkUtils::BlockSize);
     fs->write(getTables(), ch.m_len);
@@ -1151,7 +1170,7 @@ int ftFile::save(const char* path, const int mode)
     ch.m_code   = ftIdNames::ENDB;
     ch.m_len    = 0;
     ch.m_nr     = 0;
-    ch.m_addr    = 0;
+    ch.m_addr   = 0;
     ch.m_typeid = 0;
     fs->write(&ch, ftChunkUtils::BlockSize);
     delete fs;
@@ -1202,9 +1221,9 @@ void ftFile::serializeChunk(skStream* stream,
     {
         ftChunk ch;
         ch.m_code   = code;
-        ch.m_len     = (FBTuint32)len;
+        ch.m_len    = (FBTuint32)len;
         ch.m_nr     = nr;
-        ch.m_addr    = (FBTsize)writeData;
+        ch.m_addr   = (FBTsize)writeData;
         ch.m_typeid = typeIndex;
         ftChunkUtils::write(&ch, stream);
 

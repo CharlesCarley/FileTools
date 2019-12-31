@@ -39,6 +39,7 @@ static FBThash skipList[] =
         ftCharHashKey("Object").hash(),
         ftCharHashKey("Camera").hash(),
         ftCharHashKey("Lamp").hash(),
+        ftCharHashKey("Base").hash(),
         ftCharHashKey("Scene").hash(),
         ftCharHashKey("Mesh").hash(),
         ftCharHashKey("MVert").hash(),
@@ -55,7 +56,7 @@ int main(int argc, char** argv)
         return 1;
 
     ftBlend fp;
-    fp.addFileFlag(LF_DIAGNOSTICS);
+    //fp.addFileFlag(LF_DIAGNOSTICS|LF_UNRESOLVED);
     fp.setFilterList(skipList, sizeof(skipList) / sizeof(FBThash), true);
     if (fp.load(argv[argc - 1], PM_COMPRESSED) != FS_OK)
         return 1;

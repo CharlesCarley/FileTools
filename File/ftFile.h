@@ -146,7 +146,12 @@ protected:
     virtual int     serializeData(skStream* stream)            = 0;
 
 private:
-    void*          findPtr(const FBTsize& iptr);
+    template <typename BaseType>
+    void castPointer(FBTsize*& dstPtr, FBTsize*& srcPtr, int arrayLen);
+
+    void*          findPointer(const ftPointerHashKey& iptr);
+    void*          findPointer(const FBTsize& iptr);
+
     ftMemoryChunk* findBlock(const FBTsize& iptr);
     skStream*      openStream(const char* path, int mode);
     bool           skip(const FBThash& id);
