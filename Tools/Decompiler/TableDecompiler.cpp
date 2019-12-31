@@ -55,6 +55,8 @@ struct ProgramInfo
     ftTables*   m_tables;
     char        m_header[13];
     bool        m_useNamespace;
+    bool        m_fixupBlend;
+    bool        m_initTypes;
 
     // extra vars only valid in extract to file
     string m_outName;
@@ -78,15 +80,33 @@ void writeFileHeader(ProgramInfo& ctx, ostream& out)
     out << "*/" << endl;
 
     ctx.m_outName = ctx.m_ofile.substr(0, ctx.m_ofile.find('.')).c_str();
-    out << "#ifndef _" << ctx.m_outName << "_" << endl;
-    out << "#define _" << ctx.m_outName << "_" << endl;
+    out << "#ifndef _" << ctx.m_outName << "_h_" << endl;
+    out << "#define _" << ctx.m_outName << "_h_" << endl;
     out << endl;
+
+    if (ctx.m_initTypes)
+    {
+        out << "#include <stdint.h>" << endl;
+        out << endl;
+    }
+
+    if (ctx.m_fixupBlend)
+    {
+        out << "#ifdef near" << endl;
+        out << "#undef near" << endl;
+        out << "#endif//near" << endl;
+
+        out << "#ifdef far" << endl;
+        out << "#undef far" << endl;
+        out << "#endif//far" << endl;
+        out << endl;
+    }
 }
 
 
 void writeFileFooter(ProgramInfo& ctx, ostream& out)
 {
-    out << "#endif//_" << ctx.m_outName << "_" << endl;
+    out << "#endif//_" << ctx.m_outName << "_h_" << endl;
 }
 
 void writeIndent(ostream& out, int nr, int spacePerIndent = 4)
@@ -133,7 +153,15 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
             const ftName& name = ctx.m_tables->getNameAt(strc[1]);
             writeIndent(out, 1);
 
-            out << left << setw(maxLeft) << type.m_name << ' ' << name.m_name << ';' << endl;
+            if (ctx.m_fixupBlend)
+            {
+                if (string(type.m_name) == "anim")
+                    out << left << setw(maxLeft) << "Anim" << ' ' << name.m_name << ';' << endl;
+                else
+                    out << left << setw(maxLeft) << type.m_name << ' ' << name.m_name << ';' << endl;
+            }
+            else
+                out << left << setw(maxLeft) << type.m_name << ' ' << name.m_name << ';' << endl;
         }
     }
 
@@ -150,11 +178,22 @@ void writeUnresolved(ProgramInfo& ctx, ostream& out, FBTtype* typeNotFound)
 
     if (name.m_ptrCount > 0)
     {
-        out << "struct " << typeName << endl;
-        out << '{' << endl;
-        out << "    int missing;" << endl;
-        out << "};" << endl;
-        out << endl;
+        if (ctx.m_fixupBlend && string(typeName) == "anim")
+        {
+            out << "struct Anim" << endl;
+            out << '{' << endl;
+            out << "    int missing;" << endl;
+            out << "};" << endl;
+            out << endl;
+        }
+        else
+        {
+            out << "struct " << typeName << endl;
+            out << '{' << endl;
+            out << "    int missing;" << endl;
+            out << "};" << endl;
+            out << endl;
+        }
     }
 }
 
@@ -484,7 +523,10 @@ int parseCommandLine(ProgramInfo& ctx, int argc, char** argv)
             }
             else if (*carg == 'n')
                 ctx.m_useNamespace = true;
-
+            else if (*carg == 'b')
+                ctx.m_fixupBlend = true;
+            else if (*carg == 's')
+                ctx.m_initTypes = true;
             else if (*carg == 'o')
             {
                 if (i + 1 < argc)
@@ -537,6 +579,8 @@ void usage(const char* prog)
         printf("       <options> -i <infile> -o <outfile>\n\n");
         printf("       <options>\n");
         printf("                 -n  Use namespace. Puts all declarations inside a namespace.\n");
+        printf("                 -b  Fix .blend  nonstandard naming that would require -fpermissive.\n");
+        printf("                 -s  include <stdint.h>.\n");
         printf("\n");
     }
     else
