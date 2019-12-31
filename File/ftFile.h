@@ -147,7 +147,7 @@ protected:
 
 private:
     template <typename BaseType>
-    void castPointer(FBTsize*& dstPtr, FBTsize*& srcPtr, int arrayLen);
+    void castPointer(FBTsize*& dstPtr, FBTsize*& srcPtr, FBTsize arrayLen);
 
     void*          findPointer(const ftPointerHashKey& iptr);
     void*          findPointer(const FBTsize& iptr);

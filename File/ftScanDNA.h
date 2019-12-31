@@ -57,7 +57,7 @@ public:
     // Access to the found block
     // Note: that this class does not manage the
     //       memory allocated for m_foundBlock
-    //       It was allocated with malloc, so the
+    //       It was allocated with malloc. The
     //       memory should be released with a call
     //       to free
     inline void *getDNA()

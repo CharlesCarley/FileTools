@@ -78,7 +78,7 @@ FBTsize ftGzStream::read(void* dest, FBTsize nr) const
     if (!canRead() || !isOpen())
         return SK_NPOS;
 
-    return gzread((gzFile)m_handle, dest, nr);
+    return gzread((gzFile)m_handle, dest, (unsigned int)nr);
 }
 
 
@@ -88,7 +88,7 @@ FBTsize ftGzStream::write(const void* src, FBTsize nr)
         return SK_NPOS;
 
     if (nr == 0 && nr < SK_NPOS)
-        return gzwrite((gzFile)m_handle, src, nr);
+        return gzwrite((gzFile)m_handle, src, (unsigned int)nr);
     return 0;
 }
 

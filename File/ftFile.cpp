@@ -668,9 +668,9 @@ void ftFile::castMemberPointer(ftMember* mstrc,
 
 
 template <typename BaseType>
-void ftFile::castPointer(FBTsize*& dstPtr, FBTsize*& srcPtr, int arrayLen)
+void ftFile::castPointer(FBTsize*& dstPtr, FBTsize*& srcPtr, FBTsize arrayLen)
 {
-    int i;
+    FBTsize i;
 
     BaseType* sptr = (BaseType*)srcPtr;
     for (i = 0; i < arrayLen; ++i)
@@ -703,9 +703,7 @@ void ftFile::castPointerToPointer(ftMember* dst,
             FBTsize fps = m_file->getSizeofPointer();
             if (fps == 4 || fps == 8)
             {
-                FBTsize i;
                 FBTsize total = bin->m_pblockLen / fps;
-
                 FBTsize* newBlock = (FBTsize*)::calloc(total, sizeof(FBTsize));
                 if (newBlock != nullptr)
                 {
@@ -753,7 +751,7 @@ void ftFile::castPointer(ftMember* mstrc,
                          FBTsize*& srcPtr,
                          int&      status)
 {
-    int arrayLen = skMin(mstrc->getArraySize(), fstrc->getArraySize());
+    FBTsize arrayLen = skMin(mstrc->getArraySize(), fstrc->getArraySize());
 
     FBTsize fps = m_file->getSizeofPointer();
     if (fps == 4 || fps == 8)
@@ -1146,6 +1144,7 @@ int ftFile::save(const char* path, const int mode)
     ftHeader header;
     char     version[33];
     sprintf(version, "%i", m_memoryVersion);
+    header.resize(12);
 
     strncpy(header.ptr(), m_uhid, 7);  // The first 7 bytes of the header
     header[7] = cp;                    // The 8th byte is the pointer size
