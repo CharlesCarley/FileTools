@@ -675,7 +675,7 @@ void ftFile::castPointer(FBTsize*& dstPtr, FBTsize*& srcPtr, int arrayLen)
     BaseType* sptr = (BaseType*)srcPtr;
     for (i = 0; i < arrayLen; ++i)
     {
-        void* vp  = (void*)(*sptr++);
+        void* vp  = (void*)(FBTsize)(*sptr++);
         dstPtr[i] = (FBTsize)findPointer(ftPointerHashKey(vp));
     }
 }

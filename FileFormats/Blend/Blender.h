@@ -1395,7 +1395,7 @@ namespace Blender
     {
         ImageAnim *next;
         ImageAnim *prev;
-        anim *     anim;
+        anim *     manim;
     };
 
     struct ImageView
