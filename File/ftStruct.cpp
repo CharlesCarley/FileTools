@@ -37,6 +37,8 @@ ftStruct::ftStruct(ftTables* parent) :
     m_type(0),
     m_hashedType(SK_NPOS),
     m_sizeInBytes(0),
+    m_refs(0),
+    m_lock(0),
     m_strcId(0),
     m_flag(0),
     m_attached(0),

@@ -661,6 +661,8 @@ void ftTables::compile(FBTtype    i,
         {
             if (strc[0] >= f && m_names[strc[1]].m_ptrCount == 0)
             {
+                off->addRef();
+
                 compile(m_types[strc[0]].m_strcId,
                         m_names[strc[1]].m_arraySize,
                         off,
@@ -783,6 +785,7 @@ int ftTables::compile(int fileFlags)
 
                     if (type >= m_firstStruct && m_names[name].m_ptrCount == 0)
                     {
+                        nstrc->addRef();
                         compile(m_types[type].m_strcId,
                                 m_names[name].m_arraySize,
                                 nstrc,

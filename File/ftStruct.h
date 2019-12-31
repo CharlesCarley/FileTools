@@ -47,14 +47,14 @@ struct ftName
 
 struct ftType
 {
-    char*     m_name;    // note: memory is in the main table.
-    FBThash   m_hash;    // ftCharHashKey(typeName)
+    char*   m_name;  // note: memory is in the main table.
+    FBThash m_hash;  // ftCharHashKey(typeName)
 
     // This must be checked against ftTables::getFirstStructType
     //
     //  [0-NumberOfBuiltin] = SK_NPOS32
     //  (NumberOfBuiltin, NumberOfStructs]
-    FBTuint32 m_strcId; 
+    FBTuint32 m_strcId;
 };
 
 class ftStruct
@@ -142,7 +142,7 @@ public:
         return m_link != nullptr;
     }
 
-    // If this bit is set, it means that the struct contains 
+    // If this bit is set, it means that the struct contains
     // references to other structures that are not pointers.
     inline bool hasDependantTypes()
     {
@@ -170,6 +170,27 @@ public:
     }
 
 
+    FBTint32 getReferences()
+    {
+        return m_refs;
+    }
+
+    void addRef()
+    {
+        m_refs++;
+    }
+
+
+    void lock()
+    {
+        m_lock = 1;
+    }
+
+    bool isLocked()
+    {
+        return m_lock != 0;
+    }
+
 private:
     friend class ftTables;
     friend class ftMember;
@@ -180,6 +201,7 @@ private:
     FBThash   m_hashedType;
     void*     m_attached;
     FBTint32  m_sizeInBytes;
+    FBTint32  m_refs, m_lock;
     FBTint32  m_strcId;
     FBTint32  m_flag;
     Members   m_members;
