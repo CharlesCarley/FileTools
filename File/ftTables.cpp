@@ -25,6 +25,7 @@
 */
 #define FT_IN_SOURCE_FILE
 #include "ftTables.h"
+#include "Utils/skString.h"
 #include "ftEndianUtils.h"
 #include "ftHashTypes.h"
 #include "ftLogger.h"
@@ -216,7 +217,7 @@ int ftTables::read(const void*    tableSource,
     ftMemoryStream stream;
     stream.open((FBTbyte*)tableSource, tableLength, 0, true);
 
-    // FIXME: there should be no guarantee on the order that the NAME codes come in. 
+    // FIXME: there should be no guarantee on the order that the NAME codes come in.
 
     status = readTableHeader(stream, ftIdNames::FT_SDNA, fileFlags);
     if (status != FS_OK)
@@ -631,55 +632,6 @@ int ftTables::isValidTypeName(const FBTuint16& type, const FBTuint16& name, int 
     return FS_OK;
 }
 
-
-void ftTables::compile(FBTtype    i,
-                       FBTtype    nr,
-                       ftStruct*  off,
-                       FBTuint32& cof,
-                       FBTuint32  depth,
-                       int&       status)
-{
-    FBTuint32 e, l, a, oof, ol;
-    FBTuint16 f = m_strcs[0][0];
-
-    if (i > m_strcCount)
-    {
-        printf("Missing recursive type\n");
-        return;
-    }
-
-    for (a = 0; a < nr; ++a)
-    {
-        FBTtype* strc = m_strcs[i];
-        oof           = cof;
-        ol            = m_tlens[strc[0]];
-
-        l = strc[1];
-        strc += 2;
-
-        for (e = 0; e < l; e++, strc += 2)
-        {
-            if (strc[0] >= f && m_names[strc[1]].m_ptrCount == 0)
-            {
-                off->addRef();
-
-                compile(m_types[strc[0]].m_strcId,
-                        m_names[strc[1]].m_arraySize,
-                        off,
-                        cof,
-                        depth + 1,
-                        status);
-            }
-            else
-                putMember(strc, off, a, cof, depth, status);
-        }
-
-        if ((cof - oof) != ol)
-            printf("Build ==> invalid offset (%i)(%i:%i)\n", a, (cof - oof), ol);
-    }
-}
-
-
 bool ftTables::testDuplicateKeys()
 {
     bool testResult = true;
@@ -787,27 +739,42 @@ int ftTables::compile(int fileFlags)
                     {
                         nstrc->addRef();
                         compile(m_types[type].m_strcId,
+                                &m_names[name],
                                 m_names[name].m_arraySize,
                                 nstrc,
                                 cof,
                                 depth + 1,
+                                fileFlags,
                                 status);
 
                         nstrc->m_flag |= ftStruct::HAS_DEPENDANT;
                     }
                     else
-                        putMember(strc, nstrc, 0, cof, 0, status);
+                    {
+                        putMember(nstrc->m_type,
+                                  nullptr,
+                                  strc,
+                                  nstrc,
+                                  0,
+                                  cof,
+                                  0,
+                                  fileFlags,
+                                  status);
+                    }
                 }
 
                 if (cof != nstrc->m_sizeInBytes)
                 {
                     nstrc->m_flag |= ftStruct::MISALIGNED;
 
-                    ftLogger::logF("Misaligned struct %s:%i:%i:%i\n",
-                                   m_types[nstrc->m_type].m_name,
-                                   i,
-                                   cof,
-                                   nstrc->m_sizeInBytes);
+                    if (fileFlags != LF_NONE)
+                    {
+                        ftLogger::logF("Misaligned struct %s:%i:%i:%i\n",
+                                       m_types[nstrc->m_type].m_name,
+                                       i,
+                                       cof,
+                                       nstrc->m_sizeInBytes);
+                    }
                     status = RS_MIS_ALIGNED;
                 }
             }
@@ -817,32 +784,134 @@ int ftTables::compile(int fileFlags)
 }
 
 
-void ftTables::putMember(FBTtype*   cp,
-                         ftStruct*  parent,
-                         FBTtype    nr,
-                         FBTuint32& cof,
-                         FBTuint32  depth,
+void ftTables::compile(FBTtype    owningStructureType,
+                       ftName*    owningStructureName,
+                       FBTtype    memberCount,
+                       ftStruct*  root,
+                       FBTuint32& currentOffset,
+                       FBTuint32  recursiveDepth,
+                       int        fileFlags,
+                       int&       status)
+{
+    FBTuint32 e, length, a, oldOffset, origLen;
+
+    if (owningStructureType > m_strcCount)
+    {
+        if (fileFlags != LF_NONE)
+            ftLogger::logF("Missing recursive type.");
+        status = RS_LIMIT_REACHED;
+    }
+    else
+    {
+        for (a = 0; a < memberCount && status == FS_OK; ++a)
+        {
+            FBTtype* strc                = m_strcs[owningStructureType];
+            FBTtype  owningStructureType = strc[0];
+
+
+            oldOffset = currentOffset;
+            origLen   = m_tlens[strc[0]];
+
+            length = strc[1];
+            strc += 2;
+
+            for (e = 0; e < length; e++, strc += 2)
+            {
+                const short& type = strc[0];
+                const short& name = strc[1];
+
+                if (type >= m_firstStruct && m_names[name].m_ptrCount == 0)
+                {
+                    root->addRef();
+
+                    compile(m_types[type].m_strcId,
+                            &m_names[name],
+                            m_names[name].m_arraySize,
+                            root,
+                            currentOffset,
+                            recursiveDepth + 1,
+                            fileFlags,
+                            status);
+                }
+                else
+                {
+                    putMember(owningStructureType,
+                              owningStructureName,
+                              strc,
+                              root,
+                              a,
+                              currentOffset,
+                              recursiveDepth,
+                              fileFlags,
+                              status);
+                }
+            }
+
+            if ((currentOffset - oldOffset) != origLen)
+            {
+                printf("Build ==> invalid offset (%i)(%i:%i)\n", a, (currentOffset - oldOffset), origLen);
+                status = RS_MIS_ALIGNED;
+            }
+        }
+    }
+}
+
+
+
+void ftTables::putMember(FBTtype    owningStructureType,
+                         ftName*    owningStructureName,
+                         FBTtype*   currentMemeber,
+                         ftStruct*  root,
+                         FBTtype    index,
+                         FBTuint32& currentOffset,
+                         FBTuint32  recursiveDepth,
+                         int        flags,
                          int&       status)
 {
-    const FBTuint16& type = cp[0];
-    const FBTuint16& name = cp[1];
+    const FBTuint16& type = currentMemeber[0];
+    const FBTuint16& name = currentMemeber[1];
 
-    if (type < 0 || type >= m_typeCount)
+    if (type < 0 || type >= m_typeCount || owningStructureType >= m_typeCount)
         status = RS_LIMIT_REACHED;
     else if (name < 0 || name >= m_nameCount)
         status = RS_LIMIT_REACHED;
     else
     {
         if (type >= m_firstStruct)
-            parent->m_flag |= ftStruct::HAS_DEPENDANT;
- 
-        ftMember* member = parent->createMember();
+            root->m_flag |= ftStruct::HAS_DEPENDANT;
+
+
+
+        skString hash;
+
+        if (!owningStructureName)
+            hash = skString::format("%s/%s/%s", m_names[name].m_name, m_types[type].m_name, root->getName());
+        else
+        {
+            hash = skString::format("%s/%s/%s/%s/%s", 
+
+/*                root->getName(), 
+                m_types[owningStructureType].m_name, 
+                owningStructureName->m_name,
+                m_types[type].m_name, 
+                m_names[name].m_name
+ */          
+                    m_names[name].m_name,
+                    m_types[type].m_name,
+                    owningStructureName->m_name,
+                    m_types[owningStructureType].m_name,
+                    root->getName()
+            );
+        
+        }
+        ftMember* member = root->createMember();
+
         member->setTypeIndex(type);
         member->setNameIndex(name);
-
-        member->m_offset         = cof;
-        member->m_location       = nr;
-        member->m_recursiveDepth = depth;
+        member->m_searchKey      = skHash(hash.asHex());
+        member->m_offset         = currentOffset;
+        member->m_location       = index;
+        member->m_recursiveDepth = recursiveDepth;
         member->m_link           = nullptr;
 
         if (m_names[name].m_ptrCount > 0)
@@ -850,7 +919,7 @@ void ftTables::putMember(FBTtype*   cp,
         else
             member->m_sizeInBytes = m_tlens[type] * m_names[name].m_arraySize;
 
-        cof += member->m_sizeInBytes;
+        currentOffset += member->m_sizeInBytes;
     }
 }
 

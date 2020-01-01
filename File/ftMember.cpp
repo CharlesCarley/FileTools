@@ -41,7 +41,8 @@ ftMember::ftMember(ftStruct* owner) :
     m_location(0),
     m_recursiveDepth(0),
     m_sizeInBytes(0),
-    m_atomic(-1)
+    m_atomic(-1),
+    m_searchKey(SK_NPOS)
 {
 }
 
@@ -208,16 +209,27 @@ bool ftMember::compare(ftMember* rhs)
     if (!rhs)
         return false;
 
-    bool result = m_hashedType == rhs->m_hashedType && m_hashedName == rhs->m_hashedName;
-    if (!result)
-    {
-        if (m_hashedName == rhs->m_hashedName)
-        {
-            if (ftAtomicUtils::canCast(m_hashedType, rhs->m_hashedType))
-                result = true;
-        }
-    }
-    return result;
+    return m_searchKey == rhs->m_searchKey;
+    //bool result;
+
+    //result = m_parent->m_hashedType == rhs->m_parent->m_hashedType;
+    //if (result)
+    //{
+    //    result = m_recursiveDepth == rhs->m_recursiveDepth;
+    //    if (result)
+    //    {
+    //        result = m_hashedType == rhs->m_hashedType && m_hashedName == rhs->m_hashedName;
+    //        if (!result)
+    //        {
+    //            if (m_hashedName == rhs->m_hashedName)
+    //            {
+    //                if (ftAtomicUtils::canCast(m_hashedType, rhs->m_hashedType))
+    //                    result = true;
+    //            }
+    //        }
+    //    }
+    //}
+    //return result;
 }
 
 

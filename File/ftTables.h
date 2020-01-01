@@ -239,18 +239,23 @@ private:
     int isValidTypeName(const FBTuint16& type, const FBTuint16& name, int fileFlags);
 
 
-    void putMember(FBTtype*   cp,
-                   ftStruct*  off,
-                   FBTtype    nr,
-                   FBTuint32& cof,
-                   FBTuint32  depth,
+    void putMember(FBTtype    owningStructureType,
+                   ftName*    owningStructureName,
+                   FBTtype*   currentMemeber,
+                   ftStruct*  root,
+                   FBTtype    index,
+                   FBTuint32& currentOffset,
+                   FBTuint32  recursiveDepth,
+                   int        fileFlags,
                    int&       status);
 
-    void compile(FBTtype    i,
-                 FBTtype    nr,
-                 ftStruct*  off,
-                 FBTuint32& cof,
-                 FBTuint32  depth,
+    void compile(FBTtype    owningStructureType,
+                 ftName*    owningStructureName,
+                 FBTtype    memberCount,
+                 ftStruct*  root,
+                 FBTuint32& currentOffset,
+                 FBTuint32  recursiveDepth,
+                 int        fileFlags,
                  int&       status);
     int  compile(int fileFlags);
 };

@@ -518,6 +518,7 @@ int ftFile::rebuildStructures()
 
         if (diagnostics && fstrc && mstrc)
         {
+            ftLogger::color(CS_GREEN);
             ftLogger::logF("Struct  : %s -> %s",
                            fstrc->getName(),
                            mstrc->getName());
@@ -545,11 +546,13 @@ int ftFile::rebuildStructures()
                         if (diagnostics)
                         {
                             ftLogger::newline();
-                            ftLogger::logF("%s %s ==> %s %s",
+                            ftLogger::logF("%s %s (%d) ==> %s %s (%d)",
                                            srcmbr->getType(),
                                            srcmbr->getName(),
+                                           srcmbr->getOffset(),
                                            dstmbr->getType(),
-                                           dstmbr->getName());
+                                           dstmbr->getName(),
+                                           srcmbr->getOffset());
                         }
 
                         castMember(dstmbr,
@@ -668,7 +671,7 @@ void ftFile::castMemberPointer(ftMember* mstrc,
 
 
 template <typename BaseType>
-void ftFile::castPointer(FBTsize*& dstPtr, FBTsize*& srcPtr, FBTsize arrayLen)
+void ftFile::castPointer(FBTsize*& dstPtr, FBTsize* srcPtr, FBTsize arrayLen)
 {
     FBTsize i;
 

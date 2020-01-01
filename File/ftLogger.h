@@ -28,7 +28,7 @@
 
 #include "ftFile.h"
 #include "ftTables.h"
-
+#include "Utils/skDebugger.h"
 
 class ftLogger
 {
@@ -40,6 +40,7 @@ public:
     static void seperator();
     static void divider();
     static void newline(int nr=1);
+    static void color(skConsoleColorSpace cs);
 
     static void log(const ftChunk &chunk);
     static void log(void *ptr, FBTsize len);

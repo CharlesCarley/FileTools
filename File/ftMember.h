@@ -135,6 +135,7 @@ private:
     FBTint16 m_name;
     FBThash  m_hashedType;
     FBThash  m_hashedName;
+    FBThash  m_searchKey;
 };
 
 

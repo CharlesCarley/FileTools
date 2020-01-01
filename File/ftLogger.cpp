@@ -166,6 +166,12 @@ void ftLogger::log(const ftChunk &chunk)
 }
 
 
+void ftLogger::color(skConsoleColorSpace cs)
+{
+    skHexPrint::writeColor(cs);
+}
+
+
 
 void ftLogger::log(void *ptr, FBTsize len)
 {
@@ -257,7 +263,7 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
     int D = 0;
     seperator();
     cout << left;
-
+    skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << ' ';
     cout << setw(15) << "Type";
     cout << setw(15) << "Name";
@@ -266,6 +272,7 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
     cout << setw(15) << "Name";
     cout << setw(10) << "Offset";
     cout << endl;
+    skHexPrint::writeColor(CS_WHITE);
     seperator();
 
     for (D = 0; D < C; ++D)
@@ -298,12 +305,14 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
     }
     seperator();
 
-    cout << "Size in bytes:";
-    cout << right;
-    cout << setw(25) << fstrc->getSizeInBytes();
-    cout << setw(40) << mstrc->getSizeInBytes();
+    skHexPrint::writeColor(CS_GREEN);
+    cout << "Size in bytes:" << setw(17) << ' ';
+    cout << setw(10) << fstrc->getSizeInBytes();
+    cout << setw(30) << ' ';
+    cout << setw(10) << mstrc->getSizeInBytes();
     cout << endl;
     cout << left;
+    skHexPrint::writeColor(CS_WHITE);
 }
 
 
