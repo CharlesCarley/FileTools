@@ -51,6 +51,8 @@ ftFile::ftFile(const char* uhid) :
     m_file(0),
     m_filterList(0),
     m_filterListLen(0),
+    m_castFilter(0),
+    m_castFilterLen(0),
     m_inclusive(false),
     m_fileTableData(0)
 {
@@ -497,7 +499,8 @@ int ftFile::rebuildStructures()
     FBTsize * srcPtr, *dstPtr;
     ftStruct *fstrc, *mstrc;
 
-    bool diagnostics = (m_fileFlags & LF_DIAGNOSTICS) != 0 && (m_fileFlags & LF_DUMP_CAST) != 0;
+    bool diagnostFlag = (m_fileFlags & LF_DIAGNOSTICS) != 0 && (m_fileFlags & LF_DUMP_CAST) != 0;
+    bool diagnostics  = false;
 
     ftMemoryChunk* node;
     for (node = (ftMemoryChunk*)m_chunks.first; node && status == FS_OK; node = node->m_next)
@@ -516,13 +519,17 @@ int ftFile::rebuildStructures()
         fstrc = node->m_fstrc;
         mstrc = node->m_mstrc;
 
-        if (diagnostics && fstrc && mstrc)
+        if (diagnostFlag && fstrc && mstrc)
         {
-            ftLogger::color(CS_GREEN);
-            ftLogger::logF("Struct  : %s -> %s",
-                           fstrc->getName(),
-                           mstrc->getName());
-            ftLogger::log(fstrc, mstrc);
+            diagnostics = m_castFilter ? searchFilter(m_castFilter, fstrc->getHashedType(), m_castFilterLen) : true;
+            if (diagnostics)
+            {
+                ftLogger::color(CS_GREEN);
+                ftLogger::logF("Struct  : %s -> %s",
+                               fstrc->getName(),
+                               mstrc->getName());
+                ftLogger::log(fstrc, mstrc);
+            }
         }
 
         for (n = 0; n < chunk.m_nr && status == FS_OK && fstrc && mstrc; ++n)
@@ -706,7 +713,7 @@ void ftFile::castPointerToPointer(ftMember* dst,
             FBTsize fps = m_file->getSizeofPointer();
             if (fps == 4 || fps == 8)
             {
-                FBTsize total = bin->m_pblockLen / fps;
+                FBTsize  total    = bin->m_pblockLen / fps;
                 FBTsize* newBlock = (FBTsize*)::calloc(total, sizeof(FBTsize));
                 if (newBlock != nullptr)
                 {
@@ -937,49 +944,71 @@ void ftFile::castAtomicMember(ftMember* dst,
 }
 
 
+void ftFile::setFilter(FBThash*& dest, FBTint32& destLen, FBThash* filter, FBTint32 length)
+{
+    if (!filter)
+        return;
+
+    dest  = filter;
+    int i = 0, j, k;
+    while (i < length && dest[i] != 0)
+        i++;
+
+    destLen = i;
+    for (i = 0; i < destLen - 2; i++)
+    {
+        k = i;
+        for (j = i + 1; j < destLen - 1; ++j)
+            if (dest[j] < dest[k])
+                k = j;
+        if (k != i)
+            skSwap(dest[i], dest[k]);
+    }
+}
+
+
+bool ftFile::searchFilter(const FBThash* searchIn, const FBThash& searchFor, const FBTint32& len)
+{
+    if (!searchIn)
+        return false;
+
+    int f = 0, l = len - 1, m;
+    while (f <= l)
+    {
+        m = (f + l) / 2;
+        if (searchIn[m] == searchFor)
+            return true;
+        else if (searchIn[m] > searchFor)
+            l = m - 1;
+        else
+            f = m + 1;
+    }
+    return false;
+}
 
 bool ftFile::skip(const FBThash& id)
 {
     if (!m_filterList)
         return false;
 
-    int f = 0, l = m_filterListLen - 1, m;
-    while (f <= l)
-    {
-        m = (f + l) / 2;
-        if (m_filterList[m] == id)
-            return !m_inclusive;
-        else if (m_filterList[m] > id)
-            l = m - 1;
-        else
-            f = m + 1;
-    }
-    return m_inclusive;
+    bool res = searchFilter(m_filterList, id, m_filterListLen);
+    return m_inclusive ? !res : res;
 }
+
 
 void ftFile::setFilterList(FBThash* filter, FBTsize length, bool inclusive)
 {
-    m_filterList = filter;
-    if (!m_filterList)
-        return;
-
-    int i = 0, j, k;
-
     m_inclusive = inclusive;
-    while (i < length && m_filterList[i] != 0)
-        i++;
-
-    m_filterListLen = i;
-    for (i = 0; i < m_filterListLen - 2; i++)
-    {
-        k = i;
-        for (j = i + 1; j < m_filterListLen - 1; ++j)
-            if (m_filterList[j] < m_filterList[k])
-                k = j;
-        if (k != i)
-            skSwap(m_filterList[i], m_filterList[k]);
-    }
+    setFilter(m_filterList, m_filterListLen, filter, length);
 }
+
+
+void ftFile::setCastFilter(FBThash* filter, FBTsize length)
+{
+    setFilter(m_castFilter, m_castFilterLen, filter, length);
+}
+
+
 
 ftStruct* ftFile::findInTable(ftStruct* findStruct, ftTables* sourceTable, ftTables* findInTable)
 {

@@ -49,6 +49,8 @@ private:
     void*       m_fileTableData;
     FBThash*    m_filterList;
     FBTint32    m_filterListLen;
+    FBThash*    m_castFilter;
+    FBTint32    m_castFilterLen;
     bool        m_inclusive;
 
 
@@ -127,6 +129,10 @@ public:
     //      0
     // };
     void setFilterList(FBThash* filter, FBTsize length, bool inclusive = false);
+    
+    
+    // use with dumping the results of casting
+    void setCastFilter(FBThash* filter, FBTsize length);
 
 
     void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
@@ -146,6 +152,10 @@ protected:
     virtual int     serializeData(skStream* stream)            = 0;
 
 private:
+
+    bool searchFilter(const FBThash* searchIn, const FBThash& searchFor, const FBTint32& len);
+    void setFilter(FBThash*& dest, FBTint32& destLen, FBThash* filter, FBTint32 length);
+
     template <typename BaseType>
     void castPointer(FBTsize*& dstPtr, FBTsize* srcPtr, FBTsize arrayLen);
 

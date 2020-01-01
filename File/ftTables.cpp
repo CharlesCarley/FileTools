@@ -885,30 +885,29 @@ void ftTables::putMember(FBTtype    owningStructureType,
         skString hash;
 
         if (!owningStructureName)
-            hash = skString::format("%s/%s/%s", m_names[name].m_name, m_types[type].m_name, root->getName());
+        {
+            hashMember(hash,
+                       root->getHashedType(),
+                       SK_NPOS,
+                       SK_NPOS,
+                       m_types[type].m_hash,
+                       m_names[name].m_hash);
+        }
         else
         {
-            hash = skString::format("%s/%s/%s/%s/%s", 
-
-/*                root->getName(), 
-                m_types[owningStructureType].m_name, 
-                owningStructureName->m_name,
-                m_types[type].m_name, 
-                m_names[name].m_name
- */          
-                    m_names[name].m_name,
-                    m_types[type].m_name,
-                    owningStructureName->m_name,
-                    m_types[owningStructureType].m_name,
-                    root->getName()
-            );
-        
+            hashMember(hash,
+                       root->getHashedType(),
+                       m_types[owningStructureType].m_hash,
+                       owningStructureName->m_hash,
+                       m_types[type].m_hash,
+                       m_names[name].m_hash);
         }
-        ftMember* member = root->createMember();
 
+
+        ftMember* member = root->createMember();
         member->setTypeIndex(type);
         member->setNameIndex(name);
-        member->m_searchKey      = skHash(hash.asHex());
+        member->m_searchKey      = skHash(hash);
         member->m_offset         = currentOffset;
         member->m_location       = index;
         member->m_recursiveDepth = recursiveDepth;
@@ -920,6 +919,45 @@ void ftTables::putMember(FBTtype    owningStructureType,
             member->m_sizeInBytes = m_tlens[type] * m_names[name].m_arraySize;
 
         currentOffset += member->m_sizeInBytes;
+
+
+        if (flags & LF_DUMP_MEMBER_HASH)
+            ftLogger::logF("%s", hash.c_str());
+    }
+}
+
+
+void ftTables::hashMember(skString&   name,
+                          FBThash   parentStructName,
+                          FBThash   owningStructType,
+                          FBThash   owningStructMemeberName,
+                          FBThash   memberType,
+                          FBThash   memberName)
+{
+    char* fmt;
+    if (FT_VOID8)
+        fmt = "%016llX-%016llX-%016llX-%016llX-%016llX";
+    else
+        fmt = "%08X-%08X-%08X-%08X-%08X";
+    if (owningStructMemeberName == SK_NPOS)
+    {
+
+
+        name = skString::format(fmt,
+                                parentStructName,
+                                memberType,
+                                memberName,
+                                memberType,
+                                memberName);
+    }
+    else
+    {
+        name = skString::format(fmt,
+                                parentStructName,
+                                owningStructType,
+                                owningStructMemeberName,
+                                memberType,
+                                memberName );
     }
 }
 

@@ -257,7 +257,16 @@ private:
                  FBTuint32  recursiveDepth,
                  int        fileFlags,
                  int&       status);
+
+
     int  compile(int fileFlags);
+
+    void hashMember(class skString& name,
+                    FBThash         parentStructName,
+                    FBThash         owningStructType,
+                    FBThash         owningStructMemeberName,
+                    FBThash         memberType,
+                    FBThash         memberName);
 };
 
 
