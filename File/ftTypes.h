@@ -107,8 +107,10 @@ public:
         if (!link)
             return;
         link->prev = last;
+
         if (last)
             last->next = link;
+
         if (!first)
             first = link;
         last = link;
