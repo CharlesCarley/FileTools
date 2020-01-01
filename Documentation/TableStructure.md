@@ -7,6 +7,7 @@
    4. [Name table](#name-table-1)
    5. [Structure table](#structure-table-1)
    6. [Building the memory tables](#building-the-memory-tables)
+   7. [Reversing the file tables](#reversing-the-file-tables)
 
 The compiled lookup tables contain the type names, type sizes, and the structures that contain the types.
 
@@ -99,3 +100,10 @@ the file table output will be
 The memory tables are generated from input files with the build tool TableCompiler. The file tables are written to the file as a copy of the current state of the memory tables.
 
 See [TableCompiler](TableCompiler.md)
+
+
+## Reversing the file tables
+
+The memory tables are generated from input files with the build tool TableCompiler. The file tables are written to the file as a copy of the current state of the memory tables.
+
+See [TableDecompiler](TableDecompiler.md)

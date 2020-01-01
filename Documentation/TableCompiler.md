@@ -1,6 +1,8 @@
 # Table Compiler
 
-TableCompiler is the memory table compiler.
+TableCompiler is a build tool to convert structures and classes into the file and memory SDNA tables.
+It reads from a list of input files that are provided via the command line.
+
 
 1. [Table Compiler](#table-compiler)
    1. [Output](#output)
@@ -17,7 +19,7 @@ Uasge: TableCompiler.exe tablename ofilename ifile[0] ... ifile[n]
 
 ## Output
 
-The TableCompiler output should included into to the library that contains the rest of the custom file format implementation.
+The output should included into to the library that contains the rest of the custom file format implementation.
 
 ```c
 unsigned char DocsExampleTables[]={
@@ -60,4 +62,4 @@ FBTsize DocsExample::getTableSize(void)
 }
 ```
 
-The [TableCompiler](https://github.com/snailrose/FileTools/blob/master/CMake/Readme.md) utility can be used to attach table generation to a build. This macro outputs the include file to the current build directory then adds the build directory to the list of include paths.
+The [TableCompiler](https://github.com/snailrose/FileTools/blob/master/CMake/Readme.md) CMAKE utility can be used to attach table generation to a build. This macro outputs the include file to the current build directory then adds the build directory to the list of include paths.
