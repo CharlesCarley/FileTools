@@ -58,10 +58,10 @@ typedef SKuint64  FBTuint64;
 typedef SKuintPtr FBTuintPtr;
 typedef SKintPtr  FBTintPtr;
 typedef SKuintPtr FBTsize;
-typedef SKuint64  FBThash;
+typedef SKsize    FBThash;
 typedef FBTuint16 FBTtype;
 
-const FBThash NHASH = SK_MKMX(SKuint64);
+const FBThash NHASH = SK_MKMX(FBThash);
 
 
 #ifdef ftSCALAR_DOUBLE
