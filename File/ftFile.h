@@ -135,6 +135,7 @@ public:
     void setCastFilter(FBThash* filter, FBTsize length);
 
 
+    void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData, int nr);
     void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData);
     void serialize(skStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
     void serialize(skStream* stream, FBTsize len, void* writeData, int nr = 1);

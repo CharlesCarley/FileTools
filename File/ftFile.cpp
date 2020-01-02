@@ -369,7 +369,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         ftPointerHashKey phk(chunk.m_addr);
         if (m_map.find(phk) != m_map.npos)
         {
-            freeChunk(bin);
+            //freeChunk(bin);
             //status = FS_DUPLICATE_BLOCK;
         }
         else
@@ -1226,6 +1226,28 @@ void ftFile::serialize(skStream*   stream,
         return;
     }
     serialize(stream, ft, code, len, writeData);
+}
+
+
+void ftFile::serialize(skStream*   stream,
+                       const char* id,
+                       FBTuint32   code,
+                       FBTsize     len,
+                       void*       writeData,
+                       int nr)
+{
+    if (m_memory == 0)
+        getMemoryTable();
+
+    FBTuint32 ft = m_memory->findTypeId(id);
+    if (ft == SK_NPOS32)
+    {
+        if (m_fileFlags != LF_NONE)
+            ftLogger::logF("writeStruct: %s - not found", id);
+        return;
+    }
+
+    serializeChunk(stream, code, nr, ft, len, writeData);
 }
 
 

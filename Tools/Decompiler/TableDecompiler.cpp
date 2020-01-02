@@ -171,6 +171,25 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
 }
 
 
+
+void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& strcs)
+{
+    out << "namespace StructCodes" << endl;
+    out << "{" << endl;
+
+    out << "        typedef unsigned long long HashCode;" << endl;
+
+    StructArray::ConstIterator cit = strcs.iterator();
+    while (cit.hasMoreElements())
+    {
+        const ftStruct* strc = cit.getNext();
+        out << setw(ctx.m_useNamespace ? 8 : 4) << ' ';
+        out << "const FBThash SDNA_" << uppercase << strc->getName() << "= 0x" << hex << strc->getHashedType() << ';' << endl;
+    }
+    out << "}" << endl;
+}
+
+
 void writeUnresolved(ProgramInfo& ctx, ostream& out, FBTtype* typeNotFound)
 {
     char*         typeName = ctx.m_tables->getTypeNameAt(typeNotFound[0]);
@@ -433,6 +452,9 @@ int extractToFile(ProgramInfo& ctx)
             sout << "{" << endl;
             sout << endl;
         }
+
+        writeHashCodes(ctx, sout, tables->getStructureArray());
+
 
         sout << "#pragma region Forward" << endl;
         skArray<ftStruct*>::Iterator it = tables->getStructIterator();

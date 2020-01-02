@@ -210,26 +210,6 @@ bool ftMember::compare(ftMember* rhs)
         return false;
 
     return m_searchKey == rhs->m_searchKey;
-    //bool result;
-
-    //result = m_parent->m_hashedType == rhs->m_parent->m_hashedType;
-    //if (result)
-    //{
-    //    result = m_recursiveDepth == rhs->m_recursiveDepth;
-    //    if (result)
-    //    {
-    //        result = m_hashedType == rhs->m_hashedType && m_hashedName == rhs->m_hashedName;
-    //        if (!result)
-    //        {
-    //            if (m_hashedName == rhs->m_hashedName)
-    //            {
-    //                if (ftAtomicUtils::canCast(m_hashedType, rhs->m_hashedType))
-    //                    result = true;
-    //            }
-    //        }
-    //    }
-    //}
-    //return result;
 }
 
 
