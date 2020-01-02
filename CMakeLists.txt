@@ -24,6 +24,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(FileTools)
 
+#cmake_policy(SET CMP0077 OLD)
 
 option(FileTools_BLD_TESTS        "Build basic tests." OFF)
 option(FileTools_BLD_BLEND_FILE   "Build the blend file version." OFF)
@@ -32,7 +33,7 @@ option(FileTools_USE_OWN_ZLIB     "Define this if zlib is used as part of a larg
 option(FileTools_BLD_EXAMPLE_FILE "Build the example file version." OFF)
 
 if (FileTools_USE_OWN_ZLIB)
-    set(FileTools_USE_ZLIB FORCE ON)
+    option(FileTools_USE_ZLIB FORCE ON)
 endif()
 
 
@@ -46,7 +47,7 @@ if (NOT FileTools_UTILS_EXTERNAL)
 
 
     if (NOT IS_DIRECTORY ${FileTools_Utils_CMAKE})
-        message(STATUS "Attempting to cloning Utils into ${FileTools_Utils_ROOT}")
+        message(STATUS "Attempting to clone Utils into ${FileTools_Utils_ROOT}")
 
         execute_process( 
             WORKING_DIRECTORY ${FileTools_SOURCE_DIR} 
