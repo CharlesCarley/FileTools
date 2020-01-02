@@ -934,16 +934,9 @@ void ftTables::hashMember(skString&   name,
                           FBThash   memberType,
                           FBThash   memberName)
 {
-    char* fmt;
-    if (FT_VOID8)
-        fmt = "%016llX-%016llX-%016llX-%016llX-%016llX";
-    else
-        fmt = "%08X-%08X-%08X-%08X-%08X";
     if (owningStructMemeberName == SK_NPOS)
     {
-
-
-        name = skString::format(fmt,
+        name = skString::format(FT_MEMBER_HASH_FMT,
                                 parentStructName,
                                 memberType,
                                 memberName,
@@ -952,7 +945,7 @@ void ftTables::hashMember(skString&   name,
     }
     else
     {
-        name = skString::format(fmt,
+        name = skString::format(FT_MEMBER_HASH_FMT,
                                 parentStructName,
                                 owningStructType,
                                 owningStructMemeberName,

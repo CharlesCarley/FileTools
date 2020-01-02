@@ -325,4 +325,11 @@ class ftScanner;
 class ftToken;
 
 
+#if SK_ARCH == SK_ARCH_64
+#define FT_MEMBER_HASH_FMT "%016llX-%016llX-%016llX-%016llX-%016llX"
+#else
+#define FT_MEMBER_HASH_FMT "%08X-%08X-%08X-%08X-%08X"
+#endif
+
+
 #endif  //_ftTypes_h_
