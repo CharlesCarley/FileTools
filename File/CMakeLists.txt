@@ -26,10 +26,10 @@ set(TargetName ${FileTools_TARGET_NAME})
 set(File_SRC
     ftAtomic.cpp
     ftBuildInfo.cpp
+    ftBuildMember.cpp
+    ftBuildStruct.cpp
     ftChunk.cpp
     ftCompiler.cpp
-    ftCompilerStruct.cpp
-    ftCompilerVariable.cpp
     ftEndianUtils.cpp
     ftFile.cpp
     ftLogger.cpp
@@ -46,10 +46,10 @@ set(File_SRC
 set(File_HDR
     ftAtomic.h
     ftBuildInfo.h
+    ftBuildMember.h
+    ftBuildStruct.h
     ftChunk.h
     ftCompiler.h
-    ftCompilerStruct.h
-    ftCompilerVariable.h
     ftConfig.h
     ftEndianUtils.h
     ftFile.h

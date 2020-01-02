@@ -27,6 +27,7 @@
 #include "ftScanner.h"
 #include "Templates.h"
 
+using namespace ftFlags;
 
 
 TEST_CASE("Basic Struct Test")

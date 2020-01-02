@@ -125,7 +125,6 @@ void writeForward(ProgramInfo& ctx, ostream& out, ftStruct* ftStrc)
 
 void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
 {
-
     writeIndent(out, 1);
     out << "struct " << fstrc->getName() << endl;
     writeIndent(out, 1);

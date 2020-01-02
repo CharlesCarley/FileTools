@@ -23,29 +23,35 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _ftCompileStruct_h_
-#define _ftCompileStruct_h_
+#ifndef _ftBuildMember_h_
+#define _ftBuildMember_h_
 
+#include "Utils/skArray.h"
+#include "Utils/skFixedString.h"
+#include "Utils/skMap.h"
 #include "ftTables.h"
 #include "ftTypes.h"
-#include "ftCompilerVariable.h"
 
 
-class ftBuildStruct
+class ftBuildMember
 {
 public:
-    typedef skArray<ftBuildStruct> Array;
-    typedef skArray<ftBuildMember>      Variables;
+    ftBuildMember();
 
-public:
-    ftBuildStruct();
-
-    FBTsize     m_structId;
-    ftId        m_name;
-    Variables   m_data;
-    FBTsize     m_nrDependentTypes;
-    ftPath      m_path;
-    FBTsize     m_line;
+    ftId         m_type;
+    ftId         m_name;
+    int          m_typeId;
+    FBTtype      m_hashedName;
+    int          m_ptrCount;
+    int          m_numDimensions;
+    int          m_isFunctionPointer;
+    int          m_lstat;
+    int          m_undefined;
+    bool         m_isDependentType;
+    ftArraySlots m_arrays;
+    FBTsize      m_arraySize;
+    ftPath       m_path;
+    FBTsize      m_line;
 };
 
-#endif  //_ftCompileStruct_h_
+#endif  //_ftBuildMember_h_

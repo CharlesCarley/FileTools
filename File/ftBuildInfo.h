@@ -26,8 +26,8 @@
 #ifndef _ftBuildInfo_h_
 #define _ftBuildInfo_h_
 
-#include "ftCompilerVariable.h"
-#include "ftCompilerStruct.h"
+#include "ftBuildMember.h"
+#include "ftBuildStruct.h"
 
 typedef skArray<FBTtype> IntPtrArray;
 typedef skArray<FBTtype> TypeArray;
