@@ -42,7 +42,7 @@ struct ftChunk32
     FBTuint32 m_code;
     FBTuint32 m_len;
     FBTuint32 m_addr;
-    FBTuint32 m_typeid;
+    FBTuint32 m_structId;
     FBTuint32 m_nr;
 };
 SK_ASSERTCOMP(ChunkLen32, sizeof(ftChunk32) == 20);
@@ -53,7 +53,7 @@ struct ftChunk64
     FBTuint32 m_code;
     FBTuint32 m_len;
     FBTuint64 m_addr;
-    FBTuint32 m_typeid;
+    FBTuint32 m_structId;
     FBTuint32 m_nr;
 };
 SK_ASSERTCOMP(ChunkLen64, sizeof(ftChunk64) == 24);
@@ -64,7 +64,7 @@ struct ftChunk
     FBTuint32 m_code;
     FBTuint32 m_len;
     FBTsize   m_addr;
-    FBTuint32 m_typeid;
+    FBTuint32 m_structId;
     FBTuint32 m_nr;
 };
 

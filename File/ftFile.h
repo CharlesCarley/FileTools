@@ -128,11 +128,11 @@ public:
     //      ftCharHashKey("StructToFilter").hash(),
     //      0
     // };
-    void setFilterList(FBThash* filter, FBTsize length, bool inclusive = false);
+    void setFilterList(FBThash* filter, FBTuint32 length, bool inclusive = false);
     
     
     // use with dumping the results of casting
-    void setCastFilter(FBThash* filter, FBTsize length);
+    void setCastFilter(FBThash* filter, FBTuint32 length);
 
 
     void serialize(skStream* stream, const char* id, FBTuint32 code, FBTsize len, void* writeData, int nr);

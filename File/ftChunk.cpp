@@ -37,7 +37,7 @@ const ftChunk ftChunkUtils::BLANK_CHUNK = {
     0,  // m_code
     0,  // m_sizeInBytes
     0,  // m_addr
-    0,  // m_typeid
+    0,  // m_structId
     0,  // m_nr
 };
 
@@ -106,7 +106,7 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
             c64.m_len  = src.m_len;
             ptr.m_int[0] = src.m_addr;
             c64.m_addr    = ptr.m_ptr;
-            c64.m_typeid = src.m_typeid;
+            c64.m_structId = src.m_structId;
             c64.m_nr     = src.m_nr;
         }
         else
@@ -129,7 +129,7 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
             FBTByteInteger ptr = {0};
             c32.m_code   = src.m_code;
             c32.m_len    = src.m_len;
-            c32.m_typeid = src.m_typeid;
+            c32.m_structId = src.m_structId;
             c32.m_nr     = src.m_nr;
 
             ptr.m_ptr = src.m_addr;
@@ -154,7 +154,7 @@ FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 
         tmp->m_len    = swap32(tmp->m_len);
         tmp->m_nr     = swap32(tmp->m_nr);
-        tmp->m_typeid = swap32(tmp->m_typeid);
+        tmp->m_structId = swap32(tmp->m_structId);
     }
 
     if (tmp->m_len == SK_NPOS32)

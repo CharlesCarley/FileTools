@@ -58,8 +58,10 @@ typedef SKuint64  FBTuint64;
 typedef SKuintPtr FBTuintPtr;
 typedef SKintPtr  FBTintPtr;
 typedef SKuintPtr FBTsize;
-typedef FBTsize   FBThash;
+typedef SKuint64  FBThash;
 typedef FBTuint16 FBTtype;
+
+const FBThash NHASH = SK_MKMX(SKuint64);
 
 
 #ifdef ftSCALAR_DOUBLE
@@ -229,18 +231,18 @@ namespace ftFlags
     {
         LF_NONE             = 0,
         LF_ONLY_ERR         = 1 << 0,
-        LF_READ_CHUNKS      = 1 << 1,
-        LF_WRITE_CHUNKS     = 1 << 2,
-        LF_WRITE_LINK       = 1 << 3,
-        LF_DO_CHECKS        = 1 << 4,
-        LF_DIAGNOSTICS      = 1 << 5,
-        LF_DUMP_NAME_TABLE  = 1 << 6,
-        LF_DUMP_TYPE_TABLE  = 1 << 7,
-        LF_DUMP_SIZE_TABLE  = 1 << 8,
-        LF_DUMP_SKIP        = 1 << 9,
-        LF_DUMP_CAST        = 1 << 10,
-        LF_UNRESOLVED       = 1 << 11,
-        LF_DUMP_MEMBER_HASH = 1 << 12,
+        LF_READ_CHUNKS      = 1 << 1, // Logs the chunks as they are read
+        LF_WRITE_CHUNKS     = 1 << 2, // Logs the chunks as they are written
+        LF_DO_CHECKS        = 1 << 3,
+        LF_DIAGNOSTICS      = 1 << 4, // Enable diagnostics printout
+        LF_DUMP_NAME_TABLE  = 1 << 5, // Output the contents of the name table.
+        LF_DUMP_TYPE_TABLE  = 1 << 6, // Output the contents of the type table.
+        LF_DUMP_SIZE_TABLE  = 1 << 7, // Output the contents of the size table.
+        LF_DUMP_MEMBER_HASH = 1 << 8, // Output member search key
+        LF_DUMP_SKIP        = 1 << 9, // Log the blocks being skipped.
+        LF_DUMP_CAST        = 1 << 10,// Log the before and after buffers while casting. 
+        LF_UNRESOLVED       = 1 << 11,// Log cases where there is not a memory structure associated with a file structure. 
+        LF_MISSING_PTR_PTR  = 1 << 12,// Log cases where the pointer to pointer lookup address is valid but was not found.
     };
 
     enum LinkerIssues

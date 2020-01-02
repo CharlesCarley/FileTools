@@ -48,6 +48,7 @@ namespace ftIdNames
     const FBTuint32 DNA1 = FT_TYPEID('D', 'N', 'A', '1');
     const FBTuint32 ENDB = FT_TYPEID('E', 'N', 'D', 'B');
     const FBTuint32 DATA = FT_TYPEID('D', 'A', 'T', 'A');
+    const FBTuint32 TEST = FT_TYPEID('T', 'E', 'S', 'T');
 }  // namespace ftIdNames
 
 

@@ -152,15 +152,13 @@ void ftLogger::log(const ftChunk &chunk)
     memcpy(buf, cp, 4);
     buf[4] = '\0';
 
-    seperator();
-
     skHexPrint::writeColor(CS_DARKYELLOW);
     cout << "Chunk" << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << "Code   : " << buf << endl;
     cout << "Len    : " << dec << chunk.m_len << endl;
     cout << "Old    : 0x" << hex << chunk.m_addr << endl;
-    cout << "TypeId : " << dec << chunk.m_typeid << endl;
+    cout << "TypeId : " << dec << chunk.m_structId << endl;
     cout << "Count  : " << dec << chunk.m_nr << endl;
     skHexPrint::writeColor(CS_WHITE);
 }
