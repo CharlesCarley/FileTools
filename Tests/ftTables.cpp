@@ -45,12 +45,12 @@ TEST_CASE("CompilerTest")
 
     status = compiler.buildTypes();
 
-    EXPECT_EQ(LNK_OK, status);
+    EXPECT_EQ(ftFlags::LNK_OK, status);
     EXPECT_EQ(compiler.getNumberOfBuiltinTypes(), ftAtomicUtils::NumberOfTypes);
 
 
 
-    compiler.setWriteMode(ftCompiler::WRITE_STREAM);
+    compiler.setWriteMode(ftFlags::WRITE_STREAM);
     skMemoryStream stream;
     compiler.writeStream(&stream);
 
@@ -59,7 +59,7 @@ TEST_CASE("CompilerTest")
     ftTables tbl(sizeof(void*));
     tbl.read(stream.ptr(), stream.size(), 0, 0);
 
-    FBTuint32 nr, i, j, mnr;
+    FBTuint32 nr, i;
 
     nr = tbl.getNumberOfTypes();
     i  = 0;
@@ -110,11 +110,11 @@ TEST_CASE("RebuildTest")
 
     status = compiler.buildTypes();
 
-    EXPECT_EQ(LNK_OK, status);
+    EXPECT_EQ(ftFlags::LNK_OK, status);
     EXPECT_EQ(compiler.getNumberOfBuiltinTypes(), ftAtomicUtils::NumberOfTypes);
 
 
-    compiler.setWriteMode(ftCompiler::WRITE_STREAM);
+    compiler.setWriteMode(ftFlags::WRITE_STREAM);
     skMemoryStream stream(skStream::WRITE);
 
     compiler.writeStream(&stream);
