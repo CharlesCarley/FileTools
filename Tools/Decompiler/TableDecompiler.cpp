@@ -57,6 +57,7 @@ struct ProgramInfo
     bool        m_useNamespace;
     bool        m_fixupBlend;
     bool        m_initTypes;
+    bool        m_writeHashCode;
 
     // extra vars only valid in extract to file
     string m_outName;
@@ -124,12 +125,14 @@ void writeForward(ProgramInfo& ctx, ostream& out, ftStruct* ftStrc)
 
 void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
 {
+
+    writeIndent(out, 1);
     out << "struct " << fstrc->getName() << endl;
+    writeIndent(out, 1);
     out << "{" << endl;
     FBTtype* strc = ctx.m_tables->getStructAt(fstrc->getStructIndex());
 
     int maxLeft = -1;
-
     if (strc)
     {
         FBTtype cnt = strc[1], i;
@@ -151,8 +154,6 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
         {
             const ftType& type = ctx.m_tables->getTypeAt(strc[0]);
             const ftName& name = ctx.m_tables->getNameAt(strc[1]);
-            writeIndent(out, 1);
-
             if (ctx.m_fixupBlend)
             {
                 if (string(type.m_name) == "anim")
@@ -164,8 +165,6 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
                 out << left << setw(maxLeft) << type.m_name << ' ' << name.m_name << ';' << endl;
         }
     }
-
-
     out << "};" << endl;
     out << endl;
 }
@@ -176,17 +175,19 @@ void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& strcs)
 {
     out << "namespace StructCodes" << endl;
     out << "{" << endl;
-
     out << "        typedef unsigned long long HashCode;" << endl;
+    out << endl;
 
     StructArray::ConstIterator cit = strcs.iterator();
     while (cit.hasMoreElements())
     {
         const ftStruct* strc = cit.getNext();
         out << setw(ctx.m_useNamespace ? 8 : 4) << ' ';
-        out << "const FBThash SDNA_" << uppercase << strc->getName() << "= 0x" << hex << strc->getHashedType() << ';' << endl;
+        out << "const HashCode SDNA_" << uppercase << strc->getName() << "= 0x" << hex << strc->getHashedType() << ';' << endl;
     }
     out << "}" << endl;
+    out << endl;
+    out << endl;
 }
 
 
@@ -453,7 +454,8 @@ int extractToFile(ProgramInfo& ctx)
             sout << endl;
         }
 
-        writeHashCodes(ctx, sout, tables->getStructureArray());
+        if (ctx.m_writeHashCode)
+            writeHashCodes(ctx, sout, tables->getStructureArray());
 
 
         sout << "#pragma region Forward" << endl;
@@ -522,6 +524,24 @@ int extractToFile(ProgramInfo& ctx)
     return status;
 }
 
+void usage(const char* prog)
+{
+    if (prog)
+    {
+        printf("%s\n", prog);
+        printf("       <options> -i <infile> -o <outfile>\n\n");
+        printf("       <options>\n");
+        printf("                 -n  Use namespace. Puts all declarations inside a namespace.\n");
+        printf("                 -b  Fix .blend  nonstandard naming that would require -fpermissive.\n");
+        printf("                 -s  include <stdint.h>.\n");
+        printf("                 -c  Generate structure hash codes.\n");
+        printf("                 -h  Display this message.\n");
+        printf("\n");
+    }
+    else
+        printf("Invalid program name supplied to usage.\n");
+}
+
 int parseCommandLine(ProgramInfo& ctx, int argc, char** argv)
 {
     int i, status = 0;
@@ -543,12 +563,16 @@ int parseCommandLine(ProgramInfo& ctx, int argc, char** argv)
                     status = -1;
                 }
             }
+            else if (*carg == 'h')
+                usage(ctx.m_progName);
             else if (*carg == 'n')
                 ctx.m_useNamespace = true;
             else if (*carg == 'b')
                 ctx.m_fixupBlend = true;
             else if (*carg == 's')
                 ctx.m_initTypes = true;
+            else if (*carg == 'c')
+                ctx.m_writeHashCode = true;
             else if (*carg == 'o')
             {
                 if (i + 1 < argc)
@@ -593,21 +617,6 @@ int getBaseName(const char* input)
 }
 
 
-void usage(const char* prog)
-{
-    if (prog)
-    {
-        printf("%s\n", prog);
-        printf("       <options> -i <infile> -o <outfile>\n\n");
-        printf("       <options>\n");
-        printf("                 -n  Use namespace. Puts all declarations inside a namespace.\n");
-        printf("                 -b  Fix .blend  nonstandard naming that would require -fpermissive.\n");
-        printf("                 -s  include <stdint.h>.\n");
-        printf("\n");
-    }
-    else
-        printf("Invalid program name supplied to usage.\n");
-}
 
 int main(int argc, char** argv)
 {
