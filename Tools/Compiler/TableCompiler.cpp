@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     }
 
     int code = tables.buildTypes();
-    if (code != LNK_OK)
+    if (code != ftFlags::LNK_OK)
     {
         printf("%s -> Link Error(%08X): When compiling table %s\n", base, code, argv[1]);
         return code;

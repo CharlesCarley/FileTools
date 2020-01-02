@@ -23,13 +23,13 @@
 # ------------------------------------------------------------------------------
 set(TargetName ${FileTools_TARGET_NAME})
 
-
-
 set(File_SRC
     ftAtomic.cpp
+    ftBuildInfo.cpp
     ftChunk.cpp
     ftCompiler.cpp
-    ftScanDNA.cpp
+    ftCompilerStruct.cpp
+    ftCompilerVariable.cpp
     ftEndianUtils.cpp
     ftFile.cpp
     ftLogger.cpp
@@ -40,9 +40,15 @@ set(File_SRC
     ftStruct.cpp
     ftTables.cpp
     ftTypes.cpp
+)
+
+set(File_HDR
     ftAtomic.h
+    ftBuildInfo.h
     ftChunk.h
     ftCompiler.h
+    ftCompilerStruct.h
+    ftCompilerVariable.h
     ftConfig.h
     ftEndianUtils.h
     ftFile.h
@@ -64,6 +70,5 @@ if (FileTools_USE_ZLIB)
     link_libraries(${FileTools_ZLIB_LIBRARY})
 endif()
 
-
 include_directories(${FileTools_Utils_INCLUDE})
-add_library(${TargetName} ${File_SRC})
+add_library(${TargetName} ${File_SRC} ${File_HDR})

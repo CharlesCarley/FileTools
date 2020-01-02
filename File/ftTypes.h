@@ -30,8 +30,10 @@
 #include "ftConfig.h"
 #endif
 
+#include "Utils/skMap.h"
 #include "Utils/skArray.h"
 #include "Utils/skFixedString.h"
+#include "Utils/skString.h"
 #include "memory.h"
 #include "string.h"
 
@@ -158,6 +160,7 @@ typedef union FBTByteInteger {
     FBTuint8  m_byte[8];
 } FBTByteInteger;
 
+
 class skStream;
 class ftTables;
 class ftStruct;
@@ -239,7 +242,40 @@ namespace ftFlags
         LF_UNRESOLVED       = 1 << 11,
         LF_DUMP_MEMBER_HASH = 1 << 12,
     };
+
+    enum LinkerIssues
+    {
+        LNK_OK              = 0,
+        LNK_ASSERT          = (1 << 0),
+        LNK_ALIGNEMENT2     = (1 << 1),
+        LNK_ALIGNEMENT4     = (1 << 2),
+        LNK_ALIGNEMENT8     = (1 << 3),
+        LNK_ALIGNEMENTS     = (1 << 4),
+        LNK_ALIGNEMENTP     = (1 << 5),
+        LNK_UNKNOWN         = (1 << 6),
+        LNK_UNDEFINED_TYPES = (1 << 7),
+        LNK_DUPLICATE_TYPES = (1 << 8)
+    };
+
+
+    enum WriteMode
+    {
+        WRITE_ARRAY = 0,  // Writes table as a c/c++ array. (the default mode)
+        WRITE_STREAM,     // Writes table to the specified stream. (raw data only)
+    };
 }
+
+typedef skFixedString<272>       ftPath;
+typedef skFixedString<FT_MAX_ID> ftId;
+typedef int                      ftArraySlots[FT_ARR_DIM_MAX];
+typedef void*                    ftParser;
+typedef skArray<ftId>            ftStringPtrArray;
+typedef skHashTable<ftId, ftId>  ftStringPtrTable;
+typedef skArray<ftPath>          ftPathArray;
+
+class ftBuildInfo;
+class ftScanner;
+class ftToken;
 
 
 #endif  //_ftTypes_h_
