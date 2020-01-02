@@ -31,14 +31,14 @@
 #include "ftCompilerVariable.h"
 
 
-class ftCompileStruct
+class ftBuildStruct
 {
 public:
-    typedef skArray<ftCompileStruct> Array;
-    typedef skArray<ftVariable>      Variables;
+    typedef skArray<ftBuildStruct> Array;
+    typedef skArray<ftBuildMember>      Variables;
 
 public:
-    ftCompileStruct();
+    ftBuildStruct();
 
     FBTsize     m_structId;
     ftId        m_name;

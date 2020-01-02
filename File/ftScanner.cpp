@@ -27,18 +27,17 @@
 #include <stdlib.h>
 
 
+using namespace ftFlags;
 
 
-enum ftLexState
+ftScanner::ftScanner(const char* ptr, SKsize length) :
+    m_buffer(ptr),
+    m_pos(0),
+    m_len(length),
+    m_state(0),
+    m_lineNo(1)
 {
-    FT_IN_START = 0,
-    FT_IN_NAMESPACE,
-    FT_IN_CLASS,
-    FT_IN_STRUCT,
-    FT_INSIDE,
-    FT_IN_SKIP,
-};
-
+}
 
 int ftScanner::lex(ftToken& ct)
 {
@@ -78,7 +77,7 @@ int ftScanner::lex(ftToken& ct)
             return ct.getToken();
     }
     return FT_EOF;
-} 
+}
 
 
 
@@ -134,6 +133,8 @@ int ftScanner::handleNamespaceState(ftToken& ct)
         m_state = FT_IN_START;
         return ct.getToken();
     }
+    else if (m_buffer[m_pos] == '/')
+        return handleLineComment(ct);
     else
     {
         ++m_pos;
@@ -153,6 +154,8 @@ int ftScanner::handleClassState(ftToken& ct)
         makeIdentifier(ct);
         return ct.getToken();
     }
+    else if (m_buffer[m_pos] == '/')
+        return handleLineComment(ct);
     else
     {
         switch (m_buffer[m_pos])
@@ -222,40 +225,7 @@ int ftScanner::handleInsideState(ftToken& ct)
         return ct.getToken();
     }
     else if (cp == '/')
-    {
-        m_pos++;
-        if (isEOF())
-            return FT_EOF;
-
-        cp = m_buffer[m_pos];
-        if (cp == '/')
-        {
-            while (m_pos < m_len &&
-                   m_buffer[m_pos] != '@' &&
-                   !isNewLine(m_buffer[m_pos]))
-                m_pos++;
-
-            if (isEOF())
-                return FT_EOF;
-            else if (!isNewLine(m_buffer[m_pos]))
-            {
-                m_pos++;
-                if (isKeyword("makeft_ignore", 13, FT_IN_SKIP))
-                    m_pos += 13;
-                else
-                {
-                    while (m_pos < m_len && !isNewLine(m_buffer[m_pos]))
-                        m_pos++;
-
-                    if (isEOF())
-                        return FT_EOF;
-
-                    if (isNewLine(m_buffer[m_pos + 1]))
-                        m_pos++;
-                }
-            }
-        }
-    }
+        return handleLineComment(ct);
     else
     {
         switch (m_buffer[m_pos])
@@ -291,6 +261,46 @@ int ftScanner::handleInsideState(ftToken& ct)
         default:
             ++m_pos;
             break;
+        }
+    }
+    return FT_KEEP_GOING;
+}
+
+
+int ftScanner::handleLineComment(ftToken& ct)
+{
+    char cp;
+
+    m_pos++;
+    if (isEOF())
+        return FT_EOF;
+
+    cp = m_buffer[m_pos];
+    if (cp == '/')
+    {
+        while (m_pos < m_len &&
+               m_buffer[m_pos] != '@' &&
+               !isNewLine(m_buffer[m_pos]))
+            m_pos++;
+
+        if (isEOF())
+            return FT_EOF;
+        else if (!isNewLine(m_buffer[m_pos]))
+        {
+            m_pos++;
+            if (isKeyword("makeft_ignore", 13, FT_IN_SKIP))
+                m_pos += 13;
+            else
+            {
+                while (m_pos < m_len && !isNewLine(m_buffer[m_pos]))
+                    m_pos++;
+
+                if (isEOF())
+                    return FT_EOF;
+
+                if (isNewLine(m_buffer[m_pos + 1]))
+                    m_pos++;
+            }
         }
     }
     return FT_KEEP_GOING;

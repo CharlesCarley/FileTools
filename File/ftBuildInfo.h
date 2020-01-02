@@ -49,8 +49,8 @@ public:
     ~ftBuildInfo();
 
     void    reserve(void);
-    int     getLengths(ftCompileStruct::Array& struct_builders);
-    int     getTLengths(ftCompileStruct::Array& struct_builders);
+    int     getLengths(ftBuildStruct::Array& struct_builders);
+    int     getTLengths(ftBuildStruct::Array& struct_builders);
     void    makeBuiltinTypes(void);
     bool    hasType(const ftId& type);
     FBTsize addType(const ftId& type, const FBTuint32& len);

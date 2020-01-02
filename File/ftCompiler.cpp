@@ -36,7 +36,7 @@
 #include "ftStreams.h"
 
 
-#define ftValidToken(x) (x > 0)
+#define FT_IS_VALID_TOKEN(x) (x > 0)
 
 using namespace ftFlags;
 
@@ -58,7 +58,7 @@ ftCompiler::~ftCompiler()
 }
 
 
-void ftCompiler::makeName(ftVariable& v, bool forceArray)
+void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
 {
     ftId newName;
     int  i = 0, j = 0;
@@ -150,142 +150,179 @@ int ftCompiler::parse(const ftPath& id)
 
 int ftCompiler::parse(void)
 {
-    int     TOK;
-    ftToken tp, np;
+    int     token;
+    ftToken tokenPtr;
 
     do
     {
-        TOK = m_scanner->lex(tp);
-        if (TOK == FT_NAMESPACE)
+        token = m_scanner->lex(tokenPtr);
+        if (token == FT_NAMESPACE)
         {
-            TOK = m_scanner->lex(tp);
-            if (TOK == FT_ID)
+            token = m_scanner->lex(tokenPtr);
+            if (token == FT_ID)
             {
-                if (m_namespaces.find(tp.getValue().c_str()) == m_namespaces.npos)
-                    m_namespaces.push_back(tp.getValue().c_str());
+                if (m_namespaces.find(tokenPtr.getValue().c_str()) == m_namespaces.npos)
+                    m_namespaces.push_back(tokenPtr.getValue().c_str());
             }
         }
-        else if (TOK == FT_STRUCT || TOK == FT_CLASS)
-            parseClass(TOK, tp);
-    } while (ftValidToken(TOK));
+        else if (token == FT_STRUCT || token == FT_CLASS)
+            parseClass(token, tokenPtr);
 
-    return TOK;
+    } while (FT_IS_VALID_TOKEN(token));
+
+    return token;
 }
 
 
-void ftCompiler::parseClass(int& TOK, ftToken& tp)
+void ftCompiler::parseClass(int& token, ftToken& tokenPtr)
 {
     do
     {
-        TOK = m_scanner->lex(tp);
-        if (TOK == FT_ID)
+        token = m_scanner->lex(tokenPtr);
+        if (token == FT_ID)
         {
-            ftCompileStruct bs;
-            bs.m_name = tp.getValue();
+            ftBuildStruct bs;
+            bs.m_name = tokenPtr.getValue();
 
-            TOK = m_scanner->lex(tp);
-            if (TOK == FT_LBRACKET)
+            token = m_scanner->lex(tokenPtr);
+            if (token == FT_LBRACKET)
             {
                 do
                 {
-                    TOK = m_scanner->lex(tp);
-                    if (TOK == FT_RBRACKET)
-                        break;
-
-                    if (TOK == FT_CLASS || TOK == FT_STRUCT)
-                        TOK = m_scanner->lex(tp);
-
-                    if (TOK >= FT_ID && TOK <= FT_VOID)
+                    token = m_scanner->lex(tokenPtr);
+                    if (token != FT_RBRACKET)
                     {
-                        const ftToken::String& typeId = tp.getValue();
-                        ftVariable             cur;
+                        if (token == FT_CLASS || token == FT_STRUCT)
+                            token = m_scanner->lex(tokenPtr);
 
-                        cur.m_type      = typeId;
-                        cur.m_undefined = 0;
-
-                        bool forceArray = false;
-                        bool isId       = TOK == FT_ID;
-                        do
-                        {
-                            TOK = m_scanner->lex(tp);
-                            switch (TOK)
-                            {
-                            case FT_RBRACE:
-                            case FT_LBRACE:
-                                forceArray = true;
-                                break;
-                            case FT_CONSTANT:
-                                if (cur.m_numDimensions + 1 > FT_ARR_DIM_MAX)
-                                {
-                                    printf("Maximum number of array slots exceeded!\n");
-                                    printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FT_ARR_DIM_MAX);
-                                    TOK = FT_NULL_TOKEN;
-                                }
-                                cur.m_arrays[cur.m_numDimensions] = tp.getArrayLen();
-                                cur.m_numDimensions++;
-                                cur.m_arraySize *= tp.getArrayLen();
-                                break;
-                            case FT_POINTER:
-                                cur.m_ptrCount++;
-                                break;
-                            case FT_ID:
-                                cur.m_name = tp.getValue();
-                                break;
-                            case FT_LPARN:
-                                cur.m_isFunctionPointer = 1;
-                                cur.m_ptrCount          = 0;
-                                cur.m_name              = tp.getValue();
-                                break;
-                            case FT_RPARN:
-                            case FT_PRIVATE:
-                            case FT_PUBLIC:
-                            case FT_PROTECTED:
-                            case FT_COLON:
-                                break;
-                            case FT_TERM:
-                            case FT_COMMA:
-                            {
-                                makeName(cur, forceArray);
-                                if (isId && cur.m_ptrCount == 0)
-                                {
-                                    if (bs.m_nrDependentTypes > 0)
-                                        bs.m_nrDependentTypes = bs.m_nrDependentTypes * 2;
-                                    else
-                                        bs.m_nrDependentTypes++;
-                                    cur.m_isDependentType = true;
-                                }
-                                bs.m_data.push_back(cur);
-                                cur.m_ptrCount  = 0;
-                                cur.m_arraySize = 1;
-                                if (TOK == FT_COMMA)
-                                    cur.m_numDimensions = 0;
-                                break;
-                            }
-                            default:
-                                printf("%s(%i): error : Unknown character parsed! %s\n",
-                                       m_includes.back().c_str(),
-                                       m_scanner->getLine(),
-                                       tp.getValue().c_str());
-                                TOK = FT_NULL_TOKEN;
-                                break;
-                            }
-                        } while ((TOK != FT_TERM) && ftValidToken(TOK));
+                        if (token >= FT_ID && token <= FT_VOID)
+                            parseIdentifier(token, tokenPtr, bs);
+                        else
+                            errorUnknown(token, tokenPtr);
                     }
-                    else
-                    {
-                        printf("%s(%i): error : Unknown character parsed! %s\n",
-                               m_includes.back().c_str(),
-                               m_scanner->getLine(),
-                               tp.getValue().c_str());
-                        TOK = FT_NULL_TOKEN;
-                    }
-
-                } while ((TOK != FT_RBRACKET) && ftValidToken(TOK));
+                } while (token != FT_RBRACKET &&
+                         FT_IS_VALID_TOKEN(token));
 
                 m_builders.push_back(bs);
             }
         }
-    } while ((TOK != FT_RBRACKET && TOK != FT_TERM) && ftValidToken(TOK));
+
+    } while ((token != FT_RBRACKET && token != FT_TERM) &&
+             FT_IS_VALID_TOKEN(token));
+}
+
+
+
+void ftCompiler::parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& buildStruct)
+{
+    bool forceArray = false;
+
+    const ftToken::String& typeId = tokenPtr.getValue();
+
+    ftBuildMember cur;
+    cur.m_type      = typeId;
+    cur.m_undefined = 0;
+
+    bool isId = token == FT_ID;
+
+    do
+    {
+        token = m_scanner->lex(tokenPtr);
+        switch (token)
+        {
+        case FT_RBRACE:
+        case FT_LBRACE:
+            forceArray = true;
+            break;
+        case FT_CONSTANT:
+            handleConstant(token, tokenPtr, cur);
+            break;
+        case FT_POINTER:
+            cur.m_ptrCount++;
+            break;
+        case FT_ID:
+            cur.m_name = tokenPtr.getValue();
+            break;
+        case FT_LPARN:
+            cur.m_name = tokenPtr.getValue();
+            cur.m_isFunctionPointer = 1;
+            cur.m_ptrCount = 0;
+            break;
+        case FT_RPARN:
+        case FT_PRIVATE:
+        case FT_PUBLIC:
+        case FT_PROTECTED:
+        case FT_COLON:
+            break;
+        case FT_TERM:
+        case FT_COMMA:
+            handleStatementClosure(token,
+                                   tokenPtr,
+                                   buildStruct,
+                                   cur,
+                                   forceArray,
+                                   isId);
+            break;
+        default:
+            errorUnknown(token, tokenPtr);
+            break;
+        }
+
+    } while (token != FT_TERM && FT_IS_VALID_TOKEN(token));
+}
+
+void ftCompiler::handleConstant(int& token, ftToken& tokenPtr, ftBuildMember& member)
+{
+    if (member.m_numDimensions + 1 > FT_ARR_DIM_MAX)
+    {
+        printf("Maximum number of array slots exceeded!\n");
+        printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FT_ARR_DIM_MAX);
+        token = FT_NULL_TOKEN;
+    }
+    member.m_arrays[member.m_numDimensions] = tokenPtr.getArrayLen();
+    member.m_numDimensions++;
+    member.m_arraySize *= tokenPtr.getArrayLen();
+}
+
+
+void ftCompiler::handleStatementClosure(int&           token,
+                                        ftToken&       tokenPtr,
+                                        ftBuildStruct& buildStruct,
+                                        ftBuildMember& member,
+                                        bool           forceArray,
+                                        bool           isIdentifier)
+{
+    makeName(member, forceArray);
+
+
+    if (isIdentifier && member.m_ptrCount == 0)
+    {
+        if (buildStruct.m_nrDependentTypes > 0)
+            buildStruct.m_nrDependentTypes = buildStruct.m_nrDependentTypes * 2;
+        else
+            buildStruct.m_nrDependentTypes++;
+
+        // Flag it as Dependant
+        member.m_isDependentType = true;
+    }
+
+    buildStruct.m_data.push_back(member);
+
+    // reset it for the next iteration
+    member.m_ptrCount  = 0;
+    member.m_arraySize = 1;
+    if (token == FT_COMMA)
+        member.m_numDimensions = 0;
+}
+
+
+void ftCompiler::errorUnknown(int& token, ftToken& tokenPtr)
+{
+    printf("%s(%i): error : Unknown character parsed! '%s'\n",
+           m_includes.back().c_str(),
+           m_scanner->getLine(),
+           tokenPtr.getValue().c_str());
+    token = FT_NULL_TOKEN;
 }
 
 
@@ -354,7 +391,7 @@ void ftCompiler::writeStream(skStream* fp)
     i = m_build->m_name.size();
 
 
-#if ftFAKE_ENDIAN == 1
+#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
 
@@ -365,17 +402,21 @@ void ftCompiler::writeStream(skStream* fp)
 
     writeBinPtr(fp, (void*)&ftIdNames::FT_TYPE[0], 4);
     i = m_build->m_typeLookup.size();
-#if ftFAKE_ENDIAN == 1
+
+#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
+    
     writeBinPtr(fp, &i, 4);
     writeCharPtr(fp, m_build->m_typeLookup);
     writeBinPtr(fp, (void*)&ftIdNames::FT_TLEN[0], 4);
 
-#if ftFAKE_ENDIAN == 1
+#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
     for (i = 0; i < (int)m_build->m_tlen.size(); i++)
         m_build->m_tlen.at(i) = ftSwap16(m_build->m_tlen.at(i));
 #endif
+
+
     writeBinPtr(fp, m_build->m_tlen.ptr(), m_build->m_alloc.m_tlen);
     if (m_build->m_tlen.size() & 1)
     {
@@ -386,15 +427,17 @@ void ftCompiler::writeStream(skStream* fp)
     writeBinPtr(fp, (void*)&ftIdNames::FT_STRC[0], 4);
     i = m_builders.size();
 
-#if ftFAKE_ENDIAN == 1
+#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
     writeBinPtr(fp, &i, 4);
 
-#if ftFAKE_ENDIAN == 1
+
+#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
     for (i = 0; i < (int)m_build->m_strc.size(); i++)
         m_build->m_strc.at(i) = ftSwap16(m_build->m_strc.at(i));
 #endif
+
     writeBinPtr(fp, m_build->m_strc.ptr(), m_build->m_alloc.m_strc);
 }
 
@@ -402,7 +445,7 @@ void ftCompiler::writeStream(skStream* fp)
 
 void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
 {
-    char    pad[4] = {'b', 'y', 't', 'e'};
+    char     pad[4] = {'b', 'y', 't', 'e'};
     SKuint32 i = 0, s = ptrs.size();
     SKuint32 t = 0;
 
@@ -419,7 +462,7 @@ void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
     len = (len + 3) & ~3;
     if (len - t)
     {
-        ftId id;
+        ftId     id;
         SKuint32 p;
         for (p = 0; p < (len - t); p++)
             id.push_back(pad[p % 4]);
@@ -501,17 +544,17 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
     fprintf(fp, "int main()\n{\n\tint errors=0;\n");
 
-    ftCompileStruct::Array::Iterator it = m_builders.iterator();
+    ftBuildStruct::Array::Iterator it = m_builders.iterator();
     while (it.hasMoreElements())
     {
-        ftCompileStruct& bs = it.getNext();
+        ftBuildStruct& bs = it.getNext();
 
         ftId&   cur = m_build->m_typeLookup.at((SKuint32)bs.m_structId);
         FBTtype len = m_build->m_tlen.at((SKuint32)bs.m_structId);
 
         if (m_skip.find(cur) != m_skip.npos)
             continue;
-#if ftFAKE_ENDIAN == 1
+#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
         len = ftSwap16(len);
 #endif
         fprintf(fp, "\t");

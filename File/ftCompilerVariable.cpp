@@ -23,11 +23,11 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "ftCompilerVariable.h"
+#include "ftBuildMember.h"
 
 
 
-ftVariable::ftVariable() :
+ftBuildMember::ftBuildMember() :
     m_type(),
     m_name(),
     m_typeId(-1),

@@ -55,13 +55,27 @@ public:
 
 private:
     int  parse(void);
-    void parseClass(int& tok, ftToken& tp);
+    void parseClass(int& token, ftToken& tokenPtr);
+    void parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& buildStruct);
+
+    void handleConstant(int&           token,
+                        ftToken&       tokenPtr,
+                        ftBuildMember& member);
+
+    void handleStatementClosure(int&           token,
+                                ftToken&       tokenPtr,
+                                ftBuildStruct& buildStruct,
+                                ftBuildMember& member,
+                                bool           forceArray,
+                                bool           isId);
+
+    void errorUnknown(int& token, ftToken& tokenPtr);
 
 
     void writeBinPtr(skStream* fp, void* ptr, int len);
     void writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs);
     void writeValidationProgram(const ftPath& path);
-    void makeName(ftVariable&, bool);
+    void makeName(ftBuildMember&, bool);
 
     char*                  m_buffer;
     FBTsize                m_pos;
@@ -69,7 +83,7 @@ private:
     FBTsize                m_start;
     ftPathArray            m_includes;
     ftStringPtrArray       m_namespaces, m_skip;
-    ftCompileStruct::Array m_builders;
+    ftBuildStruct::Array m_builders;
     int                    m_curBuf, m_writeMode;
     ftScanner*             m_scanner;
 };

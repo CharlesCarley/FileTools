@@ -23,10 +23,6 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,13 +34,21 @@
 #include "ftLogger.h"
 #include "ftScanner.h"
 #include "ftStreams.h"
-#define ftValidToken(x) (x > 0)
+
+#define FT_IS_VALID_TOKEN(x) (x > 0)
 
 using namespace ftFlags;
 
-ftBuildInfo::ftBuildInfo()
+
+ftBuildInfo::ftBuildInfo() :
+    m_name(),
+    m_typeLookup(),
+    m_tlen(),
+    m_64ln(),
+    m_strc(),
+    m_undef(),
+    m_numberOfBuiltIn(0)
 {
-    m_numberOfBuiltIn    = 0;
     m_alloc.m_name       = 0;
     m_alloc.m_type       = 0;
     m_alloc.m_tlen       = 0;
@@ -55,7 +59,6 @@ ftBuildInfo::ftBuildInfo()
 ftBuildInfo::~ftBuildInfo()
 {
 }
-
 
 void ftBuildInfo::reserve(void)
 {
@@ -109,14 +112,14 @@ FBTsize ftBuildInfo::addName(const ftId& name)
     return loc;
 }
 
-int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
+int ftBuildInfo::getLengths(ftBuildStruct::Array& struct_builders)
 {
     makeBuiltinTypes();
 
-    ftCompileStruct::Array::Iterator bit = struct_builders.iterator();
+    ftBuildStruct::Array::Iterator bit = struct_builders.iterator();
     while (bit.hasMoreElements())
     {
-        ftCompileStruct& bs = bit.getNext();
+        ftBuildStruct& bs = bit.getNext();
         bs.m_structId       = addType(bs.m_name, 0);
 
         m_strc.push_back((SKuint16)bs.m_structId);
@@ -124,10 +127,10 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
 
         m_alloc.m_strc += (sizeof(FBTtype) * 2);
 
-        ftCompileStruct::Variables::Iterator it = bs.m_data.iterator();
+        ftBuildStruct::Variables::Iterator it = bs.m_data.iterator();
         while (it.hasMoreElements())
         {
-            ftVariable& cvar = it.getNext();
+            ftBuildMember& cvar = it.getNext();
 
             cvar.m_typeId     = (int)addType(cvar.m_type, 0);
             cvar.m_hashedName = (FBTtype)addName(cvar.m_name);
@@ -143,9 +146,9 @@ int ftBuildInfo::getLengths(ftCompileStruct::Array& struct_builders)
 }
 
 
-int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
+int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
 {
-    ftCompileStruct* strcs = struct_builders.ptr();
+    ftBuildStruct* strcs = struct_builders.ptr();
     FBTsize          tot   = struct_builders.size(), i, e;
 
     FBTsize next = tot, prev = 0;
@@ -160,7 +163,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
     if (strcs)
         ft_start = (FBTtype)strcs[0].m_structId;
 
-    ftVariable* vptr = 0;
+    ftBuildMember* vptr = 0;
     while (next != prev && strcs)
     {
         prev = next;
@@ -168,7 +171,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
         for (i = 0; i < tot; ++i)
         {
-            ftCompileStruct& cur = strcs[i];
+            ftBuildStruct& cur = strcs[i];
             if (tlens[cur.m_structId] != 0)
             {
                 FBTuint32 pos;
@@ -185,7 +188,7 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
                 bool hasPtr = false;
                 for (e = 0; e < nrel; ++e)
                 {
-                    ftVariable& v = vptr[e];
+                    ftBuildMember& v = vptr[e];
                     ct            = v.m_typeId;
 
                     if (v.m_ptrCount > 0)
@@ -318,19 +321,19 @@ int ftBuildInfo::getTLengths(ftCompileStruct::Array& struct_builders)
 
     if (FT_DEBUG >= 3)
     {
-        ftCompileStruct::Array::Iterator bit = struct_builders.iterator();
+        ftBuildStruct::Array::Iterator bit = struct_builders.iterator();
 
         while (bit.hasMoreElements())
         {
-            ftCompileStruct& bs = bit.getNext();
+            ftBuildStruct& bs = bit.getNext();
 
             printf(bs.m_path.c_str(), bs.m_line, "typeid (%s):%i\n", bs.m_name.c_str(), bs.m_structId);
             if (FT_DEBUG > 0 && !bs.m_data.empty())
             {
-                ftCompileStruct::Variables::Iterator it = bs.m_data.iterator();
+                ftBuildStruct::Variables::Iterator it = bs.m_data.iterator();
                 while (it.hasMoreElements())
                 {
-                    ftVariable& cvar = it.getNext();
+                    ftBuildMember& cvar = it.getNext();
                     printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", cvar.m_typeId, cvar.m_hashedName, (cvar.m_ptrCount > 0 ? FT_VOIDP : tlens[cvar.m_typeId]) * cvar.m_arraySize, cvar.m_type.c_str(), cvar.m_name.c_str());
                 }
             }

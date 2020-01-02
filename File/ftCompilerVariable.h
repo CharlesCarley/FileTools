@@ -33,10 +33,10 @@
 #include "ftTypes.h"
 
 
-class ftVariable
+class ftBuildMember
 {
 public:
-    ftVariable();
+    ftBuildMember();
 
 
     ftId         m_type;

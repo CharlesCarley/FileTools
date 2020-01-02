@@ -27,120 +27,7 @@
 #define _ftScanner_h_
 
 #include "ftTypes.h"
-
-enum ftTokenID
-{
-    FT_KEEP_GOING = -2,
-    FT_NULL_TOKEN = -1,
-    FT_EOF,
-    FT_COMMA    = ',',
-    FT_POINTER  = '*',
-    FT_LBRACE   = '[',
-    FT_COLON    = ':',
-    FT_RBRACE   = ']',
-    FT_LPARN   = '(',
-    FT_RPARN    = ')',
-    FT_LBRACKET = '{',
-    FT_RBRACKET = '}',
-    FT_TERM     = ';',
-    FT_ID       = 256,
-    FT_CHAR,
-    FT_SHORT,
-    FT_INTEGER,
-    FT_LONG,
-    FT_FLOAT,
-    FT_DOUBLE,
-    FT_INT64,
-    FT_SCALAR,
-    FT_PUBLIC,
-    FT_PRIVATE,
-    FT_PROTECTED,
-    FT_VOID,
-    FT_CLASS,
-    FT_NAMESPACE,
-    FT_STRUCT,
-    FT_CONSTANT,
-    // FT_UNION, ?
-
-};
-
-
-struct ftKeywordTable
-{
-    const char* m_name;
-    int         m_len;
-    int         m_token;
-};
-
-
-class ftToken
-{
-public:
-    typedef ftFixedString<FT_MAX_TOK> String;
-
-private:
-    int    m_id;
-    String m_value;
-    int    m_arrayConstant;
-
-public:
-    ftToken() :
-        m_id(FT_NULL_TOKEN),
-        m_value(),
-        m_arrayConstant(0)
-    {
-    }
-
-    ftToken(int id, const String& val) :
-        m_id(id),
-        m_value(val),
-        m_arrayConstant(0)
-    {
-    }
-
-    ftToken(const ftToken& tok) :
-        m_id(tok.m_id),
-        m_value(tok.m_value),
-        m_arrayConstant(tok.m_arrayConstant)
-    {
-    }
-
-    inline int getToken() const
-    {
-        return m_id;
-    }
-
-    inline void setToken(int tok)
-    {
-        m_id = tok;
-    }
-
-    inline const String& getValue() const
-    {
-        return m_value;
-    }
-
-    inline const String& getConstRef() const
-    {
-        return m_value;
-    }
-
-    inline String& getRef()
-    {
-        return m_value;
-    }
-
-    
-    inline int getArrayLen() const
-    {
-        return m_arrayConstant;
-    }
-
-    inline void setArrayLen(int alen)
-    {
-        m_arrayConstant = alen;
-    }
-};
+#include "ftToken.h"
 
 
 
@@ -157,15 +44,7 @@ private:
     static const size_t         KeywordTableSize;
 
 public:
-
-    ftScanner(const char* ptr, SKsize length) :
-        m_buffer(ptr),
-        m_pos(0),
-        m_len(length),
-        m_state(0),
-        m_lineNo(1)
-    {
-    }
+    ftScanner(const char* ptr, SKsize length);
 
     int lex(ftToken& tok);
 
@@ -174,7 +53,6 @@ public:
     {
         return m_lineNo;
     }
-
 
 private:
     int  isKeyword(const char* kw, int len, int stateIf);
@@ -212,6 +90,7 @@ private:
     int handleClassState(ftToken& ct);
     int handleInsideState(ftToken& ct);
     int handleToggleState(ftToken& ct);
+    int handleLineComment(ftToken& ct);
 };
 
 

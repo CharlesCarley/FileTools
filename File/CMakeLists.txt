@@ -39,6 +39,7 @@ set(File_SRC
     ftStreams.cpp
     ftStruct.cpp
     ftTables.cpp
+    ftToken.cpp
     ftTypes.cpp
 )
 
@@ -61,6 +62,7 @@ set(File_HDR
     ftStreams.h
     ftStruct.h
     ftTables.h
+    ftToken.h
     ftTypes.h
 )
 

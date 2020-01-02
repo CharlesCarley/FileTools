@@ -23,10 +23,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "ftCompilerStruct.h"
+#include "ftBuildStruct.h"
 
 
-ftCompileStruct::ftCompileStruct() :
+ftBuildStruct::ftBuildStruct() :
     m_structId(SK_NPOS),
     m_line(-1),
     m_nrDependentTypes(0)

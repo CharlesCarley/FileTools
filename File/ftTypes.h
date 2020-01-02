@@ -263,6 +263,53 @@ namespace ftFlags
         WRITE_ARRAY = 0,  // Writes table as a c/c++ array. (the default mode)
         WRITE_STREAM,     // Writes table to the specified stream. (raw data only)
     };
+
+    enum TokenID
+    {
+        FT_KEEP_GOING = -2,
+        FT_NULL_TOKEN = -1,
+        FT_EOF,
+        FT_COMMA    = ',',
+        FT_POINTER  = '*',
+        FT_LBRACE   = '[',
+        FT_COLON    = ':',
+        FT_RBRACE   = ']',
+        FT_LPARN    = '(',
+        FT_RPARN    = ')',
+        FT_LBRACKET = '{',
+        FT_RBRACKET = '}',
+        FT_TERM     = ';',
+        FT_ID       = 256,
+        FT_CHAR,
+        FT_SHORT,
+        FT_INTEGER,
+        FT_LONG,
+        FT_FLOAT,
+        FT_DOUBLE,
+        FT_INT64,
+        FT_SCALAR,
+        FT_PUBLIC,
+        FT_PRIVATE,
+        FT_PROTECTED,
+        FT_VOID,
+        FT_CLASS,
+        FT_NAMESPACE,
+        FT_STRUCT,
+        FT_CONSTANT,
+        // FT_UNION, ?
+    };
+
+    enum LexState
+    {
+        FT_IN_START = 0,
+        FT_IN_NAMESPACE,
+        FT_IN_CLASS,
+        FT_IN_STRUCT,
+        FT_INSIDE,
+        FT_IN_SKIP,
+    };
+
+
 }
 
 typedef skFixedString<272>       ftPath;
