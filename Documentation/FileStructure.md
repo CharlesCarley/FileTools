@@ -91,7 +91,7 @@ Count  : 1
 
 
 | Member  | Description                                                                          |
-| ------- | ------------------------------------------------------------------------------------ |
+| ------- | :----------------------------------------------------------------------------------- |
 | code    | Is a unique IFF type identifier for identifying how this block should be read.       |
 | length  | Is the size in bytes of the chunks data.                                             |
 | address | Is the base address of the chunk data at the time of saving.                         |
@@ -103,7 +103,7 @@ Count  : 1
 The following are reserved chunk identifiers that are used to build the API.  
 
 | Member | Description                                                                                                                      |
-| ------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| ------ | :------------------------------------------------------------------------------------------------------------------------------- |
 | DNA1   | Chunk identifier that lets the loader separate and load the API.                                                                 |
 | SDNA   | Table header.                                                                                                                    |
 | NAME   | Specifies the member name table.                                                                                                 |
