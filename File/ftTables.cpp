@@ -934,6 +934,18 @@ void ftTables::hashMember(skString&   name,
                           FBThash   memberType,
                           FBThash   memberName)
 {
+    // TODO: this needs to take into account types 
+    //       that may change but still may be usable 
+    //  EG;  
+    //   SomeSturct-SubStruct-int-val
+    //   SomeSturct-SubStruct-long-val
+    // 
+    // In this case the member currently will not be found.
+    // But since the types are related enough to still be usable,  
+    // this needs to define the type as such:
+    // 
+    //   SomeSturct-SubStruct-number_t-val
+    // 
     if (owningStructMemeberName == SK_NPOS)
     {
         name = skString::format(FT_MEMBER_HASH_FMT,

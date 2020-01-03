@@ -1,14 +1,16 @@
 # File Structure
 
-
 1. [File Structure](#file-structure)
    1. [Header](#header)
    2. [Chunks](#chunks)
    3. [Reserved Codes](#reserved-codes)
 
+The file format is a simple chunk based format. It consists of a 12 byte file header, then N number of chunks.
+A chunk consists of a header an data block. The header is a varying structure that is either 20 or 24 bytes. The size is dependent on the architecture that the file is being saved in. This is so the heap address of the block of memory being saved as the chunk's data block can be stored as a lookup code which is used later during the loading process.
+
 ## Header
 
-The file header is the first 12 bytes of the file.
+The file header is the first 12 bytes of the file. It is used to determine the file type, the platform it was saved in and the API version.
 
 | Bytes  | Data Type | Description                                                                 |
 | :----: | --------- | :-------------------------------------------------------------------------- |
@@ -64,9 +66,32 @@ struct Chunk64
 }; // 24 bytes total
 ```
 
+```
+Chunk32
+Code   : OLIB
+Len    : 152
+Old    : 0x15170d0
+TypeId : 0
+Count  : 1
+-------------------------------------------------------------------------------
+00000000   43 75 62 65 00 00 00 00  00 00 00 00 00 00 00 00  |Cube............|
+00000010   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000020   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000030   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000040   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000050   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000060   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000070   00 00 00 00 63 58 E2 3F  00 00 00 00 63 58 E2 3F  |....cX.?....cX.?|
+00000080   00 00 00 00 63 58 E2 3F  02 00 00 00 50 41 44 42  |....cX.?....PADB|
+00000090   68 09 B9 01 CD CD CD CD                           |h.......        |
+-------------------------------------------------------------------------------
+
+```
+
+
 
 | Member  | Description                                                                          |
-| ------- | ------------------------------------------------------------------------------------ |
+| ------- | :----------------------------------------------------------------------------------- |
 | code    | Is a unique IFF type identifier for identifying how this block should be read.       |
 | length  | Is the size in bytes of the chunks data.                                             |
 | address | Is the base address of the chunk data at the time of saving.                         |
@@ -75,13 +100,16 @@ struct Chunk64
 
 ## Reserved Codes
 
-The following are reserved chunk identifier codes that are used to save the file I/O API.  
-See the [TableStructure](TableStructure.md) document for a description of their use.
+The following are reserved chunk identifiers that are used to build the API.  
 
-+ DNA1
-+ SDNA
-+ NAME
-+ TYPE
-+ TLEN
-+ STRC
-+ DATA
+| Member | Description                                                                                                                      |
+| ------ | :------------------------------------------------------------------------------------------------------------------------------- |
+| DNA1   | Chunk identifier that lets the loader separate and load the API.                                                                 |
+| SDNA   | Table header.                                                                                                                    |
+| NAME   | Specifies the member name table.                                                                                                 |
+| TYPE   | Specifies the type name table.                                                                                                   |
+| TLEN   | Specifies the type length table.                                                                                                 |
+| STRC   | Specifies the structure table.                                                                                                   |
+| DATA   | Indicates a block of data that may or may not have a structure associated with it but still needs to be relinked by its address. |
+
+See the [TableStructure](TableStructure.md) document for a description of their use.
