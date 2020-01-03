@@ -371,10 +371,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 
         ftPointerHashKey phk(chunk.m_addr);
         if (m_map.find(phk) != m_map.npos)
-        {
-            //freeChunk(bin);
-            //status = FS_DUPLICATE_BLOCK;
-        }
+            freeChunk(bin);
         else
         {
             bin->m_fblock = block;

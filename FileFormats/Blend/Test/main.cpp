@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 
     ftBlend fp;
     //fp.addFileFlag(LF_DIAGNOSTICS|LF_UNRESOLVED);
-    fp.setFilterList(skipList, sizeof(skipList) / sizeof(FBThash), true);
+    //fp.setFilterList(skipList, sizeof(skipList) / sizeof(FBThash), true);
     if (fp.load(argv[argc - 1], PM_COMPRESSED) != FS_OK)
         return 1;
 
