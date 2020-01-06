@@ -81,7 +81,8 @@ struct ftMemoryChunk
 {
     enum Flag
     {
-        BLK_MODIFIED = (1 << 0),
+        BLK_MODIFIED = 1 << 0,
+        BLK_LINKED   = 1 << 1,
     };
 
     ftMemoryChunk *m_next, *m_prev;

@@ -26,31 +26,49 @@
 #ifndef _ftLogger_h_
 #define _ftLogger_h_
 
+#include "Utils/skDebugger.h"
 #include "ftFile.h"
 #include "ftTables.h"
-#include "Utils/skDebugger.h"
 
-class ftLogger
+
+namespace ftLogger
 {
-public:
-    static void log(int status);
-    static void log(int status, const char *msg, ...);
-    static void logF(const char *msg, ...);
+    extern void log(int status);
+    extern void log(int status, const char *msg, ...);
+    extern void logF(const char *msg, ...);
 
-    static void seperator();
-    static void divider();
-    static void newline(int nr=1);
-    static void color(skConsoleColorSpace cs);
+    extern void seperator();
+    extern void divider();
+    extern void newline(int nr = 1);
+    extern void color(skConsoleColorSpace cs);
 
-    static void log(const ftChunk &chunk);
-    static void log(void *ptr, FBTsize len);
-    static void log(ftStruct *strc);
-    static void log(ftMember *strc);
-    static void log(ftStruct *fstrc, ftStruct *mstrc);
-    static void log(const ftName &name);
-    static void log(const ftType &type);
-    static void log(const ftType &type, FBTtype size);
-};
+    extern void log(const ftChunk &chunk);
+    extern void log(const void *ptr, const FBTsize len);
+    extern void log(ftStruct *strc);
+    extern void log(ftMember *strc);
+    extern void log(ftStruct *fstrc, ftStruct *mstrc);
+    extern void log(const ftName &name);
+    extern void log(const ftType &type);
+    extern void log(const ftType &type, FBTtype size);
+
+
+    extern void logDiagnosticsCastHeader(const ftChunk &chunk,
+                                         ftStruct *     fstrc,
+                                         ftStruct *     mstrc);
+    extern void logDiagnosticsCastMemberHeader(ftMember *fstrc,
+                                               ftMember *mstrc);
+
+    extern void logReadChunk(const ftChunk &chunk,
+                             const void *   block,
+                             const FBTsize &len);
+
+    extern void logSkipChunk(const ftChunk &chunk,
+                             ftStruct *     fstrc,
+                             const void *   block,
+                             const FBTsize &len);
+
+
+}  // namespace ftLogger
 
 
 #endif  //_ftLogger_h_

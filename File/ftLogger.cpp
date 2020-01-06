@@ -169,11 +169,14 @@ void ftLogger::color(skConsoleColorSpace cs)
     skHexPrint::writeColor(cs);
 }
 
-
-
-void ftLogger::log(void *ptr, FBTsize len)
+void ftLogger::log(const void *ptr, const FBTsize len)
 {
-    skHexPrint::dumpHex((char *)ptr, 0, len, skHexPrint::PF_DEFAULT, -1);
+    skHexPrint::dumpHex(
+        (char *)ptr,
+        0,
+        len,
+        skHexPrint::PF_DEFAULT,
+        -1);
 }
 
 
@@ -357,4 +360,61 @@ void ftLogger::log(const ftType &type, FBTtype size)
 
     cout << endl;
     skHexPrint::writeColor(CS_WHITE);
+}
+
+
+void ftLogger::logDiagnosticsCastHeader(const ftChunk &chunk,
+                                        ftStruct *     fstrc,
+                                        ftStruct *     mstrc)
+{
+    newline(2);
+    seperator();
+    log(chunk);
+    seperator();
+    color(CS_GREEN);
+    logF("Struct  : %s -> %s",
+         fstrc->getName(),
+         mstrc->getName());
+    log(fstrc, mstrc);
+}
+
+
+void ftLogger::logDiagnosticsCastMemberHeader(ftMember *dstmbr,
+                                              ftMember *srcmbr)
+{
+    newline();
+    color(CS_DARKYELLOW);
+    logF("%s %s (%d) ==> %s %s (%d)",
+         srcmbr->getType(),
+         srcmbr->getName(),
+         srcmbr->getOffset(),
+         dstmbr->getType(),
+         dstmbr->getName(),
+         srcmbr->getOffset());
+}
+
+
+void ftLogger::logReadChunk(const ftChunk &chunk, const void *block, const FBTsize &len)
+{
+    newline();
+    log(chunk);
+    seperator();
+    log(block, len);
+    seperator();
+}
+
+
+void ftLogger::logSkipChunk(const ftChunk &chunk,
+                            ftStruct *     fstrc,
+                            const void *   block,
+                            const FBTsize &len)
+{
+    newline();
+    color(CS_RED);
+    logF("Skipping Chunk for structure %s", fstrc->getName());
+    newline();
+    log(chunk);
+    seperator();
+    log(block, len);
+    seperator();
 }

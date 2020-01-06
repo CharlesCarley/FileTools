@@ -406,13 +406,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                             insertChunk(phk, bin, status);
 
                             if (m_fileFlags & LF_READ_CHUNKS)
-                            {
-                                ftLogger::newline();
-                                ftLogger::log(chunk);
-                                ftLogger::seperator();
-                                ftLogger::log(bin->m_fblock, chunk.m_len);
-                                ftLogger::seperator();
-                            }
+                                ftLogger::logReadChunk(chunk, bin->m_fblock, chunk.m_len);
                         }
                     }
                     else
@@ -421,16 +415,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                 else
                 {
                     if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_DUMP_SKIP)
-                    {
-                        ftLogger::newline();
-                        ftLogger::color(CS_RED);
-                        ftLogger::logF("Skipping Chunk for structure %s", fstrc->getName());
-                        ftLogger::newline();
-                        ftLogger::log(bin->m_chunk);
-                        ftLogger::seperator();
-                        ftLogger::log(bin->m_fblock, bin->m_chunk.m_len);
-                        ftLogger::seperator();
-                    }
+                        ftLogger::logSkipChunk(bin->m_chunk, fstrc, bin->m_fblock, bin->m_chunk.m_len);
                     freeChunk(bin);
                 }
             }
@@ -527,19 +512,12 @@ int ftFile::rebuildStructures()
         {
             diagnostics = m_castFilter ? searchFilter(m_castFilter, fstrc->getHashedType(), m_castFilterLen) : true;
             if (diagnostics)
-            {
-                ftLogger::seperator();
-                ftLogger::log(chunk);
-                ftLogger::seperator();
-                ftLogger::color(CS_GREEN);
-                ftLogger::logF("Struct  : %s -> %s",
-                               fstrc->getName(),
-                               mstrc->getName());
-                ftLogger::log(fstrc, mstrc);
-            }
+                ftLogger::logDiagnosticsCastHeader(chunk, fstrc, mstrc);
         }
 
-        for (n = 0; n < chunk.m_nr && status == FS_OK && fstrc && mstrc; ++n)
+        for (n = 0;
+             n < chunk.m_nr && status == FS_OK && fstrc && mstrc && (node->m_flag & ftMemoryChunk::BLK_LINKED) == 0;
+             ++n)
         {
             dst = mstrc->getBlock(node->m_mblock, n, chunk.m_nr);
             src = fstrc->getBlock(node->m_fblock, n, chunk.m_nr);
@@ -583,6 +561,7 @@ int ftFile::rebuildStructures()
                             ftLogger::newline();
                             ftLogger::log(dstPtr, dstmbr->getSizeInBytes());
                             ftLogger::seperator();
+                            ftLogger::newline();
                         }
 
                         if (status != FS_OK)
@@ -652,7 +631,10 @@ int ftFile::rebuildStructures()
         }
 
         if (node->m_mblock && status == FS_OK)
+        {
+            node->m_flag |= ftMemoryChunk::BLK_LINKED;
             notifyDataRead(node->m_mblock, node->m_chunk);
+        }
     }
 
     return status;
@@ -762,7 +744,6 @@ void ftFile::castPointerToPointer(ftMember* dst,
             ftLogger::newline();
             ftLogger::log(dstPtr, dst->getSizeInBytes());
         }
-
     }
 }
 
