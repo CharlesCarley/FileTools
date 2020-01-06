@@ -19,6 +19,7 @@ The file header is the first 12 bytes of the file. It is used to determine the f
 | [9,12] | int       | Bytes 9-12 is a three digit integer version code. (EG; 1.5.0 equals 150) |
 
 The following ASCII codes are reserved for bytes 7 and 8:
+
 | ASCII | Hex  | Description                                                    |
 | ----- | ---- | -------------------------------------------------------------- |
 | '-'   | 0x2D | '-' indicates that the file was saved with 64 bit chunks.      |
@@ -75,7 +76,7 @@ struct Chunk64
 
 For example:
 
-```
+```hex
 Chunk32
 Code   : OLIB
 Len    : 152
