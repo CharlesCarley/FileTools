@@ -5,7 +5,11 @@
    2. [Chunks](#chunks)
    3. [Reserved Codes](#reserved-codes)
 
-The file format is a simple chunk based format. It is comprised of a 12-byte file header succeeded by any number of chunks. A complete chunk includes a header and a data block. The length of the data block and its type are stored in the header. 
+The file format is a simple chunk based format. It is comprised of a 12-byte file header followed by any number of chunks. The last chunk should be a blank chunk header with the ENDB code.
+
+![FileStructure](FileStructure.svg)
+
+A complete chunk includes a header and a data block. The length of the data block and its type are stored in the header. 
 
 The chunk header is a varying sized structure that is 20 or 24 bytes. The chunk size is dependent on the platform architecture where the file was saved. 
 
