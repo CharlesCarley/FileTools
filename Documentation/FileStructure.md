@@ -11,12 +11,12 @@ The file format is a simple chunk based format. It is comprised of a 12-byte fil
 
 The file header is the first 12 bytes of the file. It is used to determine the file type, the platform it was saved in and the API version.
 
-| Bytes  | Data Type | Description                                                              |
-| :----: | --------- | :----------------------------------------------------------------------- |
-| [0,6]  | char[7]   | Bytes 0-6 are a unique name to identify the file type.                   |
-|   7    | char      | Identifies the machine architecture that the file was was saved in.      |
-|   8    | char      | Identifies the byte order that the file was was saved in.                |
-| [9,12] | int       | Bytes 9-12 is a three digit integer version code. (EG; 1.5.0 equals 150) |
+| Bytes  | Data Type | Description                                                               |
+| :----: | --------- | :------------------------------------------------------------------------ |
+| [0,6]  | char[7]   | Bytes 0-6 are a unique name to identify the file type.                    |
+|   7    | char      | Identifies the machine architecture that the file was was saved in.       |
+|   8    | char      | Identifies the byte order that the file was was saved in.                 |
+| [9,11] | int       | Bytes 9-11 are a three digit integer version code. (EG; 1.5.0 equals 150) |
 
 The following ASCII codes are reserved for bytes 7 and 8:
 
@@ -35,7 +35,7 @@ BLENDER-v279
 
 ## Chunk Header
 
-A complete chunk includes a header and a data block. The header is a varying sized structure that is 20 or 24 bytes. The size is dependent on the platform architecture where the file was saved because it stores the heap address of the data block at the time of saving.
+The header is a varying sized structure that is 20 or 24 bytes. The size is dependent on the platform architecture where the file was saved because it stores the heap address of the data block at the time of saving. 
 
 ```c++
 struct ChunkNative
@@ -74,7 +74,7 @@ struct Chunk64
 | typeid  | Is the structure type index identifier found in the DNA1 block.                      |
 | count   | Is the number of subsequent blocks being saved in this chunk starting with 'address' |
 
-For example:
+A complete chunk includes a header and block of memory directly following the header. The memory should the same length as described in the header.
 
 ```hex
 Chunk32
@@ -98,10 +98,9 @@ Count  : 1
 
 ```
 
-
 ## Reserved Codes
 
-The following are reserved chunk identifiers that are used to build the API.  
+The following are reserved chunk identifiers that are used when loading.  
 
 | CODE | Description                                                                                                                      |
 | ---- | :------------------------------------------------------------------------------------------------------------------------------- |
