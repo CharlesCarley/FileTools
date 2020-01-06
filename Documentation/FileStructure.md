@@ -10,6 +10,7 @@ The file format is a simple chunk based format. It is comprised of a 12-byte fil
 ## File Header
 
 The file header is the first 12 bytes of the file. It is used to determine the file type, the platform it was saved in and the API version.
+
 | Bytes  | Data Type | Description                                                              |
 | :----: | --------- | :----------------------------------------------------------------------- |
 | [0,6]  | char[7]   | Bytes 0-6 are a unique name to identify the file type.                   |
