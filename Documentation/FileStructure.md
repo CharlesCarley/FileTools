@@ -112,5 +112,6 @@ The following are reserved chunk identifiers that are used to build the API.
 | TLEN | Specifies the type length table.                                                                                                 |
 | STRC | Specifies the structure table.                                                                                                   |
 | DATA | Indicates a block of data that may or may not have a structure associated with it but still needs to be relinked by its address. |
+| ENDB | Indicates that there are no more chunks to read                                                                                  |
 
-See the [TableStructure](TableStructure.md) document for a description of their use.
+See the [TableStructure](TableStructure.md) document for a description of the table codes.
