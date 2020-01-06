@@ -1,32 +1,23 @@
 # File Structure
 
 1. [File Structure](#file-structure)
-   1. [Header](#header)
-   2. [Chunks](#chunks)
+   1. [File Header](#file-header)
+   2. [Chunk Header](#chunk-header)
    3. [Reserved Codes](#reserved-codes)
 
 The file format is a simple chunk based format. It is comprised of a 12-byte file header followed by any number of chunks. The last chunk should be a blank chunk header with the ENDB code.
 
-![FileStructure](FileStructure.svg)
-
-A complete chunk includes a header and a data block. The length of the data block and its type are stored in the header. 
-
-The chunk header is a varying sized structure that is 20 or 24 bytes. The chunk size is dependent on the platform architecture where the file was saved. 
-
-
-## Header
+## File Header
 
 The file header is the first 12 bytes of the file. It is used to determine the file type, the platform it was saved in and the API version.
+| Bytes  | Data Type | Description                                                              |
+| :----: | --------- | :----------------------------------------------------------------------- |
+| [0,6]  | char[7]   | Bytes 0-6 are a unique name to identify the file type.                   |
+|   7    | char      | Identifies the machine architecture that the file was was saved in.      |
+|   8    | char      | Identifies the byte order that the file was was saved in.                |
+| [9,12] | int       | Bytes 9-12 is a three digit integer version code. (EG; 1.5.0 equals 150) |
 
-| Bytes  | Data Type | Description                                                                 |
-| :----: | --------- | :-------------------------------------------------------------------------- |
-| [0,6]  | char[7]   | Are a unique name to identify the file type.                                |
-|   7    | char      | Identifies the machine architecture that the file was was saved in.         |
-|   8    | char      | Identifies the byte order that the file was was saved in.                   |
-| [9,12] | int       | A integer that fills up to 3 ASCII characters; IE, version 1.5.0 equals 150 |
-
-Codes for bytes 7,8
-
+The following ASCII codes are reserved for bytes 7 and 8:
 | ASCII | Hex  | Description                                                    |
 | ----- | ---- | -------------------------------------------------------------- |
 | '-'   | 0x2D | '-' indicates that the file was saved with 64 bit chunks.      |
@@ -34,8 +25,15 @@ Codes for bytes 7,8
 | 'V'   | 0x56 | 'V' indicates that the file was saved on a big endian machine. |
 | 'v'   | 0x76 | 'V' indicates that the file was saved on a big endian machine. |
 
-## Chunks
+For example the .blend header:
 
+```blend
+BLENDER-v279
+```
+
+## Chunk Header
+
+A complete chunk includes a header and a data block. The header is a varying sized structure that is 20 or 24 bytes. The size is dependent on the platform architecture where the file was saved because it stores the heap address of the data block at the time of saving.
 
 ```c++
 struct ChunkNative
@@ -46,11 +44,7 @@ struct ChunkNative
     unsigned int typeid;  // 4 bytes
     unsigned int count;   // 4 bytes
 }; // 20 or 24 bytes total
-```
 
-The address member needs to be large enough to hold the base address of the pointer that this chunk represents.
-
-```c++
 struct Chunk32
 {
     unsigned int code;    // 4 bytes
@@ -59,9 +53,7 @@ struct Chunk32
     unsigned int typeid;  // 4 bytes
     unsigned int count;   // 4 bytes
 }; // 20 bytes total
-```
 
-```c++
 struct Chunk64
 {
     unsigned int      code;    // 4 bytes
@@ -71,6 +63,16 @@ struct Chunk64
     unsigned int      count;   // 4 bytes
 }; // 24 bytes total
 ```
+
+| Member  | Description                                                                          |
+| ------- | :----------------------------------------------------------------------------------- |
+| code    | Is a unique IFF type identifier for identifying how this block should be handled.    |
+| length  | Is the size in bytes of the data block.                                              |
+| address | Is the base address of the chunk data at the time of saving.                         |
+| typeid  | Is the structure type index identifier found in the DNA1 block.                      |
+| count   | Is the number of subsequent blocks being saved in this chunk starting with 'address' |
+
+For example:
 
 ```
 Chunk32
@@ -95,27 +97,18 @@ Count  : 1
 ```
 
 
-
-| Member  | Description                                                                          |
-| ------- | :----------------------------------------------------------------------------------- |
-| code    | Is a unique IFF type identifier for identifying how this block should be read.       |
-| length  | Is the size in bytes of the chunks data.                                             |
-| address | Is the base address of the chunk data at the time of saving.                         |
-| typeid  | Is the structure type index identifier found in the DNA1 block.                      |
-| count   | Is the number of subsequent blocks being saved in this chunk starting with 'address' |
-
 ## Reserved Codes
 
 The following are reserved chunk identifiers that are used to build the API.  
 
-| Member | Description                                                                                                                      |
-| ------ | :------------------------------------------------------------------------------------------------------------------------------- |
-| DNA1   | Chunk identifier that lets the loader separate and load the API.                                                                 |
-| SDNA   | Table header.                                                                                                                    |
-| NAME   | Specifies the member name table.                                                                                                 |
-| TYPE   | Specifies the type name table.                                                                                                   |
-| TLEN   | Specifies the type length table.                                                                                                 |
-| STRC   | Specifies the structure table.                                                                                                   |
-| DATA   | Indicates a block of data that may or may not have a structure associated with it but still needs to be relinked by its address. |
+| CODE | Description                                                                                                                      |
+| ---- | :------------------------------------------------------------------------------------------------------------------------------- |
+| DNA1 | Chunk identifier that lets the loader separate and load the API.                                                                 |
+| SDNA | Table header.                                                                                                                    |
+| NAME | Specifies the member name table.                                                                                                 |
+| TYPE | Specifies the type name table.                                                                                                   |
+| TLEN | Specifies the type length table.                                                                                                 |
+| STRC | Specifies the structure table.                                                                                                   |
+| DATA | Indicates a block of data that may or may not have a structure associated with it but still needs to be relinked by its address. |
 
 See the [TableStructure](TableStructure.md) document for a description of their use.
