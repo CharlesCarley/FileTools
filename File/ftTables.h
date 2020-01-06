@@ -108,7 +108,6 @@ public:
     ftStruct* findStructByType(const FBTuint16& type);
     FBTuint32 findStructIdByType(const FBTuint16& type);
 
-    bool isLinkedToMemory(const FBTuint16& type);
 
     inline FBTuint32 getNumberOfNames() const
     {
@@ -154,7 +153,7 @@ public:
         return m_typeCount;
     }
 
-    inline const FBTtype& getTypeLengthAt(FBTuint32 idx) const
+    const FBTtype& getTypeLengthAt(FBTuint32 idx) const
     {
         if (idx < m_typeCount)
             return m_tlens[idx];

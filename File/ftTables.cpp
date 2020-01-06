@@ -913,6 +913,10 @@ void ftTables::putMember(FBTtype    owningStructureType,
         member->m_recursiveDepth = recursiveDepth;
         member->m_link           = nullptr;
 
+        MemberSearchKey msk = {member->m_searchKey, member};
+        root->m_memberSearch.insert(msk);
+
+
         if (m_names[name].m_ptrCount > 0)
             member->m_sizeInBytes = m_ptrLength * m_names[name].m_arraySize;
         else
@@ -979,16 +983,6 @@ ftStruct* ftTables::findStructByType(const FBTuint16& type)
     }
     return nullptr;
 }
-
-
-bool ftTables::isLinkedToMemory(const FBTuint16& type)
-{
-    if (type < m_structures.size())
-        return m_structures.at(type)->m_link != 0;
-    return false;
-}
-
-
 
 FBTuint32 ftTables::findTypeId(const ftCharHashKey& cp)
 {

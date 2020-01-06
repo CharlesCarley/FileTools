@@ -526,7 +526,7 @@ int ftFile::rebuildStructures()
             while (it.hasMoreElements())
             {
                 ftMember* dstmbr = it.getNext();
-                ftMember* srcmbr = findInFileTable(fstrc, dstmbr);
+                ftMember* srcmbr = fstrc->find(dstmbr);
 
                 if (srcmbr)
                 {
@@ -615,7 +615,7 @@ int ftFile::rebuildStructures()
 
                     if (status == FS_OK)
                     {
-                        if (diagnostics)
+                        if (diagnostFlag)
                         {
                             ftLogger::newline();
                             ftLogger::logF("MISSING %s %s",

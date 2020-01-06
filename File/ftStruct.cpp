@@ -26,9 +26,8 @@
 #include "ftStruct.h"
 #include <stdio.h>
 #include "ftAtomic.h"
-#include "ftTables.h"
 #include "ftMember.h"
-
+#include "ftTables.h"
 
 
 
@@ -70,6 +69,15 @@ ftMember* ftStruct::getMember(Members::SizeType idx)
     if (idx < m_members.size())
         return m_members[idx];
     return nullptr;
+}
+
+
+ftMember* ftStruct::find(ftMember* oth)
+{
+    MemberSearchKey msk = {oth->m_searchKey, 0};
+    if (m_memberSearch.findNonRecursive(msk, msk))
+        return msk.m_member;
+    return 0;
 }
 
 

@@ -26,6 +26,7 @@
 #ifndef _ftStruct_h_
 #define _ftStruct_h_
 
+#include "Utils/skBinarySearchTree.h"
 #include "ftAtomic.h"
 #include "ftTypes.h"
 
@@ -57,10 +58,28 @@ struct ftType
     FBTuint32 m_strcId;
 };
 
+struct MemberSearchKey
+{
+    FBThash   m_hash;
+    ftMember* m_member;
+};
+
+inline bool operator<(const MemberSearchKey& a, const MemberSearchKey& b)
+{
+    return a.m_hash < b.m_hash;
+}
+
+inline bool operator==(const MemberSearchKey& a, const MemberSearchKey& b)
+{
+    return a.m_hash == b.m_hash;
+}
+
+
 class ftStruct
 {
 public:
-    typedef skArray<ftMember*> Members;
+    typedef skArray<ftMember*>                  Members;
+    typedef skBinarySearchTree<MemberSearchKey> MemberLookup;
 
     enum Flag
     {
@@ -79,6 +98,9 @@ public:
     const char* getName() const;
 
     ftMember* getMember(Members::SizeType idx);
+    ftMember* find(ftMember* oth);
+
+
 
     inline Members::SizeType getMemberCount() const
     {
@@ -170,6 +192,7 @@ public:
     }
 
 
+    // Returns the number of dependent structures
     FBTint32 getReferences()
     {
         return m_refs;
@@ -181,6 +204,8 @@ public:
     }
 
 
+    // This is used when sorting the parent table's
+    // structures before decompiling them into code.
     void lock()
     {
         m_lock = 1;
@@ -197,16 +222,17 @@ private:
 
     ftMember* createMember();
 
-    FBTuint16 m_type;
-    FBThash   m_hashedType;
-    void*     m_attached;
-    FBTint32  m_sizeInBytes;
-    FBTint32  m_refs, m_lock;
-    FBTint32  m_strcId;
-    FBTint32  m_flag;
-    Members   m_members;
-    ftTables* m_table;
-    ftStruct* m_link;
+    FBTuint16    m_type;
+    FBThash      m_hashedType;
+    void*        m_attached;
+    FBTint32     m_sizeInBytes;
+    FBTint32     m_refs, m_lock;
+    FBTint32     m_strcId;
+    FBTint32     m_flag;
+    Members      m_members;
+    ftTables*    m_table;
+    ftStruct*    m_link;
+    MemberLookup m_memberSearch;
 };
 
 
