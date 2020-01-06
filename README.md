@@ -10,10 +10,9 @@
 
 ## Introduction
 
-Is a file format that is based off of the blender .blend file. It was originally written in a hurry as part of the [OgreKit project](https://github.com/gamekit-developers/gamekit). This project aims to clean up, and complete that version.
+The FileTools project is a collection of tools that are centered around loading file formats which are based on the Blender .blend file.  The original library was written as part of the [OgreKit](https://github.com/gamekit-developers/gamekit) project. This project aims to clean up and complete that version.
 
-The main idea of the loader is to serialize a C/C++ API that is written to both the file and the program that loads the file.
-The [ftFile](File/ftFile.h) and [ftTables](File/ftTables.h) classes use the API tables to reconstruct the saved file memory into the most current version that is compiled into the program.
+The main idea of the file format is to take a C/C++ API, compile it into a set of tables that can then be used to rebuild structure or class memory which is saved in chunks.
 
 ### File Structure
 

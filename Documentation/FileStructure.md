@@ -5,8 +5,10 @@
    2. [Chunks](#chunks)
    3. [Reserved Codes](#reserved-codes)
 
-The file format is a simple chunk based format. It consists of a 12 byte file header, then N number of chunks.
-A chunk consists of a header an data block. The header is a varying structure that is either 20 or 24 bytes. The size is dependent on the architecture that the file is being saved in. This is so the heap address of the block of memory being saved as the chunk's data block can be stored as a lookup code which is used later during the loading process.
+The file format is a simple chunk based format. It is comprised of a 12-byte file header succeeded by any number of chunks. A complete chunk includes a header and a data block. The length of the data block and its type are stored in the header. 
+
+The chunk header is a varying sized structure that is 20 or 24 bytes. The chunk size is dependent on the platform architecture where the file was saved. 
+
 
 ## Header
 
