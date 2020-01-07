@@ -5,28 +5,27 @@
    2. [Chunk Header](#chunk-header)
    3. [Reserved Codes](#reserved-codes)
 
-
 The file format is a simple chunk based format.  It consists of a 12-byte file header followed by any number of chunks. The last header should be an empty chunk with the ENDB code.
 
 ## File Header
 
 The file header determines the file type, the architecture of the saving platform, and the API version.
 
-| Bytes  | Data Type | Description                                                               |
-| :----: | --------- | :------------------------------------------------------------------------ |
-| [0,6]  | char[7]   | Bytes 0-6 are a unique name to identify the file type.                    |
-|   7    | char      | Identifies the machine architecture that the file was was saved in.       |
-|   8    | char      | Identifies the byte order that the file was was saved in.                 |
-| [9,11] | int       | Bytes 9-11 are a three digit integer version code. (EG; 1.5.0 equals 150) |
+| Byte(s) | Data Type | Description                                            |
+| :-----: | --------- | :----------------------------------------------------- |
+|  [0,6]  | char[7]   | Identify the file type.                                |
+|    7    | char      | Is used to determine whether to load 32/64 bit chunks. |
+|    8    | char      | Identifies the byte-order of the file.                 |
+| [9,11]  | int       | Is a three-digit version code. (EG; 1.5.0 equals 150)  |
 
 The following ASCII codes are reserved for bytes 7 and 8:
 
 | ASCII | Hex  | Description                                                       |
 | ----- | ---- | ----------------------------------------------------------------- |
-| '-'   | 0x2D | '-' indicates that the file was saved with 64 bit chunks.         |
-| '_'   | 0x5F | '_' indicates that the file was saved with 32 bit chunks.         |
-| 'V'   | 0x56 | 'V' indicates that the file was saved on a big endian machine.    |
-| 'v'   | 0x76 | 'V' indicates that the file was saved on a little endian machine. |
+| '-'   | 0x2D | '-' indicates that the file was saved with 64-bit chunks.         |
+| '_'   | 0x5F | '_' indicates that the file was saved with 32-bit chunks.         |
+| 'V'   | 0x56 | 'V' indicates that the file was saved on a big-endian machine.    |
+| 'v'   | 0x76 | 'v' indicates that the file was saved on a little-endian machine. |
 
 For example the .blend header:
 
@@ -36,44 +35,44 @@ BLENDER-v279
 
 ## Chunk Header
 
-The header is a varying sized structure that is 20 or 24 bytes. The size is dependent on the platform architecture at the time of saving because it stores the heap address of its data block at the time of saving.
+The chunk header is a varying sized structure that is 20 or 24 bytes. The size is dependent on the platform architecture at the time of saving because it stores the heap address of its data block.
 
 ```c++
 struct ChunkNative
 {
-    unsigned int code;    // 4 bytes
-    unsigned int length;  // 4 bytes
-    size_t       address; // 4|8 bytes
-    unsigned int typeid;  // 4 bytes
-    unsigned int count;   // 4 bytes
+    unsigned int code;      // 4 bytes
+    unsigned int length;    // 4 bytes
+    size_t       address;   // 4|8 bytes
+    unsigned int structId;  // 4 bytes
+    unsigned int count;     // 4 bytes
 }; // 20 or 24 bytes total
 
 struct Chunk32
 {
-    unsigned int code;    // 4 bytes
-    unsigned int length;  // 4 bytes
-    unsigned int address; // 4 bytes
-    unsigned int typeid;  // 4 bytes
-    unsigned int count;   // 4 bytes
+    unsigned int code;      // 4 bytes
+    unsigned int length;    // 4 bytes
+    unsigned int address;   // 4 bytes
+    unsigned int structId;  // 4 bytes
+    unsigned int count;     // 4 bytes
 }; // 20 bytes total
 
 struct Chunk64
 {
-    unsigned int      code;    // 4 bytes
-    unsigned int      length;  // 4 bytes
-    unsigned int64_t  address; // 8 bytes
-    unsigned int      typeid;  // 4 bytes
-    unsigned int      count;   // 4 bytes
+    unsigned int      code;      // 4 bytes
+    unsigned int      length;    // 4 bytes
+    unsigned int64_t  address;   // 8 bytes
+    unsigned int      structId;  // 4 bytes
+    unsigned int      count;     // 4 bytes
 }; // 24 bytes total
 ```
 
-| Member  | Description                                                                          |
-| ------- | :----------------------------------------------------------------------------------- |
-| code    | Is a unique IFF type identifier for identifying how this block should be handled.    |
-| length  | Is the size in bytes of the data block.                                              |
-| address | Is the base address of the chunk data at the time of saving.                         |
-| typeid  | Is the structure type index identifier found in the DNA1->STRC block.                |
-| count   | Is the number of subsequent blocks being saved in this chunk starting with 'address' |
+| Member   | Description                                                                          |
+| -------- | :----------------------------------------------------------------------------------- |
+| code     | Is a unique IFF type identifier for identifying how this block should be handled.    |
+| length   | Is the size in bytes of the data block.                                              |
+| address  | Is the base address of the chunk data at the time of saving.                         |
+| structId | Is the structure type index identifier found in the DNA1->STRC block.                |
+| count    | Is the number of subsequent blocks being saved in this chunk starting with 'address' |
 
 A whole chunk includes a header and block of memory directly following the header. The block of memory should be the same length as described in the header.
 
