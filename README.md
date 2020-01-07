@@ -95,8 +95,8 @@ The following is an example of a 32-bit chunk:
 Chunk
 Code   : OLIB
 Len    : 152
-Old    : 0x15170d0
-TypeId : 0
+Addr   : 0x15170d0
+StrcId : 0
 Count  : 1
 -------------------------------------------------------------------------------
 00000000   43 75 62 65 00 00 00 00  00 00 00 00 00 00 00 00  |Cube............|
