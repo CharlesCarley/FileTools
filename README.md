@@ -16,8 +16,10 @@ The FileTools project is a small collection of tools that are centered around lo
       3. [Type size table(TLEN)](#type-size-tabletlen)
       4. [Structure table(STRC)](#structure-tablestrc)
       5. [Building the tables](#building-the-tables)
-         1. [Output](#output)
-         2. [CMAKE](#cmake)
+         1. [Scanner and Compiler](#scanner-and-compiler)
+         2. [Usage](#usage)
+         3. [Output](#output)
+         4. [CMake Utility](#cmake-utility)
       6. [Reversing a file's tables](#reversing-a-files-tables)
 
 ## File Structure
@@ -161,48 +163,55 @@ struct vec3f
 
 ...
 
-
 ### Building the tables
 
-The TableCompiler program is a build tool to convert structures and classes into the tables.
-It reads from a list of input files that are provided via the command line.
+The TableCompiler program compiles structures and classes into the tables. It reads the files via the command line.
 
+#### Scanner and Compiler
+
+The goal of the scanner is to extract only member variables from classes and structures. It will parse namespaces but only in as much to store it's name. Every time the scanner reads an 'n', 'c', or an 's', it will test for a namespace class or struct keyword. If any of the keywords match it will attempt to store the keyword identifier. If it matches a struct or a class keyword, the scanner will change states and attempt to extract and store member variables. The scanner will not parse c++ outside the scope of member variable declaration, and does not calculate the size of an object with base types. If any API specific methods are needed, the scanner tests for the comment keyword:
+```txt 
+// @makeft_ignore
+```
+If the scanner finds a match it will switch state to ignore everything  to the end of the file or until the next occurrence of the keyword. One thing to note is that any member variable declarations must be visible to the scanner in order for it to calculate the correct size of the class or structure. Members can be public or private from the perspective of C++, but no member variables should be declared in an ignore block.
+
+
+#### Usage
 
 ```txt
-Uasge: TableCompiler.exe tablename ofilename ifile[0] ... ifile[n]
+Uasge: TableCompiler.exe <tablename> <ofilename> <ifile[0]> ... <ifile[n]>
 ```
 
-|  Argument   |                    Description                    |
-| :---------: | :-----------------------------------------------: |
-|  tablename  |     A unique name for the output table array.     |
-|  ofilename  | Output file and path name for the generated code. |
-| ifile[0..n] |      Input API declaration file(s) to parse.      |
+| Argument    | Description                                       |
+| :---------- | :------------------------------------------------ |
+| tablename   | A unique name for the output table array.         |
+| ofilename   | Output file and path name for the generated code. |
+| ifile[0..n] | Input API declaration file(s) to parse.           |
 
 #### Output
 
-The output should included into to the library that contains the rest of the custom file format implementation.
+The output should be compiled back into into to the library that contains the rest of the file implementation.
 
 ```c
 unsigned char DocsExampleTables[]={
-0x53,0x44,0x4E,0x41,0x4E,0x41,0x4D,0x45,0x03,0x00,0x00,0x00,
-0x78,0x00,0x79,0x00,0x7A,0x00,0x62,0x79,0x54,0x59,0x50,0x45,
-0x0B,0x00,0x00,0x00,0x63,0x68,0x61,0x72,0x00,0x75,0x63,0x68,
-0x61,0x72,0x00,0x73,0x68,0x6F,0x72,0x74,0x00,0x75,0x73,0x68,
-0x6F,0x72,0x74,0x00,0x69,0x6E,0x74,0x00,0x6C,0x6F,0x6E,0x67,
-0x00,0x75,0x6C,0x6F,0x6E,0x67,0x00,0x66,0x6C,0x6F,0x61,0x74,
-0x00,0x64,0x6F,0x75,0x62,0x6C,0x65,0x00,0x76,0x6F,0x69,0x64,
-0x00,0x76,0x65,0x63,0x33,0x66,0x00,0x62,0x54,0x4C,0x45,0x4E,
-0x01,0x00,0x01,0x00,0x02,0x00,0x02,0x00,0x04,0x00,0x04,0x00,
-0x04,0x00,0x04,0x00,0x08,0x00,0x00,0x00,0x0C,0x00,0x40,0x40,
-0x53,0x54,0x52,0x43,0x01,0x00,0x00,0x00,0x0A,0x00,0x03,0x00,
-0x07,0x00,0x00,0x00,0x07,0x00,0x01,0x00,0x07,0x00,0x02,0x00,
+    0x53,0x44,0x4E,0x41,0x4E,0x41,0x4D,0x45,0x03,0x00,0x00,0x00,
+    0x78,0x00,0x79,0x00,0x7A,0x00,0x62,0x79,0x54,0x59,0x50,0x45,
+    0x0B,0x00,0x00,0x00,0x63,0x68,0x61,0x72,0x00,0x75,0x63,0x68,
+    0x61,0x72,0x00,0x73,0x68,0x6F,0x72,0x74,0x00,0x75,0x73,0x68,
+    0x6F,0x72,0x74,0x00,0x69,0x6E,0x74,0x00,0x6C,0x6F,0x6E,0x67,
+    0x00,0x75,0x6C,0x6F,0x6E,0x67,0x00,0x66,0x6C,0x6F,0x61,0x74,
+    0x00,0x64,0x6F,0x75,0x62,0x6C,0x65,0x00,0x76,0x6F,0x69,0x64,
+    0x00,0x76,0x65,0x63,0x33,0x66,0x00,0x62,0x54,0x4C,0x45,0x4E,
+    0x01,0x00,0x01,0x00,0x02,0x00,0x02,0x00,0x04,0x00,0x04,0x00,
+    0x04,0x00,0x04,0x00,0x08,0x00,0x00,0x00,0x0C,0x00,0x40,0x40,
+    0x53,0x54,0x52,0x43,0x01,0x00,0x00,0x00,0x0A,0x00,0x03,0x00,
+    0x07,0x00,0x00,0x00,0x07,0x00,0x01,0x00,0x07,0x00,0x02,0x00,
 };
 int DocsExampleLen=sizeof(DocsExampleTables);
-
-
 ```
 
-The pure virtual methods in [ftFile](https://github.com/snailrose/FileTools/blob/master/File/ftFile.h) provide a way for the loader to access the compiler output.
+
+The pure virtual methods in [ftFile](https://github.com/CharlesCarley/FileTools/blob/master/File/ftFile.h) provide a way for the loader to access the compiler output.
 
 ```c
 virtual void*       getTables(void) = 0;
@@ -223,9 +232,9 @@ FBTsize DocsExample::getTableSize(void)
 }
 ```
 
-#### CMAKE
-The [TableCompiler](https://github.com/snailrose/FileTools/blob/master/CMake/Readme.md) CMAKE utility can be used to attach table generation to a build. This macro outputs the include file to the current build directory then adds the build directory to the list of include paths.
+#### CMake Utility
 
+The [TableCompiler](https://github.com/snailrose/FileTools/blob/master/CMake/Readme.md) CMake utility can be used to attach table generation to a build. This macro outputs the include file to the current build directory then adds the build directory to the list of include paths.
 
 
 ### Reversing a file's tables
