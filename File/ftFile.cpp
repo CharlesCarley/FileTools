@@ -377,73 +377,100 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
             bin->m_fblock = block;
             ftStruct *fstrc, *mstrc = nullptr;
 
-            fstrc = m_file->findStructByType(bin->m_chunk.m_structId);
-            if (fstrc)
-                mstrc = findInMemoryTable(fstrc);
 
-            if (fstrc && mstrc)
+            if (bin->m_chunk.m_code == ftIdNames::DATA && bin->m_chunk.m_structId <= m_file->getFirstStructType())
             {
-                bin->m_fstrc     = fstrc;
-                bin->m_mstrc     = mstrc;
-                bin->m_newTypeId = bin->m_mstrc->getStructIndex();
-
-                if (!skip(fstrc->getHashedType()))
+                const FBTuint32 totSize = bin->m_chunk.m_len;
+                if (totSize > 0 && totSize != SK_NPOS32)
                 {
-                    // Change the length of the file structure's memory
-                    // to account for the memory structures size.
-                    const FBTuint32 totSize = (chunk.m_nr * mstrc->getSizeInBytes());
-                    if (totSize > 0 && totSize != SK_NPOS32)
-                    {
-                        bin->m_chunk.m_len = totSize;
-                        bin->m_mblock      = ::malloc(totSize);
-                        if (!bin->m_mblock)
-                            status = FS_BAD_ALLOC;
-                        else
-                            ::memset(bin->m_mblock, 0, totSize);
-
-                        if (status == FS_OK)
-                        {
-                            insertChunk(phk, bin, status);
-
-                            if (m_fileFlags & LF_READ_CHUNKS)
-                                ftLogger::logReadChunk(chunk, bin->m_fblock, chunk.m_len);
-                        }
-                    }
-                    else
+                    bin->m_chunk.m_len = totSize;
+                    bin->m_mblock      = ::malloc(totSize);
+                    if (!bin->m_mblock)
                         status = FS_BAD_ALLOC;
+                    else
+                        ::memcpy(bin->m_mblock, bin->m_fblock, totSize);
+
+                    if (status == FS_OK)
+                    {
+                        insertChunk(phk, bin, status);
+
+                        if (m_fileFlags & LF_READ_CHUNKS)
+                            ftLogger::logReadChunk(chunk, bin->m_fblock, chunk.m_len);
+                    }
                 }
                 else
-                {
-                    if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_DUMP_SKIP)
-                        ftLogger::logSkipChunk(bin->m_chunk, fstrc, bin->m_fblock, bin->m_chunk.m_len);
-                    freeChunk(bin);
-                }
+                    status = FS_BAD_ALLOC;
             }
             else
             {
-                if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_UNRESOLVED)
-                {
-                    ftLogger::seperator();
-                    ftLogger::logF("Failed to resolve both file and memory declarations for chunk:");
-                    ftLogger::log(bin->m_chunk);
-                    ftLogger::logF("File   : %s", fstrc ? "Valid" : "Invalid");
-                    ftLogger::logF("Memory : %s", mstrc ? "Valid" : "Invalid");
+                fstrc = m_file->findStructByType(bin->m_chunk.m_structId);
+                if (fstrc)
+                    mstrc = findInMemoryTable(fstrc);
 
-                    if (fstrc)
+                if (fstrc && mstrc)
+                {
+                    bin->m_fstrc     = fstrc;
+                    bin->m_mstrc     = mstrc;
+                    bin->m_newTypeId = bin->m_mstrc->getStructIndex();
+
+                    if (!skip(fstrc->getHashedType()))
                     {
-                        ftLogger::log(fstrc);
-                        ftLogger::seperator();
-                        ftLogger::log(bin->m_fblock, fstrc->getSizeInBytes());
+                        // Change the length of the file structure's memory
+                        // to account for the memory structures size.
+                        const FBTuint32 totSize = (chunk.m_nr * mstrc->getSizeInBytes());
+                        if (totSize > 0 && totSize != SK_NPOS32)
+                        {
+                            bin->m_chunk.m_len = totSize;
+                            bin->m_mblock      = ::malloc(totSize);
+                            if (!bin->m_mblock)
+                                status = FS_BAD_ALLOC;
+                            else
+                                ::memset(bin->m_mblock, 0, totSize);
+
+                            if (status == FS_OK)
+                            {
+                                insertChunk(phk, bin, status);
+
+                                if (m_fileFlags & LF_READ_CHUNKS)
+                                    ftLogger::logReadChunk(chunk, bin->m_fblock, chunk.m_len);
+                            }
+                        }
+                        else
+                            status = FS_BAD_ALLOC;
                     }
-                    if (mstrc)
+                    else
                     {
-                        ftLogger::log(mstrc);
-                        ftLogger::seperator();
-                        ftLogger::log(bin->m_mblock, mstrc->getSizeInBytes());
+                        if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_DUMP_SKIP)
+                            ftLogger::logSkipChunk(bin->m_chunk, fstrc, bin->m_fblock, bin->m_chunk.m_len);
+                        freeChunk(bin);
                     }
-                    ftLogger::newline(2);
                 }
-                freeChunk(bin);
+                else
+                {
+                    if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_UNRESOLVED)
+                    {
+                        ftLogger::seperator();
+                        ftLogger::logF("Failed to resolve both file and memory declarations for chunk:");
+                        ftLogger::log(bin->m_chunk);
+                        ftLogger::logF("File   : %s", fstrc ? "Valid" : "Invalid");
+                        ftLogger::logF("Memory : %s", mstrc ? "Valid" : "Invalid");
+
+                        if (fstrc)
+                        {
+                            ftLogger::log(fstrc);
+                            ftLogger::seperator();
+                            ftLogger::log(bin->m_fblock, fstrc->getSizeInBytes());
+                        }
+                        if (mstrc)
+                        {
+                            ftLogger::log(mstrc);
+                            ftLogger::seperator();
+                            ftLogger::log(bin->m_mblock, mstrc->getSizeInBytes());
+                        }
+                        ftLogger::newline(2);
+                    }
+                    freeChunk(bin);
+                }
             }
         }
     }
