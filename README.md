@@ -1,6 +1,6 @@
 # FileTools
 
-The FileTools project is a small collection of tools that are centered around loading file formats which are similar in structure to the [Blender](https://blender.org) .blend file. The main idea of the file format is to take a C or C++ API and compile it into a set of tables that can be used to rebuild the API on load.
+The FileTools project is a small collection of tools that are centered around loading file formats which are similar in structure to the [Blender](https://blender.org) .blend file. The original loader was written as part of the [OgreKit](https://github.com/gamekit-developers/gamekit/tree/master/Tools/FileTools) project. The main idea of the file format is to take a C or C++ API and compile it into a set of tables that can be used to rebuild the API on load.
 
 ## Contents
 
@@ -237,7 +237,6 @@ FBTsize DocsExample::getTableSize(void)
 
 The [TableCompiler](https://github.com/CharlesCarley/FileTools/blob/master/CMake/Readme.md) CMake utility can be used to attach table generation to a build. This macro outputs the include file to the current build directory then adds the build directory to the list of include paths.
 
-
 ### Reversing a file's tables
 
-The TableDecompiler tool is for converting a file's tables back into usable C++
+The TableDecompiler tool is for converting a file's tables back into usable C++. This program will scan the supplied input file for a DNA1 chunk and attempt to read the tables back. Then it will output a single header file that contains the sorted structure definitions.
