@@ -26,32 +26,25 @@ The FileTools project is a small collection of tools that are centered around lo
 
 The file structure is a simple chunk based format. It consists of a 12-byte file header followed by n-number of chunks then closed with an blank chunk header. The closing header should contain all zeros except for the code which should be set to the ENDB identifier.
 
-
 ### File Header
 
 The file header determines the file type, the architecture of the saving platform, and the API version.
 
 | Byte(s) | Data Type | Description                                                      |
 | :-----: | --------- | :--------------------------------------------------------------- |
-|  [0,6]  | char[7]   | Identify's the type of file.                                     |
+|  [0,6]  | char[7]   | Used to determine the type of file.                              |
 |    7    | char      | Byte 7 is used to determine whether to load 32 or 64 bit chunks. |
 |    8    | char      | Byte 8 identifies the byte-order of the file.                    |
 | [9,11]  | int       | Is a three-digit version code. (EG: 1.5.0 equals 150)            |
 
 The following ASCII codes are reserved for bytes 7 and 8:
 
-| ASCII | Hex  | Description                                                       |
-| ----- | ---- | ----------------------------------------------------------------- |
-| '-'   | 0x2D | '-' indicates that the file was saved with 64-bit chunks.         |
-| '_'   | 0x5F | '_' indicates that the file was saved with 32-bit chunks.         |
-| 'V'   | 0x56 | 'V' indicates that the file was saved on a big-endian machine.    |
-| 'v'   | 0x76 | 'v' indicates that the file was saved on a little-endian machine. |
-
-For example the .blend header:
-
-```blend
-BLENDER-v279
-```
+| ASCII | Hex  | Description                                                   |
+| ----- | ---- | ------------------------------------------------------------- |
+| '-'   | 0x2D | Indicates that the file was saved with 64-bit chunks.         |
+| '_'   | 0x5F | Indicates that the file was saved with 32-bit chunks.         |
+| 'V'   | 0x56 | Indicates that the file was saved on a big-endian machine.    |
+| 'v'   | 0x76 | Indicates that the file was saved on a little-endian machine. |
 
 ### Chunk Header
 
@@ -86,13 +79,13 @@ struct Chunk64
 }; // 24 bytes total
 ```
 
-| Member   | Description                                                                          |
-| -------- | :----------------------------------------------------------------------------------- |
-| code     | Is a unique identifier for determining how this block should be handled.             |
-| length   | Is the size in bytes of the data block.                                              |
-| address  | Is the heap address of the data block at the time of saving.                         |
-| structId | Is the type index found in the SDNA->TYPE table.                                     |
-| count    | Is the number of subsequent blocks being saved in this chunk starting with 'address' |
+| Member   | Description                                                              |
+| -------- | :----------------------------------------------------------------------- |
+| code     | Is a unique identifier for determining how this block should be handled. |
+| length   | Is the size in bytes of the data block.                                  |
+| address  | Is the heap address of the data block at the time of saving.             |
+| structId | Is the type index found in the SDNA->TYPE table.                         |
+| count    | Is the number of subsequent blocks being saved in this chunk.            |
 
 A complete chunk includes a header and block of memory directly following the header. The block of memory should be the same length as described in the header.
 
@@ -121,12 +114,12 @@ Count  : 1
 
 ### Reserved Codes
 
-The following are reserved chunk identifiers that the loader internally uses when reading a file.  
+The following are reserved codes that the loader internally uses when reading a file.  
 
 | CODE | Description                                                                                                                      |
 | ---- | :------------------------------------------------------------------------------------------------------------------------------- |
-| DNA1 | Lets the loader separate and load the API tables.                                                                                |
-| SDNA | Table header. Unused outside of testing for the existence of the tables.                                                         |
+| DNA1 | Lets the loader know that it needs to load the API tables.                                                                       |
+| SDNA | API  Table header. This is unused outside of testing for the existence of the tables.                                            |
 | NAME | Indicates that a NAME table follows.                                                                                             |
 | TYPE | Indicates that a TYPE table follows..                                                                                            |
 | TLEN | Indicates that a TLEN table follows.                                                                                             |
@@ -136,15 +129,13 @@ The following are reserved chunk identifiers that the loader internally uses whe
 
 ## Table structure
 
-The tables consist of the type names,  member names, type sizes, and the structures that contain the types.
-
 ### Type table(TYPE)
 
-The TYPE table starts with a 4-byte IFF code. Directly following the type code is a 4-byte integer holding the number of strings in the type table. The table itself is a NULL-terminated string array. Built-in or atomic types are declared first, which is followed by user-defined class/struct names.
+This table starts with a 4-byte TYPE code. Directly following the code is a 4-byte integer containing the number of strings in the type table. The table itself is a NULL-terminated string array. Built-in or atomic types are declared first, which is then followed by user-defined class/struct names.
 
 ### Name table(NAME)
 
-The name table is identical in structure as the type table. Its string array contains the member names of all user-defined types. Any extra information about a specific member other than its atomic type comes from the name. Which would be, for instance, determining whether or not it is a pointer, a pointer to a pointer, an array or multidimensional array, etc.. By default, FileTools supports only three-dimensional arrays. The preprocessor definition FT_ARR_DIM_MAX 3, may be changed to support larger n-dimensional arrays if needed.
+The name table is identical in structure as the type table. Its string array contains the member names of all user-defined types. Any extra information about a specific member other than its atomic type comes from the name. Which would be, for instance, determining whether or not it is a pointer, a pointer to a pointer, an array or multidimensional array, etc.. By default, FileTools supports only three-dimensional arrays. The preprocessor definition FT_ARR_DIM_MAX 3, may be changed to support larger n-dimensional arrays.
 
 ### Type size table(TLEN)
 
@@ -163,19 +154,20 @@ struct vec3f
 
 ### Structure table(STRC)
 
-The STRC table is an array of 2-byte integers that hold the indices of the other tables. The table starts with the 4-byte identifier STRC, then another 4-byte integer that contains the number of structure definitions in the table. Then each structure in the table is stored by a 2-byte integer that holds the type table index and another 2-byte integer that hold the total number of members in the structure. Then from zero to the total number of members, a pair of 2-byte integers hold the members type index and the member's name index.
-
+The STRC table is an array of 2-byte integers that hold the indices of the other tables. The table starts with the 4-byte identifier STRC, then another 4-byte integer that contains the number of structure definitions in the table. Then each structure in the table is stored by a 2-byte integer that holds the type table index and another 2-byte integer that hold the total number of members in the structure. Then from zero to the total number of members, a pair of 2-byte integers hold the member's type index and the member's name index.
 
 ### Building the tables
 
-The TableCompiler program compiles structures and classes into the tables. It reads the files via the command line.
+The TableCompiler program compiles everything into the tables. It reads the files via the command line.
 
 #### Scanner
 
 The goal of the scanner is to extract only member variables from classes and structures. It does parse namespaces but only in as much to store its name. Every time the scanner reads an 'n', 'c', or an 's', it tests for a namespace class or struct keyword. If any of the keywords match, it attempts to store the keyword identifier. If it matches a struct or a class keyword, the scanner changes its state and attempts to extract and store member variables. The scanner will not parse C++ outside the scope of member variable declaration and does not calculate the size of an object with base types. If any API specific methods are needed, the scanner tests for the comment keyword:
-```txt 
+
+```txt
 // @makeft_ignore
 ```
+
 If the scanner finds a match, it switches its state to ignore everything up to the end of the file or until the next reoccurrence of the keyword. One thing to note is that any member variable declarations must be visible to the scanner for it to calculate the correct size of the class or structure. Members can be public or private from the perspective of C++, but no member variables should be inside an ignore block.
 
 #### Usage
@@ -192,7 +184,7 @@ Uasge: TableCompiler.exe <tablename> <ofilename> <ifile[0]> ... <ifile[n]>
 
 #### Output
 
-The output should be compiled back into into to the library that contains the rest of the file implementation.
+The output should be included in the library that contains the rest of the file implementation.
 
 ```c
 const unsigned char DocsExampleTables[]={
@@ -235,7 +227,7 @@ FBTsize DocsExample::getTableSize(void)
 
 #### CMake Utility
 
-The [TableCompiler](https://github.com/CharlesCarley/FileTools/blob/master/CMake/Readme.md) CMake utility can be used to attach table generation to a build. This macro outputs the include file to the current build directory then adds the build directory to the list of include paths.
+The [TableCompiler](https://github.com/CharlesCarley/FileTools/blob/master/CMake/Readme.md) CMake utility can be used to attach table generation to a build. This macro will output the needed include file to the current build directory and then adds the build directory to the list of include paths. 
 
 ### Reversing a file's tables
 
