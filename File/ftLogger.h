@@ -68,6 +68,10 @@ namespace ftLogger
                              const FBTsize &len);
 
 
+    extern void logUnresolvedStructure(ftMemoryChunk *bin, ftStruct *fstrc, ftStruct *mstrc);
+
+    extern void logInvalidInsert(ftMemoryChunk *bin);
+
 }  // namespace ftLogger
 
 

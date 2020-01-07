@@ -418,3 +418,38 @@ void ftLogger::logSkipChunk(const ftChunk &chunk,
     log(block, len);
     seperator();
 }
+
+
+void ftLogger::logUnresolvedStructure(ftMemoryChunk *bin, ftStruct *fstrc, ftStruct *mstrc)
+{
+    seperator();
+    logF("Failed to resolve both file and memory declarations for chunk:");
+    log(bin->m_chunk);
+    logF("File   : %s", fstrc ? "Valid" : "Invalid");
+    logF("Memory : %s", mstrc ? "Valid" : "Invalid");
+
+    if (fstrc)
+    {
+        log(fstrc);
+        seperator();
+        log(bin->m_fblock, fstrc->getSizeInBytes());
+    }
+    if (mstrc)
+    {
+        log(mstrc);
+        seperator();
+        log(bin->m_mblock, mstrc->getSizeInBytes());
+    }
+    newline(2);
+}
+
+
+
+void ftLogger::logInvalidInsert(ftMemoryChunk *bin)
+{
+    seperator();
+    logF("Failed to insert chunk");
+    log(bin->m_chunk);
+    seperator();
+    log(bin->m_fblock, bin->m_chunk.m_len);
+}

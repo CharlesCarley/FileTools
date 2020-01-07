@@ -364,7 +364,6 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         ::memset(bin, 0, sizeof(ftMemoryChunk));
         ::memcpy(&bin->m_chunk, &chunk, sizeof(ftChunk));
 
-
         // This is saved here to recalculate the total
         // number of elements in a pointer array.
         bin->m_pblockLen = chunk.m_len;
@@ -377,29 +376,12 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
             bin->m_fblock = block;
             ftStruct *fstrc, *mstrc = nullptr;
 
-
             if (bin->m_chunk.m_code == ftIdNames::DATA && bin->m_chunk.m_structId <= m_file->getFirstStructType())
             {
-                const FBTuint32 totSize = bin->m_chunk.m_len;
-                if (totSize > 0 && totSize != SK_NPOS32)
-                {
-                    bin->m_chunk.m_len = totSize;
-                    bin->m_mblock      = ::malloc(totSize);
-                    if (!bin->m_mblock)
-                        status = FS_BAD_ALLOC;
-                    else
-                        ::memcpy(bin->m_mblock, bin->m_fblock, totSize);
-
-                    if (status == FS_OK)
-                    {
-                        insertChunk(phk, bin, status);
-
-                        if (m_fileFlags & LF_READ_CHUNKS)
-                            ftLogger::logReadChunk(chunk, bin->m_fblock, chunk.m_len);
-                    }
-                }
-                else
-                    status = FS_BAD_ALLOC;
+                status = allocateMBlock(phk,
+                                        bin,
+                                        (FBTsize)bin->m_chunk.m_nr * (FBTsize)bin->m_chunk.m_len,
+                                        false);
             }
             else
             {
@@ -415,28 +397,10 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 
                     if (!skip(fstrc->getHashedType()))
                     {
-                        // Change the length of the file structure's memory
-                        // to account for the memory structures size.
-                        const FBTuint32 totSize = (chunk.m_nr * mstrc->getSizeInBytes());
-                        if (totSize > 0 && totSize != SK_NPOS32)
-                        {
-                            bin->m_chunk.m_len = totSize;
-                            bin->m_mblock      = ::malloc(totSize);
-                            if (!bin->m_mblock)
-                                status = FS_BAD_ALLOC;
-                            else
-                                ::memset(bin->m_mblock, 0, totSize);
-
-                            if (status == FS_OK)
-                            {
-                                insertChunk(phk, bin, status);
-
-                                if (m_fileFlags & LF_READ_CHUNKS)
-                                    ftLogger::logReadChunk(chunk, bin->m_fblock, chunk.m_len);
-                            }
-                        }
-                        else
-                            status = FS_BAD_ALLOC;
+                        status = allocateMBlock(phk,
+                                                bin,
+                                                (FBTsize)bin->m_chunk.m_nr * (FBTsize)bin->m_mstrc->getSizeInBytes(),
+                                                true);
                     }
                     else
                     {
@@ -448,27 +412,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                 else
                 {
                     if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_UNRESOLVED)
-                    {
-                        ftLogger::seperator();
-                        ftLogger::logF("Failed to resolve both file and memory declarations for chunk:");
-                        ftLogger::log(bin->m_chunk);
-                        ftLogger::logF("File   : %s", fstrc ? "Valid" : "Invalid");
-                        ftLogger::logF("Memory : %s", mstrc ? "Valid" : "Invalid");
-
-                        if (fstrc)
-                        {
-                            ftLogger::log(fstrc);
-                            ftLogger::seperator();
-                            ftLogger::log(bin->m_fblock, fstrc->getSizeInBytes());
-                        }
-                        if (mstrc)
-                        {
-                            ftLogger::log(mstrc);
-                            ftLogger::seperator();
-                            ftLogger::log(bin->m_mblock, mstrc->getSizeInBytes());
-                        }
-                        ftLogger::newline(2);
-                    }
+                        ftLogger::logUnresolvedStructure(bin, fstrc, mstrc);
                     freeChunk(bin);
                 }
             }
@@ -478,23 +422,59 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         status = FS_BAD_ALLOC;
 }
 
-void ftFile::insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, int& status)
+
+int ftFile::allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, const FBTsize& len, bool zero)
+{
+    int status = FS_OK;
+
+
+    // Change the length of the file structure's memory
+    // to account for the memory structures size.
+    const FBTuint32 totSize = len;
+    if (totSize > 0 && totSize != SK_NPOS32)
+    {
+        bin->m_chunk.m_len = totSize;
+        bin->m_mblock      = ::malloc(totSize);
+        if (!bin->m_mblock)
+            status = FS_BAD_ALLOC;
+        else
+        {
+            if (zero)
+                ::memset(bin->m_mblock, 0, totSize);
+            else
+            {
+                // This is for the case when the chunk.code is saved
+                // as DATA, and the structure ID is less than the first
+                // user-defined type. I.E. it's an atomic pointer type so it's
+                // safe to just copy this block
+                ::memcpy(bin->m_mblock, bin->m_fblock, totSize);
+            }
+        }
+
+        if (status == FS_OK)
+        {
+            insertChunk(phk, bin, zero, status);
+
+            if (m_fileFlags & LF_READ_CHUNKS)
+                ftLogger::logReadChunk(bin->m_chunk, bin->m_fblock, bin->m_chunk.m_len);
+        }
+    }
+    else
+        status = FS_BAD_ALLOC;
+    return status;
+}
+
+
+void ftFile::insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, bool addToRebuildList, int& status)
 {
     if (!m_map.insert(phk, chunk))
     {
         if (m_fileFlags != LF_NONE)
-        {
-            ftLogger::seperator();
-            ftLogger::logF("Failed to insert chunk");
-            ftLogger::log(chunk->m_chunk);
-            ftLogger::seperator();
-            ftLogger::log(chunk->m_fblock, chunk->m_chunk.m_len);
-        }
-
+            ftLogger::logInvalidInsert(chunk);
         freeChunk(chunk);
         status = FS_INV_INSERT;
     }
-    else
+    else if (addToRebuildList)
     {
         m_chunks.push_back(chunk);
     }
@@ -1194,7 +1174,7 @@ int ftFile::save(const char* path, const int mode)
         ce = FM_LITTLE_ENDIAN;
 
     ftHeader header;
-    char     version[33];
+    char     version[4];
     sprintf(version, "%i", m_memoryVersion);
     header.resize(12);
 

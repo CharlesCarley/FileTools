@@ -175,16 +175,18 @@ private:
                         void*     writeData);
 
     void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
-    void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, int& status);
+    void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, bool addToRebuildList, int& status);
     void freeChunk(ftMemoryChunk*& chunk);
 
     int runTableChecks(ftTables* tbltochk);
 
     void clearStorage(void);
+
     int  parseHeader(skStream* stream);
     int  parseStreamImpl(skStream* stream);
     int  preScan(skStream* stream);
     int  rebuildStructures();
+    int  allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, const FBTsize& len, bool zero);
 
     void castMember(
         ftMember* dst,
