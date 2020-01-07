@@ -3,15 +3,22 @@
 1. [Table structure](#table-structure)
    1. [Type table](#type-table)
    2. [Name table](#name-table)
-   3. [Structure table](#structure-table)
-   4. [Name table](#name-table-1)
-   5. [Structure table](#structure-table-1)
-   6. [Building the memory tables](#building-the-memory-tables)
-   7. [Reversing the file tables](#reversing-the-file-tables)
+   3. [Type size table](#type-size-table)
+   4. [Structure table](#structure-table)
+   5. [Name table](#name-table-1)
+   6. [Structure table](#structure-table-1)
+   7. [Building the memory tables](#building-the-memory-tables)
+   8. [Reversing the file tables](#reversing-the-file-tables)
 
-The compiled lookup tables contain the type names, type sizes, and the structures that contain the types.
+The tables consist of the type names,  member names, type sizes, and the structures that contain the types.
 
 ## Type table
+
+The type table starts with the 4 byte IFF code TYPE. Directly following the type code is a 4-byte integer containing the number of names in the type table. The type table is a NULL-terminated string array.
+
+The name is found by its 'ID' which is the index as it resides in this table.
+
+Built-in or atomic types are declared first, followed by user-defined class/struct type names.
 
 |   ID | Name          | Structure ID |                     Total size |
 | ---: | :------------ | -----------: | -----------------------------: |
@@ -30,17 +37,30 @@ The compiled lookup tables contain the type names, type sizes, and the structure
 |   12 | void          |           -1 |                              0 |
 |   13 | compiled type | unique index |          sizeof(compiled type) |
 
-The first thirteen elements in the table are the standard builtin data types.
-
 ## Name table
 
-The name table is an list of structures.
-The name member is an integer that points to the array index in the name table.
-Pointer represents a Boolean value indicating whether or not the variable name is a pointer. Array size is used to determine the number of elements in each specific name.
+The name table is identical in structure as the type table. It begins with the IFF type identifier code NAME.
 
-|   ID | Name | Pointer | Array size |
-| ---: | :--- | ------: | ---------: |
-|    0 | ...  |      -1 |          1 |
+The string array contains the member names of all user-defined types. Extra information about a specific member other than its atomic type needs to be computed from the name.  That would be, for instance, determining whether or not it is a pointer, a pointer to a pointer, an array or multidimensional array, etc..
+
+By default, FileTools supports only three-dimensional. The macro definition FT_ARR_DIM_MAX 3, may be changed to support larger n-dimensional arrays.
+
+## Type size table
+
+The TLEN table is an array of 2-byte integers. It contains the same number of elements as the type table. The type index for the type table corresponds to the corresponding element in the size table.  The values in this table contain the computed size for the atomic types as well as user-defined types.
+
+For example:
+
+```c
+struct vec3f
+{
+    float x; // size[type[float]] * name[x].array_len  = 4 bytes  
+    float y; // size[type[float]] * name[y].array_len  = 4 bytes
+    float z; // size[type[float]] * name[z].array_len  = 4 bytes
+}; // size[type[vec3f]] = 12 bytes  
+```
+
+
 
 ## Structure table
 

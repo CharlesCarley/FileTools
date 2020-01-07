@@ -5,11 +5,12 @@
    2. [Chunk Header](#chunk-header)
    3. [Reserved Codes](#reserved-codes)
 
-The file format is a simple chunk based format. It is comprised of a 12-byte file header followed by any number of chunks. The last chunk should be a blank chunk header with the ENDB code.
+
+The file format is a simple chunk based format.  It consists of a 12-byte file header followed by any number of chunks. The last header should be an empty chunk with the ENDB code.
 
 ## File Header
 
-The file header is the first 12 bytes of the file. It is used to determine the file type, the platform it was saved in and the API version.
+The file header determines the file type, the architecture of the saving platform, and the API version.
 
 | Bytes  | Data Type | Description                                                               |
 | :----: | --------- | :------------------------------------------------------------------------ |
@@ -20,12 +21,12 @@ The file header is the first 12 bytes of the file. It is used to determine the f
 
 The following ASCII codes are reserved for bytes 7 and 8:
 
-| ASCII | Hex  | Description                                                    |
-| ----- | ---- | -------------------------------------------------------------- |
-| '-'   | 0x2D | '-' indicates that the file was saved with 64 bit chunks.      |
-| '_'   | 0x5F | '_' indicates that the file was saved with 32 bit chunks.      |
-| 'V'   | 0x56 | 'V' indicates that the file was saved on a big endian machine. |
-| 'v'   | 0x76 | 'V' indicates that the file was saved on a big endian machine. |
+| ASCII | Hex  | Description                                                       |
+| ----- | ---- | ----------------------------------------------------------------- |
+| '-'   | 0x2D | '-' indicates that the file was saved with 64 bit chunks.         |
+| '_'   | 0x5F | '_' indicates that the file was saved with 32 bit chunks.         |
+| 'V'   | 0x56 | 'V' indicates that the file was saved on a big endian machine.    |
+| 'v'   | 0x76 | 'V' indicates that the file was saved on a little endian machine. |
 
 For example the .blend header:
 
@@ -35,7 +36,7 @@ BLENDER-v279
 
 ## Chunk Header
 
-The header is a varying sized structure that is 20 or 24 bytes. The size is dependent on the platform architecture where the file was saved because it stores the heap address of the data block at the time of saving. 
+The header is a varying sized structure that is 20 or 24 bytes. The size is dependent on the platform architecture at the time of saving because it stores the heap address of its data block at the time of saving.
 
 ```c++
 struct ChunkNative
@@ -71,10 +72,10 @@ struct Chunk64
 | code    | Is a unique IFF type identifier for identifying how this block should be handled.    |
 | length  | Is the size in bytes of the data block.                                              |
 | address | Is the base address of the chunk data at the time of saving.                         |
-| typeid  | Is the structure type index identifier found in the DNA1 block.                      |
+| typeid  | Is the structure type index identifier found in the DNA1->STRC block.                |
 | count   | Is the number of subsequent blocks being saved in this chunk starting with 'address' |
 
-A complete chunk includes a header and block of memory directly following the header. The memory should the same length as described in the header.
+A whole chunk includes a header and block of memory directly following the header. The block of memory should be the same length as described in the header.
 
 ```hex
 Chunk32
@@ -100,7 +101,7 @@ Count  : 1
 
 ## Reserved Codes
 
-The following are reserved chunk identifiers that are used when loading.  
+The following are reserved chunk identifiers that the loader internally uses when reading a file.  
 
 | CODE | Description                                                                                                                      |
 | ---- | :------------------------------------------------------------------------------------------------------------------------------- |
