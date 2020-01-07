@@ -143,7 +143,6 @@ int ftMember::getArraySize()
     return 1;
 }
 
-
 int ftMember::getArrayElementSize()
 {
     int arraySize = skMax(getArraySize(), 1);
@@ -172,8 +171,6 @@ int ftMember::getPointerCount()
     return 0;
 }
 
-
-
 void ftMember::setNameIndex(const FBTuint16& idx)
 {
     m_name = idx;
@@ -194,7 +191,6 @@ void ftMember::setTypeIndex(const FBTuint16& idx)
             m_hashedType = m_parent->m_table->m_types[m_type].m_hash;
     }
 }
-
 
 bool ftMember::compare(ftMember* rhs)
 {
