@@ -112,7 +112,7 @@ Count  : 1
 -------------------------------------------------------------------------------
 ```
 
-### [Reserved Codes](File/ftTables.h#38)
+### [Reserved Codes](File/ftTables.h#L38)
 
 The following are reserved codes that the loader internally uses when reading a file.  
 
@@ -231,4 +231,6 @@ The CMake utility can be used to attach table generation to a build. This macro 
 
 ### [Reversing a file's tables](Tools/Decompiler/TableDecompiler.cpp)
 
-The TableDecompiler tool is for converting a file's tables back into usable C++. This program will scan the supplied input file for a DNA1 chunk and attempt to read the tables back. Then it will output a single header file that contains the sorted structure definitions.
+The TableDecompiler tool is for converting a file's tables back into usable C++. This program will scan the supplied input file for a DNA1 chunk and attempt to read the tables back. Then it will output a single header file that contains the sorted structure definitions. 
+
+Example output can be found in the [BlendFile](FileFormats/Blend/Blender.h) loader.  

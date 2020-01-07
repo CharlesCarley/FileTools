@@ -1281,7 +1281,7 @@ namespace Blender
 // Pointers that have references to no known
 // struct need to be declared as some type of handle.
 // This should be a struct handle class so that it can be
-// recompiled. struct XXX {int unused; }
+// recompiled. struct XXX { int unused; }
 #pragma region MissingStructures
 
     struct FileData
