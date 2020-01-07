@@ -1,6 +1,6 @@
 # FileTools
 
-The FileTools project is a small collection of tools that are centered around loading file formats which are similar in structure to the [Blender](https://blender.org) .blend file. The original loader was written as part of the [OgreKit](https://github.com/gamekit-developers/gamekit/tree/master/Tools/FileTools) project. The main idea of the file format is to take a C or C++ API and compile it into a set of tables that can be used to rebuild the API on load.
+The FileTools project is a small collection of tools that are centered around loading file formats which are similar in structure to the [Blender](https://blender.org) .blend file. The main idea of the file format is to take a C or C++ API and compile it into a set of tables that can be used to rebuild the API on load.
 
 ## Contents
 
@@ -46,7 +46,7 @@ The following ASCII codes are reserved for bytes 7 and 8:
 | 'V'   | 0x56 | Indicates that the file was saved on a big-endian machine.    |
 | 'v'   | 0x76 | Indicates that the file was saved on a little-endian machine. |
 
-### Chunk Header
+### [Chunk Header](File/ftChunk.h#30)
 
 The chunk header is a varying sized structure that is 20 or 24 bytes. Its size is dependent on the platform architecture at the time of saving because it stores the heap address of its data block.
 
@@ -112,7 +112,7 @@ Count  : 1
 -------------------------------------------------------------------------------
 ```
 
-### Reserved Codes
+### [Reserved Codes](File/ftTables.h#38)
 
 The following are reserved codes that the loader internally uses when reading a file.  
 
@@ -127,7 +127,7 @@ The following are reserved codes that the loader internally uses when reading a 
 | DATA | Indicates a block of data that may or may not have a structure associated with it but still needs to be relinked by its address. |
 | ENDB | Indicates that there are no more chunks to read.                                                                                 |
 
-## Table structure
+## [Table structure](File/ftTables.h)
 
 ### Type table(TYPE)
 
@@ -156,11 +156,11 @@ struct vec3f
 
 The STRC table is an array of 2-byte integers that hold the indices of the other tables. The table starts with the 4-byte identifier STRC, then another 4-byte integer that contains the number of structure definitions in the table. Then each structure in the table is stored by a 2-byte integer that holds the type table index and another 2-byte integer that hold the total number of members in the structure. Then from zero to the total number of members, a pair of 2-byte integers hold the member's type index and the member's name index.
 
-### Building the tables
+### [Building the tables](Tools/Compiler/TableCompiler.cpp)
 
 The TableCompiler program compiles everything into the tables. It reads the files via the command line.
 
-#### Scanner
+#### [Scanner](File/ftScanner.h)
 
 The goal of the scanner is to extract only member variables from classes and structures. It does parse namespaces but only in as much to store its name. Every time the scanner reads an 'n', 'c', or an 's', it tests for a namespace class or struct keyword. If any of the keywords match, it attempts to store the keyword identifier. If it matches a struct or a class keyword, the scanner changes its state and attempts to extract and store member variables. The scanner will not parse C++ outside the scope of member variable declaration and does not calculate the size of an object with base types. If any API specific methods are needed, the scanner tests for the comment keyword:
 
@@ -204,7 +204,7 @@ const unsigned char DocsExampleTables[]={
 const unsigned int DocsExampleLen=sizeof(DocsExampleTables);
 ```
 
-The pure virtual methods in [ftFile](https://github.com/CharlesCarley/FileTools/blob/master/File/ftFile.h) provide access for the loader to get the compiler output.
+The pure virtual methods in [ftFile](File/ftFile.h) provide access for the loader to get the compiler output.
 
 ```c
 virtual void*       getTables(void) = 0;
@@ -225,10 +225,10 @@ FBTsize DocsExample::getTableSize(void)
 }
 ```
 
-#### CMake Utility
+#### [CMake Utility](CMake/Readme.md)
 
-The [TableCompiler](https://github.com/CharlesCarley/FileTools/blob/master/CMake/Readme.md) CMake utility can be used to attach table generation to a build. This macro will output the needed include file to the current build directory and then adds the build directory to the list of include paths. 
+The CMake utility can be used to attach table generation to a build. This macro will output the needed include file to the current build directory and then adds the build directory to the list of include paths.
 
-### Reversing a file's tables
+### [Reversing a file's tables](Tools/Decompiler/TableDecompiler.cpp)
 
 The TableDecompiler tool is for converting a file's tables back into usable C++. This program will scan the supplied input file for a DNA1 chunk and attempt to read the tables back. Then it will output a single header file that contains the sorted structure definitions.
