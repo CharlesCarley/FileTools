@@ -62,4 +62,5 @@ FBTsize DocsExample::getTableSize(void)
 }
 ```
 
+
 The [TableCompiler](https://github.com/snailrose/FileTools/blob/master/CMake/Readme.md) CMAKE utility can be used to attach table generation to a build. This macro outputs the include file to the current build directory then adds the build directory to the list of include paths.

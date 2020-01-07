@@ -16,11 +16,11 @@ This table starts with a 4-byte IFF code. Directly following the type code is a 
 
 ## Name table(NAME)
 
-The name table is identical in structure as the type table. The string array contains the member names of all user-defined members. Any extra information about a specific member other than its atomic type comes from the name. Which would be, for instance, determining whether or not it is a pointer, a pointer to a pointer, an array or multidimensional array, etc.. By default, FileTools supports only three-dimensional arrays. The macro definition FT_ARR_DIM_MAX 3, may be changed to support larger n-dimensional arrays if needed.
+The name table is identical in structure as the type table. The string array contains the member names of all user-defined types. Any extra information about a specific member other than its atomic type comes from the name. Which would be, for instance, determining whether or not it is a pointer, a pointer to a pointer, an array or multidimensional array, etc.. By default, FileTools supports only three-dimensional arrays. The preprocessor definition FT_ARR_DIM_MAX 3, may be changed to support larger n-dimensional arrays if needed.
 
 ## Type size table(TLEN)
 
-The TLEN table is an array of 2-byte integers. It contains the same number of elements as the type table. The type index for the type table corresponds to the corresponding element in the size table. The values in this table contain the computed size for the atomic types as well as user-defined types.
+The TLEN table is an array of 2-byte integers. It contains the same number of elements as the type table. The type index for the type table directly corresponds to the same element in the size table. The values in this table contain the computed size for the atomic types as well as all user-defined types.
 
 For example:
 
