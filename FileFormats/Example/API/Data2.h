@@ -23,11 +23,7 @@
 
 struct Data1;
 
-#if defined(__GNUC__)
-    typedef long long int64_t;
-#else
-    typedef __int64 int64_t;
-#endif
+#include <stdint.h>
 
 
 typedef struct Data2
