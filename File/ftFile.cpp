@@ -809,11 +809,8 @@ void ftFile::castMemberVariable(ftMember* dst,
                            FT_MAX_MBR_RANGE);
         status = FS_INV_SIZE;
     }
-    else if (!src->isValidAtomicType() || !dst->isValidAtomicType())
+    else if (!src->isBuiltinType() || !dst->isBuiltinType())
     {
-        // re examine this, it should already be ruled out
-        // when the table is compiled
-
         if (m_fileFlags != LF_NONE)
             ftLogger::logF("Invalid atomic type src(%d), dst(%d)",
                            src->getAtomicType(),
@@ -856,17 +853,6 @@ void ftFile::castMemberVariable(ftMember* dst,
         {
             FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
             FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
-
-
-            //if (alen > 1)
-            //{
-            //    castAtomicMemberArray(dst, dstBPtr, src, srcBPtr, status);
-            //}
-            //else
-            //{
-            //    castAtomicMember(dst, dstBPtr, src, srcBPtr, status);
-            //}
-
 
             ftAtomic stp, dtp;
             stp = src->getAtomicType();

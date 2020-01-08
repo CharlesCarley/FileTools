@@ -912,10 +912,9 @@ void ftTables::putMember(FBTtype    owningStructureType,
         member->m_location       = index;
         member->m_recursiveDepth = recursiveDepth;
         member->m_link           = nullptr;
-
+        
         MemberSearchKey msk = {member->m_searchKey, member};
         root->m_memberSearch.insert(msk);
-
 
         if (m_names[name].m_ptrCount > 0)
             member->m_sizeInBytes = m_ptrLength * m_names[name].m_arraySize;
@@ -950,9 +949,11 @@ void ftTables::hashMember(skString&   name,
     // 
     //   SomeSturct-SubStruct-number_t-val
     // 
+    name.reserve(96);
+
     if (owningStructMemeberName == SK_NPOS)
     {
-        name = skString::format(FT_MEMBER_HASH_FMT,
+        skString::format(name, FT_MEMBER_HASH_FMT,
                                 parentStructName,
                                 memberType,
                                 memberName,
@@ -961,7 +962,7 @@ void ftTables::hashMember(skString&   name,
     }
     else
     {
-        name = skString::format(FT_MEMBER_HASH_FMT,
+        skString::format(name, FT_MEMBER_HASH_FMT,
                                 parentStructName,
                                 owningStructType,
                                 owningStructMemeberName,

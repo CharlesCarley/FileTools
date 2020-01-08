@@ -151,7 +151,7 @@ int ftMember::getArrayElementSize()
 
 bool ftMember::isValidAtomicType()
 {
-    return getAtomicType() < ftAtomic::FT_ATOMIC_VOID;
+    return isBuiltinType();
 }
 
 ftAtomic ftMember::getAtomicType()

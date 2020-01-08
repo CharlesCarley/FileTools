@@ -79,7 +79,7 @@ public:
         if (m_hash != SK_NPOS)
             return m_hash;
 
-        m_hash = skHash(m_key, ::strlen(m_key));
+        m_hash = skHash(m_key, FT_MAX_ID);
         return m_hash;
     }
 
