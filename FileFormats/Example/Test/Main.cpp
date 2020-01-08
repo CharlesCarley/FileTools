@@ -10,6 +10,8 @@
 void writeFile(int version)
 {
     Example e;
+    e.setFileFlags(ftFlags::LF_WRITE_CHUNKS);
+
     e.getInfo().major = version;
 
 
@@ -41,6 +43,8 @@ void writeFile(int version)
 void readFile(void)
 {
     Example e;
+
+    e.setFileFlags(ftFlags::LF_DIAGNOSTICS|ftFlags::LF_DUMP_CAST);
     e.load(TestFile);
 
     Example::Data2Array::Iterator d2a = e.getData2().iterator();

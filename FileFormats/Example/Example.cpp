@@ -50,12 +50,9 @@ Example::Example() :
     m_memoryVersion = atoi(m_info.versionString);
 }
 
-
-
 Example::~Example()
 {
 }
-
 
 void* Example::getTables(void)
 {
@@ -66,7 +63,6 @@ FBTsize Example::getTableSize(void)
 {
     return ExampleTablesLen;
 }
-
 
 int Example::notifyDataRead(void* p, const ftChunk& id)
 {
