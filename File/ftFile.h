@@ -242,8 +242,6 @@ private:
 
     ftStruct* findInMemoryTable(ftStruct* fileStruct);
     ftStruct* findInFileTable(ftStruct* memoryStruct);
-    ftMember* findInFileTable(ftStruct* fileStruct,
-                              ftMember* memoryMember);
 };
 
 

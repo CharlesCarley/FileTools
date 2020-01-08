@@ -1038,20 +1038,6 @@ ftStruct* ftFile::findInFileTable(ftStruct* memoryStruct)
     return findInTable(memoryStruct, m_memory, m_file);
 }
 
-ftMember* ftFile::findInFileTable(ftStruct* fileStruct,
-                                  ftMember* memoryMember)
-{
-    ftStruct::Members::Iterator fmit  = fileStruct->getMemberIterator();
-    ftMember*                   fstrc = 0;
-
-    while (!fstrc && fmit.hasMoreElements())
-    {
-        ftMember* fmbr = fmit.getNext();
-        if (memoryMember->compare(fmbr))
-            fstrc = fmbr;
-    }
-    return fstrc;
-}
 
 void* ftFile::findPointer(const FBTsize& iptr)
 {

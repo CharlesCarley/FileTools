@@ -56,7 +56,7 @@ void ftGzStream::open(const char* path, int mode)
         if (m_mode == READ || m_mode == READ_TEXT)
             m_handle = gzopen(path, "rb");
         else if (mode == WRITE || m_mode == WRITE_TEXT)
-            m_handle = fopen(path, "wb");
+            m_handle = gzopen(path, "wb");
         else m_mode  = SK_NPOS32;
     }
     else

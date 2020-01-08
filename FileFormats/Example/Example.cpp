@@ -29,9 +29,9 @@
 
 namespace ExampleCodes
 {
-    const FBTuint32 INFO = ftID('I', 'N', 'F', 'O');
-    const FBTuint32 DAT1 = ftID('D', 'A', 'T', '1');
-    const FBTuint32 DAT2 = ftID('D', 'A', 'T', '2');
+    const FBTuint32 INFO = FT_TYPEID('I', 'N', 'F', 'O');
+    const FBTuint32 DAT1 = FT_TYPEID('D', 'A', 'T', '1');
+    const FBTuint32 DAT2 = FT_TYPEID('D', 'A', 'T', '2');
 }
 
 
