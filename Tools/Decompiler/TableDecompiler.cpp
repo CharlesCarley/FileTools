@@ -110,8 +110,11 @@ void writeFileFooter(ProgramInfo& ctx, ostream& out)
     out << "#endif//_" << ctx.m_outName << "_h_" << endl;
 }
 
-void writeIndent(ostream& out, int nr, int spacePerIndent = 4)
+void writeIndent(ProgramInfo& ctx, ostream& out, int nr, int spacePerIndent = 4)
 {
+    if (!ctx.m_useNamespace)
+        nr -= 1;
+
     spacePerIndent = skMax(spacePerIndent, 0);
     int i;
     for (i = 0; i < nr; ++i)
@@ -120,15 +123,19 @@ void writeIndent(ostream& out, int nr, int spacePerIndent = 4)
 
 void writeForward(ProgramInfo& ctx, ostream& out, ftStruct* ftStrc)
 {
+    writeIndent(ctx, out, 1);
     out << "struct " << ftStrc->getName() << ';' << endl;
 }
 
 void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
 {
-    writeIndent(out, 1);
+    writeIndent(ctx, out, 1);
     out << "struct " << fstrc->getName() << endl;
-    writeIndent(out, 1);
+
+    writeIndent(ctx, out, 1);
     out << "{" << endl;
+
+
     FBTtype* strc = ctx.m_tables->getStructAt(fstrc->getStructIndex());
 
     int maxLeft = -1;
@@ -153,6 +160,9 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
         {
             const ftType& type = ctx.m_tables->getTypeAt(strc[0]);
             const ftName& name = ctx.m_tables->getNameAt(strc[1]);
+
+            writeIndent(ctx, out, 2);
+
             if (ctx.m_fixupBlend)
             {
                 if (string(type.m_name) == "anim")
@@ -164,6 +174,7 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
                 out << left << setw(maxLeft) << type.m_name << ' ' << name.m_name << ';' << endl;
         }
     }
+    writeIndent(ctx, out, 1);
     out << "};" << endl;
     out << endl;
 }
@@ -172,9 +183,14 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
 
 void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& strcs)
 {
+    writeIndent(ctx, out, 1);
     out << "namespace StructCodes" << endl;
+
+    writeIndent(ctx, out, 1);
     out << "{" << endl;
-    out << "        typedef unsigned long long HashCode;" << endl;
+
+    writeIndent(ctx, out, 2);
+    out << "typedef unsigned long long HashCode;" << endl;
     out << endl;
 
     StructArray::ConstIterator cit = strcs.iterator();
@@ -184,6 +200,7 @@ void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& strcs)
         out << setw(ctx.m_useNamespace ? 8 : 4) << ' ';
         out << "const HashCode SDNA_" << uppercase << strc->getName() << "= 0x" << hex << strc->getHashedType() << ';' << endl;
     }
+    writeIndent(ctx, out, 1);
     out << "}" << endl;
     out << endl;
     out << endl;
@@ -199,17 +216,30 @@ void writeUnresolved(ProgramInfo& ctx, ostream& out, FBTtype* typeNotFound)
     {
         if (ctx.m_fixupBlend && string(typeName) == "anim")
         {
+            writeIndent(ctx, out, 1);
             out << "struct Anim" << endl;
+
+            writeIndent(ctx, out, 1);
             out << '{' << endl;
-            out << "    int missing;" << endl;
+
+            writeIndent(ctx, out, 2);
+            out << "int missing;" << endl;
+
+            writeIndent(ctx, out, 1);
             out << "};" << endl;
             out << endl;
         }
         else
         {
+            writeIndent(ctx, out, 1);
             out << "struct " << typeName << endl;
+            writeIndent(ctx, out, 1);
             out << '{' << endl;
-            out << "    int missing;" << endl;
+
+            writeIndent(ctx, out, 2);
+            out << "int missing;" << endl;
+
+            writeIndent(ctx, out, 1);
             out << "};" << endl;
             out << endl;
         }
@@ -428,6 +458,7 @@ void sortStructs(ProgramInfo&        ctx,
 }
 
 
+
 int extractToFile(ProgramInfo& ctx)
 {
     int       status = 0;
@@ -456,24 +487,12 @@ int extractToFile(ProgramInfo& ctx)
         if (ctx.m_writeHashCode)
             writeHashCodes(ctx, sout, tables->getStructureArray());
 
-
-        sout << "#pragma region Forward" << endl;
         skArray<ftStruct*>::Iterator it = tables->getStructIterator();
         while (it.hasMoreElements())
         {
             ftStruct* strc = it.getNext();
             writeForward(ctx, sout, strc);
         }
-        sout << "#pragma endregion" << endl;
-        sout << endl;
-
-
-        sout << "// Pointers that have references to no known" << endl;
-        sout << "// struct need to be declared as some type of handle." << endl;
-        sout << "// This should be a struct handle class so that it can be" << endl;
-        sout << "// recompiled. struct XXX {int unused; }" << endl;
-        sout << "#pragma region MissingStructures" << endl;
-        sout << endl;
 
         skArray<FBTtype*>::Iterator uit = unresolved.iterator();
         while (uit.hasMoreElements())
@@ -481,35 +500,18 @@ int extractToFile(ProgramInfo& ctx)
             FBTtype* cur = uit.getNext();
             writeUnresolved(ctx, sout, cur);
         }
-        sout << "#pragma endregion" << endl;
         sout << endl;
 
-
-        sout << "// Independent structures:" << endl;
-        sout << "// The member declarations only contain references to other " << endl;
-        sout << "// structures via a pointer (or only atomic types); Therefore," << endl;
-        sout << "// declaration order does not matter as long as any pointer " << endl;
-        sout << "// reference is forwardly declared." << endl;
-        sout << "#pragma region Independent" << endl;
 
         it = independent.iterator();
         while (it.hasMoreElements())
             writeStructure(ctx, sout, it.getNext());
-        sout << "#pragma endregion" << endl;
         sout << endl;
 
 
-        sout << "// Dependent structures:" << endl;
-        sout << "// The member declarations have references to other " << endl;
-        sout << "// structures without a pointer; Therefore, declaration order DOES matter." << endl;
-        sout << "// If a structure has a non pointer member structure, then that structure " << endl;
-        sout << "// must be visible before defining the structure that uses it." << endl;
-
-        sout << "#pragma region Dependent" << endl;
         it = dependent.iterator();
         while (it.hasMoreElements())
             writeStructure(ctx, sout, it.getNext());
-        sout << "#pragma endregion" << endl;
         sout << endl;
         if (ctx.m_useNamespace)
             sout << "}" << endl;
