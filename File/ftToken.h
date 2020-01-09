@@ -38,7 +38,7 @@ struct ftKeywordTable
 class ftToken
 {
 public:
-    typedef ftFixedString<FT_MAX_TOK> String;
+    typedef ftFixedString<FT_MAX_ID> String;
 
 private:
     int    m_id;

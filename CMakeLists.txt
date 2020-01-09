@@ -24,13 +24,12 @@
 cmake_minimum_required(VERSION 3.0)
 project(FileTools)
 
-#cmake_policy(SET CMP0077 OLD)
-
-option(FileTools_BLD_TESTS        "Build basic tests." OFF)
-option(FileTools_BLD_BLEND_FILE   "Build the blend file version." OFF)
-option(FileTools_USE_ZLIB         "Allow GZ compressed files to be read." OFF)
-option(FileTools_USE_OWN_ZLIB     "Define this if zlib is used as part of a larger project." OFF)
-option(FileTools_BLD_EXAMPLE_FILE "Build the example file version." OFF)
+option(FileTools_TESTS        "Build basic tests." OFF)
+option(FileTools_BLEND_FILE   "Build the blend file version." OFF)
+option(FileTools_USE_ZLIB     "Allow GZ compressed files to be read." OFF)
+option(FileTools_USE_OWN_ZLIB "Define this if zlib is used as part of a larger project." OFF)
+option(FileTools_EXAMPLE_FILE "Build the example file version." OFF)
+option(FileTools_DECOMPILER   "Build the table decompiler." OFF)
 
 if (FileTools_USE_OWN_ZLIB)
     option(FileTools_USE_ZLIB FORCE ON)
@@ -133,18 +132,21 @@ endif()
 
 subdirs(File)
 subdirs(Tools/Compiler)
-subdirs(Tools/Decompiler)
 
-if (FileTools_BLD_BLEND_FILE)
+if (FileTools_DECOMPILER)
+    subdirs(Tools/Decompiler)
+endif()
+
+if (FileTools_BLEND_FILE)
     subdirs(FileFormats/Blend)
 endif()
 
-if (FileTools_BLD_EXAMPLE_FILE)
+if (FileTools_EXAMPLE_FILE)
     subdirs(FileFormats/Example)
 endif()
 
 
-if (FileTools_BLD_TESTS)
+if (FileTools_TESTS)
 
     # The test files depend on Data2Array 
     # to build parsable source   

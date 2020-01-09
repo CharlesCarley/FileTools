@@ -21,7 +21,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(FileTools_EXAMPLE_BUILD_TEST FALSE CACHE BOOL "Builds a test program for the example file format. ")
+set(FileTools_EXAMPLE_TEST FALSE CACHE BOOL "Builds a test program for the example file format. ")
 
 set(ExampleFile_TARGET ExampleFile)
 set(ExampleFile_TOOLS_INCLUDE ${FileTools_INCLUDE})
@@ -55,6 +55,6 @@ add_library(${ExampleFile_TARGET} ${SRC})
 
 link_libraries(${ExampleFile_TOOLS_LIBRARY})
 
-if (FileTools_EXAMPLE_BUILD_TEST)
+if (FileTools_EXAMPLE_TEST)
     subdirs(Test)
 endif()
