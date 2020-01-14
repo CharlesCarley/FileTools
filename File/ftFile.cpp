@@ -430,7 +430,7 @@ int ftFile::allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, cons
 
     // Change the length of the file structure's memory
     // to account for the memory structures size.
-    const FBTuint32 totSize = len;
+    const FBTuint32 totSize = (FBTuint32)len;
     if (totSize > 0 && totSize != SK_NPOS32)
     {
         bin->m_chunk.m_len = totSize;
