@@ -15,11 +15,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 #------------------------------------------------------------------------------
-if (FileTools_COMPILER_NAME)
-    set(FT_EXECUTABLE ${FileTools_COMPILER_NAME})
-else()
-    set(FT_EXECUTABLE makeft)
-endif()
+set(FT_EXECUTABLE TableCompiler)
 
 # ----------------------------------------------------------------------------#
 #                                                                             #
@@ -50,7 +46,7 @@ endmacro(FT_BASE_SRC)
 #   Usage: ${FT_EXECUTABLE} ${OUTFILE} {ARGN}                                #
 #                                                                             #
 # ----------------------------------------------------------------------------#
-macro(ADD_FT TARGET)
+macro(ADD_TABLE TARGET)
     set(SRC_FILES )
     set(BASE_FILES )
     set(OUTFILE )
@@ -73,7 +69,7 @@ macro(ADD_FT TARGET)
 
     set(${TARGET} ${OUTFILE})
 
-endmacro(ADD_FT)
+endmacro(ADD_TABLE)
 
 # ----------------------------------------------------------------------------#
 #                                                                             #
@@ -81,7 +77,7 @@ endmacro(ADD_FT)
 #          Writes a validation target                                         #
 #                                                                             #
 # ----------------------------------------------------------------------------#
-macro(ADD_FT_VALIDATOR TARGET)
+macro(ADD_TABLE_VALIDATOR TARGET)
     
     set(SRC_FILES )
     set(BASE_FILES )
@@ -111,5 +107,5 @@ macro(ADD_FT_VALIDATOR TARGET)
 	    )
 
     set(${TARGET} ${OUTFILE})
-endmacro(ADD_FT_VALIDATOR)
+endmacro(ADD_TABLE_VALIDATOR)
 
