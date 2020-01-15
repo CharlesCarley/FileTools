@@ -240,6 +240,8 @@ int ftFile::preScan(skStream* stream)
                     ftLogger::logF("File table initialization failed.");
             }
         }
+        else
+            status = FS_INV_READ;
     }
 
     return status;
