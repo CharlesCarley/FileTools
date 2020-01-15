@@ -90,6 +90,10 @@ macro(ADD_TABLE_VALIDATOR TARGET)
     set(OUTFILE  ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}.inl)
     set(OUTFILEV ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}Validator.cpp)
 
+    # Add the output directory to the current include 
+    # list since it needs to be included in-order to use it
+    include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
     add_custom_command(
 	    OUTPUT ${OUTFILE} ${OUTFILEV}
 	    COMMAND ${FT_EXECUTABLE} ${TARNAME} ${OUTFILE} ${SRC_FILES}

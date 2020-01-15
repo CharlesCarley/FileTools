@@ -87,7 +87,7 @@ FBTsize ftGzStream::write(const void* src, FBTsize nr)
     if (!canWrite() || !isOpen() || !src)
         return SK_NPOS;
 
-    if (nr == 0 && nr < SK_NPOS)
+    if (nr > 0 && nr < SK_NPOS)
         return gzwrite((gzFile)m_handle, src, (unsigned int)nr);
     return 0;
 }
