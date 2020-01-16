@@ -35,8 +35,6 @@ if (FileTools_USE_OWN_ZLIB)
     option(FileTools_USE_ZLIB FORCE ON)
 endif()
 
-
-
 if (NOT FileTools_UTILS_EXTERNAL)
 
     set(FileTools_Utils_ROOT ${FileTools_SOURCE_DIR}/External/Utils)
