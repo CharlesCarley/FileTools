@@ -21,7 +21,19 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(TargetName ${FileTools_COMPILER_NAME})
+
+if (TableCompiler_ExternalTarget)
+    set(TargetFolders ${TableCompiler_TargetFolders})
+    set(TargetName    ${TableCompiler_TargetName})
+    set(TargetGroup   ${TableCompiler_TargetGroup})
+else()
+    set(TargetFolders FALSE)
+    set(TargetName ${FileTools_COMPILER_NAME})
+    unset(TargetGroup )
+endif()
+
+
+
 
 include_directories(${FileTools_INCLUDE})
 link_libraries(${FileTools_LIBRARY} ${FileTools_Utils_LIBRARY})
@@ -36,4 +48,10 @@ if (MSVC)
         VS_DEBUGGER_WORKING_DIRECTORY  
         ${CMAKE_CURRENT_SOURCE_DIR}
     )
+endif()
+
+
+
+if (TargetFolders)
+    set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
 endif()

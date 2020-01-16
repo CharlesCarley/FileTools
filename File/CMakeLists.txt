@@ -21,7 +21,17 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(TargetName ${FileTools_TARGET_NAME})
+
+if (FileTools_ExternalTarget)
+    set(TargetFolders ${FileTools_TargetFolders})
+    set(TargetName    ${FileTools_TargetName})
+    set(TargetGroup   ${FileTools_TargetGroup})
+else()
+    set(TargetFolders FALSE)
+    set(TargetName FileTools)
+    unset(TargetGroup )
+endif()
+
 
 set(File_SRC
     ftAtomic.cpp
@@ -74,3 +84,9 @@ endif()
 
 include_directories(${FileTools_Utils_INCLUDE})
 add_library(${TargetName} ${File_SRC} ${File_HDR})
+
+
+if (TargetFolders)
+    set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
+endif()
+

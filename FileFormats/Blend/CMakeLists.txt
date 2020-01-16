@@ -21,16 +21,27 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(FileTools_BLEND_TEST FALSE CACHE BOOL "Builds a test .blend program.")
-set(BlendFile_TARGET BlendFile)
+option(FileTools_BLEND_TEST "Builds a test .blend program." OFF)
+
+if (BlendFile_ExternalTarget)
+    set(TargetFolders ${BlendFile_TargetFolders})
+    set(TargetName   ${BlendFile_TargetName})
+    set(TargetGroup  ${BlendFile_TargetGroup})
+else()
+    set(TargetFolders FALSE)
+    set(TargetName    BlendFile)
+    unset(TargetGroup )
+endif()
+
+
 set(BlendFile_TOOLS_INCLUDE ${FileTools_INCLUDE})
 set(BlendFile_TOOLS_LIBRARY ${FileTools_LIBRARY})
 
-set(BlendFile_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} ${BlendFile_TOOLS_INCLUDE})
-set(BlendFile_LIBRARY ${BlendFile_TARGET} ${BlendFile_TOOLS_LIBRARY})
+set(BlendFile_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}  ${BlendFile_TOOLS_INCLUDE})
+set(BlendFile_LIBRARY ${TargetName} ${BlendFile_TOOLS_LIBRARY})
 
-include(MakeFT)
-add_ft(bfBlender Blender.h)
+include(TableCompiler)
+add_table(bfBlender Blender.h)
 
 set(BlendFile_SRC
     ftBlend.h
@@ -41,7 +52,7 @@ set(BlendFile_SRC
 include_directories(${BlendFile_INCLUDE})
 
 add_library(
-    ${BlendFile_TARGET} 
+    ${TargetName} 
     ${BlendFile_SRC} 
     ${bfBlender}
 )
@@ -50,4 +61,9 @@ link_libraries(${BlendFile_TOOLS_LIBRARY})
 
 if (FileTools_BLEND_TEST)
     subdirs(Test)
+endif()
+
+
+if (TargetFolders)
+    set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
 endif()
