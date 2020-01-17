@@ -84,7 +84,7 @@ void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
         {
             ftId dest;
             newName.push_back('[');
-            sprintf(dest.ptr(), "%i", v.m_arrays[i]);
+            skSprintf(dest.ptr(), dest.capacity()-1, "%i", v.m_arrays[i]);
 
             char* cp = dest.ptr();
             for (j = 0; cp[j]; ++j)
@@ -517,10 +517,14 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
         string.push_back(path[i]);
     }
+    
     string += "Validator.cpp";
 
-    FILE* fp = fopen(string.c_str(), "wb");
-    if (!fp)
+    skFileStream fp;
+
+    fp.open(string.c_str(), skStream::WRITE);
+    //FILE* fp = fopen(string.c_str(), "wb");
+    if (!fp.isOpen())
     {
         printf("Failed to open validation file %s\n", string.c_str());
         return;
@@ -531,18 +535,18 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         split.clear();
         m_includes[i].split(split, '/', '\\');
 
-        fprintf(fp, "#include \"%s\"\n", m_includes[i].c_str());
+        fp.writef("#include \"%s\"\n", m_includes[i].c_str());
     }
 
-    fprintf(fp, "#include <stdlib.h>\n");
-    fprintf(fp, "#include <stdio.h>\n\n");
+    fp.writef("#include <stdlib.h>\n");
+    fp.writef("#include <stdio.h>\n\n");
     if (!m_namespaces.empty())
     {
         for (i = 0; i < (int)m_namespaces.size(); ++i)
-            fprintf(fp, "using namespace %s;\n\n\n", m_namespaces[i].c_str());
+            fp.writef("using namespace %s;\n\n\n", m_namespaces[i].c_str());
     }
 
-    fprintf(fp, "int main()\n{\n\tint errors=0;\n");
+    fp.writef("int main()\n{\n\tint errors=0;\n");
 
     ftBuildStruct::Array::Iterator it = m_builders.iterator();
     while (it.hasMoreElements())
@@ -557,34 +561,31 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 #if FT_SWAP_FROM_NATIVE_ENDIAN == 1
         len = ftSwap16(len);
 #endif
-        fprintf(fp, "\t");
-        fprintf(fp, "if (sizeof(%s) != %i)\n\t{\n\t\terrors ++;\n", cur.c_str(), len);
-        fprintf(fp, "#ifdef _MSC_VER\n");
-        fprintf(fp,
+        fp.writef("\tif (sizeof(%s) != %i)\n\t{\n\t\terrors ++;\n", cur.c_str(), len);
+        fp.writef("#ifdef _MSC_VER\n");
+        fp.writef(
                 "\t\tfprintf(stderr, \"%%s(%%i): error : Validation failed with "
                 "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n",
                 cur.c_str(),
                 cur.c_str(),
                 len);
-        fprintf(fp, "#else\n");
-        fprintf(fp,
+        fp.writef("#else\n");
+        fp.writef(
                 "\t\tfprintf(stderr, \"%%s:%%i: error : Validation failed with "
                 "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n",
                 cur.c_str(),
                 cur.c_str(),
                 len);
-        fprintf(fp, "#endif\n");
-        fprintf(fp, "\t}\n");
-        fprintf(fp, "\n");
+        fp.writef("#endif\n");
+        fp.writef("\t}\n\n");
     }
 
-    fprintf(fp, "\t");
-    fprintf(fp,
+    fp.writef("\t");
+    fp.writef(
             "if (errors > 0)fprintf(stderr, \"%%s(%%i): error : "
             "there are %%i misaligned types.\\n\", __FILE__, __LINE__, errors);\n");
 
-    fprintf(fp, "\treturn errors == 0 ? 0 : 1;\n}\n");
+    fp.writef("\treturn errors == 0 ? 0 : 1;\n}\n");
 
 #endif
-    fclose(fp);
 }

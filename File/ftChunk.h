@@ -88,21 +88,22 @@ struct ftMemoryChunk
     ftMemoryChunk *m_next, *m_prev;
     ftChunk        m_chunk;
     
-    // fblock: is the block of memory that was allocated 
-    // and read from the file. It contains the memory of 
-    // structure at the time of saving. 
+    // m_fblock: is the block of memory that was allocated and read 
+    // from the file. It contains the data of the structure at 
+    // the time of saving.
     void* m_fblock;
 
-    // mblock: is the block of memory that was allocated for conversion.
-    // Its length is the size of the corresponding structure in its current state.
-    // The memory from fblock is cast into mblock one member at a time. 
+    // m_mblock: is the block of memory allocated for conversion. 
+    // Its length is the size of the corresponding structure in its 
+    // current state. The data from m_fblock gets cast into m_mblock 
+    // one member at a time. 
     void* m_mblock;
 
-    // pblock: is the storage location for pointers to pointers.
-    // When casting fblock into mblock, if the current member is 
-    // a pointer to a pointer. This block provides the storage 
-    // location for each of the pointers. The address of pblock 
-    // is assigned to mblock at the offset for the pointer to pointer member.
+    // m_pblock: is the storage location for pointers to pointers. 
+    // When casting m_fblock into m_mblock, if the current member is 
+    // a pointer to a pointer, this block provides the storage location 
+    // for each of the pointers. The address of m_pblock is assigned to 
+    // m_mblock at the offset for the pointer to pointer member.
     void*     m_pblock;
     FBTuint32 m_pblockLen;
 
@@ -123,12 +124,12 @@ struct ftChunkUtils
         Block64   = sizeof(ftChunk64),
         BlockScan = sizeof(ftChunkScan),
     };
+
     static FBTsize read(ftChunk* dest, skStream* stream, int flags);
     static FBTsize write(ftChunk* src, skStream* stream);
     static FBTsize scan(ftChunkScan* dest, skStream* stream, int flags);
 
     static const ftChunk BLANK_CHUNK;
 };
-
 
 #endif  //_ftChunk_h_
