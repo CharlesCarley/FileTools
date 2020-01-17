@@ -22,7 +22,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ ${BlendFile_INCLUDE})
 set(Target_Source 
   catch/catch.hpp
   catch/defines.h
-  Main.cpp
+  main.cpp
 )
 
 
