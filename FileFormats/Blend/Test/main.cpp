@@ -72,31 +72,45 @@ TEST_CASE("SceneIterate")
         EXPECT_NE(cc->collection, nullptr);
         EXPECT_TRUE(strcmp(cc->collection->id.name, "GRCollection") == 0);
 
-
         ListBase          colb = cc->collection->gobject;
         CollectionObject *co   = (CollectionObject *)colb.first;
 
         int i = 0;
-
         while (co)
         {
             EXPECT_NE(co->ob, nullptr);
+            Blender::Object *obj = co->ob;
 
             switch (i)
             {
             case 0:
             {
-                EXPECT_TRUE(strcmp(co->ob->id.name, "OBCube") == 0);
+                EXPECT_TRUE(strcmp(obj->id.name, "OBCube") == 0);
+                EXPECT_TRUE(obj->type == 1);
+                EXPECT_TRUE(obj->data != nullptr);
+
+                Blender::Mesh *me = (Blender::Mesh *)obj->data;
+                EXPECT_TRUE(strcmp(me->id.name, "MECube") == 0);
+
                 break;
             }
             case 1:
             {
-                EXPECT_TRUE(strcmp(co->ob->id.name, "OBLight") == 0);
+                EXPECT_TRUE(strcmp(obj->id.name, "OBLight") == 0);
+                EXPECT_TRUE(obj->data != nullptr);
+
+                Blender::Lamp *ca = (Blender::Lamp *)obj->data;
+                EXPECT_TRUE(strcmp(ca->id.name, "LALight") == 0);
                 break;
             }
             case 2:
             {
-                EXPECT_TRUE(strcmp(co->ob->id.name, "OBCamera") == 0);
+                EXPECT_TRUE(strcmp(obj->id.name, "OBCamera") == 0);
+                EXPECT_TRUE(obj->type == 11);
+                EXPECT_TRUE(obj->data != nullptr);
+
+                Blender::Camera *ca = (Blender::Camera *)obj->data;
+                EXPECT_TRUE(strcmp(ca->id.name, "CACamera") == 0);
                 break;
             }
             }
