@@ -23,96 +23,90 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#define CATCH_CONFIG_MAIN
 #include "Blender.h"
+#include "catch/catch.hpp"
+#include "catch/defines.h"
 #include "ftBlend.h"
 #include "stdio.h"
-
 using namespace Blender;
 using namespace ftFlags;
 
+#include "TestBlend.h"
 
 
-// Unneeded structures
-static FBThash skipList[] =
-    {
-        ftCharHashKey("FileGlobal").hash(),
-        ftCharHashKey("Object").hash(),
-        ftCharHashKey("Camera").hash(),
-        ftCharHashKey("Lamp").hash(),
-        ftCharHashKey("Base").hash(),
-        ftCharHashKey("Scene").hash(),
-        ftCharHashKey("Mesh").hash(),
-        ftCharHashKey("MVert").hash(),
-        ftCharHashKey("MFace").hash(),
-        ftCharHashKey("MPoly").hash(),
-        ftCharHashKey("MLoop").hash(),
-        ftCharHashKey("Link").hash(),
-        0,
-};
 
-int main(int argc, char** argv)
+TEST_CASE("Basic_load")
 {
-    if (argc < 2)
-        return 1;
-
     ftBlend fp;
-    //fp.addFileFlag(LF_DIAGNOSTICS|LF_UNRESOLVED);
-    //fp.setFilterList(skipList, sizeof(skipList) / sizeof(FBThash), true);
-    if (fp.load(argv[argc - 1], PM_COMPRESSED) != FS_OK)
-        return 1;
+    int     status = fp.load(TEST, TEST_SIZE);
+    EXPECT_EQ(FS_OK, status);
+}
 
-    Blender::FileGlobal* fg = fp.m_fg;
 
-    printf("Blender file version %i\n", fg->minversion);
-    printf("Objects:\n");
+TEST_CASE("SceneGrab")
+{
+    ftBlend fp;
+    int     status = fp.load(TEST, TEST_SIZE);
+    EXPECT_EQ(FS_OK, status);
 
-    ftList& objects = fp.m_object;
-    for (Object* ob = (Object*)objects.first; ob; ob = (Object*)ob->id.next)
+    EXPECT_NE(fp.m_fg, nullptr);
+    EXPECT_NE(fp.m_fg->curscene, nullptr);
+    EXPECT_TRUE(strcmp(fp.m_fg->curscene->id.name, "SCScene") == 0);
+}
+
+
+
+TEST_CASE("SceneIterate")
+{
+    ftBlend fp;
+    int     status = fp.load(TEST, TEST_SIZE);
+    EXPECT_EQ(FS_OK, status);
+
+    Blender::Scene *sc = fp.m_fg->curscene;
+    EXPECT_NE(sc->master_collection, nullptr);
+
+    ListBase         lb = sc->master_collection->children;
+    CollectionChild *cc = (CollectionChild *)lb.first;
+    EXPECT_NE(cc, nullptr);
+
+    if (cc)
     {
-        printf("     Name      : %s\n", ob->id.name + 2);
-        printf("     Location  : %.02f %.02f %.02f\n", ob->loc[0], ob->loc[1], ob->loc[2]);
-        printf("     Rotation  : %.02f %.02f %.02f\n", ob->rot[0], ob->rot[1], ob->rot[2]);
-        printf("     Scale     : %.02f %.02f %.02f\n", ob->size[0], ob->size[1], ob->size[2]);
-        printf("\n");
-    }
+        EXPECT_NE(cc->collection, nullptr);
+        EXPECT_TRUE(strcmp(cc->collection->id.name, "GRCollection") == 0);
 
-    printf("Mesh:\n");
 
-    ftList& mesh = fp.m_mesh;
-    for (Mesh* me = (Mesh*)mesh.first; me; me = (Mesh*)me->id.next)
-    {
-        printf("     Name                : %s\n", me->id.name + 2);
-        printf("     Total Vertices      : %i\n", me->totvert);
-        printf("     Total Faces         : %i\n", me->totface);
-        printf("     Total Polygons      : %i\n", me->totpoly);
-        if (me->mface)
+        ListBase          colb = cc->collection->gobject;
+        CollectionObject *co   = (CollectionObject *)colb.first;
+
+        int i = 0;
+
+        while (co)
         {
-            for (int v = 0; v < me->totvert; ++v)
+            EXPECT_NE(co->ob, nullptr);
+
+            switch (i)
             {
-                float* fp = &me->mvert[v].co[0];
-                printf("         Coordinate %.02f, %.02f, %.02f \n",
-                       (fp[0]),
-                       (fp[1]),
-                       (fp[2]));
-            }
-        }
-        else if (me->mpoly && me->mloop)
-        {
-            for (int f = 0; f < me->totpoly; ++f)
+            case 0:
             {
-                printf("     Polygon %i:\n", f);
-                Blender::MPoly& cp = me->mpoly[f];
-                for (int i = 0; i < cp.totloop; ++i)
-                {
-                    float* fp = &me->mvert[me->mloop[cp.loopstart + i].v].co[0];
-                    printf("         Coordinate %.02f, %.02f, %.02f \n",
-                           (fp[0]),
-                           (fp[1]),
-                           (fp[2]));
-                }
+                EXPECT_TRUE(strcmp(co->ob->id.name, "OBCube") == 0);
+                break;
             }
+            case 1:
+            {
+                EXPECT_TRUE(strcmp(co->ob->id.name, "OBLight") == 0);
+                break;
+            }
+            case 2:
+            {
+                EXPECT_TRUE(strcmp(co->ob->id.name, "OBCamera") == 0);
+                break;
+            }
+            }
+
+            ++i;
+            co = co->next;
         }
-        printf("\n");
+        EXPECT_EQ(cc->next, nullptr);
     }
-    return 0;
 }

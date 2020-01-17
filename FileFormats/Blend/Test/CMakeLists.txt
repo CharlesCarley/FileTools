@@ -17,10 +17,16 @@
 #------------------------------------------------------------------------------
 set(TargetName BlendFileTest)
 
-
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ ${BlendFile_INCLUDE})
-add_executable(${TargetName} main.cpp)
+
+set(Target_Source 
+  catch/catch.hpp
+  catch/defines.h
+  Main.cpp
+)
+
+
+add_executable(${TargetName} ${Target_Source})
 
 if (MSVC)
     set_target_properties(
