@@ -14,7 +14,5 @@ jobs:
        run: make
      - name: RunTests
        run: ./Tests/FileToolsTests
-     - name: SwitchDir
-       run: cd FileFormats/Blend/Test
      - name: RunBlendTests
        run: ./BlendFileTest

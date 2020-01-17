@@ -41,3 +41,11 @@ target_link_libraries(
     ${TargetName}
     ${BlendFile_LIBRARY}
 )
+
+
+if (NOT WIN32 AND NOT APPLE)
+    add_custom_command(TARGET ${TargetName} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${TargetName} "${CMAKE_BINARY_DIR}/${TargetName}"
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Test.blend "${CMAKE_BINARY_DIR}/Test1.blend"
+    )
+endif()
