@@ -33,9 +33,22 @@ using namespace Blender;
 using namespace ftFlags;
 
 
+FBThash castRept[]
+{
+    ftCharHashKey("Object").hash(),
+    ftCharHashKey("Mesh").hash(),
+    ftCharHashKey("Camera").hash(),
+    ftCharHashKey("CollectionChild").hash(),
+    ftCharHashKey("CollectionObject").hash(),
+    ftCharHashKey("Collection").hash(),
+    0
+};
+
 TEST_CASE("Basic_load")
 {
     ftBlend fp;
+    fp.setFileFlags(ftFlags::LF_DIAGNOSTICS|ftFlags::LF_DO_CHECKS|ftFlags::LF_DUMP_CAST);
+    fp.setCastFilter(castRept, sizeof(castRept)/sizeof(FBThash));
     int     status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 }
