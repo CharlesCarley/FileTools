@@ -36,7 +36,7 @@ using namespace ftFlags;
 TEST_CASE("Basic_load")
 {
     ftBlend fp;
-    int     status = fp.load("Test.Blend");
+    int     status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 }
 
@@ -44,7 +44,7 @@ TEST_CASE("Basic_load")
 TEST_CASE("SceneGrab")
 {
     ftBlend fp;
-    int     status = fp.load("Test.Blend");
+    int     status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 
     EXPECT_NE(fp.m_fg, nullptr);
@@ -57,7 +57,7 @@ TEST_CASE("SceneGrab")
 TEST_CASE("SceneIterate")
 {
     ftBlend fp;
-    int     status = fp.load("Test.Blend");
+    int     status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 
     Blender::Scene *sc = fp.m_fg->curscene;
