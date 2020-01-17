@@ -29,9 +29,7 @@ set(ExampleFile_TOOLS_LIBRARY ${FileTools_LIBRARY})
 
 set(ExampleFile_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} ${ExampleFile_TOOLS_INCLUDE})
 set(ExampleFile_LIBRARY ${ExampleFile_TARGET} ${ExampleFile_TOOLS_LIBRARY})
-
-
-include(MakeFT)
+include(TableCompiler)
 
 set(ApiFiles
     API/FileInfo.h
@@ -39,7 +37,7 @@ set(ApiFiles
     API/Data2.h
 )
 
-add_ft(ExampleTables ${ApiFiles})
+add_table(ExampleTables ${ApiFiles})
 
 set(SRC
    Example.h
