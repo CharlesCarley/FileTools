@@ -15,4 +15,5 @@ jobs:
      - name: RunTests
        run: ./Tests/FileToolsTests
      - name: RunBlendTests
-       run: ./FileFormats/Blend/Test/BlendFileTest
+       run: cd FileFormats/Blend/Test
+       run: ./BlendFileTest
