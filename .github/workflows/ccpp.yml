@@ -14,5 +14,3 @@ jobs:
        run: make
      - name: RunTests
        run: ./Tests/FileToolsTests
-     - name: RunBlendTests
-       run: ./BlendFileTest
