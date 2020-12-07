@@ -372,7 +372,10 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 
         ftPointerHashKey phk(chunk.m_addr);
         if (m_map.find(phk) != m_map.npos)
+        {
+            free(block);
             freeChunk(bin);
+        }
         else
         {
             bin->m_fblock = block;
@@ -1092,14 +1095,17 @@ int ftFile::initializeTables(ftTables* tables)
 
 void ftFile::clearStorage(void)
 {
-    ftMemoryChunk* node = (ftMemoryChunk*)m_chunks.first;
-    ftMemoryChunk* tmp;
-    while (node)
+    if (!m_map.empty())
     {
-        tmp  = node;
-        node = node->m_next;
-        freeChunk(tmp);
+        ChunkMap::Iterator it = m_map.iterator();
+        while (it.hasMoreElements())
+        {
+            ftMemoryChunk* mc = it.getNext().second;
+            freeChunk(mc);
+        }
     }
+    m_map.clear();
+    m_chunks.clear();
 
     if (m_fileTableData)
     {
