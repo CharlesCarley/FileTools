@@ -12,7 +12,7 @@ file(GLOB SourceBlend *.blend)
 file(GLOB SourceBullet *.bullet)
 
 set(DecompileFiles  ${SourceBlend} ${SourceBullet})
-decompile_files(ResultFiles ${DecompileFiles})
+decompile_files(ResultFiles "-b" ${DecompileFiles})
 
 
 # From the generated headers recompile it to a table

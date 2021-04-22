@@ -21,7 +21,7 @@ set(FT_DECOMPILER TableDecompiler)
 # This will call the TableDecompiler for each 
 # input binary and convert it back to a .h
 
-macro(decompile_files TARGET)
+macro(decompile_files TARGET FLAGS)
     set(SRC_FILES )
     set(BASE_FILES )
     set(OUTFILE )
@@ -44,7 +44,7 @@ macro(decompile_files TARGET)
 
         add_custom_command(
 	        OUTPUT ${Output}
-	        COMMAND ${FT_DECOMPILER} -n ${FileName} -s -i "${InputFile}" -o "${Output}"
+	        COMMAND ${FT_DECOMPILER} ${FLAGS} -n ${FileName} -s -i "${InputFile}" -o "${Output}"
 	        DEPENDS ${FT_DECOMPILER} ${ARGN}
             COMMENT "${OuputFile}"
 	    )
