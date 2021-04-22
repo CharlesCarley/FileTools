@@ -56,7 +56,3 @@ if (TargetFolders)
     set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
 endif()
 
-if (FileTools_BLEND_TEST)
-    subdirs(Test)
-endif()
-

@@ -17,11 +17,14 @@
 #------------------------------------------------------------------------------
 set(TargetName BlendFileTest)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ ${BlendFile_INCLUDE})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ 
+    ${BlendFile_INCLUDE} 
+    ${FileTools_INCLUDE}
+    ${Utils_INCLUDE}
+    ${GTEST_INCLUDE} 
+    )
 
 set(Target_Source 
-  catch/catch.hpp
-  catch/defines.h
   main.cpp
 )
 
@@ -51,6 +54,9 @@ endif()
 target_link_libraries(
     ${TargetName}
     ${BlendFile_LIBRARY}
+    ${FileTools_LIBRARY}
+    ${Utils_LIBRARY}
+    ${GTEST_LIBRARY}
 )
 
 add_custom_command(TARGET 
@@ -59,3 +65,7 @@ add_custom_command(TARGET
     COMMAND  $<TARGET_FILE:${TargetName}>
 )
 
+
+if (TargetFolders)
+    set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
+endif()

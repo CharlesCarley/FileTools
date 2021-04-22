@@ -33,7 +33,11 @@ configure_file(
 	${CMAKE_CURRENT_BINARY_DIR}/TestDirectory.h
 )
 
-include_directories(. ${GTEST_INCLUDE} ${CMAKE_CURRENT_BINARY_DIR} ${Utils_INCLUDE} ${FileTools_INCLUDE})
+include_directories(. 
+    ${GTEST_INCLUDE} 
+    ${CMAKE_CURRENT_BINARY_DIR} 
+    ${Utils_INCLUDE} 
+    ${FileTools_INCLUDE})
 
 add_executable(
     ${TestTargetName}

@@ -43,6 +43,10 @@ else()
     set(FileTools_INCLUDE  ${FileTools_SOURCE_DIR}/File)
     set(FileTools_LIBRARY  ${TargetName})
 
+
+    set(BlendFile_INCLUDE ${FileTools_SOURCE_DIR}/FileFormats/Blend)
+    set(BlendFile_LIBRARY BlendFile)
+
 endif()
 
 add_subdirectory(File)
@@ -65,7 +69,6 @@ if (FileTools_BUILD_TEST)
     set(BUILD_GMOCK   OFF CACHE BOOL "" FORCE)
     set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
     set(TargetGroup "Units")
-    
     add_subdirectory(${FileTools_SOURCE_DIR}/Test/googletest)
     
     set_target_properties(gtest_main PROPERTIES FOLDER "Units")
@@ -76,4 +79,9 @@ if (FileTools_BUILD_TEST)
     if (FileTools_BUILD_COMPILER AND FileTools_BUILD_DECOMPILER AND FileTools_BUILD_RECOMPILE_TEST)
         add_subdirectory(Tools/CompileTest)
     endif()
+
+    if (FileTools_BLEND_TEST)
+        add_subdirectory(FileFormats/Blend/Test)
+    endif()
+
 endif()

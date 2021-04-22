@@ -23,41 +23,34 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define CATCH_CONFIG_MAIN
 #include "Blender.h"
-#include "catch/catch.hpp"
-#include "catch/defines.h"
 #include "ftBlend.h"
-#include "stdio.h"
+#include "gtest/gtest.h"
 using namespace Blender;
 using namespace ftFlags;
 
-
-FBThash castRept[]
-{
+FBThash reportFilter[]{
     ftCharHashKey("Object").hash(),
     ftCharHashKey("Mesh").hash(),
     ftCharHashKey("Camera").hash(),
     ftCharHashKey("CollectionChild").hash(),
     ftCharHashKey("CollectionObject").hash(),
     ftCharHashKey("Collection").hash(),
-    0
-};
+    0};
 
-TEST_CASE("Basic_load")
+GTEST_TEST(BlendFile, BasicLoad)
 {
     ftBlend fp;
-    fp.setFileFlags(ftFlags::LF_DIAGNOSTICS|ftFlags::LF_DO_CHECKS|ftFlags::LF_DUMP_CAST);
-    fp.setCastFilter(castRept, sizeof(castRept)/sizeof(FBThash));
-    int     status = fp.load("Test.blend");
+    fp.setFileFlags(LF_DIAGNOSTICS | LF_DO_CHECKS | LF_DUMP_CAST);
+    fp.setCastFilter(reportFilter, sizeof(reportFilter) / sizeof(FBThash));
+    const int status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 }
 
-
-TEST_CASE("SceneGrab")
+GTEST_TEST(BlendFile, ExtractScene)
 {
-    ftBlend fp;
-    int     status = fp.load("Test.blend");
+    ftBlend   fp;
+    const int status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 
     EXPECT_NE(fp.m_fg, nullptr);
@@ -65,19 +58,17 @@ TEST_CASE("SceneGrab")
     EXPECT_TRUE(strcmp(fp.m_fg->curscene->id.name, "SCScene") == 0);
 }
 
-
-
-TEST_CASE("SceneIterate")
+GTEST_TEST(BlendFile, IterateObjects)
 {
     ftBlend fp;
     int     status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 
-    Blender::Scene *sc = fp.m_fg->curscene;
+    Scene* sc = fp.m_fg->curscene;
     EXPECT_NE(sc->master_collection, nullptr);
 
     ListBase         lb = sc->master_collection->children;
-    CollectionChild *cc = (CollectionChild *)lb.first;
+    CollectionChild* cc = (CollectionChild*)lb.first;
     EXPECT_NE(cc, nullptr);
 
     if (cc)
@@ -85,14 +76,15 @@ TEST_CASE("SceneIterate")
         EXPECT_NE(cc->collection, nullptr);
         EXPECT_TRUE(strcmp(cc->collection->id.name, "GRCollection") == 0);
 
-        ListBase          colb = cc->collection->gobject;
-        CollectionObject *co   = (CollectionObject *)colb.first;
+        ListBase collections = cc->collection->gobject;
+
+        CollectionObject* co = (CollectionObject*)collections.first;
 
         int i = 0;
         while (co)
         {
             EXPECT_NE(co->ob, nullptr);
-            Blender::Object *obj = co->ob;
+            Object* obj = co->ob;
 
             switch (i)
             {
@@ -102,7 +94,7 @@ TEST_CASE("SceneIterate")
                 EXPECT_TRUE(obj->type == 1);
                 EXPECT_TRUE(obj->data != nullptr);
 
-                Blender::Mesh *me = (Blender::Mesh *)obj->data;
+                Mesh* me = (Mesh*)obj->data;
                 EXPECT_TRUE(strcmp(me->id.name, "MECube") == 0);
 
                 break;
@@ -112,7 +104,7 @@ TEST_CASE("SceneIterate")
                 EXPECT_TRUE(strcmp(obj->id.name, "OBLight") == 0);
                 EXPECT_TRUE(obj->data != nullptr);
 
-                Blender::Lamp *ca = (Blender::Lamp *)obj->data;
+                Lamp* ca = (Lamp*)obj->data;
                 EXPECT_TRUE(strcmp(ca->id.name, "LALight") == 0);
                 break;
             }
@@ -122,10 +114,12 @@ TEST_CASE("SceneIterate")
                 EXPECT_TRUE(obj->type == 11);
                 EXPECT_TRUE(obj->data != nullptr);
 
-                Blender::Camera *ca = (Blender::Camera *)obj->data;
+                Camera* ca = (Camera*)obj->data;
                 EXPECT_TRUE(strcmp(ca->id.name, "CACamera") == 0);
                 break;
             }
+            default:
+                break;
             }
 
             ++i;
