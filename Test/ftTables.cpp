@@ -49,7 +49,7 @@ GTEST_TEST(ftCompiler, Basic)
     ftTables tbl(sizeof(void*));
     tbl.read(stream.ptr(), stream.size(), 0, 0);
 
-    FBTuint32 nr, i;
+    SKuint32 nr, i;
 
     nr = tbl.getNumberOfTypes();
     i  = 0;

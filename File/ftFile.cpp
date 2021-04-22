@@ -116,7 +116,7 @@ int ftFile::load(const char* path, int mode)
         ::free(m_curFile);
 
 
-    FBTsize pl = strlen(path);
+    SKsize pl = strlen(path);
     m_curFile  = (char*)::malloc(pl + 1);
     if (m_curFile)
     {
@@ -149,7 +149,7 @@ skStream* ftFile::openStream(const char* path, int mode)
 }
 
 
-int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
+int ftFile::load(const void* memory, SKsize sizeInBytes, int mode)
 {
     // Fix this, perhaps move zlib to utils
     // if the gzStream ever materializes..
@@ -173,7 +173,7 @@ int ftFile::load(const void* memory, FBTsize sizeInBytes, int mode)
 
 int ftFile::parseHeader(skStream* stream)
 {
-    FBTbyte *hp, *magic;
+    SKbyte *hp, *magic;
 
     m_headerFlags = 0;
     m_fileVersion = 0;
@@ -270,7 +270,7 @@ int ftFile::parseStreamImpl(skStream* stream)
 {
     int     status;
     ftChunk chunk     = ftChunkUtils::BLANK_CHUNK;
-    FBTsize bytesRead = 0;
+    SKsize bytesRead = 0;
 
     // Ensure that any memory from a previous
     // call has been freed.
@@ -385,7 +385,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
             {
                 status = allocateMBlock(phk,
                                         bin,
-                                        (FBTsize)bin->m_chunk.m_nr * (FBTsize)bin->m_chunk.m_len,
+                                        (SKsize)bin->m_chunk.m_nr * (SKsize)bin->m_chunk.m_len,
                                         false);
             }
             else
@@ -404,7 +404,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                     {
                         status = allocateMBlock(phk,
                                                 bin,
-                                                (FBTsize)bin->m_chunk.m_nr * (FBTsize)bin->m_mstrc->getSizeInBytes(),
+                                                (SKsize)bin->m_chunk.m_nr * (SKsize)bin->m_mstrc->getSizeInBytes(),
                                                 true);
                     }
                     else
@@ -428,14 +428,14 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 }
 
 
-int ftFile::allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, const FBTsize& len, bool zero)
+int ftFile::allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, const SKsize& len, bool zero)
 {
     int status = FS_OK;
 
 
     // Change the length of the file structure's memory
     // to account for the memory structures size.
-    const FBTuint32 totSize = (FBTuint32)len;
+    const SKuint32 totSize = (SKuint32)len;
     if (totSize > 0 && totSize != SK_NPOS32)
     {
         bin->m_chunk.m_len = totSize;
@@ -503,11 +503,11 @@ void ftFile::freeChunk(ftMemoryChunk*& chunk)
 
 int ftFile::rebuildStructures()
 {
-    FBTuint32 n;
+    SKuint32 n;
     int       status = FS_OK;
 
-    FBTbyte * src, *dst;
-    FBTsize * srcPtr, *dstPtr;
+    SKbyte * src, *dst;
+    SKsize * srcPtr, *dstPtr;
     ftStruct *fstrc, *mstrc;
 
     bool diagnostFlag = (m_fileFlags & LF_DIAGNOSTICS) != 0 && (m_fileFlags & LF_DUMP_CAST) != 0;
@@ -654,9 +654,9 @@ int ftFile::rebuildStructures()
 
 
 void ftFile::castMember(ftMember* mstrc,
-                        FBTsize*& dstPtr,
+                        SKsize*& dstPtr,
                         ftMember* fstrc,
-                        FBTsize*& srcPtr,
+                        SKsize*& srcPtr,
                         int&      status)
 {
     if (mstrc->isPointer())
@@ -667,9 +667,9 @@ void ftFile::castMember(ftMember* mstrc,
 
 
 void ftFile::castMemberPointer(ftMember* mstrc,
-                               FBTsize*& dstPtr,
+                               SKsize*& dstPtr,
                                ftMember* fstrc,
-                               FBTsize*& srcPtr,
+                               SKsize*& srcPtr,
                                int&      status)
 {
     if (mstrc->getPointerCount() > 1)
@@ -680,56 +680,56 @@ void ftFile::castMemberPointer(ftMember* mstrc,
 
 
 template <typename BaseType>
-void ftFile::castPointer(FBTsize*& dstPtr, FBTsize* srcPtr, FBTsize arrayLen)
+void ftFile::castPointer(SKsize*& dstPtr, SKsize* srcPtr, SKsize arrayLen)
 {
-    FBTsize i;
+    SKsize i;
 
     BaseType* sptr = (BaseType*)srcPtr;
     for (i = 0; i < arrayLen; ++i)
     {
-        void* vp  = (void*)(FBTsize)(*sptr++);
-        dstPtr[i] = (FBTsize)findPointer(ftPointerHashKey(vp));
+        void* vp  = (void*)(SKsize)(*sptr++);
+        dstPtr[i] = (SKsize)findPointer(ftPointerHashKey(vp));
     }
 }
 
 
 
 void ftFile::castPointerToPointer(ftMember* dst,
-                                  FBTsize*& dstPtr,
+                                  SKsize*& dstPtr,
                                   ftMember* src,
-                                  FBTsize*& srcPtr,
+                                  SKsize*& srcPtr,
                                   int&      status)
 {
-    ftMemoryChunk* bin = findBlock((FBTsize)(*srcPtr));
+    ftMemoryChunk* bin = findBlock((SKsize)(*srcPtr));
     if (bin)
     {
         if (bin->m_flag & ftMemoryChunk::BLK_MODIFIED && bin->m_pblock)
         {
-            (*dstPtr) = (FBTsize)bin->m_pblock;
+            (*dstPtr) = (SKsize)bin->m_pblock;
 
             if (m_fileFlags != LF_NONE)
                 ftLogger::logF("Reusing block %p", bin->m_pblock);
         }
         else
         {
-            FBTsize fps = m_file->getSizeofPointer();
+            SKsize fps = m_file->getSizeofPointer();
             if (fps == 4 || fps == 8)
             {
-                FBTsize  total    = bin->m_pblockLen / fps;
-                FBTsize* newBlock = (FBTsize*)::calloc(total, sizeof(FBTsize));
+                SKsize  total    = bin->m_pblockLen / fps;
+                SKsize* newBlock = (SKsize*)::calloc(total, sizeof(SKsize));
                 if (newBlock != nullptr)
                 {
-                    FBTsize* optr = (FBTsize*)bin->m_fblock;
+                    SKsize* optr = (SKsize*)bin->m_fblock;
                     if (fps == 4)
-                        castPointer<FBTuint32>(newBlock, optr, total);
+                        castPointer<SKuint32>(newBlock, optr, total);
                     else
-                        castPointer<FBTuint64>(newBlock, optr, total);
+                        castPointer<SKuint64>(newBlock, optr, total);
 
                     free(bin->m_pblock);
                     bin->m_pblock = newBlock;
                     bin->m_flag |= ftMemoryChunk::BLK_MODIFIED;
 
-                    (*dstPtr) = (FBTsize)newBlock;
+                    (*dstPtr) = (SKsize)newBlock;
                 }
                 else
                     status = FS_BAD_ALLOC;
@@ -744,10 +744,10 @@ void ftFile::castPointerToPointer(ftMember* dst,
     }
     else if (m_fileFlags & LF_MISSING_PTR_PTR)
     {
-        if ((FBTsize)(*srcPtr) != 0)
+        if ((SKsize)(*srcPtr) != 0)
         {
             ftLogger::logF("Failed to find corresponding chunk for address (0x%08X)",
-                           (FBTsize)(*srcPtr));
+                           (SKsize)(*srcPtr));
             ftLogger::logF("Source");
             ftLogger::log(src);
             ftLogger::logF("Destination");
@@ -761,20 +761,20 @@ void ftFile::castPointerToPointer(ftMember* dst,
 
 
 void ftFile::castPointer(ftMember* mstrc,
-                         FBTsize*& dstPtr,
+                         SKsize*& dstPtr,
                          ftMember* fstrc,
-                         FBTsize*& srcPtr,
+                         SKsize*& srcPtr,
                          int&      status)
 {
-    FBTsize arrayLen = skMin(mstrc->getArraySize(), fstrc->getArraySize());
+    SKsize arrayLen = skMin(mstrc->getArraySize(), fstrc->getArraySize());
 
-    FBTsize fps = m_file->getSizeofPointer();
+    SKsize fps = m_file->getSizeofPointer();
     if (fps == 4 || fps == 8)
     {
         if (fps == 4)
-            castPointer<FBTuint32>(dstPtr, srcPtr, arrayLen);
+            castPointer<SKuint32>(dstPtr, srcPtr, arrayLen);
         else
-            castPointer<FBTuint64>(dstPtr, srcPtr, arrayLen);
+            castPointer<SKuint64>(dstPtr, srcPtr, arrayLen);
     }
     else
     {
@@ -786,15 +786,15 @@ void ftFile::castPointer(ftMember* mstrc,
 
 
 void ftFile::castMemberVariable(ftMember* dst,
-                                FBTsize*& dstPtr,
+                                SKsize*& dstPtr,
                                 ftMember* src,
-                                FBTsize*& srcPtr,
+                                SKsize*& srcPtr,
                                 int&      status)
 {
-    FBTsize dstElmSize   = dst->getSizeInBytes();
-    FBTsize srcElmSize   = src->getSizeInBytes();
-    FBTsize maxAvailable = skMin(srcElmSize, dstElmSize);
-    FBTsize alen         = skMax(skMin(dst->getArraySize(), src->getArraySize()), 1);
+    SKsize dstElmSize   = dst->getSizeInBytes();
+    SKsize srcElmSize   = src->getSizeInBytes();
+    SKsize maxAvailable = skMin(srcElmSize, dstElmSize);
+    SKsize alen         = skMax(skMin(dst->getArraySize(), src->getArraySize()), 1);
 
     // FT_MAX_MBR_RANGE
     // Provides an upper boundary for the number of array
@@ -849,26 +849,26 @@ void ftFile::castMemberVariable(ftMember* dst,
                 // This will handle the case when there is extra information in the
                 // source buffer. strncpy will copy up to the first null terminator
                 // and the extra info in the buffer will be left untouched.
-                ::strncpy((FBTbyte*)dstPtr, (FBTbyte*)srcPtr, maxAvailable);
+                ::strncpy((SKbyte*)dstPtr, (SKbyte*)srcPtr, maxAvailable);
             }
             else
                 ::memcpy(dstPtr, srcPtr, maxAvailable);
         }
         else
         {
-            FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
-            FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
+            SKbyte* dstBPtr = reinterpret_cast<SKbyte*>(dstPtr);
+            SKbyte* srcBPtr = reinterpret_cast<SKbyte*>(srcPtr);
 
             ftAtomic stp, dtp;
             stp = src->getAtomicType();
             dtp = dst->getAtomicType();
 
-            FBTbyte tmpBuf[ftEndianUtils::MaxSwapSpace + 1] = {};
+            SKbyte tmpBuf[ftEndianUtils::MaxSwapSpace + 1] = {};
 
-            FBTsize i;
-            FBTsize elen  = maxAvailable;
-            FBTsize cslen = skMin(ftEndianUtils::MaxSwapSpace, srcElmSize / alen);
-            FBTsize cdlen = skMin(ftEndianUtils::MaxSwapSpace, maxAvailable / alen);
+            SKsize i;
+            SKsize elen  = maxAvailable;
+            SKsize cslen = skMin(ftEndianUtils::MaxSwapSpace, srcElmSize / alen);
+            SKsize cdlen = skMin(ftEndianUtils::MaxSwapSpace, maxAvailable / alen);
 
 
             int sc;
@@ -890,13 +890,13 @@ void ftFile::castMemberVariable(ftMember* dst,
                     switch (sc)
                     {
                     case 1:
-                        swap16((FBTuint16*)tmpBuf, 1);
+                        swap16((SKuint16*)tmpBuf, 1);
                         break;
                     case 2:
-                        swap32((FBTuint32*)tmpBuf, 1);
+                        swap32((SKuint32*)tmpBuf, 1);
                         break;
                     case 3:
-                        swap64((FBTuint64*)tmpBuf, 1);
+                        swap64((SKuint64*)tmpBuf, 1);
                         break;
                     default:
                         ::memset(tmpBuf, 0, cdlen);
@@ -917,25 +917,25 @@ void ftFile::castMemberVariable(ftMember* dst,
 
 
 void ftFile::castAtomicMemberArray(ftMember* dst,
-                                   FBTbyte*& dstPtr,
+                                   SKbyte*& dstPtr,
                                    ftMember* src,
-                                   FBTbyte*& srcPtr,
+                                   SKbyte*& srcPtr,
                                    int&      status)
 {
     // TODO
 }
 
 void ftFile::castAtomicMember(ftMember* dst,
-                              FBTbyte*& dstPtr,
+                              SKbyte*& dstPtr,
                               ftMember* src,
-                              FBTbyte*& srcPtr,
+                              SKbyte*& srcPtr,
                               int&      status)
 {
     // TODO
 }
 
 
-void ftFile::setFilter(FBThash*& dest, FBTint32& destLen, FBThash* filter, FBTint32 length)
+void ftFile::setFilter(SKhash*& dest, SKint32& destLen, SKhash* filter, SKint32 length)
 {
     if (!filter)
         return;
@@ -958,7 +958,7 @@ void ftFile::setFilter(FBThash*& dest, FBTint32& destLen, FBThash* filter, FBTin
 }
 
 
-bool ftFile::searchFilter(const FBThash* searchIn, const FBThash& searchFor, const FBTint32& len)
+bool ftFile::searchFilter(const SKhash* searchIn, const SKhash& searchFor, const SKint32& len)
 {
     if (!searchIn)
         return false;
@@ -977,7 +977,7 @@ bool ftFile::searchFilter(const FBThash* searchIn, const FBThash& searchFor, con
     return false;
 }
 
-bool ftFile::skip(const FBThash& id)
+bool ftFile::skip(const SKhash& id)
 {
     if (!m_filterList)
         return false;
@@ -987,14 +987,14 @@ bool ftFile::skip(const FBThash& id)
 }
 
 
-void ftFile::setFilterList(FBThash* filter, FBTuint32 length, bool inclusive)
+void ftFile::setFilterList(SKhash* filter, SKuint32 length, bool inclusive)
 {
     m_inclusive = inclusive;
     setFilter(m_filterList, m_filterListLen, filter, length);
 }
 
 
-void ftFile::setCastFilter(FBThash* filter, FBTuint32 length)
+void ftFile::setCastFilter(SKhash* filter, SKuint32 length)
 {
     setFilter(m_castFilter, m_castFilterLen, filter, length);
 }
@@ -1007,8 +1007,8 @@ ftStruct* ftFile::findInTable(ftStruct* findStruct, ftTables* sourceTable, ftTab
 
     if (findStruct != nullptr)
     {
-        FBTuint16 strcType;
-        FBTbyte*  searchKey;
+        SKuint16 strcType;
+        SKbyte*  searchKey;
         strcType  = findStruct->getTypeIndex();
         searchKey = sourceTable->getTypeNameAt(strcType);
 
@@ -1030,9 +1030,9 @@ ftStruct* ftFile::findInFileTable(ftStruct* memoryStruct)
 }
 
 
-void* ftFile::findPointer(const FBTsize& iptr)
+void* ftFile::findPointer(const SKsize& iptr)
 {
-    FBTsize i;
+    SKsize i;
     if ((i = m_map.find(iptr)) != m_map.npos)
         return m_map.at(i)->m_mblock;
     return 0;
@@ -1040,16 +1040,16 @@ void* ftFile::findPointer(const FBTsize& iptr)
 
 void* ftFile::findPointer(const ftPointerHashKey& iptr)
 {
-    FBTsize i;
+    SKsize i;
     if ((i = m_map.find(iptr)) != m_map.npos)
         return m_map.at(i)->m_mblock;
     return 0;
 }
 
 
-ftMemoryChunk* ftFile::findBlock(const FBTsize& iptr)
+ftMemoryChunk* ftFile::findBlock(const SKsize& iptr)
 {
-    FBTsize i;
+    SKsize i;
     if ((i = m_map.find(iptr)) != m_map.npos)
         return m_map.at(i);
     return nullptr;
@@ -1085,7 +1085,7 @@ int ftFile::initializeTables(ftTables* tables)
     // This calls down into derived classes
     // to gain access to the memory table.
     void*   tableData = getTables();
-    FBTsize tableSize = getTableSize();
+    SKsize tableSize = getTableSize();
 
     if (tableData != 0 && tableSize > 0 && tableSize != SK_NPOS)
         return tables->read(tableData, tableSize, 0, m_fileFlags);
@@ -1129,7 +1129,7 @@ void ftFile::clearStorage(void)
 
 int ftFile::save(const char* path, const int mode)
 {
-    FBTuint8  cp, ce;
+    SKuint8  cp, ce;
     skStream* fs;
 
     if (mode == PM_COMPRESSED)
@@ -1170,7 +1170,7 @@ int ftFile::save(const char* path, const int mode)
 
     ftChunk ch;
     ch.m_code     = ftIdNames::DNA1;
-    ch.m_len      = (FBTuint32)getTableSize();
+    ch.m_len      = (SKuint32)getTableSize();
     ch.m_nr       = 1;
     ch.m_addr     = 0;  // cannot be looked back up
     ch.m_structId = 0;
@@ -1191,14 +1191,14 @@ int ftFile::save(const char* path, const int mode)
 
 void ftFile::serialize(skStream*   stream,
                        const char* id,
-                       FBTuint32   code,
-                       FBTsize     len,
+                       SKuint32   code,
+                       SKsize     len,
                        void*       writeData)
 {
     if (m_memory == 0)
         getMemoryTable();
 
-    FBTuint32 ft = m_memory->findTypeId(id);
+    SKuint32 ft = m_memory->findTypeId(id);
     if (ft == SK_NPOS32)
     {
         if (m_fileFlags != LF_NONE)
@@ -1211,15 +1211,15 @@ void ftFile::serialize(skStream*   stream,
 
 void ftFile::serialize(skStream*   stream,
                        const char* id,
-                       FBTuint32   code,
-                       FBTsize     len,
+                       SKuint32   code,
+                       SKsize     len,
                        void*       writeData,
                        int         nr)
 {
     if (m_memory == 0)
         getMemoryTable();
 
-    FBTuint32 ft = m_memory->findTypeId(id);
+    SKuint32 ft = m_memory->findTypeId(id);
     if (ft == SK_NPOS32)
     {
         if (m_fileFlags != LF_NONE)
@@ -1231,7 +1231,7 @@ void ftFile::serialize(skStream*   stream,
 }
 
 
-bool ftFile::isValidWriteData(void* writeData, FBTsize len)
+bool ftFile::isValidWriteData(void* writeData, SKsize len)
 {
     if (writeData == nullptr || len == SK_NPOS || len == 0)
     {
@@ -1244,19 +1244,19 @@ bool ftFile::isValidWriteData(void* writeData, FBTsize len)
 
 
 void ftFile::serializeChunk(skStream* stream,
-                            FBTuint32 code,
-                            FBTuint32 nr,
-                            FBTuint32 typeIndex,
-                            FBTsize   len,
+                            SKuint32 code,
+                            SKuint32 nr,
+                            SKuint32 typeIndex,
+                            SKsize   len,
                             void*     writeData)
 {
     if (isValidWriteData(writeData, len))
     {
         ftChunk ch;
         ch.m_code     = code;
-        ch.m_len      = (FBTuint32)len;
+        ch.m_len      = (SKuint32)len;
         ch.m_nr       = nr;
-        ch.m_addr     = (FBTsize)writeData;
+        ch.m_addr     = (SKsize)writeData;
         ch.m_structId = typeIndex;
         ftChunkUtils::write(&ch, stream);
 
@@ -1272,15 +1272,15 @@ void ftFile::serializeChunk(skStream* stream,
 }
 
 void ftFile::serialize(skStream* stream,
-                       FBTtype   index,
-                       FBTuint32 code,
-                       FBTsize   len,
+                       SKtype   index,
+                       SKuint32 code,
+                       SKsize   len,
                        void*     writeData)
 {
     serializeChunk(stream, code, 1, index, len, writeData);
 }
 
-void ftFile::serialize(skStream* stream, FBTsize len, void* writeData, int nr)
+void ftFile::serialize(skStream* stream, SKsize len, void* writeData, int nr)
 {
     serializeChunk(stream, ftIdNames::DATA, 1, 0, len, writeData);
 }

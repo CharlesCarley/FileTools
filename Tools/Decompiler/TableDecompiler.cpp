@@ -134,14 +134,14 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* structure)
     writeIndent(ctx, out, 1);
     out << "{" << endl;
 
-    FBTtype* cs = ctx.tables->getStructAt(structure->getStructIndex());
+    SKtype* cs = ctx.tables->getStructAt(structure->getStructIndex());
 
     int maxLeft = -1;
     if (cs)
     {
-        const FBTtype count = cs[1];
+        const SKtype count = cs[1];
         cs += 2;
-        for (FBTtype i = 0; i < count; ++i, cs += 2)
+        for (SKtype i = 0; i < count; ++i, cs += 2)
         {
             const ftType& type = ctx.tables->getTypeAt(cs[0]);
 
@@ -152,9 +152,9 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* structure)
     cs = ctx.tables->getStructAt(structure->getStructIndex());
     if (cs)
     {
-        const FBTtype cnt = cs[1];
+        const SKtype cnt = cs[1];
         cs += 2;
-        for (FBTtype i = 0; i < cnt; ++i, cs += 2)
+        for (SKtype i = 0; i < cnt; ++i, cs += 2)
         {
             const ftType& type = ctx.tables->getTypeAt(cs[0]);
             const ftName& name = ctx.tables->getNameAt(cs[1]);
@@ -202,7 +202,7 @@ void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& structure
     out << endl;
 }
 
-void writeUnresolved(ProgramInfo& ctx, ostream& out, FBTtype* typeNotFound)
+void writeUnresolved(ProgramInfo& ctx, ostream& out, SKtype* typeNotFound)
 {
     char*         typeName = ctx.tables->getTypeNameAt(typeNotFound[0]);
     const ftName& name     = ctx.tables->getNameAt(typeNotFound[1]);
@@ -241,14 +241,14 @@ void writeUnresolved(ProgramInfo& ctx, ostream& out, FBTtype* typeNotFound)
     }
 }
 
-bool hasUnResolved(skArray<FBTtype*>& unresolved, const FBTtype* independent)
+bool hasUnResolved(skArray<SKtype*>& unresolved, const SKtype* independent)
 {
     bool found = false;
 
-    skArray<FBTtype*>::Iterator it = unresolved.iterator();
+    skArray<SKtype*>::Iterator it = unresolved.iterator();
     while (!found && it.hasMoreElements())
     {
-        FBTtype* type = it.getNext();
+        SKtype* type = it.getNext();
         found         = type[0] == independent[0];
     }
     return found;
@@ -263,12 +263,12 @@ bool structContains(ftStruct*    a,
     bool      result = false;
     if (tables)
     {
-        FBTtype* structure = tables->getStructAt(a->getStructIndex());
+        SKtype* structure = tables->getStructAt(a->getStructIndex());
         if (structure)
         {
-            const FBTtype count = structure[1];
+            const SKtype count = structure[1];
             structure += 2;
-            for (FBTtype i = 0; i < count && !result; ++i, structure += 2)
+            for (SKtype i = 0; i < count && !result; ++i, structure += 2)
             {
                 const ftType& type = tables->getTypeAt(structure[0]);
                 const ftName& name = tables->getNameAt(structure[1]);
@@ -399,7 +399,7 @@ void organizeDependentStructs(StructArray& dependent, StructArray& independent)
 }
 
 void sortStructs(ProgramInfo&        ctx,
-                 skArray<FBTtype*>&  unresolved,
+                 skArray<SKtype*>&  unresolved,
                  skArray<ftStruct*>& independent,
                  skArray<ftStruct*>& dependent)
 {
@@ -410,16 +410,16 @@ void sortStructs(ProgramInfo&        ctx,
     {
         ftStruct* cs = it.getNext();
 
-        FBTtype* structure = ctx.tables->getStructAt(cs->getStructIndex());
+        SKtype* structure = ctx.tables->getStructAt(cs->getStructIndex());
         if (structure)
         {
-            const FBTtype count = structure[1];
+            const SKtype count = structure[1];
             structure += 2;
 
             bool hasStructs           = false;
             bool hasNonPointerStructs = false;
 
-            for (FBTtype i = 0; i < count; ++i, structure += 2)
+            for (SKtype i = 0; i < count; ++i, structure += 2)
             {
                 const ftType& type = ctx.tables->getTypeAt(structure[0]);
                 const ftName& name = ctx.tables->getNameAt(structure[1]);
@@ -459,7 +459,7 @@ int extractToFile(ProgramInfo& ctx)
     int       status = 0;
     ftTables* tables = ctx.tables;
 
-    skArray<FBTtype*>  unresolved;
+    skArray<SKtype*>  unresolved;
     skArray<ftStruct*> independent, dependent;
     sortStructs(ctx, unresolved, independent, dependent);
 
@@ -488,10 +488,10 @@ int extractToFile(ProgramInfo& ctx)
             writeForward(ctx, outStream, structure);
         }
 
-        skArray<FBTtype*>::Iterator uit = unresolved.iterator();
+        skArray<SKtype*>::Iterator uit = unresolved.iterator();
         while (uit.hasMoreElements())
         {
-            FBTtype* cur = uit.getNext();
+            SKtype* cur = uit.getNext();
             writeUnresolved(ctx, outStream, cur);
         }
         outStream << endl;

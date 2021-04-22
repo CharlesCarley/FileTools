@@ -40,12 +40,12 @@ public:
 public:
     ftBuildStruct();
 
-    FBTsize     m_structId;
+    SKsize     m_structId;
     ftId        m_name;
     Variables   m_data;
-    FBTsize     m_nrDependentTypes;
+    SKsize     m_nrDependentTypes;
     ftPath      m_path;
-    FBTsize     m_line;
+    SKsize     m_line;
 };
 
 #endif  //_ftBuildStruct_h_

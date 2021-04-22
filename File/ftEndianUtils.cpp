@@ -29,7 +29,7 @@
 ftEndian ftEndianUtils::getEndian(void)
 {
     ftEndianTest e;
-    e.test = (FBTint32)FT_ENDIAN_IS_LITTLE;
+    e.test = (SKint32)FT_ENDIAN_IS_LITTLE;
     return static_cast<ftEndian>(e.bo[0]);
 }
 
@@ -42,31 +42,31 @@ bool ftEndianUtils::isEndian(const ftEndian& endian)
 }
 
 
-FBTuint16 ftEndianUtils::swap16(FBTuint16 in)
+SKuint16 ftEndianUtils::swap16(SKuint16 in)
 {
-    return static_cast<FBTuint16>(((in & 0xFF00) >> 8) | ((in & 0x00FF) << 8));
+    return static_cast<SKuint16>(((in & 0xFF00) >> 8) | ((in & 0x00FF) << 8));
 }
 
-FBTuint32 ftEndianUtils::swap32(const FBTuint32& in)
+SKuint32 ftEndianUtils::swap32(const SKuint32& in)
 {
     return (((in & 0xFF000000) >> 24) | ((in & 0x00FF0000) >> 8) | ((in & 0x0000FF00) << 8) | ((in & 0x000000FF) << 24));
 }
 
-FBTint16 ftEndianUtils::swap16(FBTint16 in)
+SKint16 ftEndianUtils::swap16(SKint16 in)
 {
-    return swap16(static_cast<FBTuint16>(in));
+    return swap16(static_cast<SKuint16>(in));
 }
 
-FBTint32 ftEndianUtils::swap32(const FBTint32& in)
+SKint32 ftEndianUtils::swap32(const SKint32& in)
 {
-    return swap32(static_cast<FBTuint32>(in));
+    return swap32(static_cast<SKuint32>(in));
 }
 
-FBTuint64 ftEndianUtils::swap64(const FBTuint64& in)
+SKuint64 ftEndianUtils::swap64(const SKuint64& in)
 {
-    FBTuint64       r   = 0;
-    const FBTubyte* src = reinterpret_cast<const FBTubyte*>(&in);
-    FBTubyte*       dst = reinterpret_cast<FBTubyte*>(&r);
+    SKuint64       r   = 0;
+    const SKubyte* src = reinterpret_cast<const SKubyte*>(&in);
+    SKubyte*       dst = reinterpret_cast<SKubyte*>(&r);
 
     dst[0] = src[7];
     dst[1] = src[6];
@@ -80,9 +80,9 @@ FBTuint64 ftEndianUtils::swap64(const FBTuint64& in)
 }
 
 
-void ftEndianUtils::swap16(FBTuint16* sp, FBTsize len)
+void ftEndianUtils::swap16(SKuint16* sp, SKsize len)
 {
-    FBTsize i;
+    SKsize i;
     for (i = 0; i < len; ++i)
     {
         *sp = swap16(*sp);
@@ -90,9 +90,9 @@ void ftEndianUtils::swap16(FBTuint16* sp, FBTsize len)
     }
 }
 
-void ftEndianUtils::swap32(FBTuint32* ip, FBTsize len)
+void ftEndianUtils::swap32(SKuint32* ip, SKsize len)
 {
-    FBTsize i;
+    SKsize i;
     for (i = 0; i < len; ++i)
     {
         *ip = swap32(*ip);
@@ -101,9 +101,9 @@ void ftEndianUtils::swap32(FBTuint32* ip, FBTsize len)
 }
 
 
-void ftEndianUtils::swap64(FBTuint64* dp, FBTsize len)
+void ftEndianUtils::swap64(SKuint64* dp, SKsize len)
 {
-    FBTsize i;
+    SKsize i;
     for (i = 0; i < len; ++i)
     {
         *dp = swap64(*dp);
@@ -111,7 +111,7 @@ void ftEndianUtils::swap64(FBTuint64* dp, FBTsize len)
     }
 }
 
-FBTint64 ftEndianUtils::swap64(const FBTint64& in)
+SKint64 ftEndianUtils::swap64(const SKint64& in)
 {
-    return swap64(static_cast<FBTuint64>(in));
+    return swap64(static_cast<SKuint64>(in));
 }

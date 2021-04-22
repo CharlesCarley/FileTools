@@ -31,41 +31,41 @@
 
 struct ftChunkScan
 {
-    FBTuint32 m_code;
-    FBTuint32 m_len;
+    SKuint32 m_code;
+    SKuint32 m_len;
 };
 
 
 
 struct ftChunk32
 {
-    FBTuint32 m_code;
-    FBTuint32 m_len;
-    FBTuint32 m_addr;
-    FBTuint32 m_structId;
-    FBTuint32 m_nr;
+    SKuint32 m_code;
+    SKuint32 m_len;
+    SKuint32 m_addr;
+    SKuint32 m_structId;
+    SKuint32 m_nr;
 };
 SK_ASSERTCOMP(ChunkLen32, sizeof(ftChunk32) == 20);
 
 
 struct ftChunk64
 {
-    FBTuint32 m_code;
-    FBTuint32 m_len;
-    FBTuint64 m_addr;
-    FBTuint32 m_structId;
-    FBTuint32 m_nr;
+    SKuint32 m_code;
+    SKuint32 m_len;
+    SKuint64 m_addr;
+    SKuint32 m_structId;
+    SKuint32 m_nr;
 };
 SK_ASSERTCOMP(ChunkLen64, sizeof(ftChunk64) == 24);
 
 
 struct ftChunk
 {
-    FBTuint32 m_code;
-    FBTuint32 m_len;
-    FBTsize   m_addr;
-    FBTuint32 m_structId;
-    FBTuint32 m_nr;
+    SKuint32 m_code;
+    SKuint32 m_len;
+    SKsize   m_addr;
+    SKuint32 m_structId;
+    SKuint32 m_nr;
 };
 
 
@@ -105,10 +105,10 @@ struct ftMemoryChunk
     // for each of the pointers. The address of m_pblock is assigned to 
     // m_mblock at the offset for the pointer to pointer member.
     void*     m_pblock;
-    FBTuint32 m_pblockLen;
+    SKuint32 m_pblockLen;
 
-    FBTuint8  m_flag;
-    FBTtype   m_newTypeId;
+    SKuint8  m_flag;
+    SKtype   m_newTypeId;
 
     ftStruct* m_fstrc;
     ftStruct* m_mstrc;
@@ -125,9 +125,9 @@ struct ftChunkUtils
         BlockScan = sizeof(ftChunkScan),
     };
 
-    static FBTsize read(ftChunk* dest, skStream* stream, int flags);
-    static FBTsize write(ftChunk* src, skStream* stream);
-    static FBTsize scan(ftChunkScan* dest, skStream* stream, int flags);
+    static SKsize read(ftChunk* dest, skStream* stream, int flags);
+    static SKsize write(ftChunk* src, skStream* stream);
+    static SKsize scan(ftChunkScan* dest, skStream* stream, int flags);
 
     static const ftChunk BLANK_CHUNK;
 };

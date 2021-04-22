@@ -36,7 +36,7 @@ class ftCharHashKey
 {
 protected:
     char*           m_key;
-    mutable FBThash m_hash;
+    mutable SKhash m_hash;
 
 public:
     ftCharHashKey() :
@@ -114,7 +114,7 @@ class ftPointerHashKey
 {
 protected:
     void*           m_key;
-    mutable FBThash m_hash;
+    mutable SKhash m_hash;
 
 public:
     ftPointerHashKey() :
@@ -131,7 +131,7 @@ public:
         hash();
     }
 
-    ftPointerHashKey(FBTsize k) :
+    ftPointerHashKey(SKsize k) :
         m_key((void*)k),
         m_hash(SK_NPOS)
     {
@@ -186,8 +186,8 @@ public:
     }
 };
 
-extern FBThash skHash(const ftCharHashKey& hk);
-extern FBThash skHash(const ftPointerHashKey& hk);
+extern SKhash skHash(const ftCharHashKey& hk);
+extern SKhash skHash(const ftPointerHashKey& hk);
 
 
 #endif  //_ftHashTypes_h_

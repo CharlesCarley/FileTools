@@ -157,7 +157,7 @@ bool ftMember::isValidAtomicType()
 ftAtomic ftMember::getAtomicType()
 {
     if (m_atomic == -1)
-        m_atomic = (FBTint32)ftAtomicUtils::getPrimitiveType(m_hashedType);
+        m_atomic = (SKint32)ftAtomicUtils::getPrimitiveType(m_hashedType);
     return (ftAtomic)m_atomic;
 }
 
@@ -171,23 +171,23 @@ int ftMember::getPointerCount()
     return 0;
 }
 
-void ftMember::setNameIndex(const FBTuint16& idx)
+void ftMember::setNameIndex(const SKuint16& idx)
 {
     m_name = idx;
     if (m_parent && m_parent->m_table)
     {
-        if (m_name < (FBTuint16)m_parent->m_table->m_hashedNames.size())
+        if (m_name < (SKuint16)m_parent->m_table->m_hashedNames.size())
             m_hashedName = m_parent->m_table->m_hashedNames[m_name];
     }
 }
 
-void ftMember::setTypeIndex(const FBTuint16& idx)
+void ftMember::setTypeIndex(const SKuint16& idx)
 {
     m_type = idx;
 
     if (m_parent && m_parent->m_table)
     {
-        if (m_type < (FBTint16)m_parent->m_table->m_typeCount)
+        if (m_type < (SKint16)m_parent->m_table->m_typeCount)
             m_hashedType = m_parent->m_table->m_types[m_type].m_hash;
     }
 }
@@ -204,9 +204,9 @@ void* ftMember::getChunk()
     return m_parent ? m_parent->m_attached : 0;
 }
 
-FBTsize* ftMember::jumpToOffset(void* base)
+SKsize* ftMember::jumpToOffset(void* base)
 {
     if (base && m_offset < m_parent->m_sizeInBytes)
-        return (FBTsize*)(reinterpret_cast<FBTbyte*>(base) + m_offset);
+        return (SKsize*)(reinterpret_cast<SKbyte*>(base) + m_offset);
     return nullptr;
 }

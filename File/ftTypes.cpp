@@ -27,12 +27,12 @@
 #include "ftHashTypes.h"
 
 
-FBThash skHash(const ftCharHashKey& hk)
+SKhash skHash(const ftCharHashKey& hk)
 {
     return hk.hash();
 }
 
-FBThash skHash(const ftPointerHashKey& hk)
+SKhash skHash(const ftPointerHashKey& hk)
 {
     return hk.hash();
 }

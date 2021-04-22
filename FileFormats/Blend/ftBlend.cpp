@@ -21,11 +21,11 @@
 #include "ftStreams.h"
 #include "ftTables.h"
 
-const FBTuint32 GLOB = FT_TYPEID('G', 'L', 'O', 'B');
+const SKuint32 GLOB = FT_TYPEID('G', 'L', 'O', 'B');
 
 struct ftIdDB
 {
-    const FBTuint16 m_code;
+    const SKuint16 m_code;
     ftList ftBlend::*m_ptr;
 };
 
@@ -108,7 +108,7 @@ int ftBlend::serializeData(skStream* stream)
         ch.m_nr       = node->m_chunk.m_nr;
         ch.m_len      = node->m_chunk.m_len;
         ch.m_structId = node->m_newTypeId;
-        ch.m_addr     = (FBTsize)wd;
+        ch.m_addr     = (SKsize)wd;
 
         stream->write(&ch, sizeof(ftChunk));
         stream->write(wd, ch.m_len);
@@ -129,7 +129,7 @@ void* ftBlend::getTables(void)
     return (void*)bfBlenderTable;
 }
 
-FBTsize ftBlend::getTableSize(void)
+SKsize ftBlend::getTableSize(void)
 {
     return bfBlenderLen;
 }

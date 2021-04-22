@@ -38,7 +38,7 @@ class ftMember;
 struct ftName
 {
     char*   m_name;
-    FBThash m_hash;
+    SKhash m_hash;
     int     m_ptrCount;
     int     m_numDimensions;
     int     m_isFunctionPointer;
@@ -49,18 +49,18 @@ struct ftName
 struct ftType
 {
     char*   m_name;  // note: memory is in the main table.
-    FBThash m_hash;  // ftCharHashKey(typeName)
+    SKhash m_hash;  // ftCharHashKey(typeName)
 
     // This must be checked against ftTables::getFirstStructType
     //
     //  [0-NumberOfBuiltin] = SK_NPOS32
     //  (NumberOfBuiltin, NumberOfStructs]
-    FBTuint32 m_strcId;
+    SKuint32 m_strcId;
 };
 
 struct MemberSearchKey
 {
-    FBThash   m_hash;
+    SKhash   m_hash;
     ftMember* m_member;
 };
 
@@ -113,31 +113,31 @@ public:
     }
 
     // Returns the base address as byte pointer of the nth block of base.
-    FBTbyte* getBlock(void* base, SKsize n, const SKsize max);
+    SKbyte* getBlock(void* base, SKsize n, const SKsize max);
 
     inline ftTables* getParent()
     {
         return m_table;
     }
 
-    inline const FBTint16 getTypeIndex() const
+    inline const SKint16 getTypeIndex() const
     {
         return m_type;
     }
 
-    inline const FBThash& getHashedType() const
+    inline const SKhash& getHashedType() const
     {
         return m_hashedType;
     }
 
 
-    inline FBTint32 getStructIndex() const
+    inline SKint32 getStructIndex() const
     {
         return m_strcId;
     }
 
 
-    inline const FBTint32& getSizeInBytes() const
+    inline const SKint32& getSizeInBytes() const
     {
         return m_sizeInBytes;
     }
@@ -171,29 +171,29 @@ public:
         return (m_flag & HAS_DEPENDANT) != 0;
     }
 
-    inline FBTint32 getFlag() const
+    inline SKint32 getFlag() const
     {
         return m_flag;
     }
 
-    inline void setFlag(const FBTint32& bits)
+    inline void setFlag(const SKint32& bits)
     {
         m_flag = bits;
     }
 
-    inline void addFlag(const FBTint32& bit)
+    inline void addFlag(const SKint32& bit)
     {
         m_flag |= bit;
     }
 
-    inline bool hasFlag(const FBTint32& bit) const
+    inline bool hasFlag(const SKint32& bit) const
     {
         return (m_flag & bit) != 0;
     }
 
 
     // Returns the number of dependent structures
-    FBTint32 getReferences()
+    SKint32 getReferences()
     {
         return m_refs;
     }
@@ -222,13 +222,13 @@ private:
 
     ftMember* createMember();
 
-    FBTuint16    m_type;
-    FBThash      m_hashedType;
+    SKuint16    m_type;
+    SKhash      m_hashedType;
     void*        m_attached;
-    FBTint32     m_sizeInBytes;
-    FBTint32     m_refs, m_lock;
-    FBTint32     m_strcId;
-    FBTint32     m_flag;
+    SKint32     m_sizeInBytes;
+    SKint32     m_refs, m_lock;
+    SKint32     m_strcId;
+    SKint32     m_flag;
     Members      m_members;
     ftTables*    m_table;
     ftStruct*    m_link;

@@ -39,8 +39,8 @@ public:
 
     ftId         m_type;
     ftId         m_name;
-    FBTtype      m_typeId;
-    FBTtype      m_hashedName;
+    SKtype      m_typeId;
+    SKtype      m_hashedName;
     int          m_ptrCount;
     int          m_numDimensions;
     int          m_isFunctionPointer;
@@ -48,9 +48,9 @@ public:
     int          m_undefined;
     bool         m_isDependentType;
     ftArraySlots m_arrays;
-    FBTsize      m_arraySize;
+    SKsize      m_arraySize;
     ftPath       m_path;
-    FBTsize      m_line;
+    SKsize      m_line;
 };
 
 #endif  //_ftBuildMember_h_

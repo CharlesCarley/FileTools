@@ -29,16 +29,16 @@
 #include "ftBuildMember.h"
 #include "ftBuildStruct.h"
 
-typedef skArray<FBTtype> IntPtrArray;
-typedef skArray<FBTtype> TypeArray;
+typedef skArray<SKtype> IntPtrArray;
+typedef skArray<SKtype> TypeArray;
 
 struct MaxAllocSize
 {
-    FBTuint32 m_name;
-    FBTuint32 m_type;
-    FBTuint32 m_tlen;
-    FBTuint32 m_strc;
-    FBTuint32 m_structures;
+    SKuint32 m_name;
+    SKuint32 m_type;
+    SKuint32 m_tlen;
+    SKuint32 m_strc;
+    SKuint32 m_structures;
 };
 
 class ftBuildInfo
@@ -52,8 +52,8 @@ public:
     int     getTLengths(ftBuildStruct::Array& structBuilders);
     void    makeBuiltinTypes(void);
     bool    hasType(const ftId& type) const;
-    FBTtype addType(const ftId& type, const FBTuint16& len);
-    FBTsize addName(const ftId& name);
+    SKtype addType(const ftId& type, const SKuint16& len);
+    SKsize addName(const ftId& name);
 
     MaxAllocSize     m_alloc;
     ftStringPtrArray m_name;
@@ -62,7 +62,7 @@ public:
     IntPtrArray      m_64ln;
     TypeArray        m_strc;
     ftStringPtrArray m_undef;
-    FBTuint32        m_numberOfBuiltIn;
+    SKuint32        m_numberOfBuiltIn;
 };
 
 #endif  //_ftBuildInfo_h_

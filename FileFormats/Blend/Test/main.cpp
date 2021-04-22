@@ -29,7 +29,7 @@
 using namespace Blender;
 using namespace ftFlags;
 
-FBThash reportFilter[]{
+SKhash reportFilter[]{
     ftCharHashKey("Object").hash(),
     ftCharHashKey("Mesh").hash(),
     ftCharHashKey("Camera").hash(),
@@ -42,7 +42,7 @@ GTEST_TEST(BlendFile, BasicLoad)
 {
     ftBlend fp;
     fp.setFileFlags(LF_DIAGNOSTICS | LF_DO_CHECKS | LF_DUMP_CAST);
-    fp.setCastFilter(reportFilter, sizeof(reportFilter) / sizeof(FBThash));
+    fp.setCastFilter(reportFilter, sizeof(reportFilter) / sizeof(SKhash));
     const int status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 }

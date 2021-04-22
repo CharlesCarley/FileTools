@@ -169,7 +169,7 @@ void ftLogger::color(skConsoleColorSpace cs)
     skHexPrint::writeColor(cs);
 }
 
-void ftLogger::log(const void *ptr, const FBTsize len)
+void ftLogger::log(const void *ptr, const SKsize len)
 {
     skHexPrint::dumpHex(
         (char *)ptr,
@@ -351,7 +351,7 @@ void ftLogger::log(const ftType &type)
 }
 
 
-void ftLogger::log(const ftType &type, FBTtype size)
+void ftLogger::log(const ftType &type, SKtype size)
 {
     cout << right << setw(10) << size << ' ';
     skHexPrint::writeColor(CS_LIGHT_GREY);
@@ -393,7 +393,7 @@ void ftLogger::logDiagnosticsCastMemberHeader(ftMember *dstmbr,
 }
 
 
-void ftLogger::logReadChunk(const ftChunk &chunk, const void *block, const FBTsize &len)
+void ftLogger::logReadChunk(const ftChunk &chunk, const void *block, const SKsize &len)
 {
     newline();
     log(chunk);
@@ -406,7 +406,7 @@ void ftLogger::logReadChunk(const ftChunk &chunk, const void *block, const FBTsi
 void ftLogger::logSkipChunk(const ftChunk &chunk,
                             ftStruct *     fstrc,
                             const void *   block,
-                            const FBTsize &len)
+                            const SKsize &len)
 {
     newline();
     color(CS_RED);

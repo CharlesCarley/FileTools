@@ -39,7 +39,7 @@ public:
 
     int buildTypes(void);
     
-    FBTuint32 getNumberOfBuiltinTypes(void) const;
+    SKuint32 getNumberOfBuiltinTypes(void) const;
 
     
     inline void setWriteMode(int mode)
@@ -77,9 +77,9 @@ private:
     static void makeName(ftBuildMember&, bool);
 
     char*                  m_buffer;
-    FBTsize                m_pos;
+    SKsize                m_pos;
     ftBuildInfo*           m_build;
-    FBTsize                m_start;
+    SKsize                m_start;
     ftPathArray            m_includes;
     ftStringPtrArray       m_namespaces, m_skip;
     ftBuildStruct::Array m_builders;

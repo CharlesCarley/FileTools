@@ -106,7 +106,7 @@ int ftScanDNA::findHeaderFlags(skStream *stream)
 int ftScanDNA::scan(skStream *stream)
 {
     int         status = FS_OK;
-    FBTsize     bytesRead;
+    SKsize     bytesRead;
     ftChunkScan scan = {0, 0};
 
     while (scan.m_code != ftIdNames::ENDB &&

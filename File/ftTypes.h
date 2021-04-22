@@ -34,35 +34,14 @@
 #include "Utils/skFixedString.h"
 #include "Utils/skMap.h"
 #include "Utils/skString.h"
-#include "memory.h"
-#include "string.h"
 
 #define FT_TYPEID(a, b, c, d) SK_ID(a, b, c, d)
 #define FT_TYPEID2(a, b) SK_ID2(a, b)
 
-
 #define FT_INLINE SK_INLINE
 
-typedef SKlong    FBTlong;
-typedef SKulong   FBTulong;
-typedef SKint32   FBTint32;
-typedef SKuint32  FBTuint32;
-typedef SKint16   FBTint16;
-typedef SKuint16  FBTuint16;
-typedef SKint8    FBTint8;
-typedef SKuint8   FBTuint8;
-typedef SKuint8   FBTubyte;
-typedef SKbyte    FBTbyte;
-typedef SKint64   FBTint64;
-typedef SKuint64  FBTuint64;
-typedef SKuintPtr FBTuintPtr;
-typedef SKintPtr  FBTintPtr;
-typedef SKuintPtr FBTsize;
-typedef SKsize    FBThash;
-typedef FBTuint16 FBTtype;
-
-const FBThash NHASH = SK_MKMX(FBThash);
-
+using SKtype        = SKuint16;
+const SKhash NoHash = SK_MKMX(SKhash);
 
 #ifdef ftSCALAR_DOUBLE
 #define scalar_t double
@@ -91,8 +70,8 @@ public:
 
 public:
     ftList() :
-        first(0),
-        last(0)
+        first(nullptr),
+        last(nullptr)
     {
     }
 
@@ -103,7 +82,7 @@ public:
 
     void clear(void)
     {
-        first = last = 0;
+        first = last = nullptr;
     }
 
     void push_back(void* v)
@@ -144,25 +123,22 @@ public:
     }
 };
 
-
 #define ftCharNEq(a, b, n) ((a && b) && !strncmp(a, b, n))
 #define ftCharEq(a, b) ((a && b) && (*a == *b) && !strcmp(a, b))
 #define ftCharEqL(a, b, l) ((a && b) && (*a == *b) && !memcmp(a, b, l))
 #define ftStrLen(a) ::strlen(a)
 
-
 #define ftFixedString skFixedString
 
 typedef skFixedString<12> ftHeader;
 
-
-typedef union FBTByteInteger {
-    FBTuint64 m_ptr;
-    FBTuint32 m_int[2];
-    FBTuint16 m_short[4];
-    FBTuint8  m_byte[8];
+typedef union FBTByteInteger
+{
+    SKuint64 m_ptr;
+    SKuint32 m_int[2];
+    SKuint16 m_short[4];
+    SKuint8  m_byte[8];
 } FBTByteInteger;
-
 
 class skStream;
 class ftTables;
@@ -171,8 +147,6 @@ struct ftName;
 class ftMember;
 class ftTables;
 class ftStruct;
-
-
 
 namespace ftFlags
 {
@@ -260,7 +234,6 @@ namespace ftFlags
         LNK_DUPLICATE_TYPES = (1 << 8)
     };
 
-
     enum WriteMode
     {
         WRITE_ARRAY = 0,  // Writes table as a c/c++ array. (the default mode)
@@ -312,7 +285,6 @@ namespace ftFlags
         FT_IN_SKIP,
     };
 
-
 }  // namespace ftFlags
 
 typedef skFixedString<272>       ftPath;
@@ -327,12 +299,10 @@ class ftBuildInfo;
 class ftScanner;
 class ftToken;
 
-
 #if SK_ARCH == SK_ARCH_64
 #define FT_MEMBER_HASH_FMT "%016llX-%016llX-%016llX-%016llX-%016llX"
 #else
 #define FT_MEMBER_HASH_FMT "%08X-%08X-%08X-%08X-%08X"
 #endif
-
 
 #endif  //_ftTypes_h_

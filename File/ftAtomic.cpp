@@ -28,14 +28,14 @@
 #define FT_IN_SOURCE_FILE
 #include "ftPlatformHeaders.h"
 
-FBThash makeHash(const char* name)
+SKhash makeHash(const char* name)
 {
     if (!name || !*name)
         return -1;
     return ftCharHashKey(name).hash();
 }
 
-ftAtomic ftAtomicUtils::getPrimitiveType(FBThash typeKey)
+ftAtomic ftAtomicUtils::getPrimitiveType(SKhash typeKey)
 {
     ftAtomic res = ftAtomic::FT_ATOMIC_UNKNOWN;
     for (size_t i = 0; i < NumberOfTypes && res == ftAtomic::FT_ATOMIC_UNKNOWN; ++i)
@@ -46,7 +46,7 @@ ftAtomic ftAtomicUtils::getPrimitiveType(FBThash typeKey)
     return res;
 }
 
-bool ftAtomicUtils::canCast(FBThash typeKeyA, FBThash typeKeyB)
+bool ftAtomicUtils::canCast(SKhash typeKeyA, SKhash typeKeyB)
 {
     return isNumeric(typeKeyA) && isNumeric(typeKeyB);
 }
@@ -58,19 +58,19 @@ ftAtomic ftAtomicUtils::getPrimitiveType(const char* typeName)
     return getPrimitiveType(ftCharHashKey(typeName).hash());
 }
 
-bool ftAtomicUtils::isInteger(FBThash typeKey)
+bool ftAtomicUtils::isInteger(SKhash typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
     return tp < ftAtomic::FT_ATOMIC_FLOAT;
 }
 
-bool ftAtomicUtils::isReal(FBThash typeKey)
+bool ftAtomicUtils::isReal(SKhash typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
     return tp == ftAtomic::FT_ATOMIC_FLOAT || tp == ftAtomic::FT_ATOMIC_DOUBLE;
 }
 
-bool ftAtomicUtils::isNumeric(FBThash typeKey)
+bool ftAtomicUtils::isNumeric(SKhash typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
     return tp != ftAtomic::FT_ATOMIC_VOID && tp != ftAtomic::FT_ATOMIC_UNKNOWN;
@@ -119,10 +119,10 @@ void ftAtomicUtils_set(char*& destination, ftAtomic destinationType, const doubl
         ftAtomicUtils_setValue<double>(destination, value);
         break;
     case ftAtomic::FT_ATOMIC_INT64_T:
-        ftAtomicUtils_setValue<FBTint64>(destination, value);
+        ftAtomicUtils_setValue<SKint64>(destination, value);
         break;
     case ftAtomic::FT_ATOMIC_UINT64_T:
-        ftAtomicUtils_setValue<FBTuint64>(destination, value);
+        ftAtomicUtils_setValue<SKuint64>(destination, value);
         break;
     case ftAtomic::FT_ATOMIC_SCALAR_T:
         ftAtomicUtils_setValue<scalar_t>(destination, value);
@@ -137,7 +137,7 @@ void ftAtomicUtils::cast(char*    source,
                          char*    destination,
                          ftAtomic sourceType,
                          ftAtomic destinationType,
-                         FBTsize  length)
+                         SKsize  length)
 {
     if (!source || !destination)
     {
@@ -146,7 +146,7 @@ void ftAtomicUtils::cast(char*    source,
     }
 
     double  value = 0;
-    FBTsize i     = 0;
+    SKsize i     = 0;
 
     while (i < length)
     {
@@ -176,10 +176,10 @@ void ftAtomicUtils::cast(char*    source,
             value = ftAtomicUtils_getValue<double>(source);
             break;
         case ftAtomic::FT_ATOMIC_INT64_T:
-            value = ftAtomicUtils_getValue<FBTint64>(source);
+            value = ftAtomicUtils_getValue<SKint64>(source);
             break;
         case ftAtomic::FT_ATOMIC_UINT64_T:
-            value = ftAtomicUtils_getValue<FBTuint64>(source);
+            value = ftAtomicUtils_getValue<SKuint64>(source);
             break;
         case ftAtomic::FT_ATOMIC_SCALAR_T:
             value = ftAtomicUtils_getValue<scalar_t>(source);
@@ -196,12 +196,12 @@ void ftAtomicUtils::cast(char*    source,
 }
 
 void ftAtomicUtils::cast(char*    source,
-                         FBTsize  srcOffs,
+                         SKsize  srcOffs,
                          char*    destination,
-                         FBTsize  dstOffs,
+                         SKsize  dstOffs,
                          ftAtomic sourceType,
                          ftAtomic destinationType,
-                         FBTsize  length)
+                         SKsize  length)
 {
     if (srcOffs != SK_NPOS && dstOffs != SK_NPOS)
     {
@@ -223,8 +223,8 @@ const ftAtomicType ftAtomicUtils::Types[] = {
     {"ulong", sizeof(long), ftAtomic::FT_ATOMIC_ULONG, makeHash("ulong")},
     {"float", sizeof(float), ftAtomic::FT_ATOMIC_FLOAT, makeHash("float")},
     {"double", sizeof(double), ftAtomic::FT_ATOMIC_DOUBLE, makeHash("double")},
-    {"int64_t", sizeof(FBTint64), ftAtomic::FT_ATOMIC_INT64_T, makeHash("int64_t")},
-    {"uint64_t", sizeof(FBTint64), ftAtomic::FT_ATOMIC_UINT64_T, makeHash("uint64_t")},
+    {"int64_t", sizeof(SKint64), ftAtomic::FT_ATOMIC_INT64_T, makeHash("int64_t")},
+    {"uint64_t", sizeof(SKint64), ftAtomic::FT_ATOMIC_UINT64_T, makeHash("uint64_t")},
 #ifdef ftSCALAR_DOUBLE
     {"scalar_t", sizeof(double), ftAtomic::FT_ATOMIC_SCALAR_T, mkhash("scalar_t")},
 #else

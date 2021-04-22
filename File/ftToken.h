@@ -50,37 +50,37 @@ public:
     ftToken(int id, const String& val);
     ftToken(const ftToken& tok);
 
-    inline int getToken() const
+    int getToken() const
     {
         return m_id;
     }
 
-    inline void setToken(int tok)
+    void setToken(int tok)
     {
         m_id = tok;
     }
 
-    inline const String& getValue() const
+    const String& getValue() const
     {
         return m_value;
     }
 
-    inline const String& getConstRef() const
+    const String& getConstRef() const
     {
         return m_value;
     }
 
-    inline String& getRef()
+    String& getRef()
     {
         return m_value;
     }
 
-    inline int getArrayLen() const
+    int getArrayLen() const
     {
         return m_arrayConstant;
     }
 
-    inline void setArrayLen(int alen)
+    void setArrayLen(int alen)
     {
         m_arrayConstant = alen;
     }

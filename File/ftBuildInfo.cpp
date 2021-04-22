@@ -67,13 +67,13 @@ void ftBuildInfo::makeBuiltinTypes(void)
     m_numberOfBuiltIn = m_typeLookup.size();
 }
 
-FBTtype ftBuildInfo::addType(const ftId& type, const FBTuint16& len)
+SKtype ftBuildInfo::addType(const ftId& type, const SKuint16& len)
 {
-    FBTsize loc = m_typeLookup.find(type);
+    SKsize loc = m_typeLookup.find(type);
     if (loc == m_typeLookup.npos)
     {
         m_alloc.m_type += type.size() + 1;
-        m_alloc.m_tlen += sizeof(FBTtype);
+        m_alloc.m_tlen += sizeof(SKtype);
         loc = m_typeLookup.size();
         if (loc > 0xFFFF)
         {
@@ -84,7 +84,7 @@ FBTtype ftBuildInfo::addType(const ftId& type, const FBTuint16& len)
         m_tlen.push_back(len);
         m_64ln.push_back(len);
     }
-    return (FBTtype)loc;
+    return (SKtype)loc;
 }
 
 bool ftBuildInfo::hasType(const ftId& type) const
@@ -92,9 +92,9 @@ bool ftBuildInfo::hasType(const ftId& type) const
     return m_typeLookup.find(type) != m_typeLookup.npos;
 }
 
-FBTsize ftBuildInfo::addName(const ftId& name)
+SKsize ftBuildInfo::addName(const ftId& name)
 {
-    FBTsize loc;
+    SKsize loc;
     if ((loc = m_name.find(name)) == m_name.npos)
     {
         m_alloc.m_name += name.size() + 1;
@@ -118,7 +118,7 @@ int ftBuildInfo::getLengths(ftBuildStruct::Array& structBuilders)
         m_strc.push_back((SKuint16)bs.m_structId);
         m_strc.push_back((SKuint16)bs.m_data.size());
 
-        m_alloc.m_strc += sizeof(FBTtype) * 2;
+        m_alloc.m_strc += sizeof(SKtype) * 2;
 
         ftBuildStruct::Variables::Iterator it = bs.m_data.iterator();
         while (it.hasMoreElements())
@@ -126,12 +126,12 @@ int ftBuildInfo::getLengths(ftBuildStruct::Array& structBuilders)
             ftBuildMember& cVar = it.getNext();
 
             cVar.m_typeId     = addType(cVar.m_type, 0);
-            cVar.m_hashedName = (FBTtype)addName(cVar.m_name);
+            cVar.m_hashedName = (SKtype)addName(cVar.m_name);
 
             m_strc.push_back(cVar.m_typeId);
             m_strc.push_back(cVar.m_hashedName);
 
-            m_alloc.m_strc += sizeof(FBTtype) * 2;
+            m_alloc.m_strc += sizeof(SKtype) * 2;
         }
     }
 
@@ -141,47 +141,47 @@ int ftBuildInfo::getLengths(ftBuildStruct::Array& structBuilders)
 int ftBuildInfo::getTLengths(ftBuildStruct::Array& structBuilders)
 {
     ftBuildStruct* structs = structBuilders.ptr();
-    const FBTsize  total   = structBuilders.size();
+    const SKsize  total   = structBuilders.size();
 
-    FBTsize next = total, prev = 0;
+    SKsize next = total, prev = 0;
 
-    FBTtype*         tln64  = m_64ln.ptr();
-    FBTtype*         tLens  = m_tlen.ptr();
+    SKtype*         tln64  = m_64ln.ptr();
+    SKtype*         tLens  = m_tlen.ptr();
     int              status = LNK_OK;
     ftStringPtrArray missingReport, missing;
 
-    FBTtype firstNonAtomic = 0;
+    SKtype firstNonAtomic = 0;
     if (structs)
-        firstNonAtomic = (FBTtype)structs[0].m_structId;
+        firstNonAtomic = (SKtype)structs[0].m_structId;
 
     while (next != prev && structs)
     {
         prev = next;
         next = 0;
 
-        for (FBTsize i = 0; i < total; ++i)
+        for (SKsize i = 0; i < total; ++i)
         {
             ftBuildStruct& cur = structs[i];
 
             if (tLens[cur.m_structId] != 0)
             {
-                FBTuint32 pos;
+                SKuint32 pos;
                 if ((pos = missingReport.find(cur.m_name)) != missingReport.npos)
                     missingReport.remove(pos);
             }
             else
             {
                 ftBuildMember* member = cur.m_data.ptr();
-                const FBTsize  nrEle  = cur.m_data.size();
+                const SKsize  nrEle  = cur.m_data.size();
 
-                FBTsize len    = 0;
-                FBTsize fake64 = 0;
+                SKsize len    = 0;
+                SKsize fake64 = 0;
                 bool    hasPtr = false;
 
-                for (FBTsize e = 0; e < nrEle; ++e)
+                for (SKsize e = 0; e < nrEle; ++e)
                 {
                     ftBuildMember& v  = member[e];
-                    const FBTsize  ct = v.m_typeId;
+                    const SKsize  ct = v.m_typeId;
 
                     if (v.m_ptrCount > 0)
                     {
@@ -267,8 +267,8 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& structBuilders)
                     }
                 }
 
-                tln64[cur.m_structId] = (FBTtype)fake64;
-                tLens[cur.m_structId] = (FBTtype)len;
+                tln64[cur.m_structId] = (SKtype)fake64;
+                tLens[cur.m_structId] = (SKtype)len;
 
                 if (len != 0)
                 {

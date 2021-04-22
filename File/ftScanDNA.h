@@ -65,7 +65,7 @@ public:
         return m_foundBlock;
     }
 
-    inline FBTsize getLength()
+    inline SKsize getLength()
     {
         return m_foundLen;
     }
@@ -79,7 +79,7 @@ public:
 
 private:
     void *  m_foundBlock;
-    FBTsize m_foundLen;
+    SKsize m_foundLen;
     int     m_headerFlags;
 };
 

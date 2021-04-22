@@ -67,7 +67,7 @@ protected:
     int serializeData(skStream* stream) override;
 
     void*   getTables(void) override;
-    FBTsize getTableSize(void) override;
+    SKsize getTableSize(void) override;
 };
 
 

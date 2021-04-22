@@ -571,7 +571,7 @@ int ftScanner::isKeyword(const char* kw, int len, int stateIf)
     const char* tp = &m_buffer[m_pos];
     if (m_pos + (len - 1) < m_len &&
         !isIdentifier(m_buffer[m_pos + len]) &&
-        strncmp(tp, kw, len) == 0)
+        skChar::equalsn(tp, kw, len) == 0)
     {
         m_state = stateIf;
         return len;

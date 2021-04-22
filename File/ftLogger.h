@@ -43,13 +43,13 @@ namespace ftLogger
     extern void color(skConsoleColorSpace cs);
 
     extern void log(const ftChunk &chunk);
-    extern void log(const void *ptr, const FBTsize len);
+    extern void log(const void *ptr, const SKsize len);
     extern void log(ftStruct *strc);
     extern void log(ftMember *strc);
     extern void log(ftStruct *fstrc, ftStruct *mstrc);
     extern void log(const ftName &name);
     extern void log(const ftType &type);
-    extern void log(const ftType &type, FBTtype size);
+    extern void log(const ftType &type, SKtype size);
 
 
     extern void logDiagnosticsCastHeader(const ftChunk &chunk,
@@ -60,12 +60,12 @@ namespace ftLogger
 
     extern void logReadChunk(const ftChunk &chunk,
                              const void *   block,
-                             const FBTsize &len);
+                             const SKsize &len);
 
     extern void logSkipChunk(const ftChunk &chunk,
                              ftStruct *     fstrc,
                              const void *   block,
-                             const FBTsize &len);
+                             const SKsize &len);
 
 
     extern void logUnresolvedStructure(ftMemoryChunk *bin, ftStruct *fstrc, ftStruct *mstrc);

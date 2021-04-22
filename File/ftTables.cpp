@@ -78,12 +78,12 @@ ftTables::~ftTables()
 }
 
 
-bool ftTables::isPointer(const FBTuint16& name) const
+bool ftTables::isPointer(const SKuint16& name) const
 {
     return getNameAt(name).m_ptrCount > 0;
 }
 
-ftCharHashKey ftTables::getStructHashByType(const FBTuint16& type)
+ftCharHashKey ftTables::getStructHashByType(const SKuint16& type)
 {
     if (type < m_typeCount)
         return ftCharHashKey(m_types[type].m_name);
@@ -93,7 +93,7 @@ ftCharHashKey ftTables::getStructHashByType(const FBTuint16& type)
 
 ftStruct* ftTables::findStructByName(const ftCharHashKey& kvp)
 {
-    FBTuint32 i;
+    SKuint32 i;
     i = findTypeId(kvp);
     if (i != SK_NPOS32)
         return m_structures.at(i);
@@ -143,8 +143,8 @@ void ftTables::clearTables(void)
 
 
 int ftTables::allocateTable(void**  destination,
-                            FBTsize numberOfEntries,
-                            FBTsize sizeOfEntry,
+                            SKsize numberOfEntries,
+                            SKsize sizeOfEntry,
                             int     fileFlags)
 {
     if (!destination)
@@ -167,7 +167,7 @@ int ftTables::allocateTable(void**  destination,
         return RS_LIMIT_REACHED;
     }
 
-    const FBTsize allocLen = numberOfEntries * sizeOfEntry;
+    const SKsize allocLen = numberOfEntries * sizeOfEntry;
     if (allocLen > 0 && allocLen < SK_NPOS32)
     {
         *destination = (Names)::malloc(allocLen);
@@ -202,7 +202,7 @@ int ftTables::allocateTable(void**  destination,
 
 
 int ftTables::read(const void*    tableSource,
-                   const FBTsize& tableLength,
+                   const SKsize& tableLength,
                    int            headerFlags,
                    int            fileFlags)
 {
@@ -210,7 +210,7 @@ int ftTables::read(const void*    tableSource,
         return RS_INVALID_PTR;
 
     ftMemoryStream stream;
-    stream.open((FBTbyte*)tableSource, tableLength, 0, true);
+    stream.open((SKbyte*)tableSource, tableLength, 0, true);
 
     // FIXME: there should be no guarantee on the order that the NAME codes come in.
 
@@ -266,19 +266,19 @@ int ftTables::read(const void*    tableSource,
         {
             if (fileFlags & LF_DUMP_NAME_TABLE)
             {
-                for (FBTuint32 i = 0; i < m_nameCount; ++i)
+                for (SKuint32 i = 0; i < m_nameCount; ++i)
                     ftLogger::log(m_names[i]);
             }
 
             if (fileFlags & LF_DUMP_TYPE_TABLE)
             {
-                for (FBTuint32 i = 0; i < m_typeCount; ++i)
+                for (SKuint32 i = 0; i < m_typeCount; ++i)
                     ftLogger::log(m_types[i]);
             }
 
             if (fileFlags & LF_DUMP_SIZE_TABLE)
             {
-                for (FBTuint32 i = 0; i < m_typeCount; ++i)
+                for (SKuint32 i = 0; i < m_typeCount; ++i)
                     ftLogger::log(m_types[i], m_tlens[i]);
             }
         }
@@ -305,9 +305,9 @@ int ftTables::readTableHeader(ftMemoryStream& stream, const char* headerName, in
 int ftTables::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
 {
     ftName    name{};
-    FBTuint32 count = 0;
+    SKuint32 count = 0;
 
-    FBTuint32 status = readTableHeader(stream, ftIdNames::FT_NAME, fileFlags);
+    SKuint32 status = readTableHeader(stream, ftIdNames::FT_NAME, fileFlags);
     if (status == FS_OK)
     {
         stream.readInt32(count);
@@ -342,7 +342,7 @@ int ftTables::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFla
 
 int ftTables::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
 {
-    FBTuint32 status, count = 0;
+    SKuint32 status, count = 0;
     status = readTableHeader(stream, ftIdNames::FT_TYPE, fileFlags);
     if (status == FS_OK)
     {
@@ -354,7 +354,7 @@ int ftTables::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFla
         status = allocateTable((void**)&m_types, count, sizeof(ftType), fileFlags);
         if (status == FS_OK)
         {
-            FBTbyte* cp;
+            SKbyte* cp;
             for (m_typeCount = 0; m_typeCount < count; ++m_typeCount)
             {
                 cp = stream.addressAtPosition();
@@ -379,15 +379,15 @@ int ftTables::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFla
 
 int ftTables::readSizeTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
 {
-    FBTuint32 status;
+    SKuint32 status;
     status = readTableHeader(stream, ftIdNames::FT_TLEN, fileFlags);
     if (status == FS_OK)
     {
-        status = allocateTable((void**)&m_tlens, m_typeCount, sizeof(FBTtype), fileFlags);
+        status = allocateTable((void**)&m_tlens, m_typeCount, sizeof(SKtype), fileFlags);
         if (status == FS_OK)
         {
-            FBTuint16 type;
-            FBTuint32 i;
+            SKuint16 type;
+            SKuint32 i;
 
             for (i = 0; i < m_typeCount; ++i)
             {
@@ -398,7 +398,7 @@ int ftTables::readSizeTable(ftMemoryStream& stream, int headerFlags, int fileFla
             }
 
             if (m_typeCount & 1)
-                stream.seek(sizeof(FBTuint16), SEEK_CUR);
+                stream.seek(sizeof(SKuint16), SEEK_CUR);
         }
     }
     return status;
@@ -407,9 +407,9 @@ int ftTables::readSizeTable(ftMemoryStream& stream, int headerFlags, int fileFla
 
 int ftTables::readStructureTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
 {
-    FBTuint32 count = 0;
+    SKuint32 count = 0;
 
-    FBTuint32 status = readTableHeader(stream, ftIdNames::FT_STRC, fileFlags);
+    SKuint32 status = readTableHeader(stream, ftIdNames::FT_STRC, fileFlags);
     if (status == FS_OK)
     {
         stream.readInt32(count);
@@ -418,13 +418,13 @@ int ftTables::readStructureTable(ftMemoryStream& stream, int headerFlags, int fi
 
         status = allocateTable((void**)&m_strcs,
                                count,
-                               sizeof(FBTtype) * FT_MAX_MEMBERS,
+                               sizeof(SKtype) * FT_MAX_MEMBERS,
                                fileFlags);
 
         if (status == FS_OK)
         {
             m_typeFinder.reserve(m_typeCount);
-            FBTuint16* tp = (FBTuint16*)stream.addressAtPosition();
+            SKuint16* tp = (SKuint16*)stream.addressAtPosition();
 
             m_strcCount = 0;
             while (m_strcCount < count && status == FS_OK)
@@ -494,7 +494,7 @@ void ftTables::convertName(ftName& dest, char* cp) const
 
 
 
-int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, int fileFlags)
+int ftTables::buildStruct(SKuint16*& strc, SKuint16 current, int headerFlags, int fileFlags)
 {
     int j, k, status = FS_OK;
 
@@ -603,7 +603,7 @@ int ftTables::buildStruct(FBTuint16*& strc, FBTuint16 current, int headerFlags, 
     return status;
 }
 
-int ftTables::isValidTypeName(const FBTuint16& type, const FBTuint16& name, int flags)
+int ftTables::isValidTypeName(const SKuint16& type, const SKuint16& name, int flags)
 {
     if (type > m_typeCount)
     {
@@ -634,7 +634,7 @@ bool ftTables::testDuplicateKeys()
 {
     bool testResult = true;
 
-    FBTuint32 i, j;
+    SKuint32 i, j;
     for (i = 0; i < m_typeCount && testResult; ++i)
     {
         for (j = 0; j < m_typeCount && testResult; ++j)
@@ -668,8 +668,8 @@ int ftTables::compile(int fileFlags)
     m_structures.reserve(m_strcCount);
     int status = FS_OK;
 
-    FBTuint32 i, cof, depth;
-    FBTuint16 e, memberCount;
+    SKuint32 i, cof, depth;
+    SKuint16 e, memberCount;
 
     // Save the first structure type index
     // So the isBuiltin test can determine
@@ -682,8 +682,8 @@ int ftTables::compile(int fileFlags)
 
     for (i = 0; i < m_strcCount && status == FS_OK; i++)
     {
-        FBTtype* strc = m_strcs[i];
-        FBTtype  type = strc[0];
+        SKtype* strc = m_strcs[i];
+        SKtype  type = strc[0];
 
         if (type > m_typeCount)
         {
@@ -782,16 +782,16 @@ int ftTables::compile(int fileFlags)
 }
 
 
-void ftTables::compile(FBTtype    owningStructureType,
+void ftTables::compile(SKtype    owningStructureType,
                        ftName*    owningStructureName,
-                       FBTtype    memberCount,
+                       SKtype    memberCount,
                        ftStruct*  root,
-                       FBTuint32& currentOffset,
-                       FBTuint32  recursiveDepth,
+                       SKuint32& currentOffset,
+                       SKuint32  recursiveDepth,
                        int        fileFlags,
                        int&       status)
 {
-    FBTuint32 e, length, a, oldOffset, origLen;
+    SKuint32 e, length, a, oldOffset, origLen;
 
     if (owningStructureType > m_strcCount)
     {
@@ -803,8 +803,8 @@ void ftTables::compile(FBTtype    owningStructureType,
     {
         for (a = 0; a < memberCount && status == FS_OK; ++a)
         {
-            FBTtype* strc                = m_strcs[owningStructureType];
-            FBTtype  owningStructureType = strc[0];
+            SKtype* strc                = m_strcs[owningStructureType];
+            SKtype  owningStructureType = strc[0];
 
 
             oldOffset = currentOffset;
@@ -856,18 +856,18 @@ void ftTables::compile(FBTtype    owningStructureType,
 
 
 
-void ftTables::putMember(FBTtype    owningStructureType,
+void ftTables::putMember(SKtype    owningStructureType,
                          ftName*    owningStructureName,
-                         FBTtype*   currentMemeber,
+                         SKtype*   currentMemeber,
                          ftStruct*  root,
-                         FBTtype    index,
-                         FBTuint32& currentOffset,
-                         FBTuint32  recursiveDepth,
+                         SKtype    index,
+                         SKuint32& currentOffset,
+                         SKuint32  recursiveDepth,
                          int        flags,
                          int&       status)
 {
-    const FBTuint16& type = currentMemeber[0];
-    const FBTuint16& name = currentMemeber[1];
+    const SKuint16& type = currentMemeber[0];
+    const SKuint16& name = currentMemeber[1];
 
     if (type < 0 || type >= m_typeCount || owningStructureType >= m_typeCount)
         status = RS_LIMIT_REACHED;
@@ -929,11 +929,11 @@ void ftTables::putMember(FBTtype    owningStructureType,
 
 
 void ftTables::hashMember(skString&   name,
-                          FBThash   parentStructName,
-                          FBThash   owningStructType,
-                          FBThash   owningStructMemeberName,
-                          FBThash   memberType,
-                          FBThash   memberName)
+                          SKhash   parentStructName,
+                          SKhash   owningStructType,
+                          SKhash   owningStructMemeberName,
+                          SKhash   memberType,
+                          SKhash   memberName)
 {
     // TODO: this needs to take into account types 
     //       that may change but still may be usable 
@@ -970,7 +970,7 @@ void ftTables::hashMember(skString&   name,
 }
 
 
-ftStruct* ftTables::findStructByType(const FBTuint16& type)
+ftStruct* ftTables::findStructByType(const SKuint16& type)
 {
     if (type < m_structures.size())
     {
@@ -983,22 +983,22 @@ ftStruct* ftTables::findStructByType(const FBTuint16& type)
     return nullptr;
 }
 
-FBTuint32 ftTables::findTypeId(const ftCharHashKey& cp)
+SKuint32 ftTables::findTypeId(const ftCharHashKey& cp)
 {
-    FBTsize pos = m_typeFinder.find(cp);
+    SKsize pos = m_typeFinder.find(cp);
     if (pos != m_typeFinder.npos)
         return m_typeFinder.at(pos).m_strcId;
     return SK_NPOS32;
 }
 
-FBThash ftTables::getTypeHash(const FBTuint16& type) const
+SKhash ftTables::getTypeHash(const SKuint16& type) const
 {
     if (type < m_typeCount)
         return m_types[type].m_hash;
     return SK_NPOS;
 }
 
-FBTuint32 ftTables::findStructIdByType(const FBTuint16& type)
+SKuint32 ftTables::findStructIdByType(const SKuint16& type)
 {
     if (type < m_typeCount)
         return m_types[type].m_strcId;
@@ -1007,7 +1007,7 @@ FBTuint32 ftTables::findStructIdByType(const FBTuint16& type)
 
 
 
-const ftName& ftTables::getStructNameByIdx(const FBTuint16& idx) const
+const ftName& ftTables::getStructNameByIdx(const SKuint16& idx) const
 {
     if (idx < m_nameCount)
         return m_names[idx];

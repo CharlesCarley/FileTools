@@ -317,7 +317,7 @@ void ftCompiler::errorUnknown(int& token, ftToken& tokenPtr)
     token = FT_NULL_TOKEN;
 }
 
-FBTuint32 ftCompiler::getNumberOfBuiltinTypes(void) const
+SKuint32 ftCompiler::getNumberOfBuiltinTypes(void) const
 {
     return m_build->m_numberOfBuiltIn;
 }
@@ -540,7 +540,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         ftBuildStruct& bs = it.getNext();
 
         ftId&         cur = m_build->m_typeLookup.at((SKuint32)bs.m_structId);
-        const FBTtype len = m_build->m_tlen.at((SKuint32)bs.m_structId);
+        const SKtype len = m_build->m_tlen.at((SKuint32)bs.m_structId);
 
         if (m_skip.find(cur) != m_skip.npos)
             continue;

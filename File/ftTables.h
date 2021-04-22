@@ -33,8 +33,6 @@
 #include "ftStruct.h"
 #include "ftTypes.h"
 
-
-
 namespace ftIdNames
 {
     const char FT_SDNA[5] = {'S', 'D', 'N', 'A', '\0'};
@@ -44,21 +42,20 @@ namespace ftIdNames
     const char FT_STRC[5] = {'S', 'T', 'R', 'C', '\0'};  // Struct/Class Array
     const char FT_OFFS[5] = {'O', 'F', 'F', 'S', '\0'};  // Offset map (Optional & TODO)
 
-    const FBTuint32 SDNA = FT_TYPEID('S', 'D', 'N', 'A');
-    const FBTuint32 DNA1 = FT_TYPEID('D', 'N', 'A', '1');
-    const FBTuint32 ENDB = FT_TYPEID('E', 'N', 'D', 'B');
-    const FBTuint32 DATA = FT_TYPEID('D', 'A', 'T', 'A');
-    const FBTuint32 TEST = FT_TYPEID('T', 'E', 'S', 'T');
+    const SKuint32 SDNA = FT_TYPEID('S', 'D', 'N', 'A');
+    const SKuint32 DNA1 = FT_TYPEID('D', 'N', 'A', '1');
+    const SKuint32 ENDB = FT_TYPEID('E', 'N', 'D', 'B');
+    const SKuint32 DATA = FT_TYPEID('D', 'A', 'T', 'A');
+    const SKuint32 TEST = FT_TYPEID('T', 'E', 'S', 'T');
 }  // namespace ftIdNames
-
 
 class ftTables
 {
 public:
     typedef ftName*                            Names;  // < FT_MAX_TABLE
     typedef ftType*                            Types;  // < FT_MAX_TABLE
-    typedef FBTtype*                           TypeL;  // < FT_MAX_TABLE
-    typedef FBTtype**                          Strcs;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
+    typedef SKtype*                            TypeL;  // < FT_MAX_TABLE
+    typedef SKtype**                           Strcs;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
     typedef skArray<SKsize>                    NameHash;
     typedef skArray<ftStruct*>                 Structures;
     typedef skHashTable<ftCharHashKey, ftType> TypeFinder;
@@ -70,15 +67,14 @@ public:
     ftTables(int pointerLength);
     ~ftTables();
 
-    int read(const void* ptr, const FBTsize& len, int headerFlags, int fileFlags);
+    int read(const void* ptr, const SKsize& len, int headerFlags, int fileFlags);
 
-    FBTuint32     findTypeId(const ftCharHashKey& cp);
-    ftCharHashKey getStructHashByType(const FBTuint16& type);
+    SKuint32      findTypeId(const ftCharHashKey& cp);
+    ftCharHashKey getStructHashByType(const SKuint16& type);
 
-    const ftName& getStructNameByIdx(const FBTuint16& idx) const;
-    FBThash       getTypeHash(const FBTuint16& type) const;
-    bool          isPointer(const FBTuint16& name) const;
-
+    const ftName& getStructNameByIdx(const SKuint16& idx) const;
+    SKhash        getTypeHash(const SKuint16& type) const;
+    bool          isPointer(const SKuint16& name) const;
 
     const Structures& getStructureArray() const
     {
@@ -90,90 +86,86 @@ public:
         return m_structures.iterator();
     }
 
-
     // Access to the size of a pointer when it was saved in the table.
     // This is cheating a bit here, it depends on the correct flag
     // being set when loaded it's not actually being computed.
-    FBTuint8 getSizeofPointer() const
+    SKuint8 getSizeofPointer() const
     {
         return m_ptrLength;
     }
 
-    bool isValidType(const FBTuint32& typeidx) const
+    bool isValidType(const SKuint32& typeidx) const
     {
         return typeidx < m_strcCount && typeidx < m_structures.size();
     }
 
     ftStruct* findStructByName(const ftCharHashKey& kvp);
-    ftStruct* findStructByType(const FBTuint16& type);
-    FBTuint32 findStructIdByType(const FBTuint16& type);
+    ftStruct* findStructByType(const SKuint16& type);
+    SKuint32  findStructIdByType(const SKuint16& type);
 
-
-    FBTuint32 getNumberOfNames() const
+    SKuint32 getNumberOfNames() const
     {
         return m_nameCount;
     }
 
-    const ftName& getNameAt(FBTuint32 idx) const
+    const ftName& getNameAt(SKuint32 idx) const
     {
         if (idx < m_nameCount)
             return m_names[idx];
         return INVALID_NAME;
     }
 
-    const char* getStringNameAt(FBTuint32 idx) const
+    const char* getStringNameAt(SKuint32 idx) const
     {
         if (idx < m_nameCount)
             return m_names[idx].m_name;
         return "";
     }
 
-
-    FBTuint32 getNumberOfTypes() const
+    SKuint32 getNumberOfTypes() const
     {
         return m_typeCount;
     }
 
-    const ftType& getTypeAt(FBTuint32 idx) const
+    const ftType& getTypeAt(SKuint32 idx) const
     {
         if (idx < m_typeCount)
             return m_types[idx];
         return INVALID_TYPE;
     }
 
-    char* getTypeNameAt(FBTuint32 idx) const
+    char* getTypeNameAt(SKuint32 idx) const
     {
         if (idx < m_typeCount)
             return m_types[idx].m_name;
         return nullptr;
     }
 
-    FBTuint32 getNumberOfTypeLengths() const
+    SKuint32 getNumberOfTypeLengths() const
     {
         return m_typeCount;
     }
 
-    const FBTtype& getTypeLengthAt(FBTuint32 idx) const
+    const SKtype& getTypeLengthAt(SKuint32 idx) const
     {
         if (idx < m_typeCount)
             return m_tlens[idx];
         return SK_NPOS16;
     }
 
-    FBTuint32 getNumberOfStructs() const
+    SKuint32 getNumberOfStructs() const
     {
         return m_strcCount;
     }
 
-    FBTtype* getStructAt(FBTuint32 idx) const
+    SKtype* getStructAt(SKuint32 idx) const
     {
         if (idx < m_strcCount)
             return m_strcs[idx];
         return 0;
     }
 
-
-    FBTuint16 getFirstStructType() const
+    SKuint16 getFirstStructType() const
     {
         return m_firstStruct;
     }
@@ -190,14 +182,13 @@ private:
     Strcs m_strcs;
 
     NameHash   m_hashedNames;
-    FBTuint16  m_nameCount;
-    FBTuint16  m_typeCount;
-    FBTuint16  m_strcCount;
-    FBTuint16  m_firstStruct;
+    SKuint16   m_nameCount;
+    SKuint16   m_typeCount;
+    SKuint16   m_strcCount;
+    SKuint16   m_firstStruct;
     Structures m_structures;
-    FBTuint8   m_ptrLength;
+    SKuint8    m_ptrLength;
     TypeFinder m_typeFinder;
-
 
     static int readTableHeader(
         ftMemoryStream& stream,
@@ -225,49 +216,46 @@ private:
         int             fileFlags);
 
     int allocateTable(
-        void**  dest,
-        FBTsize numberOfEntries,
-        FBTsize sizeofEntry,
-        int     fileFlags);
+        void** dest,
+        SKsize numberOfEntries,
+        SKsize sizeofEntry,
+        int    fileFlags);
 
     void clearTables(void);
 
     void convertName(ftName& destName, char* convString) const;
 
-    int buildStruct(FBTuint16*& buf, FBTuint16 current, int headerFlags, int fileFlags);
+    int buildStruct(SKuint16*& buf, SKuint16 current, int headerFlags, int fileFlags);
 
-    int isValidTypeName(const FBTuint16& type, const FBTuint16& name, int fileFlags);
+    int isValidTypeName(const SKuint16& type, const SKuint16& name, int fileFlags);
 
+    void putMember(SKtype    owningStructureType,
+                   ftName*   owningStructureName,
+                   SKtype*   currentMemeber,
+                   ftStruct* root,
+                   SKtype    index,
+                   SKuint32& currentOffset,
+                   SKuint32  recursiveDepth,
+                   int       fileFlags,
+                   int&      status);
 
-    void putMember(FBTtype    owningStructureType,
-                   ftName*    owningStructureName,
-                   FBTtype*   currentMemeber,
-                   ftStruct*  root,
-                   FBTtype    index,
-                   FBTuint32& currentOffset,
-                   FBTuint32  recursiveDepth,
-                   int        fileFlags,
-                   int&       status);
+    void compile(SKtype    owningStructureType,
+                 ftName*   owningStructureName,
+                 SKtype    memberCount,
+                 ftStruct* root,
+                 SKuint32& currentOffset,
+                 SKuint32  recursiveDepth,
+                 int       fileFlags,
+                 int&      status);
 
-    void compile(FBTtype    owningStructureType,
-                 ftName*    owningStructureName,
-                 FBTtype    memberCount,
-                 ftStruct*  root,
-                 FBTuint32& currentOffset,
-                 FBTuint32  recursiveDepth,
-                 int        fileFlags,
-                 int&       status);
-
-
-    int  compile(int fileFlags);
+    int compile(int fileFlags);
 
     void hashMember(class skString& name,
-                    FBThash         parentStructName,
-                    FBThash         owningStructType,
-                    FBThash         owningStructMemeberName,
-                    FBThash         memberType,
-                    FBThash         memberName);
+                    SKhash          parentStructName,
+                    SKhash          owningStructType,
+                    SKhash          owningStructMemeberName,
+                    SKhash          memberType,
+                    SKhash          memberName);
 };
-
 
 #endif  //_ftTables_h_

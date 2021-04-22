@@ -42,9 +42,9 @@ const ftChunk ftChunkUtils::BLANK_CHUNK = {
 };
 
 
-FBTsize ftChunkUtils::write(ftChunk* src, skStream* stream)
+SKsize ftChunkUtils::write(ftChunk* src, skStream* stream)
 {
-    FBTsize size = 0;
+    SKsize size = 0;
     size += stream->write(src, BlockSize);
     size += stream->write((void*)src->m_addr, src->m_len);
     return size;
@@ -52,10 +52,10 @@ FBTsize ftChunkUtils::write(ftChunk* src, skStream* stream)
 
 
 
-FBTsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
+SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
 {
-    FBTsize bytesRead = 0;
-    FBTsize blockLen  = BlockSize;
+    SKsize bytesRead = 0;
+    SKsize blockLen  = BlockSize;
 
     if (FT_VOID8)
     {
@@ -86,9 +86,9 @@ FBTsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
 
 
 
-FBTsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
+SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 {
-    FBTsize bytesRead  = 0;
+    SKsize bytesRead  = 0;
     ftChunk* tmp;
 
     if (FT_VOID8)

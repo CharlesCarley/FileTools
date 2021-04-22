@@ -53,35 +53,35 @@ enum class ftAtomic
 struct ftAtomicType
 {
     const char* m_name;
-    FBTuint16   m_sizeof;
+    SKuint16   m_sizeof;
     ftAtomic    m_type;
-    FBThash     m_hash;
+    SKhash     m_hash;
 };
 
 class ftAtomicUtils
 {
 public:
-    static ftAtomic getPrimitiveType(FBThash typeKey);
+    static ftAtomic getPrimitiveType(SKhash typeKey);
     static ftAtomic getPrimitiveType(const char* typeName);
-    static bool     isInteger(FBThash typeKey);
-    static bool     isReal(FBThash typeKey);
-    static bool     isNumeric(FBThash typeKey);
+    static bool     isInteger(SKhash typeKey);
+    static bool     isReal(SKhash typeKey);
+    static bool     isNumeric(SKhash typeKey);
 
-    static bool canCast(FBThash typeKeyA, FBThash typeKeyB);
+    static bool canCast(SKhash typeKeyA, SKhash typeKeyB);
 
     static void cast(char*    source,
                      char*    destination,
                      ftAtomic sourceType,
                      ftAtomic destinationType,
-                     FBTsize  length);
+                     SKsize  length);
 
     static void cast(char*    source,
-                     FBTsize  srcOffs,
+                     SKsize  srcOffs,
                      char*    destination,
-                     FBTsize  dstOffs,
+                     SKsize  dstOffs,
                      ftAtomic sourceType,
                      ftAtomic destinationType,
-                     FBTsize  length);
+                     SKsize  length);
 
     static const ftAtomicType Types[];
     static const size_t       NumberOfTypes;

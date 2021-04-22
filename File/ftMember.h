@@ -38,8 +38,8 @@ public:
     const char* getName();
     const char* getType();
 
-    void setNameIndex(const FBTuint16& idx);
-    void setTypeIndex(const FBTuint16& idx);
+    void setNameIndex(const SKuint16& idx);
+    void setTypeIndex(const SKuint16& idx);
     bool isBuiltinType();
     bool isStructure();
     bool isPointer();
@@ -59,7 +59,7 @@ public:
     bool compare(ftMember* rhs);
 
 
-    FBTsize* jumpToOffset(void* base);
+    SKsize* jumpToOffset(void* base);
     void*    getChunk();
 
 
@@ -70,22 +70,22 @@ public:
         return isCharacter() && isArray();
     }
 
-    inline FBTsize getSizeInBytes()
+    inline SKsize getSizeInBytes()
     {
         return m_sizeInBytes;
     }
 
-    inline FBTsize getOffset()
+    inline SKsize getOffset()
     {
         return m_offset;
     }
 
-    inline const FBThash& getHashedType() const
+    inline const SKhash& getHashedType() const
     {
         return m_hashedType;
     }
 
-    inline const FBThash& getHashedName() const
+    inline const SKhash& getHashedName() const
     {
         return m_hashedName;
     }
@@ -122,20 +122,20 @@ private:
     // TODO: Look at this these should all be unsigned.
     // Find all references, and look for specific reasons 
     // as to why they are declared signed.
-    FBTint32 m_location;
-    FBTint32 m_offset;
-    FBTint32 m_recursiveDepth;
-    FBTint32 m_sizeInBytes;
+    SKint32 m_location;
+    SKint32 m_offset;
+    SKint32 m_recursiveDepth;
+    SKint32 m_sizeInBytes;
 
     // Keep this signed.
-    FBTint32 m_atomic;
+    SKint32 m_atomic;
 
 
-    FBTint16 m_type;
-    FBTint16 m_name;
-    FBThash  m_hashedType;
-    FBThash  m_hashedName;
-    FBThash  m_searchKey;
+    SKint16 m_type;
+    SKint16 m_name;
+    SKhash  m_hashedType;
+    SKhash  m_hashedName;
+    SKhash  m_searchKey;
 };
 
 

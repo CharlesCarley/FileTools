@@ -132,7 +132,7 @@ GTEST_TEST(ftAtomic, Cast)
 
 GTEST_TEST(ftAtomic, Swap)
 {
-    const FBTsize srcElmSize = 8;
+    const SKsize srcElmSize = 8;
     
     FBTByteInteger seed = {};
     seed.m_byte[0]      = 51;
@@ -144,18 +144,18 @@ GTEST_TEST(ftAtomic, Swap)
     seed.m_byte[6]      = 62;
     seed.m_byte[7]      = 15;
 
-    FBTuint64 i64 = seed.m_ptr;
+    SKuint64 i64 = seed.m_ptr;
 
-    FBTbyte  dstBuffer[ftEndianUtils::MaxSwapSpace];
-    FBTbyte* srcBPtr = (FBTbyte*)&i64;
+    SKbyte  dstBuffer[ftEndianUtils::MaxSwapSpace];
+    SKbyte* srcBPtr = (SKbyte*)&i64;
 
     memcpy(dstBuffer, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
     FBTByteInteger before, after;
     before.m_ptr = i64;
 
-    ftEndianUtils::swap64((FBTuint64*)&dstBuffer[0], 1);
+    ftEndianUtils::swap64((SKuint64*)&dstBuffer[0], 1);
 
-    after.m_ptr = *(FBTuint64*)dstBuffer;
+    after.m_ptr = *(SKuint64*)dstBuffer;
 
     EXPECT_EQ(before.m_byte[0], after.m_byte[7]);
     EXPECT_EQ(before.m_byte[1], after.m_byte[6]);

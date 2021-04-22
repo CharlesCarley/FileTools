@@ -81,11 +81,11 @@ ftMember* ftStruct::find(ftMember* oth)
 }
 
 
-FBTbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max)
+SKbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max)
 {
-    FBTbyte* val = nullptr;
+    SKbyte* val = nullptr;
     if (base && idx < max)
-        val = reinterpret_cast<FBTbyte*>(base) + (m_sizeInBytes * idx);
+        val = reinterpret_cast<SKbyte*>(base) + (m_sizeInBytes * idx);
     return val;
 }
 
