@@ -269,13 +269,11 @@ int ftScanner::handleInsideState(ftToken& ct)
 
 int ftScanner::handleLineComment(ftToken& ct)
 {
-    char cp;
-
     m_pos++;
     if (isEOF())
         return FT_EOF;
 
-    cp = m_buffer[m_pos];
+    const char cp = m_buffer[m_pos];
     if (cp == '/')
     {
         while (m_pos < m_len &&
@@ -285,7 +283,8 @@ int ftScanner::handleLineComment(ftToken& ct)
 
         if (isEOF())
             return FT_EOF;
-        else if (!isNewLine(m_buffer[m_pos]))
+
+        if (!isNewLine(m_buffer[m_pos]))
         {
             m_pos++;
             if (isKeyword("makeft_ignore", 13, FT_IN_SKIP))
@@ -325,7 +324,7 @@ int ftScanner::handleToggleState(ftToken& ct)
 
 bool ftScanner::newlineTest()
 {
-    bool skp = m_pos < m_len && isNewLine(m_buffer[m_pos]);
+    const bool skp = m_pos < m_len && isNewLine(m_buffer[m_pos]);
     while (m_pos < m_len && isNewLine(m_buffer[m_pos]))
     {
         m_lineNo++;
@@ -510,9 +509,9 @@ const ftKeywordTable ftScanner::KeywordTable[] = {
     {"void", 4, FT_VOID},
 };
 
-const size_t ftScanner::KeywordTableSize = sizeof(KeywordTable) / sizeof(ftKeywordTable);
+const SKsize ftScanner::KeywordTableSize = sizeof(KeywordTable) / sizeof(ftKeywordTable);
 
-bool ftScanner::isEOF()
+bool ftScanner::isEOF() const
 {
     return m_pos >= m_len || m_buffer[m_pos] == '\0';
 }

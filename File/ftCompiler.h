@@ -35,7 +35,7 @@ public:
     ~ftCompiler();
 
     int parse(const ftPath& id);
-    int parse(const ftPath& id, const char* data, size_t len);
+    int parse(const ftPath& id, const char* data, SKsize len);
 
     int buildTypes(void);
     

@@ -41,7 +41,7 @@ private:
     int         m_lineNo;
 
     static const ftKeywordTable KeywordTable[];
-    static const size_t         KeywordTableSize;
+    static const SKsize         KeywordTableSize;
 
 public:
     ftScanner(const char* ptr, SKsize length);
@@ -49,22 +49,22 @@ public:
     int lex(ftToken& tok);
 
 
-    inline int getLine() const
+    int getLine() const
     {
         return m_lineNo;
     }
 
 private:
-    int  isKeyword(const char* kw, int len, int stateIf);
-    bool isEOF();
-    bool isNewLine(const char& ch);
-    bool isNCS(const char& ch);
-    bool isAlpha(const char& ch);
-    bool isPotentialKeyword(const char& ch);
-    bool isDigit(const char& ch);
-    bool isAlphaNumeric(const char& ch);
-    bool isIdentifier(const char& ch);
-    bool isWS(const char& ch);
+    int         isKeyword(const char* kw, int len, int stateIf);
+    bool        isEOF() const;
+    static bool isNewLine(const char& ch);
+    static bool isNCS(const char& ch);
+    static bool isAlpha(const char& ch);
+    static bool isPotentialKeyword(const char& ch);
+    static bool isDigit(const char& ch);
+    static bool isAlphaNumeric(const char& ch);
+    static bool isIdentifier(const char& ch);
+    static bool isWS(const char& ch);
 
     void ignoreWhiteSpace();
     void ignoreUntilNCS();
