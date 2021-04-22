@@ -60,14 +60,14 @@ public:
 
     Blender::FileGlobal* m_fg;
 
-    int save(const char* path, const int mode = 0);
+    int save(const char* path, const int mode = 0) override;
 
 protected:
-    virtual int notifyDataRead(void* p, const ftChunk& id);
-    virtual int serializeData(skStream* stream);
+    int notifyDataRead(void* p, const ftChunk& id) override;
+    int serializeData(skStream* stream) override;
 
-    virtual void*   getTables(void);
-    virtual FBTsize getTableSize(void);
+    void*   getTables(void) override;
+    FBTsize getTableSize(void) override;
 };
 
 

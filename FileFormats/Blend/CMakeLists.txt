@@ -1,10 +1,6 @@
 # -----------------------------------------------------------------------------
+#   Copyright (c) Charles Carley.
 #
-#   Copyright (c) 2019 Charles Carley.
-#
-#   Contributor(s): none yet
-#
-# ------------------------------------------------------------------------------
 #   This software is provided 'as-is', without any express or implied
 # warranty. In no event will the authors be held liable for any damages
 # arising from the use of this software.
@@ -21,25 +17,20 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-option(FileTools_BLEND_TEST "Builds a test .blend program." OFF)
+set(TargetName BlendFile)
 
-if (BlendFile_ExternalTarget)
-    set(TargetFolders ${BlendFile_TargetFolders})
-    set(TargetName   ${BlendFile_TargetName})
-    set(TargetGroup  ${BlendFile_TargetGroup})
-else()
-    set(TargetFolders FALSE)
-    set(TargetName    BlendFile)
-    unset(TargetGroup )
-endif()
+set(BlendFile_INCLUDE 
+    ${CMAKE_CURRENT_SOURCE_DIR}  
+    ${FileTools_INCLUDE} 
+    ${Utils_INCLUDE})
+
+set(BlendFile_LIBRARY 
+    ${TargetName} 
+    ${FileTools_LIBRARY} 
+    ${Utils_LIBRARY})
 
 
-set(BlendFile_TOOLS_INCLUDE ${FileTools_INCLUDE})
-set(BlendFile_TOOLS_LIBRARY ${FileTools_LIBRARY})
-
-set(BlendFile_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}  ${BlendFile_TOOLS_INCLUDE})
-set(BlendFile_LIBRARY ${TargetName} ${BlendFile_TOOLS_LIBRARY})
-
+list(APPEND CMAKE_MODULE_PATH  ${FileTools_SOURCE_DIR}/Tools/Compiler/CMake)
 include(TableCompiler)
 add_table(bfBlender Blender.h)
 
@@ -50,20 +41,22 @@ set(BlendFile_SRC
 )
 
 include_directories(${BlendFile_INCLUDE})
-
 add_library(
-    ${TargetName} 
+    ${TargetName}
     ${BlendFile_SRC} 
     ${bfBlender}
 )
 
-link_libraries(${BlendFile_TOOLS_LIBRARY})
+target_link_libraries(${TargetName} ${BlendFile_TOOLS_LIBRARY})
+message("${TargetGroup}")
 
-if (FileTools_BLEND_TEST)
-    subdirs(Test)
-endif()
 
 
 if (TargetFolders)
     set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
 endif()
+
+if (FileTools_BLEND_TEST)
+    subdirs(Test)
+endif()
+

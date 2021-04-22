@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -23,14 +19,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "catch/Macro.h"
+#include "gtest/gtest.h"
 #include "ftScanner.h"
 #include "Templates.h"
 
 using namespace ftFlags;
 
-
-TEST_CASE("Basic Struct Test")
+GTEST_TEST(ftScanner, BasicStruct)
 {
     const unsigned char* testCode = (const unsigned char*)TEST;
     const unsigned int   testCodeLen = TEST_SIZE;

@@ -53,9 +53,9 @@ macro(ADD_TABLE TARGET)
 
     ft_absolute_src(SRC_FILES ${ARGN})
     ft_base_src(BASE_FILES ${ARGN})
-    get_filename_component(TARNAME ${TARGET} NAME)
+    get_filename_component(__TargetName__ ${TARGET} NAME)
    
-    set(OUTFILE ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}.inl)
+    set(OUTFILE ${CMAKE_CURRENT_BINARY_DIR}/${__TargetName__}.inl)
 
     # Add the output directory to the current include 
     # list since it needs to be included in-order to use it
@@ -63,7 +63,7 @@ macro(ADD_TABLE TARGET)
 
     add_custom_command(
 	    OUTPUT ${OUTFILE}
-	    COMMAND ${FT_EXECUTABLE} ${TARNAME} ${OUTFILE} ${SRC_FILES}
+	    COMMAND ${FT_EXECUTABLE} ${__TargetName__} ${OUTFILE} ${SRC_FILES}
 	    DEPENDS ${FT_EXECUTABLE} ${SRC_FILES}
 	    )
 
@@ -83,33 +83,34 @@ macro(ADD_TABLE_VALIDATOR TARGET)
     set(BASE_FILES )
     set(OUTFILE )
 
-    ft_absolute_src(SRC_FILES ${ARGN})
-    ft_base_src(BASE_FILES ${ARGN})
+    get_filename_component(Result ${ARGN} EXT)
+    get_filename_component(FileName ${ARGN} NAME)
+    string(REPLACE ${Result} "" BaseName ${FileName})
 
-    get_filename_component(TARNAME ${TARGET} NAME)
-    set(OUTFILE  ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}.inl)
-    set(OUTFILEV ${CMAKE_CURRENT_BINARY_DIR}/${TARNAME}Validator.cpp)
+    set(OutTable      ${CMAKE_CURRENT_BINARY_DIR}/${BaseName}.inl)
+    set(OutValidator  ${CMAKE_CURRENT_BINARY_DIR}/${BaseName}Validator.cpp)
 
     # Add the output directory to the current include 
     # list since it needs to be included in-order to use it
     include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
     add_custom_command(
-	    OUTPUT ${OUTFILE} ${OUTFILEV}
-	    COMMAND ${FT_EXECUTABLE} ${TARNAME} ${OUTFILE} ${SRC_FILES}
-	    DEPENDS ${FT_EXECUTABLE} ${SRC_FILES}
+	    OUTPUT ${OutTable} ${OutValidator}
+	    COMMAND ${FT_EXECUTABLE} ${BaseName} ${OutTable} ${ARGN}
+	    DEPENDS ${FT_EXECUTABLE} ${ARGN}
 	    COMMENT ""
 	    )
 
 
-    add_executable(${TARNAME}Validator ${OUTFILEV})
+    add_executable(${BaseName}Validator ${OutValidator})
+
     add_custom_command(
-        TARGET ${TARNAME}Validator
+        TARGET ${BaseName}Validator
         POST_BUILD
-	    COMMAND ${TARNAME}Validator
-	    COMMENT "Validating -> ${TARNAME}"
+	    COMMAND ${BaseName}Validator
+	    COMMENT "Validating ${TARNAME}"
 	    )
 
-    set(${TARGET} ${OUTFILE})
+    set(${TARGET} ${OutTable})
 endmacro(ADD_TABLE_VALIDATOR)
 

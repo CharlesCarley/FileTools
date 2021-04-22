@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -23,13 +19,11 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include <stdio.h>
+#include <cstdio>
 #include "ftCompiler.h"
 
-
-void usage(const char* prog);
-int getBaseName(const char* inp);
-
+void usage(const char* programName);
+int  getBaseName(const char* input);
 
 int main(int argc, char** argv)
 {
@@ -51,7 +45,7 @@ int main(int argc, char** argv)
         }
     }
 
-    int code = tables.buildTypes();
+    const int code = tables.buildTypes();
     if (code != ftFlags::LNK_OK)
     {
         printf("%s -> Link Error(%08X): When compiling table %s\n", base, code, argv[1]);
@@ -61,26 +55,24 @@ int main(int argc, char** argv)
     return 0;
 }
 
-
 int getBaseName(const char* input)
 {
     int offs = 0;
     if (input)
     {
-        int len = ((int)strlen(input)), i;
-        for (i = len - 1; i >= 0 && offs == 0; --i)
+        const int len = (int)strlen(input);
+        for (int i = len - 1; i >= 0 && offs == 0; --i)
             if (input[i] == '/' || input[i] == '\\')
-                offs = i+1;
+                offs = i + 1;
     }
     return offs;
 }
 
-
-void usage(const char* prog)
+void usage(const char* programName)
 {
-    if (prog)
+    if (programName)
     {
-        printf("%s\n", prog);
+        printf("%s\n", programName);
         printf("       <tablename> <outfile> <infile>[0] ... <infile>[n]\n");
         printf("\n");
         printf("       tablename - A prefix on the generated table.  \n");

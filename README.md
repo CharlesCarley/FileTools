@@ -5,22 +5,26 @@ The FileTools project is a small collection of tools that are centered around lo
 ## Contents
 
 1. [FileTools](#filetools)
-   1. [Contents](#contents)
-   2. [File Structure](#file-structure)
-      1. [File Header](#file-header)
-      2. [Chunk Header](#chunk-header)
-      3. [Reserved Codes](#reserved-codes)
-   3. [Table structure](#table-structure)
-      1. [Type table(TYPE)](#type-tabletype)
-      2. [Name table(NAME)](#name-tablename)
-      3. [Type size table(TLEN)](#type-size-tabletlen)
-      4. [Structure table(STRC)](#structure-tablestrc)
-      5. [Building the tables](#building-the-tables)
-         1. [Scanner](#scanner)
-         2. [Usage](#usage)
-         3. [Output](#output)
-         4. [CMake Utility](#cmake-utility)
-      6. [Reversing a file's tables](#reversing-a-files-tables)
+    1. [Contents](#contents)
+    2. [File Structure](#file-structure)
+        1. [File Header](#file-header)
+        2. [Chunk Header](#chunk-header)
+        3. [Reserved Codes](#reserved-codes)
+    3. [Table structure](#table-structure)
+        1. [Type table(TYPE)](#type-tabletype)
+        2. [Name table(NAME)](#name-tablename)
+        3. [Type size table(TLEN)](#type-size-tabletlen)
+        4. [Structure table(STRC)](#structure-tablestrc)
+        5. [Building the tables](#building-the-tables)
+            1. [Scanner](#scanner)
+            2. [Usage](#usage)
+            3. [Output](#output)
+            4. [CMake Utility](#cmake-utility)
+        6. [Reversing a file's tables](#reversing-a-files-tables)
+    4. [Sub-modules](#sub-modules)
+    5. [Testing](#testing)
+    6. [Building](#building)
+    7. [Optional defines](#optional-defines)
 
 ## File Structure
 
@@ -31,7 +35,7 @@ The file structure is a simple chunk based format. It consists of a 12-byte file
 The file header determines the file type, the architecture of the saving platform, and the API version.
 
 | Byte(s) | Data Type | Description                                                      |
-| :-----: | --------- | :--------------------------------------------------------------- |
+|:-------:|-----------|:-----------------------------------------------------------------|
 |  [0,6]  | char[7]   | Used to determine the type of file.                              |
 |    7    | char      | Byte 7 is used to determine whether to load 32 or 64 bit chunks. |
 |    8    | char      | Byte 8 identifies the byte-order of the file.                    |
@@ -40,7 +44,7 @@ The file header determines the file type, the architecture of the saving platfor
 The following ASCII codes are reserved for bytes 7 and 8:
 
 | ASCII | Hex  | Description                                                   |
-| ----- | ---- | ------------------------------------------------------------- |
+|-------|------|---------------------------------------------------------------|
 | '-'   | 0x2D | Indicates that the file was saved with 64-bit chunks.         |
 | '_'   | 0x5F | Indicates that the file was saved with 32-bit chunks.         |
 | 'V'   | 0x56 | Indicates that the file was saved on a big-endian machine.    |
@@ -80,7 +84,7 @@ struct Chunk64
 ```
 
 | Member   | Description                                                              |
-| -------- | :----------------------------------------------------------------------- |
+|----------|:-------------------------------------------------------------------------|
 | code     | Is a unique identifier for determining how this block should be handled. |
 | length   | Is the size in bytes of the data block.                                  |
 | address  | Is the heap address of the data block at the time of saving.             |
@@ -117,7 +121,7 @@ Count  : 1
 The following are reserved codes that the loader internally uses when reading a file.  
 
 | CODE | Description                                                                                                                      |
-| ---- | :------------------------------------------------------------------------------------------------------------------------------- |
+|------|:---------------------------------------------------------------------------------------------------------------------------------|
 | DNA1 | Lets the loader know that it needs to load the API tables.                                                                       |
 | SDNA | API  Table header. This is unused outside of testing for the existence of the tables.                                            |
 | NAME | Indicates that a NAME table follows.                                                                                             |
@@ -177,7 +181,7 @@ Uasge: TableCompiler.exe <tablename> <ofilename> <ifile[0]> ... <ifile[n]>
 ```
 
 | Argument    | Description                                       |
-| :---------- | :------------------------------------------------ |
+|:------------|:--------------------------------------------------|
 | tablename   | A unique name for the output table array.         |
 | ofilename   | Output file and path name for the generated code. |
 | ifile[0..n] | Input API declaration file(s) to parse.           |
@@ -234,3 +238,43 @@ The CMake utility can be used to attach table generation to a build. This macro 
 The TableDecompiler tool is for converting a file's tables back into usable C++. This program will scan the supplied input file for a DNA1 chunk and attempt to read the tables back. Then it will output a single header file that contains the sorted structure definitions. 
 
 Example output can be found in the [BlendFile](FileFormats/Blend/Blender.h) loader.  
+
+## Sub-modules
+
+The files [gitupdate.py](gitupdate.py) or [gitupdate.bat](gitupdate.bat) help automate initial cloning and with keeping the modules up to date.
+
+Once this project has been cloned. The following command will initialize any external modules.
+
+```txt
+python gitupdate.py 
+...
+gitupdate.bat 
+```
+
+## Testing
+
+The testing directory is setup to work with [googletest](https://github.com/google/googletest). As well as the initial setup for testing the standalone module either using GitHub actions or with Jenkins.
+
+## Building
+
+Building with CMake and Make
+
+```sh
+mkdir build
+cd build
+cmake ..
+
+make
+```
+
+## Optional defines
+
+| Option                         | Description                         | Default |
+|:-------------------------------|:------------------------------------|:-------:|
+| FileTools_BUILD_TEST           | Build the unit test program.        |   OFF   |
+| FileTools_AUTO_RUN_TEST        | Automatically run the test program. |   OFF   |
+| FileTools_BUILD_COMPILER       | Build the table compiler.           |   ON    |
+| FileTools_BUILD_DECOMPILER     | Build the table decompiler.         |   ON    |
+| FileTools_BUILD_RECOMPILE_TEST | Build the Decompile/Recompile test. |   OFF   |
+| FileTools_BLEND_FILE           | Build the Blend file loader.        |   OFF   |
+| FileTools_BLEND_TEST           | Builds a test .blend program.       |   OFF   |

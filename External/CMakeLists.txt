@@ -1,10 +1,6 @@
 # -----------------------------------------------------------------------------
+#   Copyright (c) Charles Carley.
 #
-#   Copyright (c) 2019 Charles Carley.
-#
-#   Contributor(s): none yet
-#
-# ------------------------------------------------------------------------------
 #   This software is provided 'as-is', without any express or implied
 # warranty. In no event will the authors be held liable for any damages
 # arising from the use of this software.
@@ -21,30 +17,5 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(TargetName FileToolsTests)
-#include (Data2Array)
-
-file(GLOB LS    *.cpp)
-file(GLOB LH    *.h)
-file(GLOB CH    catch/*.h)
-file(GLOB CS    catch/*.cpp)
-file(GLOB TMPL  Templates/*.h)
-
-#add_templates(Templates.h ${TMPL})
-
-set(SRC
-    Templates.h
-    ${LS} ${LH}
-    ${CH} ${CS}
-    ${TMPL}
-)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ../File)
-include_directories(${FileTools_INCLUDE})
-
-add_executable(${TargetName} ${SRC})
-
-target_link_libraries(
-    ${TargetName} 
-    ${FileTools_LIBRARY}
-)
+subdirs(Data2Array)
+subdirs(Utils)

@@ -1,4 +1,5 @@
 # -----------------------------------------------------------------------------
+#
 #   Copyright (c) Charles Carley.
 #
 #   This software is provided 'as-is', without any express or implied
@@ -17,72 +18,47 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(TargetName FileTools)
-unset(TargetGroup )
+set(TestTargetName ${TargetName}Test)
 
-
-set(File_SRC
+set(TestTarget_SOURCE
+    fhCharHash.cpp
     ftAtomic.cpp
-    ftBuildInfo.cpp
-    ftBuildMember.cpp
-    ftBuildStruct.cpp
-    ftChunk.cpp
-    ftCompiler.cpp
-    ftEndianUtils.cpp
-    ftFile.cpp
-    ftLogger.cpp
-    ftMember.cpp
-    ftScanDNA.cpp
-    ftScanner.cpp
-    ftStreams.cpp
-    ftStruct.cpp
     ftTables.cpp
-    ftToken.cpp
-    ftTypes.cpp
+    ftScanner.cpp
 )
 
-set(File_HDR
-    ftAtomic.h
-    ftBuildInfo.h
-    ftBuildMember.h
-    ftBuildStruct.h
-    ftChunk.h
-    ftCompiler.h
-    ftConfig.h
-    ftEndianUtils.h
-    ftFile.h
-    ftHashTypes.h
-    ftLogger.h
-    ftMember.h
-    ftPlatformHeaders.h
-    ftScanDNA.h
-    ftScanner.h
-    ftStreams.h
-    ftStruct.h
-    ftTables.h
-    ftToken.h
-    ftTypes.h
+set(ABSOLUTE_TEST_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/TestDirectory.h.in
+	${CMAKE_CURRENT_BINARY_DIR}/TestDirectory.h
 )
 
-if (FileTools_USE_ZLIB)
-    include_directories(${FileTools_ZLIB_INCLUDE})
-    add_definitions(${FileTools_ZLIB_DEFINITIONS})
-    link_libraries(${FileTools_ZLIB_LIBRARY})
-endif()
+include_directories(. ${GTEST_INCLUDE} ${CMAKE_CURRENT_BINARY_DIR} ${Utils_INCLUDE} ${FileTools_INCLUDE})
 
-include_directories(${Utils_INCLUDE})
-
-add_library(${TargetName} 
-    ${File_SRC} 
-    ${File_HDR}
+add_executable(
+    ${TestTargetName}
+    ${TestTarget_SOURCE}
 )
-
-target_link_libraries(${TargetName} 
-    ${Utils_LIBRARY}
-)
-
+target_link_libraries(${TestTargetName} ${GTEST_LIBRARY} ${Utils_LIBRARY} ${FileTools_LIBRARY})
 
 if (TargetFolders)
-    set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
+    set_target_properties(${TestTargetName} PROPERTIES FOLDER "${TargetGroup}")
 endif()
 
+
+if (FileTools_AUTO_RUN_TEST)
+
+   add_custom_command(TARGET 
+        ${TestTargetName} POST_BUILD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND  $<TARGET_FILE:${TestTargetName}>
+    )
+        
+    set_target_properties(
+        ${TestTargetName} 
+        PROPERTIES 
+        VS_DEBUGGER_WORKING_DIRECTORY  
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+endif()

@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -24,31 +20,28 @@
 -------------------------------------------------------------------------------
 */
 #include "ftAtomic.h"
-#include "Templates.h"
-#include "catch/Macro.h"
+#include "gtest/gtest.h"
 
-
-TEST_CASE("ftAtomic ftCharHashKey")
+GTEST_TEST(ftAtomic, ftCharHashKey)
 {
     ftAtomicUtils::Types;
-    size_t i, j;
 
     // test for unique hashes
-    for (i = 0; i < ftAtomicUtils::NumberOfTypes; ++i)
+    for (size_t i = 0; i < ftAtomicUtils::NumberOfTypes; ++i)
     {
         const ftAtomicType& type1 = ftAtomicUtils::Types[i];
 
-        for (j = 0; j < ftAtomicUtils::NumberOfTypes; ++j)
+        for (size_t j = 0; j < ftAtomicUtils::NumberOfTypes; ++j)
         {
             if (j != i)  // excluding the same idx
             {
                 const ftAtomicType& type2 = ftAtomicUtils::Types[j];
                 const char*         fmtString;
-                if (FT_VOID8)
-                    fmtString = "ftAtomicType (0x%016llX, 0x%016llX)\n";
-                else
-                    fmtString = "ftAtomicType (0x%08X, 0x%08X)\n";
-
+#if SK_ARCH == SK_ARCH64
+                fmtString = "ftAtomicType (0x%016llX, 0x%016llX)\n";
+#else
+                fmtString = "ftAtomicType (0x%08X, 0x%08X)\n";
+#endif
                 printf(fmtString, type1.m_hash, type2.m_hash);
                 EXPECT_NE(type1.m_hash, type2.m_hash);
             }
@@ -56,47 +49,44 @@ TEST_CASE("ftAtomic ftCharHashKey")
     }
 }
 
-class Test
+class TestCast
 {
 private:
     int    x, y, z, p;
     double d;
 
 public:
-    Test()
+    TestCast()
     {
         x = y = z = 0, p = 0;
         d = 0;
     }
 
-    int getX()
+    int getX() const
     {
         return x;
     }
 
-    int getY()
+    int getY() const
     {
         return y;
     }
 
-    int getZ()
+    int getZ() const
     {
         return z;
     }
 
-    double getD()
+    double getD() const
     {
         return d;
     }
 };
 
-
-
-TEST_CASE("ftAtomic Cast")
+GTEST_TEST(ftAtomic, Cast)
 {
-    Test* t  = new Test();
-    char* cp = (char*)t;
-
+    TestCast* t  = new TestCast();
+    char*     cp = (char*)t;
 
     int    x = 1, y = 2, z = 3;
     double d = 3.14;
@@ -140,48 +130,35 @@ TEST_CASE("ftAtomic Cast")
 
 #include "ftEndianUtils.h"
 
+GTEST_TEST(ftAtomic, Swap)
+{
+    const FBTsize srcElmSize = 8;
+    
+    FBTByteInteger seed = {};
+    seed.m_byte[0]      = 51;
+    seed.m_byte[1]      = 26;
+    seed.m_byte[2]      = 37;
+    seed.m_byte[3]      = 98;
+    seed.m_byte[4]      = 89;
+    seed.m_byte[5]      = 73;
+    seed.m_byte[6]      = 62;
+    seed.m_byte[7]      = 15;
 
+    FBTuint64 i64 = seed.m_ptr;
 
- typedef union Split {
-    FBTuint8   lohi8[8];
-    FBTuint16  lohi16[4];
-    FBTuint32  lohi32[2];
-    FBTuint64  space;
- } Split;
+    FBTbyte  dstBuffer[ftEndianUtils::MaxSwapSpace];
+    FBTbyte* srcBPtr = (FBTbyte*)&i64;
 
+    memcpy(dstBuffer, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
+    FBTByteInteger before, after;
+    before.m_ptr = i64;
 
- 
- TEST_CASE("Swap")
- {
-     FBTsize srcElmSize = 8;
-     FBTsize dstElmSize = 8;
+    ftEndianUtils::swap64((FBTuint64*)&dstBuffer[0], 1);
 
+    after.m_ptr = *(FBTuint64*)dstBuffer;
 
-     Split seed;
-     seed.lohi8[0] = 51;
-     seed.lohi8[1] = 26;
-     seed.lohi8[2] = 37;
-     seed.lohi8[3] = 98;
-     seed.lohi8[4] = 89;
-     seed.lohi8[5] = 73;
-     seed.lohi8[6] = 62;
-     seed.lohi8[7] = 15;
-
-     FBTuint64 i64 = seed.space;
-
-     FBTbyte  dstBuffer[ftEndianUtils::MaxSwapSpace];
-     FBTbyte* srcBPtr = (FBTbyte*)&i64;
-
-     ::memcpy(dstBuffer, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
-     Split before, after;
-     before.space = i64;
-
-     ftEndianUtils::swap64((FBTuint64*)dstBuffer, 1);
-
-     after.space = *((FBTuint64*)dstBuffer);
-
-     EXPECT_EQ(before.lohi8[0], after.lohi8[7]);
-     EXPECT_EQ(before.lohi8[1], after.lohi8[6]);
-     EXPECT_EQ(before.lohi8[2], after.lohi8[5]);
-     EXPECT_EQ(before.lohi8[3], after.lohi8[4]);
- }
+    EXPECT_EQ(before.m_byte[0], after.m_byte[7]);
+    EXPECT_EQ(before.m_byte[1], after.m_byte[6]);
+    EXPECT_EQ(before.m_byte[2], after.m_byte[5]);
+    EXPECT_EQ(before.m_byte[3], after.m_byte[4]);
+}

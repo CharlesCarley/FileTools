@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -25,18 +21,14 @@
 */
 #include <iostream>
 #include "Templates.h"
-#include "Utils/skHexPrint.h"
 #include "Utils/skMemoryStream.h"
-#include "catch/Macro.h"
 #include "ftAtomic.h"
 #include "ftCompiler.h"
 #include "ftLogger.h"
 #include "ftMember.h"
-#include "ftScanner.h"
+#include "gtest/gtest.h"
 
-
-
-TEST_CASE("CompilerTest")
+GTEST_TEST(ftCompiler, Basic)
 {
     int        status;
     ftCompiler compiler;
@@ -47,8 +39,6 @@ TEST_CASE("CompilerTest")
 
     EXPECT_EQ(ftFlags::LNK_OK, status);
     EXPECT_EQ(compiler.getNumberOfBuiltinTypes(), ftAtomicUtils::NumberOfTypes);
-
-
 
     compiler.setWriteMode(ftFlags::WRITE_STREAM);
     skMemoryStream stream;
@@ -63,7 +53,6 @@ TEST_CASE("CompilerTest")
 
     nr = tbl.getNumberOfTypes();
     i  = 0;
-
 
     while (i < nr)
     {
@@ -81,7 +70,6 @@ TEST_CASE("CompilerTest")
         ++i;
     }
 
-
     nr = tbl.getNumberOfNames();
     i  = 0;
     while (i < nr)
@@ -96,15 +84,13 @@ TEST_CASE("CompilerTest")
     }
 }
 
-
 using namespace std;
 
-TEST_CASE("RebuildTest")
+GTEST_TEST(ftCompiler, RebuildTest)
 {
     int        status;
     ftCompiler compiler;
-  
-    
+
     status = compiler.parse("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
     EXPECT_GE(status, 0);
 
@@ -113,31 +99,25 @@ TEST_CASE("RebuildTest")
     EXPECT_EQ(ftFlags::LNK_OK, status);
     EXPECT_EQ(compiler.getNumberOfBuiltinTypes(), ftAtomicUtils::NumberOfTypes);
 
-
     compiler.setWriteMode(ftFlags::WRITE_STREAM);
     skMemoryStream stream(skStream::WRITE);
 
     compiler.writeStream(&stream);
     ftLogger::log(stream.ptr(), stream.size());
 
-
     ftTables tbl(sizeof(void*));
-    status  = tbl.read(stream.ptr(), stream.size(), 0, ftFlags::LF_DIAGNOSTICS);
+    status = tbl.read(stream.ptr(), stream.size(), 0, ftFlags::LF_DIAGNOSTICS);
     EXPECT_EQ(ftFlags::FS_OK, status);
-
-
 
     ftTables::Structures::Iterator it = tbl.getStructIterator();
     while (it.hasMoreElements())
     {
-        ftStruct* strc = it.getNext();
+        ftStruct* structure = it.getNext();
 
-
-        cout << "struct " << strc->getName() << endl;
+        cout << "struct " << structure->getName() << endl;
         cout << "{" << endl;
 
-
-        ftStruct::Members::Iterator mit = strc->getMemberIterator();
+        ftStruct::Members::Iterator mit = structure->getMemberIterator();
         while (mit.hasMoreElements())
         {
             ftMember* mbr = mit.getNext();

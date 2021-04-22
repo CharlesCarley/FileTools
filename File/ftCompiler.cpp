@@ -24,30 +24,24 @@
 -------------------------------------------------------------------------------
 */
 #include "ftCompiler.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
 #include "Utils/skArray.h"
-#include "Utils/skHash.h"
-#include "ftAtomic.h"
 #include "ftConfig.h"
 #include "ftLogger.h"
 #include "ftScanner.h"
 #include "ftStreams.h"
 
-
-#define FT_IS_VALID_TOKEN(x) (x > 0)
+#define FT_IS_VALID_TOKEN(x) ((x) > 0)
 
 using namespace ftFlags;
 
-
 ftCompiler::ftCompiler() :
+    m_buffer(nullptr),
+    m_pos(0),
     m_build(new ftBuildInfo()),
     m_start(0),
     m_curBuf(0),
     m_writeMode(WRITE_ARRAY),
-    m_buffer(0),
-    m_pos(0),
     m_scanner(0)
 {
 }
@@ -57,11 +51,10 @@ ftCompiler::~ftCompiler()
     delete m_build;
 }
 
-
 void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
 {
     ftId newName;
-    int  i = 0, j = 0;
+    int  i;
     if (v.m_isFunctionPointer)
         newName.push_back('(');
 
@@ -84,10 +77,10 @@ void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
         {
             ftId dest;
             newName.push_back('[');
-            skSprintf(dest.ptr(), dest.capacity()-1, "%i", v.m_arrays[i]);
+            skSprintf(dest.ptr(), ftId::capacity() - 1, "%i", v.m_arrays[i]);
 
             char* cp = dest.ptr();
-            for (j = 0; cp[j]; ++j)
+            for (int j = 0; cp[j]; ++j)
                 newName.push_back(cp[j]);
 
             newName.push_back(']');
@@ -105,13 +98,11 @@ int ftCompiler::parse(const ftPath& name, const char* data, size_t len)
     m_scanner = &scanner;
     m_includes.push_back(name.c_str());
 
-
     int ret = parse();
 
     m_scanner = 0;
     return ret;
 }
-
 
 int ftCompiler::parse(const ftPath& id)
 {
@@ -123,8 +114,8 @@ int ftCompiler::parse(const ftPath& id)
         return -1;
     }
 
-    SKsize len = fp.size(), br;
-    int    rc  = -1;
+    const SKsize len = fp.size();
+    int          rc  = -1;
 
     if (len == SK_NPOS)
         printf("Error: Failed to determine the length of the file: %s\n", id.c_str());
@@ -132,7 +123,7 @@ int ftCompiler::parse(const ftPath& id)
     {
         char* buffer = new char[len + 1];
 
-        br = fp.read(buffer, len);
+        const SKsize br = fp.read(buffer, len);
         if (br != SK_NPOS)
         {
             buffer[br] = 0;
@@ -146,7 +137,6 @@ int ftCompiler::parse(const ftPath& id)
     }
     return rc;
 }
-
 
 int ftCompiler::parse(void)
 {
@@ -172,7 +162,6 @@ int ftCompiler::parse(void)
 
     return token;
 }
-
 
 void ftCompiler::parseClass(int& token, ftToken& tokenPtr)
 {
@@ -211,8 +200,6 @@ void ftCompiler::parseClass(int& token, ftToken& tokenPtr)
              FT_IS_VALID_TOKEN(token));
 }
 
-
-
 void ftCompiler::parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& buildStruct)
 {
     bool forceArray = false;
@@ -223,7 +210,7 @@ void ftCompiler::parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& b
     cur.m_type      = typeId;
     cur.m_undefined = 0;
 
-    bool isId = token == FT_ID;
+    const bool isId = token == FT_ID;
 
     do
     {
@@ -244,9 +231,9 @@ void ftCompiler::parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& b
             cur.m_name = tokenPtr.getValue();
             break;
         case FT_LPARN:
-            cur.m_name = tokenPtr.getValue();
+            cur.m_name              = tokenPtr.getValue();
             cur.m_isFunctionPointer = 1;
-            cur.m_ptrCount = 0;
+            cur.m_ptrCount          = 0;
             break;
         case FT_RPARN:
         case FT_PRIVATE:
@@ -257,7 +244,6 @@ void ftCompiler::parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& b
         case FT_TERM:
         case FT_COMMA:
             handleStatementClosure(token,
-                                   tokenPtr,
                                    buildStruct,
                                    cur,
                                    forceArray,
@@ -284,16 +270,13 @@ void ftCompiler::handleConstant(int& token, ftToken& tokenPtr, ftBuildMember& me
     member.m_arraySize *= tokenPtr.getArrayLen();
 }
 
-
 void ftCompiler::handleStatementClosure(int&           token,
-                                        ftToken&       tokenPtr,
                                         ftBuildStruct& buildStruct,
                                         ftBuildMember& member,
                                         bool           forceArray,
                                         bool           isIdentifier)
 {
     makeName(member, forceArray);
-
 
     if (isIdentifier && member.m_ptrCount == 0)
     {
@@ -302,7 +285,7 @@ void ftCompiler::handleStatementClosure(int&           token,
         else
             buildStruct.m_nrDependentTypes++;
 
-        // Flag it as Dependant
+        // Flag it as dependent
         member.m_isDependentType = true;
     }
 
@@ -315,7 +298,6 @@ void ftCompiler::handleStatementClosure(int&           token,
         member.m_numDimensions = 0;
 }
 
-
 void ftCompiler::errorUnknown(int& token, ftToken& tokenPtr)
 {
     printf("%s(%i): error : Unknown character parsed! '%s'\n",
@@ -325,13 +307,10 @@ void ftCompiler::errorUnknown(int& token, ftToken& tokenPtr)
     token = FT_NULL_TOKEN;
 }
 
-
-FBTuint32 ftCompiler::getNumberOfBuiltinTypes(void)
+FBTuint32 ftCompiler::getNumberOfBuiltinTypes(void) const
 {
     return m_build->m_numberOfBuiltIn;
 }
-
-
 
 int ftCompiler::buildTypes(void)
 {
@@ -354,8 +333,6 @@ void ftCompiler::writeFile(const ftId& id, skStream* fp)
     }
 }
 
-
-
 void ftCompiler::writeFile(const ftId& id, const ftPath& path)
 {
     skFileStream fp;
@@ -374,7 +351,6 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
     fp.writef("\n};\n");
     fp.writef("const int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
 
-
 #if FT_TYLE_LEN_VALIDATE == 1
     writeValidationProgram(path.c_str());
 #endif
@@ -385,11 +361,9 @@ void ftCompiler::writeStream(skStream* fp)
     int i;
     m_curBuf = -1;
 
-
     writeBinPtr(fp, (void*)&ftIdNames::FT_SDNA[0], 4);
     writeBinPtr(fp, (void*)&ftIdNames::FT_NAME[0], 4);
     i = m_build->m_name.size();
-
 
 #if FT_SWAP_FROM_NATIVE_ENDIAN == 1
     i = ftSwap32(i);
@@ -398,15 +372,13 @@ void ftCompiler::writeStream(skStream* fp)
     writeBinPtr(fp, &i, 4);
     writeCharPtr(fp, m_build->m_name);
 
-
-
     writeBinPtr(fp, (void*)&ftIdNames::FT_TYPE[0], 4);
     i = m_build->m_typeLookup.size();
 
 #if FT_SWAP_FROM_NATIVE_ENDIAN == 1
     i = ftSwap32(i);
 #endif
-    
+
     writeBinPtr(fp, &i, 4);
     writeCharPtr(fp, m_build->m_typeLookup);
     writeBinPtr(fp, (void*)&ftIdNames::FT_TLEN[0], 4);
@@ -415,7 +387,6 @@ void ftCompiler::writeStream(skStream* fp)
     for (i = 0; i < (int)m_build->m_tlen.size(); i++)
         m_build->m_tlen.at(i) = ftSwap16(m_build->m_tlen.at(i));
 #endif
-
 
     writeBinPtr(fp, m_build->m_tlen.ptr(), m_build->m_alloc.m_tlen);
     if (m_build->m_tlen.size() & 1)
@@ -432,7 +403,6 @@ void ftCompiler::writeStream(skStream* fp)
 #endif
     writeBinPtr(fp, &i, 4);
 
-
 #if FT_SWAP_FROM_NATIVE_ENDIAN == 1
     for (i = 0; i < (int)m_build->m_strc.size(); i++)
         m_build->m_strc.at(i) = ftSwap16(m_build->m_strc.at(i));
@@ -441,17 +411,16 @@ void ftCompiler::writeStream(skStream* fp)
     writeBinPtr(fp, m_build->m_strc.ptr(), m_build->m_alloc.m_strc);
 }
 
-
-
-void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
+void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& pointers)
 {
-    char     pad[4] = {'b', 'y', 't', 'e'};
-    SKuint32 i = 0, s = ptrs.size();
-    SKuint32 t = 0;
+    char           pad[4] = {'b', 'y', 't', 'e'};
+    SKuint32       i      = 0;
+    const SKuint32 s      = pointers.size();
+    SKuint32       t      = 0;
 
     while (i < s)
     {
-        ftId id = ptrs[i++];
+        ftId id = pointers[i++];
         id.push_back('\0');
         writeBinPtr(fp, (void*)id.c_str(), id.size());
         t += id.size();
@@ -459,12 +428,11 @@ void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs)
 
     int len = t;
 
-    len = (len + 3) & ~3;
+    len = len + 3 & ~3;
     if (len - t)
     {
-        ftId     id;
-        SKuint32 p;
-        for (p = 0; p < (len - t); p++)
+        ftId id;
+        for (SKuint32 p = 0; p < (len - t); p++)
             id.push_back(pad[p % 4]);
 
         writeBinPtr(fp, (void*)id.c_str(), id.size());
@@ -475,12 +443,11 @@ void ftCompiler::writeBinPtr(skStream* fp, void* ptr, int len)
 {
     if (m_writeMode == WRITE_ARRAY)
     {
-        int            i;
         unsigned char* cb = (unsigned char*)ptr;
 
-        for (i = 0; i < len; ++i, ++m_curBuf)
+        for (int i = 0; i < len; ++i, ++m_curBuf)
         {
-            if ((m_curBuf % 16) == 15)
+            if (m_curBuf % 16 == 15)
                 fp->write("\n", 1);
             fp->writef("0x%02X,", (unsigned char)cb[i]);
         }
@@ -489,7 +456,7 @@ void ftCompiler::writeBinPtr(skStream* fp, void* ptr, int len)
         fp->write(ptr, len);
 }
 
-
+#define ToString(x) #x
 
 void ftCompiler::writeValidationProgram(const ftPath& path)
 {
@@ -499,9 +466,8 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     ftPathArray split;
     path.split(split, '/', '\\');
 
-    int i;
     int last = 0;
-    for (i = path.size() - 1; i > 0; --i)
+    for (SKuint16 i = path.size() - 1; i > 0; --i)
     {
         if (path[i] == '.')
         {
@@ -510,27 +476,26 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         }
     }
 
-    for (i = 0; i < path.size(); ++i)
+    for (SKuint16 i = 0; i < path.size(); ++i)
     {
         if (i >= last)
             break;
 
         string.push_back(path[i]);
     }
-    
+
     string += "Validator.cpp";
 
     skFileStream fp;
 
     fp.open(string.c_str(), skStream::WRITE);
-    //FILE* fp = fopen(string.c_str(), "wb");
     if (!fp.isOpen())
     {
         printf("Failed to open validation file %s\n", string.c_str());
         return;
     }
 
-    for (i = 0; i < (int)m_includes.size(); ++i)
+    for (SKuint32 i = 0; i < m_includes.size(); ++i)
     {
         split.clear();
         m_includes[i].split(split, '/', '\\');
@@ -538,52 +503,52 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         fp.writef("#include \"%s\"\n", m_includes[i].c_str());
     }
 
-    fp.writef("#include <stdlib.h>\n");
-    fp.writef("#include <stdio.h>\n\n");
+    fp.writef("#include <cstdlib>\n");
+    fp.writef("#include <cstdio>\n\n");
+    fp.writef("#define ToString(x) #x\n");
+    fp.writef("#define AssertFailed(typeName, expected, actual) ");
+    const char* extra = ToString(
+        fprintf(stderr,
+                "%s(%i): error : Validation failed with ( %i = sizeof(%s) ) != %i\n",
+                __FILE__,
+                __LINE__,
+                actual,
+                typeName,
+                expected););
+    fp.writef("%s\n", extra);
+
     if (!m_namespaces.empty())
     {
-        for (i = 0; i < (int)m_namespaces.size(); ++i)
+        for (SKuint32 i = 0; i < m_namespaces.size(); ++i)
             fp.writef("using namespace %s;\n\n\n", m_namespaces[i].c_str());
     }
 
     fp.writef("int main()\n{\n\tint errors=0;\n");
-
     ftBuildStruct::Array::Iterator it = m_builders.iterator();
     while (it.hasMoreElements())
     {
         ftBuildStruct& bs = it.getNext();
 
-        ftId&   cur = m_build->m_typeLookup.at((SKuint32)bs.m_structId);
-        FBTtype len = m_build->m_tlen.at((SKuint32)bs.m_structId);
+        ftId&         cur = m_build->m_typeLookup.at((SKuint32)bs.m_structId);
+        const FBTtype len = m_build->m_tlen.at((SKuint32)bs.m_structId);
 
         if (m_skip.find(cur) != m_skip.npos)
             continue;
+
 #if FT_SWAP_FROM_NATIVE_ENDIAN == 1
         len = ftSwap16(len);
 #endif
+
         fp.writef("\tif (sizeof(%s) != %i)\n\t{\n\t\terrors ++;\n", cur.c_str(), len);
-        fp.writef("#ifdef _MSC_VER\n");
-        fp.writef(
-                "\t\tfprintf(stderr, \"%%s(%%i): error : Validation failed with "
-                "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n",
-                cur.c_str(),
-                cur.c_str(),
-                len);
-        fp.writef("#else\n");
-        fp.writef(
-                "\t\tfprintf(stderr, \"%%s:%%i: error : Validation failed with "
-                "( %%i = sizeof(%s) ) != %%i\\n\", __FILE__, __LINE__, (int)sizeof(%s), %i);\n",
-                cur.c_str(),
-                cur.c_str(),
-                len);
-        fp.writef("#endif\n");
+        fp.writef("\t\t");
+        fp.writef("AssertFailed(ToString(%s), %i, (int)sizeof(%s));\n", cur.c_str(), len, cur.c_str());
         fp.writef("\t}\n\n");
     }
 
     fp.writef("\t");
     fp.writef(
-            "if (errors > 0)fprintf(stderr, \"%%s(%%i): error : "
-            "there are %%i misaligned types.\\n\", __FILE__, __LINE__, errors);\n");
+        "if (errors > 0) fprintf(stderr, \"%%s(%%i): error : "
+        "there are %%i misaligned types.\\n\", __FILE__, __LINE__, errors);\n");
 
     fp.writef("\treturn errors == 0 ? 0 : 1;\n}\n");
 

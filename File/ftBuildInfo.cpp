@@ -23,30 +23,20 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
 #include "Utils/skArray.h"
 #include "Utils/skHash.h"
 #include "ftAtomic.h"
 #include "ftCompiler.h"
 #include "ftConfig.h"
-#include "ftLogger.h"
 #include "ftScanner.h"
-#include "ftStreams.h"
 
-#define FT_IS_VALID_TOKEN(x) (x > 0)
+#define FT_IS_VALID_TOKEN(x) ((x) > 0)
 
 using namespace ftFlags;
 
-
 ftBuildInfo::ftBuildInfo() :
-    m_name(),
-    m_typeLookup(),
-    m_tlen(),
-    m_64ln(),
-    m_strc(),
-    m_undef(),
+    m_alloc{},
     m_numberOfBuiltIn(0)
 {
     m_alloc.m_name       = 0;
@@ -56,9 +46,7 @@ ftBuildInfo::ftBuildInfo() :
     m_alloc.m_structures = 0;
 }
 
-ftBuildInfo::~ftBuildInfo()
-{
-}
+ftBuildInfo::~ftBuildInfo() = default;
 
 void ftBuildInfo::reserve(void)
 {
@@ -70,16 +58,16 @@ void ftBuildInfo::reserve(void)
 
 void ftBuildInfo::makeBuiltinTypes(void)
 {
-    size_t i;
-    for (i = 0; i < ftAtomicUtils::NumberOfTypes; ++i)
+    for (size_t i = 0; i < ftAtomicUtils::NumberOfTypes; ++i)
     {
         const ftAtomicType& type = ftAtomicUtils::Types[i];
-        addType(type.m_name, (SKuint32)type.m_sizeof);
+        addType(type.m_name, type.m_sizeof);
     }
+
     m_numberOfBuiltIn = m_typeLookup.size();
 }
 
-FBTsize ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
+FBTtype ftBuildInfo::addType(const ftId& type, const FBTuint16& len)
 {
     FBTsize loc = m_typeLookup.find(type);
     if (loc == m_typeLookup.npos)
@@ -87,15 +75,19 @@ FBTsize ftBuildInfo::addType(const ftId& type, const FBTuint32& len)
         m_alloc.m_type += type.size() + 1;
         m_alloc.m_tlen += sizeof(FBTtype);
         loc = m_typeLookup.size();
-
+        if (loc > 0xFFFF)
+        {
+            printf("Type limit exceeded\n");
+            return SK_NPOS16;
+        }
         m_typeLookup.push_back(type);
         m_tlen.push_back(len);
         m_64ln.push_back(len);
     }
-    return loc;
+    return (FBTtype)loc;
 }
 
-bool ftBuildInfo::hasType(const ftId& type)
+bool ftBuildInfo::hasType(const ftId& type) const
 {
     return m_typeLookup.find(type) != m_typeLookup.npos;
 }
@@ -112,84 +104,94 @@ FBTsize ftBuildInfo::addName(const ftId& name)
     return loc;
 }
 
-int ftBuildInfo::getLengths(ftBuildStruct::Array& struct_builders)
+int ftBuildInfo::getLengths(ftBuildStruct::Array& structBuilders)
 {
     makeBuiltinTypes();
 
-    ftBuildStruct::Array::Iterator bit = struct_builders.iterator();
+    ftBuildStruct::Array::Iterator bit = structBuilders.iterator();
     while (bit.hasMoreElements())
     {
         ftBuildStruct& bs = bit.getNext();
-        bs.m_structId       = addType(bs.m_name, 0);
+
+        if (bs.m_name == "btHingeConstraintDoubleData2")
+        {
+            printf("BP\n");
+        }
+        bs.m_structId     = addType(bs.m_name, 0);
 
         m_strc.push_back((SKuint16)bs.m_structId);
         m_strc.push_back((SKuint16)bs.m_data.size());
 
-        m_alloc.m_strc += (sizeof(FBTtype) * 2);
+        m_alloc.m_strc += sizeof(FBTtype) * 2;
 
         ftBuildStruct::Variables::Iterator it = bs.m_data.iterator();
         while (it.hasMoreElements())
         {
-            ftBuildMember& cvar = it.getNext();
+            ftBuildMember& cVar = it.getNext();
 
-            cvar.m_typeId     = (int)addType(cvar.m_type, 0);
-            cvar.m_hashedName = (FBTtype)addName(cvar.m_name);
+            cVar.m_typeId     = addType(cVar.m_type, 0);
+            cVar.m_hashedName = (FBTtype)addName(cVar.m_name);
 
-            m_strc.push_back(cvar.m_typeId);
-            m_strc.push_back(cvar.m_hashedName);
+            m_strc.push_back(cVar.m_typeId);
+            m_strc.push_back(cVar.m_hashedName);
 
-            m_alloc.m_strc += (sizeof(FBTtype) * 2);
+            m_alloc.m_strc += sizeof(FBTtype) * 2;
         }
     }
 
-    return getTLengths(struct_builders);
+    return getTLengths(structBuilders);
 }
 
-
-int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
+int ftBuildInfo::getTLengths(ftBuildStruct::Array& structBuilders)
 {
-    ftBuildStruct* strcs = struct_builders.ptr();
-    FBTsize          tot   = struct_builders.size(), i, e;
+    ftBuildStruct* structs = structBuilders.ptr();
+    const FBTsize  total   = structBuilders.size();
 
-    FBTsize next = tot, prev = 0;
+    FBTsize next = total, prev = 0;
 
     FBTtype*         tln64  = m_64ln.ptr();
-    FBTtype*         tlens  = m_tlen.ptr();
-    FBTsize          nrel   = 0, ct, len, fake64;
+    FBTtype*         tLens  = m_tlen.ptr();
     int              status = LNK_OK;
-    ftStringPtrArray m_missingReport, m_zpdef;
+    ftStringPtrArray missingReport, missing;
 
-    FBTtype ft_start = 0;
-    if (strcs)
-        ft_start = (FBTtype)strcs[0].m_structId;
+    FBTtype firstNonAtomic = 0;
+    if (structs)
+        firstNonAtomic = (FBTtype)structs[0].m_structId;
 
-    ftBuildMember* vptr = 0;
-    while (next != prev && strcs)
+    while (next != prev && structs)
     {
         prev = next;
         next = 0;
 
-        for (i = 0; i < tot; ++i)
+        for (FBTsize i = 0; i < total; ++i)
         {
-            ftBuildStruct& cur = strcs[i];
-            if (tlens[cur.m_structId] != 0)
+            ftBuildStruct& cur = structs[i];
+
+            if (cur.m_name == "btHingeConstraintDoubleData2")
+            {
+                printf("BP\n");
+            }
+
+
+            if (tLens[cur.m_structId] != 0)
             {
                 FBTuint32 pos;
-                if ((pos = m_missingReport.find(cur.m_name)) != m_missingReport.npos)
-                    m_missingReport.remove(pos);
+                if ((pos = missingReport.find(cur.m_name)) != missingReport.npos)
+                    missingReport.remove(pos);
             }
             else
             {
-                vptr = cur.m_data.ptr();
-                nrel = cur.m_data.size();
+                ftBuildMember* member = cur.m_data.ptr();
+                const FBTsize  nrEle  = cur.m_data.size();
 
-                len         = 0;
-                fake64      = 0;
-                bool hasPtr = false;
-                for (e = 0; e < nrel; ++e)
+                FBTsize len    = 0;
+                FBTsize fake64 = 0;
+                bool    hasPtr = false;
+
+                for (FBTsize e = 0; e < nrEle; ++e)
                 {
-                    ftBuildMember& v = vptr[e];
-                    ct            = v.m_typeId;
+                    ftBuildMember& v  = member[e];
+                    const FBTsize  ct = v.m_typeId;
 
                     if (v.m_ptrCount > 0)
                     {
@@ -202,7 +204,7 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
                                    FT_VOIDP,
                                    v.m_type.c_str(),
                                    v.m_name.c_str(),
-                                   FT_VOIDP - (len % FT_VOIDP));
+                                   FT_VOIDP - len % FT_VOIDP);
 
                             status |= LNK_ALIGNEMENTP;
                         }
@@ -214,29 +216,29 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
                                    8,
                                    v.m_type.c_str(),
                                    v.m_name.c_str(),
-                                   8 - (fake64 % 8));
+                                   8 - fake64 % 8);
 
                             status |= LNK_ALIGNEMENTP;
                         }
                         len += FT_VOIDP * v.m_arraySize;
                         fake64 += 8 * v.m_arraySize;
                     }
-                    else if (tlens[ct])
+                    else if (tLens[ct])
                     {
-                        if (ct >= ft_start)
+                        if (ct >= firstNonAtomic)
                         {
-                            if (FT_VOID8 && (len % 8))
+                            if (FT_VOID8 && len % 8)
                             {
                                 printf(v.m_path.c_str(),
                                        v.m_line,
                                        "align: %i alignment error add %i bytes\n",
                                        8,
-                                       8 - (len % 8));
+                                       8 - len % 8);
                                 status |= LNK_ALIGNEMENTS;
                             }
                         }
 
-                        if (tlens[ct] > 3 && (len % 4))
+                        if (tLens[ct] > 3 && len % 4)
                         {
                             printf(cur.m_path.c_str(),
                                    v.m_line,
@@ -244,10 +246,10 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
                                    4,
                                    cur.m_name.c_str(),
                                    v.m_name.c_str(),
-                                   4 - (len % 4));
+                                   4 - len % 4);
                             status |= LNK_ALIGNEMENT4;
                         }
-                        else if (tlens[ct] == 2 && (len % 2))
+                        else if (tLens[ct] == 2 && len % 2)
                         {
                             printf(cur.m_path.c_str(),
                                    v.m_line,
@@ -255,28 +257,28 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
                                    2,
                                    cur.m_name.c_str(),
                                    v.m_name.c_str(),
-                                   2 - (len % 2));
+                                   2 - len % 2);
                             status |= LNK_ALIGNEMENT2;
                         }
 
-                        len += tlens[ct] * v.m_arraySize;
+                        len += tLens[ct] * v.m_arraySize;
                         fake64 += tln64[ct] * v.m_arraySize;
                     }
                     else
                     {
                         next++;
                         len = 0;
-                        if (m_missingReport.find(cur.m_name) == m_missingReport.npos)
-                            m_missingReport.push_back(cur.m_name);
+                        if (missingReport.find(cur.m_name) == missingReport.npos)
+                            missingReport.push_back(cur.m_name);
 
                         tln64[cur.m_structId] = 0;
-                        tlens[cur.m_structId] = 0;
+                        tLens[cur.m_structId] = 0;
                         break;
                     }
                 }
 
                 tln64[cur.m_structId] = (FBTtype)fake64;
-                tlens[cur.m_structId] = (FBTtype)len;
+                tLens[cur.m_structId] = (FBTtype)len;
 
                 if (len != 0)
                 {
@@ -288,7 +290,7 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
                                    cur.m_line,
                                    "64Bit alignment, in %s add %i bytes\n",
                                    cur.m_name.c_str(),
-                                   8 - (fake64 % 8));
+                                   8 - fake64 % 8);
                             status |= LNK_ALIGNEMENT8;
                         }
                     }
@@ -299,7 +301,7 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
                                cur.m_line,
                                "align 4: in %s add %i bytes\n",
                                cur.m_name.c_str(),
-                               4 - (len % 4));
+                               4 - len % 4);
                         status |= LNK_ALIGNEMENT4;
                     }
                 }
@@ -307,11 +309,10 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
         }
     }
 
-
-    if (!m_missingReport.empty())
+    if (!missingReport.empty())
     {
         status |= LNK_UNDEFINED_TYPES;
-        ftStringPtrArray::Iterator it = m_missingReport.iterator();
+        ftStringPtrArray::Iterator it = missingReport.iterator();
         while (it.hasMoreElements())
         {
             ftId& id = it.getNext();
@@ -321,22 +322,37 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& struct_builders)
 
     if (FT_DEBUG >= 3)
     {
-        ftBuildStruct::Array::Iterator bit = struct_builders.iterator();
+        ftBuildStruct::Array::Iterator bit = structBuilders.iterator();
 
         while (bit.hasMoreElements())
         {
             ftBuildStruct& bs = bit.getNext();
 
-            printf(bs.m_path.c_str(), bs.m_line, "typeid (%s):%i\n", bs.m_name.c_str(), bs.m_structId);
-            if (FT_DEBUG > 0 && !bs.m_data.empty())
+            printf(bs.m_path.c_str(),
+                   bs.m_line,
+                   "typeid (%s):%i\n",
+                   bs.m_name.c_str(),
+                   bs.m_structId);
+
+#if FT_DEBUG > 0
+
+            if (!bs.m_data.empty())
             {
                 ftBuildStruct::Variables::Iterator it = bs.m_data.iterator();
                 while (it.hasMoreElements())
                 {
-                    ftBuildMember& cvar = it.getNext();
-                    printf(cvar.m_path.c_str(), cvar.m_line, "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n", cvar.m_typeId, cvar.m_hashedName, (cvar.m_ptrCount > 0 ? FT_VOIDP : tlens[cvar.m_typeId]) * cvar.m_arraySize, cvar.m_type.c_str(), cvar.m_name.c_str());
+                    ftBuildMember& var = it.getNext();
+                    printf(var.m_path.c_str(),
+                           var.m_line,
+                           "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n",
+                           var.m_typeId,
+                           var.m_hashedName,
+                           (var.m_ptrCount > 0 ? FT_VOIDP : tLens[var.m_typeId]) * var.m_arraySize,
+                           var.m_type.c_str(),
+                           var.m_name.c_str());
                 }
             }
+#endif
         }
     }
     return status;

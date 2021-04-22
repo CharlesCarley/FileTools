@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -27,16 +23,13 @@
 #include <vector>
 #include "templates/LargeStringArray.h"
 #include "Utils/skMap.h"
-#include "catch/Macro.h"
-#include "ftAtomic.h"
 #include "ftHashTypes.h"
+#include "gtest/gtest.h"
 
 typedef skHashTable<ftCharHashKey, SKuint32> TypeFinder;
 typedef skHashTable<SKuintPtr, SKuintPtr>    PointerFinder;
 
-
-
-TEST_CASE("ftCharHash")
+GTEST_TEST(ftCharHash, HashTest)
 {
     TypeFinder find_type;
     size_t     i = 0;
@@ -65,9 +58,7 @@ TEST_CASE("ftCharHash")
     }
 }
 
-
-
-TEST_CASE("PointerHash")
+GTEST_TEST(ftCharHash, PointerHash)
 {
     int *ptrArray = new int[101];
 

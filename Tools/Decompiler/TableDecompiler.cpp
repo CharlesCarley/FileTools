@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -36,26 +32,25 @@
 #include "ftPlatformHeaders.h"
 #include "ftScanDNA.h"
 
-
 typedef skArray<ftStruct*> StructArray;
 typedef skList<ftStruct*>  StructDeque;
 
 using namespace std;
 
-
 struct ProgramInfo
 {
-    const char* m_progName;
-    skString    m_ifile;
-    skString    m_ofile;
-    skStream*   m_stream;
-    void*       m_dnaBlock;
-    ftTables*   m_tables;
-    char        m_header[13];
-    bool        m_useNamespace;
-    bool        m_fixupBlend;
-    bool        m_initTypes;
-    bool        m_writeHashCode;
+    const char* programName;
+    skString    inFile;
+    skString    outFile;
+    skStream*   stream;
+    void*       dna;
+    ftTables*   tables;
+    char        header[13];
+    bool        useNamespace;
+    string      nameSpaceName;
+    bool        fixupBlend;
+    bool        initTypes;
+    bool        writeHashCode;
 
     // extra vars only valid in extract to file
     string m_outName;
@@ -63,33 +58,40 @@ struct ProgramInfo
 
 void writeFileHeader(ProgramInfo& ctx, ostream& out)
 {
-    char     buf[32];
-    SKuint32 br = skGetTimeString(buf, 31, "%a %b %d %r");
+    char           buf[32];
+    const SKuint32 br = skGetTimeString(buf, 31, "%a %b %d %r");
+
+    string       name = ctx.inFile.c_str();
+    const size_t last = name.find_last_of('/') + 1;
+    name              = name.substr(last, name.size());
+
 
     out << "/*" << endl
         << endl;
     out << "    This file was automatically generated." << endl;
     out << "    https://github.com/CharlesCarley/FileTools" << endl;
     out << endl;
-    out << "    By    : " << ctx.m_progName << endl;
-    out << "    From  : " << ctx.m_ifile.c_str() << "(" << ctx.m_header << ")" << endl;
+    out << "    By    : " << ctx.programName << endl;
+    out << "    From  : " << name << "(" << ctx.header << ")" << endl;
     if (br != SK_NPOS32)
         out << "    On    : " << buf << endl
             << endl;
     out << "*/" << endl;
 
-    ctx.m_outName = ctx.m_ofile.substr(0, ctx.m_ofile.find('.')).c_str();
-    out << "#ifndef _" << ctx.m_outName << "_h_" << endl;
-    out << "#define _" << ctx.m_outName << "_h_" << endl;
+    name = name.substr(0, name.find('.'));
+
+    ctx.m_outName = name.c_str();
+    out << "#ifndef _" << name << "_h_" << endl;
+    out << "#define _" << name << "_h_" << endl;
     out << endl;
 
-    if (ctx.m_initTypes)
+    if (ctx.initTypes)
     {
-        out << "#include <stdint.h>" << endl;
+        out << "#include <cstdint>" << endl;
         out << endl;
     }
 
-    if (ctx.m_fixupBlend)
+    if (ctx.fixupBlend)
     {
         out << "#ifdef near" << endl;
         out << "#undef near" << endl;
@@ -102,7 +104,6 @@ void writeFileHeader(ProgramInfo& ctx, ostream& out)
     }
 }
 
-
 void writeFileFooter(ProgramInfo& ctx, ostream& out)
 {
     out << "#endif//_" << ctx.m_outName << "_h_" << endl;
@@ -110,7 +111,7 @@ void writeFileFooter(ProgramInfo& ctx, ostream& out)
 
 void writeIndent(ProgramInfo& ctx, ostream& out, int nr, int spacePerIndent = 4)
 {
-    if (!ctx.m_useNamespace)
+    if (!ctx.useNamespace)
         nr -= 1;
 
     spacePerIndent = skMax(spacePerIndent, 0);
@@ -125,43 +126,42 @@ void writeForward(ProgramInfo& ctx, ostream& out, ftStruct* ftStrc)
     out << "struct " << ftStrc->getName() << ';' << endl;
 }
 
-void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
+void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* structure)
 {
     writeIndent(ctx, out, 1);
-    out << "struct " << fstrc->getName() << endl;
+    out << "struct " << structure->getName() << endl;
 
     writeIndent(ctx, out, 1);
     out << "{" << endl;
 
-
-    FBTtype* strc = ctx.m_tables->getStructAt(fstrc->getStructIndex());
+    FBTtype* cs = ctx.tables->getStructAt(structure->getStructIndex());
 
     int maxLeft = -1;
-    if (strc)
+    if (cs)
     {
-        FBTtype cnt = strc[1], i;
-        strc += 2;
-        for (i = 0; i < cnt; ++i, strc += 2)
+        const FBTtype count = cs[1];
+        cs += 2;
+        for (FBTtype i = 0; i < count; ++i, cs += 2)
         {
-            const ftType& type = ctx.m_tables->getTypeAt(strc[0]);
+            const ftType& type = ctx.tables->getTypeAt(cs[0]);
 
             maxLeft = skMax(maxLeft, (int)strlen(type.m_name));
         }
     }
 
-    strc = ctx.m_tables->getStructAt(fstrc->getStructIndex());
-    if (strc)
+    cs = ctx.tables->getStructAt(structure->getStructIndex());
+    if (cs)
     {
-        FBTtype cnt = strc[1], i;
-        strc += 2;
-        for (i = 0; i < cnt; ++i, strc += 2)
+        const FBTtype cnt = cs[1];
+        cs += 2;
+        for (FBTtype i = 0; i < cnt; ++i, cs += 2)
         {
-            const ftType& type = ctx.m_tables->getTypeAt(strc[0]);
-            const ftName& name = ctx.m_tables->getNameAt(strc[1]);
+            const ftType& type = ctx.tables->getTypeAt(cs[0]);
+            const ftName& name = ctx.tables->getNameAt(cs[1]);
 
             writeIndent(ctx, out, 2);
 
-            if (ctx.m_fixupBlend)
+            if (ctx.fixupBlend)
             {
                 if (string(type.m_name) == "anim")
                     out << left << setw(maxLeft) << "Anim" << ' ' << name.m_name << ';' << endl;
@@ -177,9 +177,7 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* fstrc)
     out << endl;
 }
 
-
-
-void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& strcs)
+void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& structures)
 {
     writeIndent(ctx, out, 1);
     out << "namespace StructCodes" << endl;
@@ -191,12 +189,12 @@ void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& strcs)
     out << "typedef unsigned long long HashCode;" << endl;
     out << endl;
 
-    StructArray::ConstIterator cit = strcs.iterator();
+    StructArray::ConstIterator cit = structures.iterator();
     while (cit.hasMoreElements())
     {
-        const ftStruct* strc = cit.getNext();
-        out << setw(ctx.m_useNamespace ? 8 : 4) << ' ';
-        out << "const HashCode SDNA_" << uppercase << strc->getName() << "= 0x" << hex << strc->getHashedType() << ';' << endl;
+        const ftStruct* structure = cit.getNext();
+        out << setw(ctx.useNamespace ? 8 : 4) << ' ';
+        out << "const HashCode SDNA_" << uppercase << structure->getName() << "= 0x" << hex << structure->getHashedType() << ';' << endl;
     }
     writeIndent(ctx, out, 1);
     out << "}" << endl;
@@ -204,15 +202,14 @@ void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& strcs)
     out << endl;
 }
 
-
 void writeUnresolved(ProgramInfo& ctx, ostream& out, FBTtype* typeNotFound)
 {
-    char*         typeName = ctx.m_tables->getTypeNameAt(typeNotFound[0]);
-    const ftName& name     = ctx.m_tables->getNameAt(typeNotFound[1]);
+    char*         typeName = ctx.tables->getTypeNameAt(typeNotFound[0]);
+    const ftName& name     = ctx.tables->getNameAt(typeNotFound[1]);
 
     if (name.m_ptrCount > 0)
     {
-        if (ctx.m_fixupBlend && string(typeName) == "anim")
+        if (ctx.fixupBlend && string(typeName) == "anim")
         {
             writeIndent(ctx, out, 1);
             out << "struct Anim" << endl;
@@ -244,7 +241,7 @@ void writeUnresolved(ProgramInfo& ctx, ostream& out, FBTtype* typeNotFound)
     }
 }
 
-bool hasUnResolved(skArray<FBTtype*>& unresolved, FBTtype* inp)
+bool hasUnResolved(skArray<FBTtype*>& unresolved, const FBTtype* independent)
 {
     bool found = false;
 
@@ -252,41 +249,43 @@ bool hasUnResolved(skArray<FBTtype*>& unresolved, FBTtype* inp)
     while (!found && it.hasMoreElements())
     {
         FBTtype* type = it.getNext();
-
-        found = type[0] == inp[0];
+        found         = type[0] == independent[0];
     }
     return found;
 }
 
-bool structContains(ftStruct* a, ftStruct* b, StructArray& searchList, StructArray& indp)
+bool structContains(ftStruct*    a,
+                    ftStruct*    b,
+                    StructArray& searchList,
+                    StructArray& independent)
 {
     ftTables* tables = a->getParent();
     bool      result = false;
     if (tables)
     {
-        FBTtype* strc = tables->getStructAt(a->getStructIndex());
-        if (strc)
+        FBTtype* structure = tables->getStructAt(a->getStructIndex());
+        if (structure)
         {
-            FBTtype cnt = strc[1], i;
-            strc += 2;
-            for (i = 0; i < cnt && !result; ++i, strc += 2)
+            const FBTtype count = structure[1];
+            structure += 2;
+            for (FBTtype i = 0; i < count && !result; ++i, structure += 2)
             {
-                const ftType& type = tables->getTypeAt(strc[0]);
-                const ftName& name = tables->getNameAt(strc[1]);
+                const ftType& type = tables->getTypeAt(structure[0]);
+                const ftName& name = tables->getNameAt(structure[1]);
 
                 if (type.m_strcId != SK_NPOS32)
                 {
                     if (name.m_ptrCount <= 0)
                     {
-                        ftStruct* fstrc = tables->findStructByName(type.m_name);
+                        ftStruct* foundStruct = tables->findStructByName(type.m_name);
 
-                        if (fstrc && fstrc == b)
+                        if (foundStruct && foundStruct == b)
                         {
-                            if (indp.find(b) == indp.npos)
+                            if (independent.find(b) == independent.npos)
                             {
-                                if (searchList.find(fstrc) != searchList.npos)
+                                if (searchList.find(foundStruct) != searchList.npos)
                                 {
-                                    if (fstrc->getHashedType() == b->getHashedType())
+                                    if (foundStruct->getHashedType() == b->getHashedType())
                                         result = true;
                                 }
                             }
@@ -299,98 +298,98 @@ bool structContains(ftStruct* a, ftStruct* b, StructArray& searchList, StructArr
     return result;
 }
 
-void findMemberStructs(ftStruct* fstrc, StructArray& searchList, StructArray& indp, StructArray& out)
+void findMemberStructs(ftStruct*    fStructure,
+                       StructArray& searchList,
+                       StructArray& independent,
+                       StructArray& out)
 {
     StructArray::Iterator it = searchList.iterator();
     while (it.hasMoreElements())
     {
-        ftStruct* tstrc = it.getNext();
-        if (tstrc != fstrc)
+        ftStruct* tStructure = it.getNext();
+        if (tStructure != fStructure)
         {
-            if (structContains(fstrc, tstrc, searchList, indp))
-                out.push_back(tstrc);
+            if (structContains(fStructure, tStructure, searchList, independent))
+                out.push_back(tStructure);
         }
     }
 }
 
 void organizeDependentStructs(StructArray& dependent, StructArray& independent)
 {
-    StructDeque structs, toplevel;
-
+    StructDeque structs, topLevel;
     if (!dependent.empty())
     {
-        bool needs_resort = true;
-
         StructArray::Iterator it = dependent.iterator();
 
         while (it.hasMoreElements())
         {
-            ftStruct*   fstrc = it.getNext();
-            StructArray deps;
+            ftStruct*   structure = it.getNext();
+            StructArray dependencies;
 
-            findMemberStructs(fstrc, dependent, independent, deps);
+            findMemberStructs(structure, dependent, independent, dependencies);
 
-            if (deps.empty())
+            if (dependencies.empty())
             {
-                fstrc->lock();
-                toplevel.push_front(fstrc);
+                structure->lock();
+                topLevel.push_front(structure);
             }
             else
-                structs.push_back(fstrc);
+                structs.push_back(structure);
         }
 
         it = dependent.iterator();
         while (it.hasMoreElements())
         {
-            ftStruct* fstrc = it.getNext();
+            ftStruct* structure = it.getNext();
 
-            StructArray deps;
-            findMemberStructs(fstrc, dependent, independent, deps);
+            StructArray dependencies;
+            findMemberStructs(structure, dependent, independent, dependencies);
 
-            if (!deps.empty())
+            if (!dependencies.empty())
             {
-                StructDeque::Link* link = structs.find(fstrc);
+                StructDeque::Link* link = structs.find(structure);
                 if (link)
                 {
                     StructArray           erase;
-                    StructArray::Iterator sit = deps.iterator();
+                    StructArray::Iterator sit = dependencies.iterator();
                     while (sit.hasMoreElements())
                     {
-                        ftStruct* strc = sit.getNext();
-                        if (!strc->isLocked())
+                        ftStruct* ls = sit.getNext();
+                        if (!ls->isLocked())
                         {
-                            erase.push_back(strc);
-                            structs.erase(strc);
+                            erase.push_back(ls);
+                            structs.erase(ls);
                         }
                     }
 
                     sit = erase.iterator();
                     while (sit.hasMoreElements())
                     {
-                        ftStruct* strc = sit.getNext();
-                        if (!strc->isLocked())
+                        ftStruct* ls = sit.getNext();
+                        if (!ls->isLocked())
                         {
-                            strc->lock();
-                            structs.insert_front(link, strc);
+                            ls->lock();
+                            structs.insert_front(link, ls);
                         }
                     }
                 }
             }
-            else if (!fstrc->isLocked())
+            else if (!structure->isLocked())
             {
-                StructDeque::Link* link = structs.find(fstrc);
+                StructDeque::Link* link = structs.find(structure);
                 if (link)
                 {
-                    fstrc->lock();
+                    structure->lock();
                     structs.erase(link);
-                    toplevel.push_front(fstrc);
+                    topLevel.push_front(structure);
                 }
             }
         }
     }
 
     dependent.clear();
-    StructDeque::Iterator it = toplevel.iterator();
+    StructDeque::Iterator it = topLevel.iterator();
     while (it.hasMoreElements())
         dependent.push_back(it.getNext());
 
@@ -399,32 +398,31 @@ void organizeDependentStructs(StructArray& dependent, StructArray& independent)
         dependent.push_back(it.getNext());
 }
 
-
 void sortStructs(ProgramInfo&        ctx,
                  skArray<FBTtype*>&  unresolved,
                  skArray<ftStruct*>& independent,
                  skArray<ftStruct*>& dependent)
 {
-    skArray<ftStruct*> main = ctx.m_tables->getStructureArray();
+    skArray<ftStruct*> main = ctx.tables->getStructureArray();
 
     skArray<ftStruct*>::Iterator it = main.iterator();
     while (it.hasMoreElements())
     {
         ftStruct* cs = it.getNext();
 
-        FBTtype* strc = ctx.m_tables->getStructAt(cs->getStructIndex());
-        if (strc)
+        FBTtype* structure = ctx.tables->getStructAt(cs->getStructIndex());
+        if (structure)
         {
-            FBTtype cnt = strc[1], i;
-            strc += 2;
+            const FBTtype count = structure[1];
+            structure += 2;
 
             bool hasStructs           = false;
             bool hasNonPointerStructs = false;
 
-            for (i = 0; i < cnt; ++i, strc += 2)
+            for (FBTtype i = 0; i < count; ++i, structure += 2)
             {
-                const ftType& type = ctx.m_tables->getTypeAt(strc[0]);
-                const ftName& name = ctx.m_tables->getNameAt(strc[1]);
+                const ftType& type = ctx.tables->getTypeAt(structure[0]);
+                const ftName& name = ctx.tables->getNameAt(structure[1]);
 
                 if (type.m_strcId != SK_NPOS32 && name.m_ptrCount <= 0)
                     hasNonPointerStructs = true;
@@ -436,11 +434,12 @@ void sortStructs(ProgramInfo&        ctx,
                     // if it's not a struct or an atomic type then it's unresolved.
                     if (string(type.m_name) != "bool")
                     {
-                        ftAtomic atomic = ftAtomicUtils::getPrimitiveType(ftCharHashKey(type.m_name).hash());
+                        const ftAtomic atomic = ftAtomicUtils::getPrimitiveType(
+                            ftCharHashKey(type.m_name).hash());
                         if (atomic == ftAtomic::FT_ATOMIC_UNKNOWN)
                         {
-                            if (!hasUnResolved(unresolved, strc))
-                                unresolved.push_back(strc);
+                            if (!hasUnResolved(unresolved, structure))
+                                unresolved.push_back(structure);
                         }
                     }
                 }
@@ -455,79 +454,74 @@ void sortStructs(ProgramInfo&        ctx,
     organizeDependentStructs(dependent, independent);
 }
 
-
-
 int extractToFile(ProgramInfo& ctx)
 {
     int       status = 0;
-    ftTables* tables = ctx.m_tables;
+    ftTables* tables = ctx.tables;
 
     skArray<FBTtype*>  unresolved;
     skArray<ftStruct*> independent, dependent;
     sortStructs(ctx, unresolved, independent, dependent);
 
+    ofstream outFile;
+    ostream& outStream = outFile;
 
-    ofstream outf;
-    ostream& sout = outf;
-
-    outf.open(ctx.m_ofile.c_str());
-    if (outf.is_open())
+    outFile.open(ctx.outFile.c_str());
+    if (outFile.is_open())
     {
-        writeFileHeader(ctx, sout);
+        writeFileHeader(ctx, outStream);
 
-        if (ctx.m_useNamespace)
+        if (ctx.useNamespace)
         {
-            sout << "namespace " << ctx.m_outName << endl;
-            sout << "{" << endl;
-            sout << endl;
+            outStream << "namespace " << ctx.nameSpaceName << endl;
+            outStream << "{" << endl;
+            outStream << endl;
         }
 
-        if (ctx.m_writeHashCode)
-            writeHashCodes(ctx, sout, tables->getStructureArray());
+        if (ctx.writeHashCode)
+            writeHashCodes(ctx, outStream, tables->getStructureArray());
 
         skArray<ftStruct*>::Iterator it = tables->getStructIterator();
         while (it.hasMoreElements())
         {
-            ftStruct* strc = it.getNext();
-            writeForward(ctx, sout, strc);
+            ftStruct* structure = it.getNext();
+            writeForward(ctx, outStream, structure);
         }
 
         skArray<FBTtype*>::Iterator uit = unresolved.iterator();
         while (uit.hasMoreElements())
         {
             FBTtype* cur = uit.getNext();
-            writeUnresolved(ctx, sout, cur);
+            writeUnresolved(ctx, outStream, cur);
         }
-        sout << endl;
-
+        outStream << endl;
 
         it = independent.iterator();
         while (it.hasMoreElements())
-            writeStructure(ctx, sout, it.getNext());
-        sout << endl;
-
+            writeStructure(ctx, outStream, it.getNext());
+        outStream << endl;
 
         it = dependent.iterator();
         while (it.hasMoreElements())
-            writeStructure(ctx, sout, it.getNext());
-        sout << endl;
-        if (ctx.m_useNamespace)
-            sout << "}" << endl;
-        writeFileFooter(ctx, sout);
+            writeStructure(ctx, outStream, it.getNext());
+        outStream << endl;
+        if (ctx.useNamespace)
+            outStream << "}" << endl;
+        writeFileFooter(ctx, outStream);
     }
     else
     {
         status = -1;
-        cout << "Failed to open the output file " << ctx.m_ofile.c_str() << endl;
+        cout << "Failed to open the output file " << ctx.outFile.c_str() << endl;
     }
     return status;
 }
 
-void usage(const char* prog)
+void usage(const char* programName)
 {
-    if (prog)
+    if (programName)
     {
-        printf("%s\n", prog);
+        printf("%s\n", programName);
         printf("       <options> -i <infile> -o <outfile>\n\n");
         printf("       <options>\n");
         printf("                 -n  Use namespace. Puts all declarations inside a namespace.\n");
@@ -543,17 +537,17 @@ void usage(const char* prog)
 
 int parseCommandLine(ProgramInfo& ctx, int argc, char** argv)
 {
-    int i, status = 0;
-    for (i = 0; i < argc && status == 0; ++i)
+    int status = 0;
+    for (int i = 0; i < argc && status == 0; ++i)
     {
-        char* carg = argv[i];
-        if (*carg == '-')
+        char* curArg = argv[i];
+        if (*curArg == '-')
         {
-            ++carg;
-            if (*carg == 'i')
+            ++curArg;
+            if (*curArg == 'i')
             {
                 if (i + 1 < argc)
-                    ctx.m_ifile = argv[++i];
+                    ctx.inFile = argv[++i];
                 else
                 {
                     printf(
@@ -562,20 +556,23 @@ int parseCommandLine(ProgramInfo& ctx, int argc, char** argv)
                     status = -1;
                 }
             }
-            else if (*carg == 'h')
-                usage(ctx.m_progName);
-            else if (*carg == 'n')
-                ctx.m_useNamespace = true;
-            else if (*carg == 'b')
-                ctx.m_fixupBlend = true;
-            else if (*carg == 's')
-                ctx.m_initTypes = true;
-            else if (*carg == 'c')
-                ctx.m_writeHashCode = true;
-            else if (*carg == 'o')
+            else if (*curArg == 'h')
+                usage(ctx.programName);
+            else if (*curArg == 'n')
+            {
+                ctx.useNamespace  = true;
+                ctx.nameSpaceName = argv[++i];
+            }
+            else if (*curArg == 'b')
+                ctx.fixupBlend = true;
+            else if (*curArg == 's')
+                ctx.initTypes = true;
+            else if (*curArg == 'c')
+                ctx.writeHashCode = true;
+            else if (*curArg == 'o')
             {
                 if (i + 1 < argc)
-                    ctx.m_ofile = argv[++i];
+                    ctx.outFile = argv[++i];
                 else
                 {
                     printf(
@@ -587,12 +584,12 @@ int parseCommandLine(ProgramInfo& ctx, int argc, char** argv)
         }
     }
 
-    if (ctx.m_ifile.empty())
+    if (ctx.inFile.empty())
     {
         status = -2;
         printf("The input file option (-i <infile>) is required.\n");
     }
-    else if (ctx.m_ofile.empty())
+    else if (ctx.outFile.empty())
     {
         status = -2;
         printf("The output file option (-o <outfile>) is required.\n");
@@ -601,21 +598,18 @@ int parseCommandLine(ProgramInfo& ctx, int argc, char** argv)
     return status;
 }
 
-
 int getBaseName(const char* input)
 {
     int offs = 0;
     if (input)
     {
-        int len = ((int)strlen(input)), i;
-        for (i = len - 1; i >= 0 && offs == 0; --i)
+        const int len = (int)strlen(input);
+        for (int i = len - 1; i >= 0 && offs == 0; --i)
             if (input[i] == '/' || input[i] == '\\')
                 offs = i + 1;
     }
     return offs;
 }
-
-
 
 int main(int argc, char** argv)
 {
@@ -623,80 +617,77 @@ int main(int argc, char** argv)
     // to load any type of file and scan for a DNA1 chunk
     // then extract the tables.
 
-    char* base   = argv[0] + getBaseName(argv[0]);
-    int   status = 0;
+    char* base = argv[0] + getBaseName(argv[0]);
 
-    ProgramInfo ctx    = {base, "", "", nullptr, nullptr, nullptr};
-    ctx.m_useNamespace = false;
-
+    ProgramInfo ctx  = {base, "", "", nullptr, nullptr, nullptr, ""};
+    ctx.useNamespace = false;
 
     if (parseCommandLine(ctx, argc, argv) < 0)
     {
         usage(base);
         return 1;
     }
-    else
-    {
-        ftGzStream fp;
-        fp.open(ctx.m_ifile.c_str(), skStream::READ);
-        if (fp.isOpen())
-        {
-            ftScanDNA scanner;
-            status = scanner.findHeaderFlags(&fp);
-            if (status != ftFlags::FS_OK)
-            {
-                printf(
-                    "Failed to extract the appropriate header "
-                    "flags from the supplied file %s.\n",
-                    ctx.m_ifile.c_str());
-            }
-            else
-            {
-                fp.seek(0, SEEK_SET);
-                fp.read(ctx.m_header, 12);
-                ctx.m_header[12] = 0;
 
-                status = scanner.scan(&fp);
+    int status;
+
+    ftGzStream fp;
+    fp.open(ctx.inFile.c_str(), skStream::READ);
+    if (fp.isOpen())
+    {
+        ftScanDNA scanner;
+        status = scanner.findHeaderFlags(&fp);
+        if (status != ftFlags::FS_OK)
+        {
+            printf(
+                "Failed to extract the appropriate header "
+                "flags from the supplied file %s.\n",
+                ctx.inFile.c_str());
+        }
+        else
+        {
+            fp.seek(0, SEEK_SET);
+            fp.read(ctx.header, 12);
+            ctx.header[12] = 0;
+
+            status = scanner.scan(&fp);
+            if (status == ftFlags::FS_OK)
+            {
+                ctx.dna    = scanner.getDNA();
+                ctx.tables = new ftTables(scanner.is64Bit() ? 8 : 4);
+
+                status = ctx.tables->read(ctx.dna,
+                                          scanner.getLength(),
+                                          scanner.getFlags(),
+                                          ftFlags::LF_ONLY_ERR);
                 if (status == ftFlags::FS_OK)
                 {
-                    ctx.m_dnaBlock = scanner.getDNA();
-                    ctx.m_tables   = new ftTables(scanner.is64Bit() ? 8 : 4);
-
-                    status = ctx.m_tables->read(ctx.m_dnaBlock,
-                                                scanner.getLength(),
-                                                scanner.getFlags(),
-                                                ftFlags::LF_ONLY_ERR);
-                    if (status == ftFlags::FS_OK)
-                    {
-                        status = extractToFile(ctx);
-                    }
-                    else
-                    {
-                        printf(
-                            "Failed to rebuild the DNA table"
-                            "from the supplied file %s.\n",
-                            ctx.m_ifile.c_str());
-                    }
+                    status = extractToFile(ctx);
                 }
                 else
                 {
                     printf(
-                        "Failed to properly scan to the DNA1 block"
-                        "in the supplied file %s.\n",
-                        ctx.m_ifile.c_str());
+                        "Failed to rebuild the DNA table"
+                        "from the supplied file %s.\n",
+                        ctx.inFile.c_str());
                 }
             }
-        }
-        else
-        {
-            status = -1;
-            printf("Failed to open the input file for reading.\n");
+            else
+            {
+                printf(
+                    "Failed to properly scan to the DNA1 block"
+                    "in the supplied file %s.\n",
+                    ctx.inFile.c_str());
+            }
         }
     }
+    else
+    {
+        status = -1;
+        printf("Failed to open the input file for reading.\n");
+    }
 
-    if (ctx.m_tables)
-        delete ctx.m_tables;
-    if (ctx.m_dnaBlock)
-        free(ctx.m_dnaBlock);
+    delete ctx.tables;
+    if (ctx.dna)
+        free(ctx.dna);
     return status;
 }

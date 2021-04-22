@@ -32,7 +32,6 @@
 #include "ftTables.h"
 #include "ftTypes.h"
 
-
 class ftBuildMember
 {
 public:
@@ -40,7 +39,7 @@ public:
 
     ftId         m_type;
     ftId         m_name;
-    int          m_typeId;
+    FBTtype      m_typeId;
     FBTtype      m_hashedName;
     int          m_ptrCount;
     int          m_numDimensions;

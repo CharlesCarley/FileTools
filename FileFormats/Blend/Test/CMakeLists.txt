@@ -28,6 +28,17 @@ set(Target_Source
 
 add_executable(${TargetName} ${Target_Source})
 
+if (FileTools_AUTO_RUN_TEST)
+
+   add_custom_command(TARGET 
+        ${TargetName} POST_BUILD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND  $<TARGET_FILE:${TargetName}>
+    )
+
+endif()
+
+
 if (MSVC)
     set_target_properties(
         ${TargetName} 

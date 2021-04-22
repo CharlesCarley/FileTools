@@ -1,10 +1,6 @@
 # -----------------------------------------------------------------------------
+#   Copyright (c) Charles Carley.
 #
-#   Copyright (c) 2019 Charles Carley.
-#
-#   Contributor(s): none yet
-#
-# ------------------------------------------------------------------------------
 #   This software is provided 'as-is', without any express or implied
 # warranty. In no event will the authors be held liable for any damages
 # arising from the use of this software.
@@ -21,136 +17,63 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
+
 cmake_minimum_required(VERSION 3.0)
 project(FileTools)
 
-option(FileTools_TESTS        "Build basic tests." OFF)
-option(FileTools_BLEND_FILE   "Build the blend file version." OFF)
-option(FileTools_USE_ZLIB     "Allow GZ compressed files to be read." OFF)
-option(FileTools_USE_OWN_ZLIB "Define this if zlib is used as part of a larger project." OFF)
-option(FileTools_EXAMPLE_FILE "Build the example file version." OFF)
-option(FileTools_DECOMPILER   "Build the table decompiler." OFF)
+# Set the module path to include scripts
+list(APPEND CMAKE_MODULE_PATH  
+    ${FileTools_SOURCE_DIR}/CMake 
+    ${FileTools_SOURCE_DIR}/CMake/Modules)
+include(Configure)
 
-if (FileTools_USE_OWN_ZLIB)
-    option(FileTools_USE_ZLIB FORCE ON)
-endif()
+if (FileTools_ExternalTarget)
 
-if (NOT FileTools_UTILS_EXTERNAL)
-
-    set(FileTools_Utils_ROOT ${FileTools_SOURCE_DIR}/External/Utils)
-    set(FileTools_Utils_INCLUDE ${FileTools_Utils_ROOT}/../)
-    set(FileTools_Utils_LIBRARY Utils)
-    set(FileTools_Utils_CMAKE   ${FileTools_Utils_ROOT}/CMake)
-
-
-    if (NOT IS_DIRECTORY ${FileTools_Utils_CMAKE})
-        message(STATUS "Attempting to clone Utils into ${FileTools_Utils_ROOT}")
-
-        execute_process( 
-            WORKING_DIRECTORY ${FileTools_SOURCE_DIR} 
-            COMMAND git submodule update --init --checkout
-            ERROR_FILE ${FileTools_BINARY_DIR}/GetSubmoduleUpdate.txt
-            OUTPUT_QUIET
-            ERROR_QUIET
-        )
-        if (NOT IS_DIRECTORY ${FileTools_Utils_CMAKE})
-            message("Failed to clone Utils. See ${FileTools_BINARY_DIR}/GetSubmoduleUpdate.txt for more information.")
-        endif()
-    endif()
-
-    subdirs(${FileTools_Utils_ROOT})
+    set(TargetFolders ${FileTools_TargetFolders})
+    set(TargetName    ${FileTools_TargetName})
+    set(TargetGroup   ${FileTools_TargetGroup})
 
 else()
-   
-    # These must be explicitly set before calling this script
+    subdirs(CMake)
+    subdirs(External)
+    set(TargetFolders TRUE)
+    set(TargetName FileTools)
+    set(TargetGroup )
 
-    set(FileTools_Utils_INCLUDE ${Utils_INCLUDE})
-    set(FileTools_Utils_LIBRARY ${Utils_LIB})
-    set(FileTools_Utils_CMAKE   ${Utils_INCLUDE}/CMake)
+    set(FileTools_INCLUDE  ${FileTools_SOURCE_DIR}/File)
+    set(FileTools_LIBRARY  ${TargetName})
 
 endif()
 
-
-
-list(APPEND CMAKE_MODULE_PATH 
-    ${FileTools_SOURCE_DIR}/Tools/Compiler/CMake
-    ${FileTools_Utils_CMAKE}
-)
-set(FileTools_TARGET_NAME       FileTools)
-set(FileTools_COMPILER_NAME     TableCompiler)
-set(FileTools_DECOMPILER_NAME   TableDecompiler)
-
-
-# This is the main include definition 
-# to use the file classes.
-set(FileTools_INCLUDE 
-    ${FileTools_SOURCE_DIR}/File
-    ${FileTools_Utils_INCLUDE}
-)
-set(FileTools_LIBRARY ${FileTools_TARGET_NAME} ${FileTools_Utils_LIBRARY})
-
-
-if (FileTools_USE_ZLIB)
-
-    if (FileTools_USE_OWN_ZLIB)
-        set(FileTools_ZLIB_INCLUDE  ${FileTools_SOURCE_DIR}/File/zlib)
-        set(FileTools_ZLIB_LIBRARY  zlib)
-        set(FileTools_ZLIB_DEFINITIONS "-DFT_USE_ZLIB=1")
-
-        subdirs(${FileTools_ZLIB_INCLUDE})
-
-    else()
-        SET(FileTools_ZLIB_FOUND 1)
-        if (NOT FileTools_ZLIB_INCLUDE)
-            message("FileTools_ZLIB_INCLUDE=<undefined>")
-            SET(FileTools_ZLIB_FOUND 0)        
-        endif()
-
-        if (NOT FileTools_ZLIB_LIBRARY)
-            message("FileTools_ZLIB_LIBRARY=<undefined>")
-            SET(FileTools_ZLIB_FOUND 0)        
-        endif()
-
-        if (FileTools_ZLIB_FOUND EQUAL 0)
-            message(FATAL_ERROR "FileTools_ZLIB_INCLUDE and FileTools_ZLIB_LIBRARY "
-            "must Be defined in a higher scope if the build is using an external source version.")
-        endif()
-    endif()
-
-
-   list(APPEND FileTools_INCLUDE
-       ${FileTools_ZLIB_INCLUDE} )
-   list(APPEND FileTools_LIBRARY
-       ${FileTools_ZLIB_LIBRARY} )
-endif()
-
-
-
-
-subdirs(File)
-subdirs(Tools/Compiler)
-
-if (FileTools_DECOMPILER)
-    subdirs(Tools/Decompiler)
-endif()
+add_subdirectory(File)
 
 if (FileTools_BLEND_FILE)
-    subdirs(FileFormats/Blend)
-endif()
-
-if (FileTools_EXAMPLE_FILE)
-    subdirs(FileFormats/Example)
+    unset(TargetGroup )
+    add_subdirectory(FileFormats/Blend)
 endif()
 
 
-if (FileTools_TESTS)
+if (FileTools_BUILD_COMPILER)
+    add_subdirectory(Tools/Compiler)
+endif()
 
-    # The test files depend on Data2Array 
-    # to build parsable source   
-    list(APPEND CMAKE_MODULE_PATH 
-        ${FileTools_SOURCE_DIR}/External/Data2Array/CMake
-    )  
-    subdirs(External/Data2Array)
-    subdirs(Tests)
+if (FileTools_BUILD_DECOMPILER)
+    add_subdirectory(Tools/Decompiler)
+endif()
 
+if (FileTools_BUILD_TEST)
+    set(BUILD_GMOCK   OFF CACHE BOOL "" FORCE)
+    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+    set(TargetGroup "Units")
+    
+    add_subdirectory(${FileTools_SOURCE_DIR}/Test/googletest)
+    
+    set_target_properties(gtest_main PROPERTIES FOLDER "Units")
+    set_target_properties(gtest      PROPERTIES FOLDER "Units")
+
+    add_subdirectory(Test)
+
+    if (FileTools_BUILD_COMPILER AND FileTools_BUILD_DECOMPILER AND FileTools_BUILD_RECOMPILE_TEST)
+        add_subdirectory(Tools/CompileTest)
+    endif()
 endif()

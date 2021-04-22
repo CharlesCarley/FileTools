@@ -32,7 +32,6 @@
 typedef skArray<FBTtype> IntPtrArray;
 typedef skArray<FBTtype> TypeArray;
 
-
 struct MaxAllocSize
 {
     FBTuint32 m_name;
@@ -49,11 +48,11 @@ public:
     ~ftBuildInfo();
 
     void    reserve(void);
-    int     getLengths(ftBuildStruct::Array& struct_builders);
-    int     getTLengths(ftBuildStruct::Array& struct_builders);
+    int     getLengths(ftBuildStruct::Array& structBuilders);
+    int     getTLengths(ftBuildStruct::Array& structBuilders);
     void    makeBuiltinTypes(void);
-    bool    hasType(const ftId& type);
-    FBTsize addType(const ftId& type, const FBTuint32& len);
+    bool    hasType(const ftId& type) const;
+    FBTtype addType(const ftId& type, const FBTuint16& len);
     FBTsize addName(const ftId& name);
 
     MaxAllocSize     m_alloc;
@@ -66,5 +65,4 @@ public:
     FBTuint32        m_numberOfBuiltIn;
 };
 
-
-#endif//_ftBuildInfo_h_
+#endif  //_ftBuildInfo_h_

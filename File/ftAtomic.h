@@ -43,22 +43,20 @@ enum class ftAtomic
     FT_ATOMIC_UINT64_T,  // 10
     FT_ATOMIC_SCALAR_T,  // 11
 
-    // Placement order matters 
+    // Placement order matters
     // valid types are < FT_ATOMIC_VOID
-    FT_ATOMIC_VOID,      // 13
-    FT_ATOMIC_UNKNOWN    // 14
+    FT_ATOMIC_VOID,    // 13
+    FT_ATOMIC_UNKNOWN  // 14
 };
-
 
 // Structure to manage the default data types
 struct ftAtomicType
 {
     const char* m_name;
-    size_t      m_sizeof;
+    FBTuint16   m_sizeof;
     ftAtomic    m_type;
     FBThash     m_hash;
 };
-
 
 class ftAtomicUtils
 {
@@ -69,7 +67,7 @@ public:
     static bool     isReal(FBThash typeKey);
     static bool     isNumeric(FBThash typeKey);
 
-    static bool     canCast(FBThash typeKeyA, FBThash typeKeyB);
+    static bool canCast(FBThash typeKeyA, FBThash typeKeyB);
 
     static void cast(char*    source,
                      char*    destination,
@@ -78,18 +76,15 @@ public:
                      FBTsize  length);
 
     static void cast(char*    source,
-                     FBTsize  srcoffs,
+                     FBTsize  srcOffs,
                      char*    destination,
-                     FBTsize  dstoffs,
+                     FBTsize  dstOffs,
                      ftAtomic sourceType,
                      ftAtomic destinationType,
                      FBTsize  length);
-
 
     static const ftAtomicType Types[];
-    static const size_t        NumberOfTypes;
+    static const size_t       NumberOfTypes;
 };
-
-
 
 #endif  //_ftAtomic_h_

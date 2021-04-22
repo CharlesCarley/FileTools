@@ -5,3 +5,9 @@
 [submodule "External/Data2Array"]
 	path = External/Data2Array
 	url = https://github.com/CharlesCarley/Data2Array.git
+[submodule "CMake/Modules"]
+	path = CMake/Modules
+	url = https://github.com/CharlesCarley/CMakeModules.git
+[submodule "Test/googletest"]
+	path = Test/googletest
+	url = https://github.com/CharlesCarley/googletest.git

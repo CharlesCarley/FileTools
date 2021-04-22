@@ -28,17 +28,21 @@ if (TableCompiler_ExternalTarget)
     set(TargetGroup   ${TableCompiler_TargetGroup})
 else()
     set(TargetFolders FALSE)
-    set(TargetName ${FileTools_COMPILER_NAME})
+    set(TargetName TableCompiler)
     unset(TargetGroup )
 endif()
 
 
 
 
-include_directories(${FileTools_INCLUDE})
-link_libraries(${FileTools_LIBRARY} ${FileTools_Utils_LIBRARY})
+include_directories(${FileTools_INCLUDE} ${Utils_INCLUDE})
+link_libraries(${FileTools_LIBRARY} ${Utils_LIBRARY})
 
-add_executable(${TargetName}  TableCompiler.cpp)
+add_executable(${TargetName}  
+    TableCompiler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/TableCompiler.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Readme.md
+    )
 
 
 if (MSVC)

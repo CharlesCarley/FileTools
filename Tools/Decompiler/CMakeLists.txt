@@ -21,19 +21,27 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(TargetName ${FileTools_DECOMPILER_NAME})
+set(TargetName TableDecompiler)
 
-include_directories(${FileTools_INCLUDE})
-link_libraries(${FileTools_LIBRARY} ${FileTools_Utils_LIBRARY})
 
-add_executable(${TargetName}  TableDecompiler.cpp)
+include_directories(${FileTools_INCLUDE} ${Utils_INCLUDE})
+link_libraries(${FileTools_LIBRARY} ${Utils_LIBRARY})
+
+
+add_executable(${TargetName} 
+    TableDecompiler.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/TableDecompiler.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Readme.md
+    )
 
 
 if (MSVC)
+
     set_target_properties(
         ${TargetName} 
         PROPERTIES 
         VS_DEBUGGER_WORKING_DIRECTORY  
         ${CMAKE_CURRENT_SOURCE_DIR}
     )
+
 endif()

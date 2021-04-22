@@ -39,7 +39,7 @@ public:
 
     int buildTypes(void);
     
-    FBTuint32 getNumberOfBuiltinTypes(void);
+    FBTuint32 getNumberOfBuiltinTypes(void) const;
 
     
     inline void setWriteMode(int mode)
@@ -58,24 +58,23 @@ private:
     void parseClass(int& token, ftToken& tokenPtr);
     void parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& buildStruct);
 
-    void handleConstant(int&           token,
-                        ftToken&       tokenPtr,
-                        ftBuildMember& member);
+    static void handleConstant(int&           token,
+                               ftToken&       tokenPtr,
+                               ftBuildMember& member);
 
-    void handleStatementClosure(int&           token,
-                                ftToken&       tokenPtr,
-                                ftBuildStruct& buildStruct,
-                                ftBuildMember& member,
-                                bool           forceArray,
-                                bool           isId);
+    static void handleStatementClosure(int&           token,
+                                       ftBuildStruct& buildStruct,
+                                       ftBuildMember& member,
+                                       bool           forceArray,
+                                       bool           isId);
 
     void errorUnknown(int& token, ftToken& tokenPtr);
 
 
-    void writeBinPtr(skStream* fp, void* ptr, int len);
-    void writeCharPtr(skStream* fp, const ftStringPtrArray& ptrs);
-    void writeValidationProgram(const ftPath& path);
-    void makeName(ftBuildMember&, bool);
+    void        writeBinPtr(skStream* fp, void* ptr, int len);
+    void        writeCharPtr(skStream* fp, const ftStringPtrArray& pointers);
+    void        writeValidationProgram(const ftPath& path);
+    static void makeName(ftBuildMember&, bool);
 
     char*                  m_buffer;
     FBTsize                m_pos;

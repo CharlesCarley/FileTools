@@ -80,12 +80,12 @@ public:
     bool          isPointer(const FBTuint16& name) const;
 
 
-    inline const Structures& getStructureArray() const
+    const Structures& getStructureArray() const
     {
         return m_structures;
     }
 
-    inline Structures::Iterator getStructIterator()
+    Structures::Iterator getStructIterator()
     {
         return m_structures.iterator();
     }
@@ -94,12 +94,12 @@ public:
     // Access to the size of a pointer when it was saved in the table.
     // This is cheating a bit here, it depends on the correct flag
     // being set when loaded it's not actually being computed.
-    inline FBTuint8 getSizeofPointer()
+    FBTuint8 getSizeofPointer() const
     {
         return m_ptrLength;
     }
 
-    inline bool isValidType(const FBTuint32& typeidx) const
+    bool isValidType(const FBTuint32& typeidx) const
     {
         return typeidx < m_strcCount && typeidx < m_structures.size();
     }
@@ -109,19 +109,19 @@ public:
     FBTuint32 findStructIdByType(const FBTuint16& type);
 
 
-    inline FBTuint32 getNumberOfNames() const
+    FBTuint32 getNumberOfNames() const
     {
         return m_nameCount;
     }
 
-    inline const ftName& getNameAt(FBTuint32 idx) const
+    const ftName& getNameAt(FBTuint32 idx) const
     {
         if (idx < m_nameCount)
             return m_names[idx];
         return INVALID_NAME;
     }
 
-    inline const char* getStringNameAt(FBTuint32 idx) const
+    const char* getStringNameAt(FBTuint32 idx) const
     {
         if (idx < m_nameCount)
             return m_names[idx].m_name;
@@ -129,26 +129,26 @@ public:
     }
 
 
-    inline FBTuint32 getNumberOfTypes() const
+    FBTuint32 getNumberOfTypes() const
     {
         return m_typeCount;
     }
 
-    inline const ftType& getTypeAt(FBTuint32 idx) const
+    const ftType& getTypeAt(FBTuint32 idx) const
     {
         if (idx < m_typeCount)
             return m_types[idx];
         return INVALID_TYPE;
     }
 
-    inline char* getTypeNameAt(FBTuint32 idx) const
+    char* getTypeNameAt(FBTuint32 idx) const
     {
         if (idx < m_typeCount)
             return m_types[idx].m_name;
         return nullptr;
     }
 
-    inline FBTuint32 getNumberOfTypeLengths() const
+    FBTuint32 getNumberOfTypeLengths() const
     {
         return m_typeCount;
     }
@@ -160,7 +160,7 @@ public:
         return SK_NPOS16;
     }
 
-    inline FBTuint32 getNumberOfStructs() const
+    FBTuint32 getNumberOfStructs() const
     {
         return m_strcCount;
     }
@@ -173,7 +173,7 @@ public:
     }
 
 
-    inline FBTuint16 getFirstStructType() const
+    FBTuint16 getFirstStructType() const
     {
         return m_firstStruct;
     }
