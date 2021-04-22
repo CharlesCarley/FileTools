@@ -329,8 +329,7 @@ void ftLogger::log(const ftName &name)
     cout << "Number Of Dimensions : " << name.m_numDimensions << endl;
     cout << "Dimension Size       : ";
 
-    int i;
-    for (i = 0; i < skMax(name.m_numDimensions, 1); ++i)
+    for (int i = 0; i < skMin(name.m_numDimensions, FT_ARR_DIM_MAX); ++i)
     {
         if (i > 0)
             cout << ',' << ' ';

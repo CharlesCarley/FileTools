@@ -199,7 +199,7 @@ private:
     TypeFinder m_typeFinder;
 
 
-    int readTableHeader(
+    static int readTableHeader(
         ftMemoryStream& stream,
         const char*     headerName,
         int             fileFlags);
@@ -232,7 +232,7 @@ private:
 
     void clearTables(void);
 
-    void convertName(ftName& destName, char* convString);
+    void convertName(ftName& destName, char* convString) const;
 
     int buildStruct(FBTuint16*& buf, FBTuint16 current, int headerFlags, int fileFlags);
 

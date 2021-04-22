@@ -113,10 +113,6 @@ int ftBuildInfo::getLengths(ftBuildStruct::Array& structBuilders)
     {
         ftBuildStruct& bs = bit.getNext();
 
-        if (bs.m_name == "btHingeConstraintDoubleData2")
-        {
-            printf("BP\n");
-        }
         bs.m_structId     = addType(bs.m_name, 0);
 
         m_strc.push_back((SKuint16)bs.m_structId);
@@ -166,12 +162,6 @@ int ftBuildInfo::getTLengths(ftBuildStruct::Array& structBuilders)
         for (FBTsize i = 0; i < total; ++i)
         {
             ftBuildStruct& cur = structs[i];
-
-            if (cur.m_name == "btHingeConstraintDoubleData2")
-            {
-                printf("BP\n");
-            }
-
 
             if (tLens[cur.m_structId] != 0)
             {

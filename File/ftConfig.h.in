@@ -24,34 +24,34 @@
 
 #define FT_DEBUG 3                    // Detail
 
-#define FileTools_MaxStructMember  65536
+#cmakedefine FileTools_MaxStructMember  @FileTools_MaxStructMember@
 #define FT_MAX_MBR_RANGE FileTools_MaxStructMember
 
-#define FileTools_MaxTableSize  5000
+#cmakedefine FileTools_MaxTableSize  @FileTools_MaxTableSize@
 #define FT_MAX_TABLE FileTools_MaxTableSize
 
-#define FileTools_MaxCharArray 64
+#cmakedefine FileTools_MaxCharArray @FileTools_MaxCharArray@
 #define FT_MAX_ID FileTools_MaxCharArray
 
 
-#define FileTools_MaxMember 256
+#cmakedefine FileTools_MaxMember @FileTools_MaxMember@
 #define FT_MAX_MEMBERS FileTools_MaxMember          
 
-#define FileTools_DefaultAllocationSize 1024
+#cmakedefine FileTools_DefaultAllocationSize @FileTools_DefaultAllocationSize@
 #define FT_DEF_ALLOC FileTools_DefaultAllocationSize          
 
 
-#define FileTools_MaxArrayDim 3
+#cmakedefine FileTools_MaxArrayDim @FileTools_MaxArrayDim@
 #define FT_ARR_DIM_MAX FileTools_MaxArrayDim          
 
 
-#define FileTools_TypeLengthValidate 
+#cmakedefine FileTools_TypeLengthValidate 
 #ifdef  FileTools_TypeLengthValidate
 #define FT_TYLE_LEN_VALIDATE 1
 #endif
 
 
-/* #undef FileTools_SwapEndian */
+#cmakedefine FileTools_SwapEndian 
 #ifdef FileTools_SwapEndian
 #define FT_SWAP_FROM_NATIVE_ENDIAN 1
 #endif

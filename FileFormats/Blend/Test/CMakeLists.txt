@@ -59,13 +59,6 @@ target_link_libraries(
     ${GTEST_LIBRARY}
 )
 
-add_custom_command(TARGET 
-    ${TargetName} POST_BUILD
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMAND  $<TARGET_FILE:${TargetName}>
-)
-
-
 if (TargetFolders)
     set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
 endif()

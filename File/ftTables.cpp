@@ -44,7 +44,7 @@ const ftName ftTables::INVALID_NAME = {
     0,        // m_numDimensions
     0,        // m_isFunctionPointer;
     0,        // m_arraySize
-    {0, 0}    // m_array
+    {0}    // m_array
 };
 
 const ftType ftTables::INVALID_TYPE = {
@@ -166,40 +166,36 @@ int ftTables::allocateTable(void**  destination,
         }
         return RS_LIMIT_REACHED;
     }
-    else
+
+    const FBTsize allocLen = numberOfEntries * sizeOfEntry;
+    if (allocLen > 0 && allocLen < SK_NPOS32)
     {
-        FBTsize allocLen = numberOfEntries * sizeOfEntry;
-        if (allocLen > 0 && allocLen < SK_NPOS32)
-        {
-            *destination = (Names)::malloc(allocLen);
-            if (!(*destination))
-            {
-                if (fileFlags != LF_NONE)
-                    ftLogger::logF("Failed to allocate table.");
-                return RS_BAD_ALLOC;
-            }
-            else
-            {
-                // This doesn't explicitly need to be zeroed.
-                // The memory will be initialized after this
-                // call. This should only used be to
-                // weed out any possible bugs.
-                if (fileFlags & LF_DO_CHECKS)
-                    memset(*destination, 0, allocLen);
-            }
-        }
-        else
+        *destination = (Names)::malloc(allocLen);
+        if (!*destination)
         {
             if (fileFlags != LF_NONE)
-            {
-                ftLogger::logF(
-                    "The sizeOfEntry(%d) parameter caused the "
-                    "allocation limit to be exceeded (%d)",
-                    sizeOfEntry,
-                    allocLen);
-            }
+                ftLogger::logF("Failed to allocate table.");
             return RS_BAD_ALLOC;
         }
+
+        // This doesn't explicitly need to be zeroed.
+        // The memory will be initialized after this
+        // call. This should only used be to
+        // weed out any possible bugs.
+        if (fileFlags & LF_DO_CHECKS)
+            memset(*destination, 0, allocLen);
+    }
+    else
+    {
+        if (fileFlags != LF_NONE)
+        {
+            ftLogger::logF(
+                "The sizeOfEntry(%d) parameter caused the "
+                "allocation limit to be exceeded (%d)",
+                sizeOfEntry,
+                allocLen);
+        }
+        return RS_BAD_ALLOC;
     }
     return FS_OK;
 }
@@ -210,7 +206,6 @@ int ftTables::read(const void*    tableSource,
                    int            headerFlags,
                    int            fileFlags)
 {
-    int status = FS_OK;
     if (!tableSource)
         return RS_INVALID_PTR;
 
@@ -219,7 +214,7 @@ int ftTables::read(const void*    tableSource,
 
     // FIXME: there should be no guarantee on the order that the NAME codes come in.
 
-    status = readTableHeader(stream, ftIdNames::FT_SDNA, fileFlags);
+    int status = readTableHeader(stream, ftIdNames::FT_SDNA, fileFlags);
     if (status != FS_OK)
     {
         if (fileFlags != LF_NONE)
@@ -271,22 +266,19 @@ int ftTables::read(const void*    tableSource,
         {
             if (fileFlags & LF_DUMP_NAME_TABLE)
             {
-                FBTuint32 i;
-                for (i = 0; i < m_nameCount; ++i)
+                for (FBTuint32 i = 0; i < m_nameCount; ++i)
                     ftLogger::log(m_names[i]);
             }
 
             if (fileFlags & LF_DUMP_TYPE_TABLE)
             {
-                FBTuint32 i;
-                for (i = 0; i < m_typeCount; ++i)
+                for (FBTuint32 i = 0; i < m_typeCount; ++i)
                     ftLogger::log(m_types[i]);
             }
 
             if (fileFlags & LF_DUMP_SIZE_TABLE)
             {
-                FBTuint32 i;
-                for (i = 0; i < m_typeCount; ++i)
+                for (FBTuint32 i = 0; i < m_typeCount; ++i)
                     ftLogger::log(m_types[i], m_tlens[i]);
             }
         }
@@ -312,10 +304,10 @@ int ftTables::readTableHeader(ftMemoryStream& stream, const char* headerName, in
 
 int ftTables::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
 {
-    ftName    name;
-    FBTuint32 status, count = 0;
+    ftName    name{};
+    FBTuint32 count = 0;
 
-    status = readTableHeader(stream, ftIdNames::FT_NAME, fileFlags);
+    FBTuint32 status = readTableHeader(stream, ftIdNames::FT_NAME, fileFlags);
     if (status == FS_OK)
     {
         stream.readInt32(count);
@@ -336,7 +328,7 @@ int ftTables::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFla
                 m_names[m_nameCount] = name;
                 m_hashedNames.push_back(name.m_hash);
 
-                stream.seekString();
+                (void)stream.seekString();
             }
 
             count = (SKuint32)stream.getVaryingInt();
@@ -415,9 +407,9 @@ int ftTables::readSizeTable(ftMemoryStream& stream, int headerFlags, int fileFla
 
 int ftTables::readStructureTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
 {
-    FBTuint32 status, count = 0;
+    FBTuint32 count = 0;
 
-    status = readTableHeader(stream, ftIdNames::FT_STRC, fileFlags);
+    FBTuint32 status = readTableHeader(stream, ftIdNames::FT_STRC, fileFlags);
     if (status == FS_OK)
     {
         stream.readInt32(count);
@@ -447,7 +439,7 @@ int ftTables::readStructureTable(ftMemoryStream& stream, int headerFlags, int fi
 
 
 
-void ftTables::convertName(ftName& dest, char* cp)
+void ftTables::convertName(ftName& dest, char* cp) const
 {
     dest = INVALID_NAME;
 
@@ -462,7 +454,7 @@ void ftTables::convertName(ftName& dest, char* cp)
     int i = 0;
     while (*cp)
     {
-        int ival = 0;
+        int iVal = 0;
         switch (*cp)
         {
         default:
@@ -481,17 +473,23 @@ void ftTables::convertName(ftName& dest, char* cp)
             dest.m_ptrCount++;
             break;
         case '[':
-            while ((*++cp) != ']')
+            while (*++cp != ']')
             {
-                if ((*cp) >= '0' && (*cp) <= '9')
-                    ival = (ival * 10) + ((*cp) - '0');
+                if (*cp >= '0' && *cp <= '9')
+                    iVal = (iVal * 10) + (*cp - '0');
             }
-            dest.m_dimensions[i] = ival;
-            dest.m_arraySize *= dest.m_dimensions[i++];
+            if (i < FT_ARR_DIM_MAX )
+            {
+                dest.m_dimensions[i] = iVal;
+                dest.m_arraySize *= dest.m_dimensions[i++];
+            }
             break;
         }
     }
-    dest.m_numDimensions = i;
+    if (i > FT_ARR_DIM_MAX)
+        dest.m_numDimensions = 0;
+    else
+        dest.m_numDimensions = i;
 }
 
 

@@ -73,18 +73,25 @@ void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
     }
     if (v.m_arraySize > 1 || forceArray)
     {
-        for (i = 0; i < v.m_numDimensions; ++i)
+        if (v.m_numDimensions > FT_ARR_DIM_MAX)
+            printf("The number of array dimensions exceeded. Max FT_ARR_DIM_MAX(%i) needed (%i)\n", FT_ARR_DIM_MAX, v.m_numDimensions);
+        else
         {
-            ftId dest;
-            newName.push_back('[');
-            skSprintf(dest.ptr(), ftId::capacity() - 1, "%i", v.m_arrays[i]);
+            for (i = 0; i < v.m_numDimensions; ++i)
+            {
+                ftId dest;
+                newName.push_back('[');
+                skSprintf(dest.ptr(), ftId::capacity() - 1, "%i", v.m_arrays[i]);
 
-            char* cp = dest.ptr();
-            for (int j = 0; cp[j]; ++j)
-                newName.push_back(cp[j]);
+                char* cp = dest.ptr();
+                for (int j = 0; cp[j]; ++j)
+                    newName.push_back(cp[j]);
 
-            newName.push_back(']');
+                newName.push_back(']');
+            }
         }
+
+
     }
     v.m_name = newName;
 }
@@ -265,9 +272,12 @@ void ftCompiler::handleConstant(int& token, ftToken& tokenPtr, ftBuildMember& me
         printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FT_ARR_DIM_MAX);
         token = FT_NULL_TOKEN;
     }
-    member.m_arrays[member.m_numDimensions] = tokenPtr.getArrayLen();
-    member.m_numDimensions++;
-    member.m_arraySize *= tokenPtr.getArrayLen();
+    else
+    {
+        member.m_arrays[member.m_numDimensions] = tokenPtr.getArrayLen();
+        member.m_numDimensions++;
+        member.m_arraySize *= tokenPtr.getArrayLen();
+    }
 }
 
 void ftCompiler::handleStatementClosure(int&           token,

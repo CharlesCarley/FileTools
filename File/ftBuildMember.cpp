@@ -25,11 +25,7 @@
 */
 #include "ftBuildMember.h"
 
-
-
 ftBuildMember::ftBuildMember() :
-    m_type(),
-    m_name(),
     m_typeId(-1),
     m_hashedName(-1),
     m_ptrCount(0),
@@ -38,9 +34,8 @@ ftBuildMember::ftBuildMember() :
     m_lstat(0),
     m_undefined(0),
     m_isDependentType(false),
+    m_arrays(),
     m_arraySize(1),
-    m_path(),
-    m_line(-1),
-    m_arrays()
+    m_line(-1)
 {
 }
