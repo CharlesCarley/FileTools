@@ -96,7 +96,7 @@ void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
     v.m_name = newName;
 }
 
-int ftCompiler::parse(const ftPath& name, const char* data, size_t len)
+int ftCompiler::parse(const ftPath& name, const char* data, SKsize len)
 {
     ftScanner scanner(data, (SKsize)len);
 
