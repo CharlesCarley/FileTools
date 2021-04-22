@@ -53,9 +53,9 @@ enum class ftAtomic
 struct ftAtomicType
 {
     const char* m_name;
-    SKuint16   m_sizeof;
+    SKuint16    m_sizeof;
     ftAtomic    m_type;
-    SKhash     m_hash;
+    SKhash      m_hash;
 };
 
 class ftAtomicUtils
@@ -73,18 +73,18 @@ public:
                      char*    destination,
                      ftAtomic sourceType,
                      ftAtomic destinationType,
-                     SKsize  length);
+                     SKsize   length);
 
     static void cast(char*    source,
-                     SKsize  srcOffs,
+                     SKsize   srcOffs,
                      char*    destination,
-                     SKsize  dstOffs,
+                     SKsize   dstOffs,
                      ftAtomic sourceType,
                      ftAtomic destinationType,
-                     SKsize  length);
+                     SKsize   length);
 
     static const ftAtomicType Types[];
-    static const size_t       NumberOfTypes;
+    static const SKsize       NumberOfTypes;
 };
 
 #endif  //_ftAtomic_h_

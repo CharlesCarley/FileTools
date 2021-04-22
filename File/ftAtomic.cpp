@@ -38,7 +38,7 @@ SKhash makeHash(const char* name)
 ftAtomic ftAtomicUtils::getPrimitiveType(SKhash typeKey)
 {
     ftAtomic res = ftAtomic::FT_ATOMIC_UNKNOWN;
-    for (size_t i = 0; i < NumberOfTypes && res == ftAtomic::FT_ATOMIC_UNKNOWN; ++i)
+    for (SKsize i = 0; i < NumberOfTypes && res == ftAtomic::FT_ATOMIC_UNKNOWN; ++i)
     {
         if (Types[i].m_hash == typeKey)
             res = Types[i].m_type;
@@ -233,4 +233,4 @@ const ftAtomicType ftAtomicUtils::Types[] = {
     {"void", 0, ftAtomic::FT_ATOMIC_VOID, makeHash("void")},
 };
 
-const size_t ftAtomicUtils::NumberOfTypes = sizeof Types / sizeof(ftAtomicType);
+const SKsize ftAtomicUtils::NumberOfTypes = sizeof Types / sizeof(ftAtomicType);
