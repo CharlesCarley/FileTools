@@ -21,7 +21,14 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(TargetName TableDecompiler)
+if (TableDecompiler_ExternalTarget)
+    set(TargetFolders ${TableDecompiler_TargetFolders})
+    set(TargetName    ${TableDecompiler_TargetName})
+    set(TargetGroup   ${TableDecompiler_TargetGroup})
+else()
+    set(TargetName TableDecompiler)
+    unset(TargetGroup )
+endif()
 
 
 include_directories(${FileTools_INCLUDE} ${Utils_INCLUDE})
@@ -44,4 +51,8 @@ if (MSVC)
         ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
+endif()
+
+if (TargetFolders)
+    set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
 endif()

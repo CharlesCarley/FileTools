@@ -17,7 +17,18 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(TargetName BlendFile)
+
+
+if (BlendFile_ExternalTarget)
+    set(TargetFolders ${BlendFile_TargetFolders})
+    set(TargetName    ${BlendFile_TargetName})
+    set(TargetGroup   ${BlendFile_TargetGroup})
+else()
+    set(TargetName BlendFile)
+    unset(TargetGroup )
+endif()
+
+
 
 set(BlendFile_INCLUDE 
     ${CMAKE_CURRENT_SOURCE_DIR}  

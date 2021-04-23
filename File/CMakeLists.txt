@@ -17,9 +17,15 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 # ------------------------------------------------------------------------------
-set(TargetName FileTools)
-unset(TargetGroup )
 
+if (FileTools_ExternalTarget)
+    set(TargetFolders ${FileTools_TargetFolders})
+    set(TargetName    ${FileTools_TargetName})
+    set(TargetGroup   ${FileTools_TargetGroup})
+else()
+    set(TargetName FileTools)
+    unset(TargetGroup )
+endif()
 
 set(FileTools_MaxStructMember 65536 CACHE STRING "Upper limit for the size in bytes of a single member.")
 set(FileTools_MaxTableSize 5000 CACHE STRING "Maximum number of structures in a table.")
