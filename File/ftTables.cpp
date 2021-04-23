@@ -717,7 +717,7 @@ int ftTables::compile(int fileFlags)
                 nstrc                = new ftStruct(this);
                 nstrc->m_type        = type;
                 nstrc->m_hashedType  = m_types[type].m_hash;
-                nstrc->m_strcId      = i;
+                nstrc->m_structureId      = i;
                 nstrc->m_sizeInBytes = m_tlens[type];
                 nstrc->m_link        = 0;
                 nstrc->m_flag        = ftStruct::CAN_LINK;
@@ -745,7 +745,7 @@ int ftTables::compile(int fileFlags)
                                 fileFlags,
                                 status);
 
-                        nstrc->m_flag |= ftStruct::HAS_DEPENDANT;
+                        nstrc->m_flag |= ftStruct::HAS_DEPENDENT;
                     }
                     else
                     {
@@ -876,7 +876,7 @@ void ftTables::putMember(SKtype    owningStructureType,
     else
     {
         if (type >= m_firstStruct)
-            root->m_flag |= ftStruct::HAS_DEPENDANT;
+            root->m_flag |= ftStruct::HAS_DEPENDENT;
 
 
 
@@ -976,7 +976,7 @@ ftStruct* ftTables::findStructByType(const SKuint16& type)
     {
         ftStruct* strc = m_structures.at(type);
 
-        if (type != strc->m_strcId)
+        if (type != strc->m_structureId)
             ftLogger::logF("Type mismatch!");
         return strc;
     }

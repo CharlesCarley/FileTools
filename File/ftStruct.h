@@ -34,21 +34,20 @@ class ftTables;
 class ftStruct;
 class ftMember;
 
-
 struct ftName
 {
-    char*   m_name;
+    char*  m_name;
     SKhash m_hash;
-    int     m_ptrCount;
-    int     m_numDimensions;
-    int     m_isFunctionPointer;
-    int     m_arraySize;
-    int     m_dimensions[FT_ARR_DIM_MAX];
+    int    m_ptrCount;
+    int    m_numDimensions;
+    int    m_isFunctionPointer;
+    int    m_arraySize;
+    int    m_dimensions[FT_ARR_DIM_MAX];
 };
 
 struct ftType
 {
-    char*   m_name;  // note: memory is in the main table.
+    char*  m_name;  // note: memory is in the main table.
     SKhash m_hash;  // ftCharHashKey(typeName)
 
     // This must be checked against ftTables::getFirstStructType
@@ -60,7 +59,7 @@ struct ftType
 
 struct MemberSearchKey
 {
-    SKhash   m_hash;
+    SKhash    m_hash;
     ftMember* m_member;
 };
 
@@ -74,7 +73,6 @@ inline bool operator==(const MemberSearchKey& a, const MemberSearchKey& b)
     return a.m_hash == b.m_hash;
 }
 
-
 class ftStruct
 {
 public:
@@ -87,7 +85,7 @@ public:
         MISSING       = 1 << 0,
         MISALIGNED    = 1 << 1,
         NEED_CAST     = 1 << 2,
-        HAS_DEPENDANT = 1 << 3,
+        HAS_DEPENDENT = 1 << 3,
     };
 
 public:
@@ -98,102 +96,95 @@ public:
     const char* getName() const;
 
     ftMember* getMember(Members::SizeType idx);
-    ftMember* find(ftMember* oth);
+    ftMember* find(ftMember* oth) const;
 
-
-
-    inline Members::SizeType getMemberCount() const
+    Members::SizeType getMemberCount() const
     {
         return m_members.size();
     }
 
-    inline Members::Iterator getMemberIterator()
+    Members::Iterator getMemberIterator()
     {
         return m_members.iterator();
     }
 
     // Returns the base address as byte pointer of the nth block of base.
-    SKbyte* getBlock(void* base, SKsize n, const SKsize max);
+    SKbyte* getBlock(void* base, SKsize idx, SKsize max) const;
 
-    inline ftTables* getParent()
+    ftTables* getParent() const
     {
         return m_table;
     }
 
-    inline const SKint16 getTypeIndex() const
+    SKint16 getTypeIndex() const
     {
         return m_type;
     }
 
-    inline const SKhash& getHashedType() const
+    const SKhash& getHashedType() const
     {
         return m_hashedType;
     }
 
-
-    inline SKint32 getStructIndex() const
+    SKint32 getStructIndex() const
     {
-        return m_strcId;
+        return m_structureId;
     }
 
-
-    inline const SKint32& getSizeInBytes() const
+    const SKint32& getSizeInBytes() const
     {
         return m_sizeInBytes;
     }
 
-
-    inline void setLink(ftStruct* strc)
+    void setLink(ftStruct* structure)
     {
-        m_link = strc;
+        m_link = structure;
     }
 
-
-    inline ftStruct* getLink()
+    ftStruct* getLink()
     {
         return m_link;
     }
 
-    inline const ftStruct* getLink() const
+    const ftStruct* getLink() const
     {
         return m_link;
     }
 
-    inline bool hasLink() const
+    bool hasLink() const
     {
         return m_link != nullptr;
     }
 
     // If this bit is set, it means that the struct contains
     // references to other structures that are not pointers.
-    inline bool hasDependantTypes()
+    bool hasDependentTypes() const
     {
-        return (m_flag & HAS_DEPENDANT) != 0;
+        return (m_flag & HAS_DEPENDENT) != 0;
     }
 
-    inline SKint32 getFlag() const
+    SKint32 getFlag() const
     {
         return m_flag;
     }
 
-    inline void setFlag(const SKint32& bits)
+    void setFlag(const SKint32& bits)
     {
         m_flag = bits;
     }
 
-    inline void addFlag(const SKint32& bit)
+    void addFlag(const SKint32& bit)
     {
         m_flag |= bit;
     }
 
-    inline bool hasFlag(const SKint32& bit) const
+    bool hasFlag(const SKint32& bit) const
     {
         return (m_flag & bit) != 0;
     }
 
-
     // Returns the number of dependent structures
-    SKint32 getReferences()
+    SKint32 getReferences() const
     {
         return m_refs;
     }
@@ -203,15 +194,15 @@ public:
         m_refs++;
     }
 
-
     // This is used when sorting the parent table's
     // structures before decompiling them into code.
+
     void lock()
     {
         m_lock = 1;
     }
 
-    bool isLocked()
+    bool isLocked() const
     {
         return m_lock != 0;
     }
@@ -222,18 +213,17 @@ private:
 
     ftMember* createMember();
 
-    SKuint16    m_type;
-    SKhash      m_hashedType;
+    SKuint16     m_type;
+    SKhash       m_hashedType;
     void*        m_attached;
-    SKint32     m_sizeInBytes;
-    SKint32     m_refs, m_lock;
-    SKint32     m_strcId;
-    SKint32     m_flag;
+    SKint32      m_sizeInBytes;
+    SKint32      m_refs, m_lock;
+    SKint32      m_structureId;
+    SKint32      m_flag;
     Members      m_members;
     ftTables*    m_table;
     ftStruct*    m_link;
     MemberLookup m_memberSearch;
 };
-
 
 #endif  //_ftStruct_h_

@@ -20,6 +20,8 @@
 -------------------------------------------------------------------------------
 */
 #include <cstdio>
+#include <cstring>
+
 #include "ftCompiler.h"
 
 void usage(const char* programName);

@@ -26,26 +26,29 @@
 #ifndef _ftBuildStruct_h_
 #define _ftBuildStruct_h_
 
-#include "ftTables.h"
-#include "ftTypes.h"
 #include "ftBuildMember.h"
-
+#include "ftTypes.h"
 
 class ftBuildStruct
 {
 public:
     typedef skArray<ftBuildStruct> Array;
-    typedef skArray<ftBuildMember>      Variables;
+    typedef skArray<ftBuildMember> Variables;
 
 public:
-    ftBuildStruct();
+    ftBuildStruct() :
+        m_structId(SK_NPOS),
+        m_nrDependentTypes(0),
+        m_line(-1)
+    {
+    }
 
-    SKsize     m_structId;
-    ftId        m_name;
-    Variables   m_data;
-    SKsize     m_nrDependentTypes;
-    ftPath      m_path;
-    SKsize     m_line;
+    SKsize    m_structId;
+    ftId      m_name;
+    Variables m_data;
+    SKsize    m_nrDependentTypes;
+    ftPath    m_path;
+    SKsize    m_line;
 };
 
 #endif  //_ftBuildStruct_h_

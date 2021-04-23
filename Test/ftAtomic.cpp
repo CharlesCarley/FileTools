@@ -24,8 +24,6 @@
 
 GTEST_TEST(ftAtomic, ftCharHashKey)
 {
-    ftAtomicUtils::Types;
-
     // test for unique hashes
     for (size_t i = 0; i < ftAtomicUtils::NumberOfTypes; ++i)
     {
@@ -133,7 +131,7 @@ GTEST_TEST(ftAtomic, Cast)
 GTEST_TEST(ftAtomic, Swap)
 {
     const SKsize srcElmSize = 8;
-    
+
     FBTByteInteger seed = {};
     seed.m_byte[0]      = 51;
     seed.m_byte[1]      = 26;
@@ -150,7 +148,8 @@ GTEST_TEST(ftAtomic, Swap)
     SKbyte* srcBPtr = (SKbyte*)&i64;
 
     memcpy(dstBuffer, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
-    FBTByteInteger before, after;
+    FBTByteInteger before;
+    FBTByteInteger after;
     before.m_ptr = i64;
 
     ftEndianUtils::swap64((SKuint64*)&dstBuffer[0], 1);

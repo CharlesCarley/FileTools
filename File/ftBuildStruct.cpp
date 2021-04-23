@@ -25,10 +25,3 @@
 */
 #include "ftBuildStruct.h"
 
-
-ftBuildStruct::ftBuildStruct() :
-    m_structId(SK_NPOS),
-    m_line(-1),
-    m_nrDependentTypes(0)
-{
-}

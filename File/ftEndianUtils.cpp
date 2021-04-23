@@ -24,7 +24,7 @@
 -------------------------------------------------------------------------------
 */
 #include "ftEndianUtils.h"
-
+#include "Utils/skDisableWarnings.h"
 
 ftEndian ftEndianUtils::getEndian(void)
 {
@@ -44,12 +44,12 @@ bool ftEndianUtils::isEndian(const ftEndian& endian)
 
 SKuint16 ftEndianUtils::swap16(SKuint16 in)
 {
-    return static_cast<SKuint16>(((in & 0xFF00) >> 8) | ((in & 0x00FF) << 8));
+    return static_cast<SKuint16>((in & 0xFF00) >> 8 | (in & 0x00FF) << 8);
 }
 
 SKuint32 ftEndianUtils::swap32(const SKuint32& in)
 {
-    return (((in & 0xFF000000) >> 24) | ((in & 0x00FF0000) >> 8) | ((in & 0x0000FF00) << 8) | ((in & 0x000000FF) << 24));
+    return (in & 0xFF000000) >> 24 | (in & 0x00FF0000) >> 8 | (in & 0x0000FF00) << 8 | (in & 0x000000FF) << 24;
 }
 
 SKint16 ftEndianUtils::swap16(SKint16 in)
@@ -82,8 +82,7 @@ SKuint64 ftEndianUtils::swap64(const SKuint64& in)
 
 void ftEndianUtils::swap16(SKuint16* sp, SKsize len)
 {
-    SKsize i;
-    for (i = 0; i < len; ++i)
+    for (SKsize i = 0; i < len; ++i)
     {
         *sp = swap16(*sp);
         ++sp;
@@ -92,8 +91,7 @@ void ftEndianUtils::swap16(SKuint16* sp, SKsize len)
 
 void ftEndianUtils::swap32(SKuint32* ip, SKsize len)
 {
-    SKsize i;
-    for (i = 0; i < len; ++i)
+    for (SKsize i = 0; i < len; ++i)
     {
         *ip = swap32(*ip);
         ++ip;
@@ -103,8 +101,7 @@ void ftEndianUtils::swap32(SKuint32* ip, SKsize len)
 
 void ftEndianUtils::swap64(SKuint64* dp, SKsize len)
 {
-    SKsize i;
-    for (i = 0; i < len; ++i)
+    for (SKsize i = 0; i < len; ++i)
     {
         *dp = swap64(*dp);
         ++dp;

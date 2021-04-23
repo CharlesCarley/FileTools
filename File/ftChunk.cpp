@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -24,10 +20,9 @@
 -------------------------------------------------------------------------------
 */
 #include "ftChunk.h"
-#include <stdio.h>
+#include <cstdio>
+#include "Utils/skPlatformHeaders.h"
 #include "ftEndianUtils.h"
-#include "ftFile.h"
-#include "ftLogger.h"
 #include "ftStreams.h"
 
 using namespace ftEndianUtils;
@@ -41,7 +36,6 @@ const ftChunk ftChunkUtils::BLANK_CHUNK = {
     0,  // m_nr
 };
 
-
 SKsize ftChunkUtils::write(ftChunk* src, skStream* stream)
 {
     SKsize size = 0;
@@ -49,8 +43,6 @@ SKsize ftChunkUtils::write(ftChunk* src, skStream* stream)
     size += stream->write((void*)src->m_addr, src->m_len);
     return size;
 }
-
-
 
 SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
 {
@@ -84,11 +76,9 @@ SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
     return bytesRead;
 }
 
-
-
 SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 {
-    SKsize bytesRead  = 0;
+    SKsize   bytesRead = 0;
     ftChunk* tmp;
 
     if (FT_VOID8)
@@ -102,12 +92,12 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 
             FBTByteInteger ptr = {0};
 
-            c64.m_code = src.m_code;
-            c64.m_len  = src.m_len;
-            ptr.m_int[0] = src.m_addr;
-            c64.m_addr    = ptr.m_ptr;
+            c64.m_code     = src.m_code;
+            c64.m_len      = src.m_len;
+            ptr.m_int[0]   = src.m_addr;
+            c64.m_addr     = ptr.m_ptr;
             c64.m_structId = src.m_structId;
-            c64.m_nr     = src.m_nr;
+            c64.m_nr       = src.m_nr;
         }
         else
         {
@@ -127,10 +117,10 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
                 return FS_INV_READ;
 
             FBTByteInteger ptr = {0};
-            c32.m_code   = src.m_code;
-            c32.m_len    = src.m_len;
-            c32.m_structId = src.m_structId;
-            c32.m_nr     = src.m_nr;
+            c32.m_code         = src.m_code;
+            c32.m_len          = src.m_len;
+            c32.m_structId     = src.m_structId;
+            c32.m_nr           = src.m_nr;
 
             ptr.m_ptr = src.m_addr;
             if (ptr.m_int[0] != 0)
@@ -152,8 +142,8 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
         if ((tmp->m_code & 0xFFFF) == 0)
             tmp->m_code >>= 16;
 
-        tmp->m_len    = swap32(tmp->m_len);
-        tmp->m_nr     = swap32(tmp->m_nr);
+        tmp->m_len      = swap32(tmp->m_len);
+        tmp->m_nr       = swap32(tmp->m_nr);
         tmp->m_structId = swap32(tmp->m_structId);
     }
 

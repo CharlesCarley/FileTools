@@ -35,32 +35,32 @@ public:
     ftMember(ftStruct* owner);
     ~ftMember();
 
-    const char* getName();
-    const char* getType();
+    const char* getName() const;
+    const char* getType() const;
 
     void setNameIndex(const SKuint16& idx);
     void setTypeIndex(const SKuint16& idx);
-    bool isBuiltinType();
-    bool isStructure();
-    bool isPointer();
-    bool isArray();
+    bool isBuiltinType() const;
+    bool isStructure() const;
+    bool isPointer() const;
+    bool isArray() const;
     bool isCharacter();
 
     bool isInteger16();
     bool isInteger32();
     bool isInteger64();
 
-    int getArraySize();
-    int getPointerCount();
-    int getArrayElementSize();
+    int getArraySize() const;
+    int getPointerCount() const;
+    int getArrayElementSize() const;
 
     ftAtomic getAtomicType();
 
-    bool compare(ftMember* rhs);
+    bool compare(ftMember* rhs) const;
 
 
-    SKsize* jumpToOffset(void* base);
-    void*    getChunk();
+    SKsize* jumpToOffset(void* base) const;
+    void*   getChunk() const;
 
 
     bool isValidAtomicType();

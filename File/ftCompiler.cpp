@@ -42,7 +42,7 @@ ftCompiler::ftCompiler() :
     m_start(0),
     m_curBuf(0),
     m_writeMode(WRITE_ARRAY),
-    m_scanner(0)
+    m_scanner(nullptr)
 {
 }
 
@@ -54,7 +54,7 @@ ftCompiler::~ftCompiler()
 void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
 {
     ftId newName;
-    int  i;
+    SKuint16  i;
     if (v.m_isFunctionPointer)
         newName.push_back('(');
 
@@ -63,8 +63,10 @@ void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
         for (i = 0; i < v.m_ptrCount; ++i)
             newName.push_back('*');
     }
+
     for (i = 0; i < v.m_name.size(); ++i)
         newName.push_back(v.m_name[i]);
+
     if (v.m_isFunctionPointer)
     {
         newName.push_back(')');

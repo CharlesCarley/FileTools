@@ -28,8 +28,6 @@
 #include "ftStruct.h"
 #include "ftTables.h"
 
-
-
 ftMember::ftMember(ftStruct* owner) :
     m_parent(owner),
     m_offset(0),
@@ -46,13 +44,9 @@ ftMember::ftMember(ftStruct* owner) :
 {
 }
 
+ftMember::~ftMember() = default;
 
-ftMember::~ftMember()
-{
-}
-
-
-const char* ftMember::getName()
+const char* ftMember::getName() const
 {
     if (m_parent && m_parent->m_table)
     {
@@ -62,8 +56,7 @@ const char* ftMember::getName()
     return "";
 }
 
-
-const char* ftMember::getType()
+const char* ftMember::getType() const
 {
     if (m_parent && m_parent->m_table)
     {
@@ -73,27 +66,26 @@ const char* ftMember::getType()
     return "";
 }
 
-
-bool ftMember::isBuiltinType()
+bool ftMember::isBuiltinType() const
 {
     if (m_parent && m_parent->m_table)
         return m_type < m_parent->m_table->m_firstStruct;
     return false;
 }
 
-bool ftMember::isStructure()
+bool ftMember::isStructure() const
 {
     if (m_parent && m_parent->m_table)
         return m_type >= m_parent->m_table->m_firstStruct;
     return false;
 }
 
-bool ftMember::isPointer()
+bool ftMember::isPointer() const
 {
     return getPointerCount() > 0;
 }
 
-bool ftMember::isArray()
+bool ftMember::isArray() const
 {
     if (m_parent && m_parent->m_table)
     {
@@ -103,37 +95,32 @@ bool ftMember::isArray()
     return false;
 }
 
-
 bool ftMember::isCharacter()
 {
     return getAtomicType() == ftAtomic::FT_ATOMIC_CHAR;
 }
 
-
 bool ftMember::isInteger16()
 {
-    ftAtomic atomic = getAtomicType();
+    const ftAtomic atomic = getAtomicType();
     return atomic == ftAtomic::FT_ATOMIC_SHORT || atomic == ftAtomic::FT_ATOMIC_USHORT;
 }
-
 
 bool ftMember::isInteger32()
 {
     // TODO: ftSCALAR_DOUBLE
-    ftAtomic atomic = getAtomicType();
+    const ftAtomic atomic = getAtomicType();
     return atomic >= ftAtomic::FT_ATOMIC_INT && atomic <= ftAtomic::FT_ATOMIC_FLOAT;
 }
-
 
 bool ftMember::isInteger64()
 {
     // TODO: ftSCALAR_DOUBLE
-    ftAtomic atomic = getAtomicType();
+    const ftAtomic atomic = getAtomicType();
     return atomic >= ftAtomic::FT_ATOMIC_DOUBLE && atomic <= ftAtomic::FT_ATOMIC_UINT64_T;
 }
 
-
-int ftMember::getArraySize()
+int ftMember::getArraySize() const
 {
     if (m_parent && m_parent->m_table)
     {
@@ -143,9 +130,9 @@ int ftMember::getArraySize()
     return 1;
 }
 
-int ftMember::getArrayElementSize()
+int ftMember::getArrayElementSize() const
 {
-    int arraySize = skMax(getArraySize(), 1);
+    const int arraySize = skMax(getArraySize(), 1);
     return m_sizeInBytes / arraySize;
 }
 
@@ -161,7 +148,7 @@ ftAtomic ftMember::getAtomicType()
     return (ftAtomic)m_atomic;
 }
 
-int ftMember::getPointerCount()
+int ftMember::getPointerCount() const
 {
     if (m_parent && m_parent->m_table)
     {
@@ -192,21 +179,21 @@ void ftMember::setTypeIndex(const SKuint16& idx)
     }
 }
 
-bool ftMember::compare(ftMember* rhs)
+bool ftMember::compare(ftMember* rhs) const
 {
     if (!rhs)
         return false;
     return m_searchKey == rhs->m_searchKey;
 }
 
-void* ftMember::getChunk()
+void* ftMember::getChunk() const
 {
-    return m_parent ? m_parent->m_attached : 0;
+    return m_parent ? m_parent->m_attached : nullptr;
 }
 
-SKsize* ftMember::jumpToOffset(void* base)
+SKsize* ftMember::jumpToOffset(void* base) const
 {
     if (base && m_offset < m_parent->m_sizeInBytes)
-        return (SKsize*)(reinterpret_cast<SKbyte*>(base) + m_offset);
+        return (SKsize*)(static_cast<SKbyte*>(base) + m_offset);
     return nullptr;
 }

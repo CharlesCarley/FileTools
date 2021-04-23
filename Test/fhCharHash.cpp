@@ -31,23 +31,23 @@ typedef skHashTable<SKuintPtr, SKuintPtr>    PointerFinder;
 
 GTEST_TEST(ftCharHash, HashTest)
 {
-    TypeFinder find_type;
-    size_t     i = 0;
+    TypeFinder findType;
+    size_t     i;
     for (i = 0; i < random_names_len; ++i)
     {
         ftCharHashKey chk(random_names[i]);
 
-        SKsize lookup = find_type.find(chk);
+        SKsize lookup = findType.find(chk);
         EXPECT_EQ(SK_NPOS, lookup);
 
-        bool result = find_type.insert(chk, (SKuint32)i + 1);
+        bool result = findType.insert(chk, (SKuint32)i + 1);
         EXPECT_EQ(true, result);
     }
 
-    EXPECT_EQ(random_names_len, find_type.size());
+    EXPECT_EQ(random_names_len, findType.size());
     i = 0;
     
-    TypeFinder::Iterator it = find_type.iterator();
+    TypeFinder::Iterator it = findType.iterator();
     while (it.hasMoreElements() && i < random_names_len)
     {
         ftCharHashKey chk = it.getNext().first;
@@ -62,31 +62,31 @@ GTEST_TEST(ftCharHash, PointerHash)
 {
     int *ptrArray = new int[101];
 
-    size_t i = 0;
+    size_t i;
     for (i = 0; i < 100; ++i)
         ptrArray[i] = (int)i + 1;
 
 
-    PointerFinder find_ptr;
+    PointerFinder findPtr;
     int *it = ptrArray;
 
     for (i = 0; i < 100; ++i)
     {
         SKuintPtr ptr = (SKuintPtr)(it + i);
 
-        SKsize lookup = find_ptr.find(ptr);
+        SKsize lookup = findPtr.find(ptr);
         EXPECT_EQ(SK_NPOS, lookup);
 
 
-        bool result = find_ptr.insert(ptr, it[i]);
+        bool result = findPtr.insert(ptr, it[i]);
         EXPECT_EQ(true, result);
     }
 
-    EXPECT_EQ(100, find_ptr.size());
+    EXPECT_EQ(100, findPtr.size());
 
     i = 0;
 
-    PointerFinder::Iterator pit = find_ptr.iterator();
+    PointerFinder::Iterator pit = findPtr.iterator();
     while (pit.hasMoreElements() && i < 100)
     {
         SKuintPtr chk = pit.getNext().first;

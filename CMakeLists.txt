@@ -42,11 +42,8 @@ else()
 
     set(FileTools_INCLUDE  ${FileTools_SOURCE_DIR}/File)
     set(FileTools_LIBRARY  ${TargetName})
-
-
     set(BlendFile_INCLUDE ${FileTools_SOURCE_DIR}/FileFormats/Blend)
     set(BlendFile_LIBRARY BlendFile)
-
 endif()
 
 add_subdirectory(File)
@@ -82,6 +79,13 @@ if (FileTools_BUILD_TEST)
 
     if (FileTools_BLEND_TEST)
         add_subdirectory(FileFormats/Blend/Test)
+    endif()
+
+    if (NOT FileTools_ExternalTarget)
+        if(FileTools_AUTO_RUN_TEST)
+            set(Utils_AUTO_RUN_TESTS TRUE)
+        endif()
+        add_subdirectory(External/Utils/Tests)
     endif()
 
 endif()

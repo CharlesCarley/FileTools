@@ -43,12 +43,12 @@ private:
     int         m_fileFlags;
     const char* m_uhid;
     ftHeader    m_header;
-    char*       m_curFile;
+    skString    m_curFile;
     void*       m_fileTableData;
-    SKhash*    m_filterList;
-    SKint32    m_filterListLen;
-    SKhash*    m_castFilter;
-    SKint32    m_castFilterLen;
+    SKhash*     m_filterList;
+    SKint32     m_filterListLen;
+    SKhash*     m_castFilter;
+    SKint32     m_castFilterLen;
     bool        m_inclusive;
 
 protected:
@@ -64,7 +64,7 @@ public:
     virtual ~ftFile();
 
     int         load(const char* path, int mode = 0);
-    int         load(const void* memory, SKsize sizeInBytes, int mode = 0);
+    int         load(const void* memory, SKsize sizeInBytes);  //, int mode = 0);
     virtual int save(const char* path, int mode = 0);
 
     ftTables* getMemoryTable(void);
@@ -79,7 +79,7 @@ public:
         return m_fileVersion;
     }
 
-    const char* getPath(void) const
+    const skString& getPath(void) const
     {
         return m_curFile;
     }
@@ -138,10 +138,10 @@ protected:
     int  initializeTables(ftTables* tables);
     int  initializeMemory(void);
 
-    virtual void*   getTables(void)                            = 0;
+    virtual void*  getTables(void)                            = 0;
     virtual SKsize getTableSize(void)                         = 0;
-    virtual int     notifyDataRead(void* p, const ftChunk& id) = 0;
-    virtual int     serializeData(skStream* stream)            = 0;
+    virtual int    notifyDataRead(void* p, const ftChunk& id) = 0;
+    virtual int    serializeData(skStream* stream)            = 0;
 
 private:
     bool searchFilter(const SKhash* searchIn, const SKhash& searchFor, const SKint32& len);
@@ -153,22 +153,22 @@ private:
     void* findPointer(const ftPointerHashKey& iptr);
     void* findPointer(const SKsize& iptr);
 
-    ftMemoryChunk* findBlock(const SKsize& iptr);
-    skStream*      openStream(const char* path, int mode);
-    bool           skip(const SKhash& id);
+    ftMemoryChunk*   findBlock(const SKsize& iptr);
+    static skStream* openStream(const char* path, int mode);
+    bool             skip(const SKhash& id);
 
     void serializeChunk(skStream* stream,
-                        SKuint32 code,
-                        SKuint32 nr,
-                        SKuint32 typeIndex,
-                        SKsize   len,
+                        SKuint32  code,
+                        SKuint32  nr,
+                        SKuint32  typeIndex,
+                        SKsize    len,
                         void*     writeData);
 
-    void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
-    void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, bool addToRebuildList, int& status);
-    void freeChunk(ftMemoryChunk*& chunk);
+    void        handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
+    void        insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, bool addToRebuildList, int& status);
+    static void freeChunk(ftMemoryChunk*& chunk);
 
-    int runTableChecks(ftTables* tbltochk);
+    int runTableChecks(ftTables* check) const;
 
     void clearStorage(void);
 
@@ -180,51 +180,51 @@ private:
 
     void castMember(
         ftMember* dst,
-        SKsize*& dstPtr,
+        SKsize*&  dstPtr,
         ftMember* src,
-        SKsize*& srcPtr,
+        SKsize*&  srcPtr,
         int&      status);
 
     void castMemberPointer(
         ftMember* dst,
-        SKsize*& dstPtr,
+        SKsize*&  dstPtr,
         ftMember* src,
-        SKsize*& srcPtr,
+        SKsize*&  srcPtr,
         int&      status);
 
     void castPointer(
         ftMember* dst,
-        SKsize*& dstPtr,
+        SKsize*&  dstPtr,
         ftMember* src,
-        SKsize*& srcPtr,
+        SKsize*&  srcPtr,
         int&      status);
 
     void castPointerToPointer(
         ftMember* dst,
-        SKsize*& dstPtr,
+        SKsize*&  dstPtr,
         ftMember* src,
-        SKsize*& srcPtr,
+        SKsize*&  srcPtr,
         int&      status);
 
     void castMemberVariable(
         ftMember* dst,
-        SKsize*& dstPtr,
+        SKsize*&  dstPtr,
         ftMember* src,
-        SKsize*& srcPtr,
+        SKsize*&  srcPtr,
         int&      status);
 
     void castAtomicMemberArray(
         ftMember* dst,
-        SKbyte*& dstPtr,
+        SKbyte*&  dstPtr,
         ftMember* src,
-        SKbyte*& srcPtr,
+        SKbyte*&  srcPtr,
         int&      status);
 
     void castAtomicMember(
         ftMember* dst,
-        SKbyte*& dstPtr,
+        SKbyte*&  dstPtr,
         ftMember* src,
-        SKbyte*& srcPtr,
+        SKbyte*&  srcPtr,
         int&      status);
 
     ftStruct* findInTable(ftStruct* fileStruct, ftTables* sourceTable, ftTables* findInTable);

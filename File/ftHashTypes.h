@@ -26,8 +26,6 @@
 #ifndef _ftHashTypes_h_
 #define _ftHashTypes_h_
 
-#include <memory.h>
-#include <string.h>
 #include "Utils/skHash.h"
 #include "ftTypes.h"
 
@@ -40,7 +38,7 @@ protected:
 
 public:
     ftCharHashKey() :
-        m_key(0),
+        m_key(nullptr),
         m_hash(SK_NPOS)
     {
     }
@@ -50,7 +48,7 @@ public:
         m_key(k),
         m_hash(SK_NPOS)
     {
-        hash();
+        (void)hash();
     }
 
 
@@ -58,7 +56,7 @@ public:
         m_key(const_cast<char*>(k)),
         m_hash(SK_NPOS)
     {
-        hash();
+        (void)hash();
     }
 
 
@@ -66,13 +64,13 @@ public:
         m_key(k.m_key),
         m_hash(SK_NPOS)
     {
-        hash();
+        (void)hash();
     }
 
 
     SKhash hash(void) const
     {
-        if (m_key == nullptr || !(*m_key))
+        if (m_key == nullptr || !*m_key)
             return SK_NPOS;
 
         // it has already been calculated
@@ -83,27 +81,27 @@ public:
         return m_hash;
     }
 
-    inline const char* key() const
+    const char* key() const
     {
         return m_key;
     }
 
-    inline bool operator==(const ftCharHashKey& v) const
+    bool operator==(const ftCharHashKey& v) const
     {
         return hash() == v.hash();
     }
 
-    inline bool operator!=(const ftCharHashKey& v) const
+    bool operator!=(const ftCharHashKey& v) const
     {
         return hash() != v.hash();
     }
 
-    inline bool operator==(const SKhash& v) const
+    bool operator==(const SKhash& v) const
     {
         return hash() == v;
     }
 
-    inline bool operator!=(const SKhash& v) const
+    bool operator!=(const SKhash& v) const
     {
         return hash() != v;
     }
@@ -160,27 +158,27 @@ public:
         return m_hash;
     }
 
-    inline const void* key() const
+    const void* key() const
     {
         return m_key;
     }
 
-    inline bool operator==(const ftCharHashKey& v) const
+    bool operator==(const ftCharHashKey& v) const
     {
         return hash() == v.hash();
     }
 
-    inline bool operator!=(const ftCharHashKey& v) const
+    bool operator!=(const ftCharHashKey& v) const
     {
         return hash() != v.hash();
     }
 
-    inline bool operator==(const SKhash& v) const
+    bool operator==(const SKhash& v) const
     {
         return hash() == v;
     }
 
-    inline bool operator!=(const SKhash& v) const
+    bool operator!=(const SKhash& v) const
     {
         return hash() != v;
     }

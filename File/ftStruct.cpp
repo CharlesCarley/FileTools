@@ -38,7 +38,7 @@ ftStruct::ftStruct(ftTables* parent) :
     m_sizeInBytes(0),
     m_refs(0),
     m_lock(0),
-    m_strcId(0),
+    m_structureId(0),
     m_flag(0),
     m_attached(0),
     m_members(),
@@ -72,20 +72,20 @@ ftMember* ftStruct::getMember(Members::SizeType idx)
 }
 
 
-ftMember* ftStruct::find(ftMember* oth)
+ftMember* ftStruct::find(ftMember* oth) const
 {
-    MemberSearchKey msk = {oth->m_searchKey, 0};
+    MemberSearchKey msk = {oth->m_searchKey, nullptr};
     if (m_memberSearch.findNonRecursive(msk, msk))
         return msk.m_member;
-    return 0;
+    return nullptr;
 }
 
 
-SKbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max)
+SKbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max) const
 {
     SKbyte* val = nullptr;
     if (base && idx < max)
-        val = reinterpret_cast<SKbyte*>(base) + (m_sizeInBytes * idx);
+        val = static_cast<SKbyte*>(base) + m_sizeInBytes * idx;
     return val;
 }
 
