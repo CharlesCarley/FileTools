@@ -24,36 +24,28 @@
 -------------------------------------------------------------------------------
 */
 #include "ftStruct.h"
-#include <stdio.h>
-#include "ftAtomic.h"
 #include "ftMember.h"
-#include "ftTables.h"
+#include "ftTable.h"
 
-
-
-ftStruct::ftStruct(ftTables* parent) :
-    m_table(parent),
+ftStruct::ftStruct(ftTable* parent) :
     m_type(0),
     m_hashedType(SK_NPOS),
+    m_attached(nullptr),
     m_sizeInBytes(0),
     m_refs(0),
     m_lock(0),
     m_structureId(0),
     m_flag(0),
-    m_attached(0),
-    m_members(),
-    m_link(0)
+    m_table(parent),
+    m_link(nullptr)
 {
 }
-
 
 ftStruct::~ftStruct()
 {
-    Members::Iterator it = m_members.iterator();
-    while (it.hasMoreElements())
-        delete it.getNext();
+    for (ftMember* member : m_members)
+        delete member;
 }
-
 
 ftMember* ftStruct::createMember()
 {
@@ -62,26 +54,25 @@ ftMember* ftStruct::createMember()
     return mbr;
 }
 
-
-
-ftMember* ftStruct::getMember(Members::SizeType idx)
+ftMember* ftStruct::getMember(const Members::SizeType& index)
 {
-    if (idx < m_members.size())
-        return m_members[idx];
+    if (index < m_members.size())
+        return m_members[index];
     return nullptr;
 }
 
-
-ftMember* ftStruct::find(ftMember* oth) const
+ftMember* ftStruct::find(ftMember* other) const
 {
-    MemberSearchKey msk = {oth->m_searchKey, nullptr};
+    if (!other || other->m_searchKey == NoHash)
+        return nullptr;
+
+    ftMemberSearchKey msk = {other->m_searchKey, nullptr};
     if (m_memberSearch.findNonRecursive(msk, msk))
-        return msk.m_member;
+        return msk.member;
     return nullptr;
 }
 
-
-SKbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max) const
+SKbyte* ftStruct::getChunk(void* base, SKsize idx, const SKsize max) const
 {
     SKbyte* val = nullptr;
     if (base && idx < max)
@@ -89,10 +80,9 @@ SKbyte* ftStruct::getBlock(void* base, SKsize idx, const SKsize max) const
     return val;
 }
 
-
 const char* ftStruct::getName() const
 {
     if (m_table && m_type < m_table->m_typeCount)
-        return m_table->m_types[m_type].m_name;
+        return m_table->m_types[m_type].name;
     return "";
 }

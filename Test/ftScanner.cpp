@@ -42,7 +42,7 @@ GTEST_TEST(ftScanner, BasicStruct)
     EXPECT_TRUE(strcmp("XYZ", tp.getValue().c_str())==0);
 
     tok = sc.lex(tp);
-    EXPECT_EQ(tok, FT_LBRACKET);
+    EXPECT_EQ(tok, FT_L_BRACKET);
 
     tok = sc.lex(tp);
     EXPECT_EQ(tok, FT_INTEGER);
@@ -72,7 +72,7 @@ GTEST_TEST(ftScanner, BasicStruct)
     EXPECT_EQ(tok, FT_VOID);
 
     tok = sc.lex(tp);
-    EXPECT_EQ(tok, FT_LPARN);
+    EXPECT_EQ(tok, FT_L_PARENTHESIS);
 
     tok = sc.lex(tp);
     EXPECT_EQ(tok, FT_POINTER);
@@ -81,11 +81,77 @@ GTEST_TEST(ftScanner, BasicStruct)
     EXPECT_EQ(tok, FT_ID);
 
     tok = sc.lex(tp);
-    EXPECT_EQ(tok, FT_RPARN);
+    EXPECT_EQ(tok, FT_R_PARENTHESIS);
 
     tok = sc.lex(tp);
     EXPECT_EQ(tok, FT_TERM);
 
     tok = sc.lex(tp);
-    EXPECT_EQ(tok, FT_RBRACKET);
+    EXPECT_EQ(tok, FT_R_BRACKET);
+}
+
+
+
+GTEST_TEST(ftScanner, FileMaxed)
+{
+    const unsigned char* testCode    = (const unsigned char*)TEST;
+
+    ftScanner sc((char*)testCode, SK_NPOS);
+
+    ftToken tp;
+    int     tok;
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_STRUCT);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_ID);
+    EXPECT_FALSE(strcmp("XYZ", tp.getValue().c_str()) == 0);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_L_BRACKET);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_INTEGER);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_ID);
+    EXPECT_FALSE(strcmp("a", tp.getValue().c_str()) == 0);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_COMMA);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_ID);
+    EXPECT_FALSE(strcmp("b", tp.getValue().c_str()) == 0);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_COMMA);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_ID);
+    EXPECT_FALSE(strcmp("c", tp.getValue().c_str()) == 0);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_TERM);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_VOID);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_L_PARENTHESIS);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_POINTER);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_ID);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_R_PARENTHESIS);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_TERM);
+
+    tok = sc.lex(tp);
+    EXPECT_NE(tok, FT_R_BRACKET);
 }

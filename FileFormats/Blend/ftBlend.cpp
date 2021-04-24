@@ -19,7 +19,7 @@
 */
 #include "ftBlend.h"
 #include "ftStreams.h"
-#include "ftTables.h"
+#include "ftTable.h"
 
 const SKuint32 GLOB = FT_TYPEID('G', 'L', 'O', 'B');
 
@@ -71,18 +71,18 @@ ftBlend::~ftBlend() = default;
 
 int ftBlend::notifyDataRead(void* p, const ftChunk& id)
 {
-    if (id.m_code == GLOB)
+    if (id.code == GLOB)
     {
         m_fg = (Blender::FileGlobal*)p;
         return ftFlags::FS_OK;
     }
 
-    if (id.m_code <= 0xFFFF)
+    if (id.code <= 0xFFFF)
     {
         int i = 0;
         while (ftData[i].m_code != 0)
         {
-            if (ftData[i].m_code == id.m_code)
+            if (ftData[i].m_code == id.code)
             {
                 (this->*ftData[i].m_ptr).push_back(p);
                 break;
@@ -95,23 +95,23 @@ int ftBlend::notifyDataRead(void* p, const ftChunk& id)
 
 int ftBlend::serializeData(skStream* stream)
 {
-    for (ftMemoryChunk* node = (ftMemoryChunk*)m_chunks.first; node; node = node->m_next)
+    for (ftMemoryChunk* node = (ftMemoryChunk*)m_chunks.first; node; node = node->next)
     {
-        if (node->m_newTypeId > m_memory->getNumberOfTypes())
+        if (node->newTypeId > m_memory->getNumberOfTypes())
             continue;
-        if (!node->m_mblock)
+        if (!node->memoryBlock)
             continue;
 
-        void*   wd = node->m_mblock;
+        void*   wd = node->memoryBlock;
         ftChunk ch{};
-        ch.m_code     = node->m_chunk.m_code;
-        ch.m_nr       = node->m_chunk.m_nr;
-        ch.m_len      = node->m_chunk.m_len;
-        ch.m_structId = node->m_newTypeId;
-        ch.m_addr     = (SKsize)wd;
+        ch.code     = node->chunk.code;
+        ch.count       = node->chunk.count;
+        ch.length      = node->chunk.length;
+        ch.structId = node->newTypeId;
+        ch.address     = (SKsize)wd;
 
         stream->write(&ch, sizeof(ftChunk));
-        stream->write(wd, ch.m_len);
+        stream->write(wd, ch.length);
     }
     return ftFlags::FS_OK;
 }

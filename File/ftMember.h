@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -23,6 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+
 #ifndef _ftMember_h_
 #define _ftMember_h_
 
@@ -58,69 +55,65 @@ public:
 
     bool compare(ftMember* rhs) const;
 
-
     SKsize* jumpToOffset(void* base) const;
     void*   getChunk() const;
 
-
-    bool isValidAtomicType();
+    bool isValidAtomicType() const;
 
     bool isCharacterArray()
     {
         return isCharacter() && isArray();
     }
 
-    inline SKsize getSizeInBytes()
+    SKsize getSizeInBytes() const
     {
         return m_sizeInBytes;
     }
 
-    inline SKsize getOffset()
+    SKsize getOffset() const
     {
         return m_offset;
     }
 
-    inline const SKhash& getHashedType() const
+    const SKhash& getHashedType() const
     {
         return m_hashedType;
     }
 
-    inline const SKhash& getHashedName() const
+    const SKhash& getHashedName() const
     {
         return m_hashedName;
     }
 
-    inline ftStruct* getParent()
+    ftStruct* getParent() const
     {
         return m_parent;
     }
 
-    inline ftMember* getLink()
+    ftMember* getLink() const
     {
         return m_link;
     }
 
-    inline bool hasLink()
+    bool hasLink() const
     {
-        return m_link != 0;
+        return m_link != nullptr;
     }
 
-
-    inline void setLink(ftMember* member)
+    void setLink(ftMember* member)
     {
         m_link = member;
     }
 
-
 private:
-    friend class ftTables;
+    friend class ftTable;
     friend class ftStruct;
 
     ftStruct* m_parent;
     ftMember* m_link;
 
     // TODO: Look at this these should all be unsigned.
-    // Find all references, and look for specific reasons 
+    // Find all references, and look for specific reasons
     // as to why they are declared signed.
     SKint32 m_location;
     SKint32 m_offset;
@@ -130,13 +123,11 @@ private:
     // Keep this signed.
     SKint32 m_atomic;
 
-
     SKint16 m_type;
     SKint16 m_name;
     SKhash  m_hashedType;
     SKhash  m_hashedName;
     SKhash  m_searchKey;
 };
-
 
 #endif  //_ftMember_h_

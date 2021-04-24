@@ -28,19 +28,13 @@
 using namespace ftEndianUtils;
 using namespace ftFlags;
 
-const ftChunk ftChunkUtils::BLANK_CHUNK = {
-    0,  // m_code
-    0,  // m_sizeInBytes
-    0,  // m_addr
-    0,  // m_structId
-    0,  // m_nr
-};
+const ftChunk ftChunkUtils::BlankChunk = {};
 
 SKsize ftChunkUtils::write(ftChunk* src, skStream* stream)
 {
     SKsize size = 0;
     size += stream->write(src, BlockSize);
-    size += stream->write((void*)src->m_addr, src->m_len);
+    size += stream->write((void*)src->address, src->length);
     return size;
 }
 
@@ -69,9 +63,9 @@ SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int flags)
 
     if (flags & FH_ENDIAN_SWAP)
     {
-        if ((dest->m_code & 0xFFFF) == 0)
-            dest->m_code >>= 16;
-        dest->m_len = swap32(dest->m_len);
+        if ((dest->code & 0xFFFF) == 0)
+            dest->code >>= 16;
+        dest->length = swap32(dest->length);
     }
     return bytesRead;
 }
@@ -83,21 +77,21 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 
     if (FT_VOID8)
     {
-        ftChunk64 c64;
+        ftChunk64 c64{};
         if (flags & FH_VAR_BITS)
         {
-            ftChunk32 src;
+            ftChunk32 src{};
             if ((bytesRead = stream->read(&src, Block32)) <= 0)
                 return FS_INV_READ;
 
-            FBTByteInteger ptr = {0};
+            ftByteInteger ptr = {0};
 
-            c64.m_code     = src.m_code;
-            c64.m_len      = src.m_len;
-            ptr.m_int[0]   = src.m_addr;
-            c64.m_addr     = ptr.m_ptr;
-            c64.m_structId = src.m_structId;
-            c64.m_nr       = src.m_nr;
+            c64.code     = src.code;
+            c64.length   = src.length;
+            ptr.m_int[0] = src.address;
+            c64.address  = ptr.m_ptr;
+            c64.structId = src.structId;
+            c64.count    = src.count;
         }
         else
         {
@@ -109,24 +103,24 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
     }
     else
     {
-        ftChunk32 c32;
+        ftChunk32 c32{};
         if (flags & FH_VAR_BITS)
         {
-            ftChunk64 src;
+            ftChunk64 src{};
             if ((bytesRead = stream->read(&src, Block64)) <= 0)
                 return FS_INV_READ;
 
-            FBTByteInteger ptr = {0};
-            c32.m_code         = src.m_code;
-            c32.m_len          = src.m_len;
-            c32.m_structId     = src.m_structId;
-            c32.m_nr           = src.m_nr;
+            ftByteInteger ptr  = {0};
+            c32.code           = src.code;
+            c32.length         = src.length;
+            c32.structId       = src.structId;
+            c32.count          = src.count;
 
-            ptr.m_ptr = src.m_addr;
+            ptr.m_ptr = src.address;
             if (ptr.m_int[0] != 0)
-                c32.m_addr = ptr.m_int[0];
+                c32.address = ptr.m_int[0];
             else
-                c32.m_addr = ptr.m_int[1];
+                c32.address = ptr.m_int[1];
         }
         else
         {
@@ -139,20 +133,20 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int flags)
 
     if (flags & FH_ENDIAN_SWAP)
     {
-        if ((tmp->m_code & 0xFFFF) == 0)
-            tmp->m_code >>= 16;
+        if ((tmp->code & 0xFFFF) == 0)
+            tmp->code >>= 16;
 
-        tmp->m_len      = swap32(tmp->m_len);
-        tmp->m_nr       = swap32(tmp->m_nr);
-        tmp->m_structId = swap32(tmp->m_structId);
+        tmp->length   = swap32(tmp->length);
+        tmp->count    = swap32(tmp->count);
+        tmp->structId = swap32(tmp->structId);
     }
 
-    if (tmp->m_len == SK_NPOS32)
+    if (tmp->length == SK_NPOS32)
         return FS_INV_LENGTH;
 
-    if (tmp->m_nr < 1 || tmp->m_nr == SK_NPOS32)
+    if (tmp->count < 1 || tmp->count == SK_NPOS32)
         return FS_INV_LENGTH;
 
-    ::memcpy(dest, tmp, BlockSize);
+    memcpy(dest, tmp, BlockSize);
     return bytesRead;
 }

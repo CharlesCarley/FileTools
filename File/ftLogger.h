@@ -28,16 +28,22 @@
 
 #include "Utils/skDebugger.h"
 #include "ftFile.h"
-#include "ftTables.h"
-
+#include "ftTable.h"
 
 namespace ftLogger
 {
+    /// <summary>
+    /// Logs the enumerated name a predetermined status return code.
+    /// </summary>
+    /// <param name="status">code defined in <see cref="ftFlags::FileStatus">ftFlags::FileStatus</see></param>
     extern void log(int status);
+
     extern void log(int status, const char *msg, ...);
+
+
     extern void logF(const char *msg, ...);
 
-    extern void seperator();
+    extern void separator();
     extern void divider();
     extern void newline(int nr = 1);
     extern void color(skConsoleColorSpace cs);
@@ -49,7 +55,7 @@ namespace ftLogger
     extern void log(ftStruct *fstrc, ftStruct *mstrc);
     extern void log(const ftName &name);
     extern void log(const ftType &type);
-    extern void log(const ftType &type, SKtype size);
+    extern void log(const ftType &type, FTtype size);
 
 
     extern void logDiagnosticsCastHeader(const ftChunk &chunk,

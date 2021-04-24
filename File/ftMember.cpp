@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -26,20 +22,20 @@
 #include "ftMember.h"
 #include "ftAtomic.h"
 #include "ftStruct.h"
-#include "ftTables.h"
+#include "ftTable.h"
 
 ftMember::ftMember(ftStruct* owner) :
     m_parent(owner),
+    m_link(nullptr),
+    m_location(0),
     m_offset(0),
+    m_recursiveDepth(0),
+    m_sizeInBytes(0),
+    m_atomic(-1),
     m_type(0),
     m_name(0),
     m_hashedType(SK_NPOS),
     m_hashedName(SK_NPOS),
-    m_link(0),
-    m_location(0),
-    m_recursiveDepth(0),
-    m_sizeInBytes(0),
-    m_atomic(-1),
     m_searchKey(SK_NPOS)
 {
 }
@@ -51,7 +47,7 @@ const char* ftMember::getName() const
     if (m_parent && m_parent->m_table)
     {
         if (m_name < m_parent->m_table->m_nameCount)
-            return m_parent->m_table->m_names[m_name].m_name;
+            return m_parent->m_table->m_names[m_name].name;
     }
     return "";
 }
@@ -61,7 +57,7 @@ const char* ftMember::getType() const
     if (m_parent && m_parent->m_table)
     {
         if (m_type < m_parent->m_table->m_typeCount)
-            return m_parent->m_table->m_types[m_type].m_name;
+            return m_parent->m_table->m_types[m_type].name;
     }
     return "";
 }
@@ -90,7 +86,7 @@ bool ftMember::isArray() const
     if (m_parent && m_parent->m_table)
     {
         if (m_name < m_parent->m_table->m_nameCount)
-            return m_parent->m_table->m_names[m_name].m_arraySize > 1;
+            return m_parent->m_table->m_names[m_name].arraySize > 1;
     }
     return false;
 }
@@ -125,7 +121,7 @@ int ftMember::getArraySize() const
     if (m_parent && m_parent->m_table)
     {
         if (m_name < m_parent->m_table->m_nameCount)
-            return m_parent->m_table->m_names[m_name].m_arraySize;
+            return m_parent->m_table->m_names[m_name].arraySize;
     }
     return 1;
 }
@@ -136,7 +132,7 @@ int ftMember::getArrayElementSize() const
     return m_sizeInBytes / arraySize;
 }
 
-bool ftMember::isValidAtomicType()
+bool ftMember::isValidAtomicType() const
 {
     return isBuiltinType();
 }
@@ -153,7 +149,7 @@ int ftMember::getPointerCount() const
     if (m_parent && m_parent->m_table)
     {
         if (m_name < m_parent->m_table->m_nameCount)
-            return m_parent->m_table->m_names[m_name].m_ptrCount;
+            return m_parent->m_table->m_names[m_name].pointerCount;
     }
     return 0;
 }
@@ -175,7 +171,7 @@ void ftMember::setTypeIndex(const SKuint16& idx)
     if (m_parent && m_parent->m_table)
     {
         if (m_type < (SKint16)m_parent->m_table->m_typeCount)
-            m_hashedType = m_parent->m_table->m_types[m_type].m_hash;
+            m_hashedType = m_parent->m_table->m_types[m_type].hash;
     }
 }
 

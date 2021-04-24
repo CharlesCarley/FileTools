@@ -24,37 +24,30 @@
 
 #define FT_DEBUG 3                    // Detail
 
+
+/// <summary>Upper limit for the size in bytes of a single member. </summary>
 #define FileTools_MaxStructMember  65536
-#define FT_MAX_MBR_RANGE FileTools_MaxStructMember
 
+/// <summary>Maximum number of structures that are allowed in a table. </summary>
 #define FileTools_MaxTableSize  5000
-#define FT_MAX_TABLE FileTools_MaxTableSize
 
+/// <summary>Maximum length of a character array. </summary>
 #define FileTools_MaxCharArray 64
-#define FT_MAX_ID FileTools_MaxCharArray
 
-
+/// <summary>Maximum number of members in a struct or class. </summary>
 #define FileTools_MaxMember 256
-#define FT_MAX_MEMBERS FileTools_MaxMember          
 
+/// <summary>Hash table initial allocation size. </summary>
 #define FileTools_DefaultAllocationSize 1024
-#define FT_DEF_ALLOC FileTools_DefaultAllocationSize          
 
-
+/// <summary>Maximum allowed N dimensional array. </summary>
 #define FileTools_MaxArrayDim 3
-#define FT_ARR_DIM_MAX FileTools_MaxArrayDim          
 
+/// <summary>Write a validation file. </summary>
+#define FileTools_TypeLengthValidate 1
 
-#define FileTools_TypeLengthValidate 
-#ifdef  FileTools_TypeLengthValidate
-#define FT_TYLE_LEN_VALIDATE 1
-#endif
-
-
+/// <summary>Swap from native endian when writing the table. (Test only) </summary>
 /* #undef FileTools_SwapEndian */
-#ifdef FileTools_SwapEndian
-#define FT_SWAP_FROM_NATIVE_ENDIAN 1
-#endif
 
 
 #endif  //_ftConfig_h_

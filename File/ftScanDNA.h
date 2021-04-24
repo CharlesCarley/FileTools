@@ -75,7 +75,7 @@ public:
         return m_headerFlags;
     }
 
-    bool is64Bit();
+    bool is64Bit() const;
 
 private:
     void *  m_foundBlock;

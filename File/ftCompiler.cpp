@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -23,6 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+
 #include "ftCompiler.h"
 #include <cstdio>
 #include "Utils/skArray.h"
@@ -38,7 +35,7 @@ using namespace ftFlags;
 ftCompiler::ftCompiler() :
     m_buffer(nullptr),
     m_pos(0),
-    m_build(new ftBuildInfo()),
+    m_build(new ftTableBuilder()),
     m_start(0),
     m_curBuf(0),
     m_writeMode(WRITE_ARRAY),
@@ -53,37 +50,37 @@ ftCompiler::~ftCompiler()
 
 void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
 {
-    ftId newName;
-    SKuint16  i;
-    if (v.m_isFunctionPointer)
+    ftId     newName;
+    SKuint16 i;
+    if (v.isFunctionPointer)
         newName.push_back('(');
 
-    if (v.m_ptrCount > 0)
+    if (v.ptrCount > 0)
     {
-        for (i = 0; i < v.m_ptrCount; ++i)
+        for (i = 0; i < v.ptrCount; ++i)
             newName.push_back('*');
     }
 
-    for (i = 0; i < v.m_name.size(); ++i)
-        newName.push_back(v.m_name[i]);
+    for (i = 0; i < v.name.size(); ++i)
+        newName.push_back(v.name[i]);
 
-    if (v.m_isFunctionPointer)
+    if (v.isFunctionPointer)
     {
         newName.push_back(')');
         newName.push_back('(');
         newName.push_back(')');
     }
-    if (v.m_arraySize > 1 || forceArray)
+    if (v.arraySize > 1 || forceArray)
     {
-        if (v.m_numDimensions > FT_ARR_DIM_MAX)
-            printf("The number of array dimensions exceeded. Max FT_ARR_DIM_MAX(%i) needed (%i)\n", FT_ARR_DIM_MAX, v.m_numDimensions);
+        if (v.numDimensions > FileTools_MaxArrayDim)
+            printf("The number of array dimensions exceeded. Max FT_ARR_DIM_MAX(%i) needed (%i)\n", FileTools_MaxArrayDim, v.numDimensions);
         else
         {
-            for (i = 0; i < v.m_numDimensions; ++i)
+            for (i = 0; i < v.numDimensions; ++i)
             {
                 ftId dest;
                 newName.push_back('[');
-                skSprintf(dest.ptr(), ftId::capacity() - 1, "%i", v.m_arrays[i]);
+                skSprintf(dest.ptr(), ftId::capacity() - 1, "%i", v.arrays[i]);
 
                 char* cp = dest.ptr();
                 for (int j = 0; cp[j]; ++j)
@@ -92,10 +89,8 @@ void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
                 newName.push_back(']');
             }
         }
-
-
     }
-    v.m_name = newName;
+    v.name = newName;
 }
 
 int ftCompiler::parse(const ftPath& name, const char* data, SKsize len)
@@ -107,9 +102,9 @@ int ftCompiler::parse(const ftPath& name, const char* data, SKsize len)
     m_scanner = &scanner;
     m_includes.push_back(name.c_str());
 
-    int ret = parse();
+    const int ret = parse();
 
-    m_scanner = 0;
+    m_scanner = nullptr;
     return ret;
 }
 
@@ -180,15 +175,15 @@ void ftCompiler::parseClass(int& token, ftToken& tokenPtr)
         if (token == FT_ID)
         {
             ftBuildStruct bs;
-            bs.m_name = tokenPtr.getValue();
+            bs.name = tokenPtr.getValue();
 
             token = m_scanner->lex(tokenPtr);
-            if (token == FT_LBRACKET)
+            if (token == FT_L_BRACKET)
             {
                 do
                 {
                     token = m_scanner->lex(tokenPtr);
-                    if (token != FT_RBRACKET)
+                    if (token != FT_R_BRACKET)
                     {
                         if (token == FT_CLASS || token == FT_STRUCT)
                             token = m_scanner->lex(tokenPtr);
@@ -198,14 +193,14 @@ void ftCompiler::parseClass(int& token, ftToken& tokenPtr)
                         else
                             errorUnknown(token, tokenPtr);
                     }
-                } while (token != FT_RBRACKET &&
+                } while (token != FT_R_BRACKET &&
                          FT_IS_VALID_TOKEN(token));
 
                 m_builders.push_back(bs);
             }
         }
 
-    } while ((token != FT_RBRACKET && token != FT_TERM) &&
+    } while ((token != FT_R_BRACKET && token != FT_TERM) &&
              FT_IS_VALID_TOKEN(token));
 }
 
@@ -216,8 +211,8 @@ void ftCompiler::parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& b
     const ftToken::String& typeId = tokenPtr.getValue();
 
     ftBuildMember cur;
-    cur.m_type      = typeId;
-    cur.m_undefined = 0;
+    cur.type      = typeId;
+    cur.undefined = 0;
 
     const bool isId = token == FT_ID;
 
@@ -227,24 +222,24 @@ void ftCompiler::parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& b
         switch (token)
         {
         case FT_RBRACE:
-        case FT_LBRACE:
+        case FT_L_BRACE:
             forceArray = true;
             break;
         case FT_CONSTANT:
             handleConstant(token, tokenPtr, cur);
             break;
         case FT_POINTER:
-            cur.m_ptrCount++;
+            cur.ptrCount++;
             break;
         case FT_ID:
-            cur.m_name = tokenPtr.getValue();
+            cur.name = tokenPtr.getValue();
             break;
-        case FT_LPARN:
-            cur.m_name              = tokenPtr.getValue();
-            cur.m_isFunctionPointer = 1;
-            cur.m_ptrCount          = 0;
+        case FT_L_PARENTHESIS:
+            cur.name              = tokenPtr.getValue();
+            cur.isFunctionPointer = 1;
+            cur.ptrCount          = 0;
             break;
-        case FT_RPARN:
+        case FT_R_PARENTHESIS:
         case FT_PRIVATE:
         case FT_PUBLIC:
         case FT_PROTECTED:
@@ -268,17 +263,17 @@ void ftCompiler::parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& b
 
 void ftCompiler::handleConstant(int& token, ftToken& tokenPtr, ftBuildMember& member)
 {
-    if (member.m_numDimensions + 1 > FT_ARR_DIM_MAX)
+    if (member.numDimensions + 1 > FileTools_MaxArrayDim)
     {
         printf("Maximum number of array slots exceeded!\n");
-        printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FT_ARR_DIM_MAX);
+        printf("define FT_ARR_DIM_MAX to expand.\nCurrent = [] * %i\n", FileTools_MaxArrayDim);
         token = FT_NULL_TOKEN;
     }
     else
     {
-        member.m_arrays[member.m_numDimensions] = tokenPtr.getArrayLen();
-        member.m_numDimensions++;
-        member.m_arraySize *= tokenPtr.getArrayLen();
+        member.arrays[member.numDimensions] = tokenPtr.getArrayLen();
+        member.numDimensions++;
+        member.arraySize *= tokenPtr.getArrayLen();
     }
 }
 
@@ -290,24 +285,24 @@ void ftCompiler::handleStatementClosure(int&           token,
 {
     makeName(member, forceArray);
 
-    if (isIdentifier && member.m_ptrCount == 0)
+    if (isIdentifier && member.ptrCount == 0)
     {
-        if (buildStruct.m_nrDependentTypes > 0)
-            buildStruct.m_nrDependentTypes = buildStruct.m_nrDependentTypes * 2;
+        if (buildStruct.nrDependentTypes > 0)
+            buildStruct.nrDependentTypes = buildStruct.nrDependentTypes * 2;
         else
-            buildStruct.m_nrDependentTypes++;
+            buildStruct.nrDependentTypes++;
 
         // Flag it as dependent
-        member.m_isDependentType = true;
+        member.isDependentType = true;
     }
 
-    buildStruct.m_data.push_back(member);
+    buildStruct.data.push_back(member);
 
     // reset it for the next iteration
-    member.m_ptrCount  = 0;
-    member.m_arraySize = 1;
+    member.ptrCount  = 0;
+    member.arraySize = 1;
     if (token == FT_COMMA)
-        member.m_numDimensions = 0;
+        member.numDimensions = 0;
 }
 
 void ftCompiler::errorUnknown(int& token, ftToken& tokenPtr)
@@ -321,7 +316,7 @@ void ftCompiler::errorUnknown(int& token, ftToken& tokenPtr)
 
 SKuint32 ftCompiler::getNumberOfBuiltinTypes(void) const
 {
-    return m_build->m_numberOfBuiltIn;
+    return m_build->numberOfBuiltIn;
 }
 
 int ftCompiler::buildTypes(void)
@@ -363,7 +358,7 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
     fp.writef("\n};\n");
     fp.writef("const int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
 
-#if FT_TYLE_LEN_VALIDATE == 1
+#if FileTools_TypeLengthValidate == 1
     writeValidationProgram(path.c_str());
 #endif
 }
@@ -375,33 +370,33 @@ void ftCompiler::writeStream(skStream* fp)
 
     writeBinPtr(fp, (void*)&ftIdNames::FT_SDNA[0], 4);
     writeBinPtr(fp, (void*)&ftIdNames::FT_NAME[0], 4);
-    i = m_build->m_name.size();
+    i = m_build->name.size();
 
-#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
+#ifdef FileTools_SwapEndian
     i = ftSwap32(i);
 #endif
 
     writeBinPtr(fp, &i, 4);
-    writeCharPtr(fp, m_build->m_name);
+    writeCharPtr(fp, m_build->name);
 
     writeBinPtr(fp, (void*)&ftIdNames::FT_TYPE[0], 4);
-    i = m_build->m_typeLookup.size();
+    i = m_build->typeLookup.size();
 
-#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
+#ifdef FileTools_SwapEndian
     i = ftSwap32(i);
 #endif
 
     writeBinPtr(fp, &i, 4);
-    writeCharPtr(fp, m_build->m_typeLookup);
+    writeCharPtr(fp, m_build->typeLookup);
     writeBinPtr(fp, (void*)&ftIdNames::FT_TLEN[0], 4);
 
-#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
+#ifdef FileTools_SwapEndian
     for (i = 0; i < (int)m_build->m_tlen.size(); i++)
         m_build->m_tlen.at(i) = ftSwap16(m_build->m_tlen.at(i));
 #endif
 
-    writeBinPtr(fp, m_build->m_tlen.ptr(), m_build->m_alloc.m_tlen);
-    if (m_build->m_tlen.size() & 1)
+    writeBinPtr(fp, m_build->typeLengths.ptr(), m_build->allocationSizes.lengths);
+    if (m_build->typeLengths.size() & 1)
     {
         char pad[2] = {'@', '@'};
         writeBinPtr(fp, (void*)&pad[0], 2);
@@ -410,17 +405,17 @@ void ftCompiler::writeStream(skStream* fp)
     writeBinPtr(fp, (void*)&ftIdNames::FT_STRC[0], 4);
     i = m_builders.size();
 
-#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
+#ifdef FileTools_SwapEndian
     i = ftSwap32(i);
 #endif
     writeBinPtr(fp, &i, 4);
 
-#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
+#ifdef FileTools_SwapEndian
     for (i = 0; i < (int)m_build->m_strc.size(); i++)
         m_build->m_strc.at(i) = ftSwap16(m_build->m_strc.at(i));
 #endif
 
-    writeBinPtr(fp, m_build->m_strc.ptr(), m_build->m_alloc.m_strc);
+    writeBinPtr(fp, m_build->structures.ptr(), m_build->allocationSizes.structures);
 }
 
 void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& pointers)
@@ -472,7 +467,7 @@ void ftCompiler::writeBinPtr(skStream* fp, void* ptr, int len)
 
 void ftCompiler::writeValidationProgram(const ftPath& path)
 {
-#if FT_TYLE_LEN_VALIDATE == 1
+#if FileTools_TypeLengthValidate == 1
 
     ftPath      string;
     ftPathArray split;
@@ -507,12 +502,12 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
         return;
     }
 
-    for (SKuint32 i = 0; i < m_includes.size(); ++i)
+    for (const ftPath& include : m_includes)
     {
         split.clear();
-        m_includes[i].split(split, '/', '\\');
+        include.split(split, '/', '\\');
 
-        fp.writef("#include \"%s\"\n", m_includes[i].c_str());
+        fp.writef("#include \"%s\"\n", include.c_str());
     }
 
     fp.writef("#include <cstdlib>\n");
@@ -541,13 +536,13 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     {
         ftBuildStruct& bs = it.getNext();
 
-        ftId&         cur = m_build->m_typeLookup.at((SKuint32)bs.m_structId);
-        const SKtype len = m_build->m_tlen.at((SKuint32)bs.m_structId);
+        ftId&        cur = m_build->typeLookup.at((SKuint32)bs.structureId);
+        const FTtype len = m_build->typeLengths.at((SKuint32)bs.structureId);
 
         if (m_skip.find(cur) != m_skip.npos)
             continue;
 
-#if FT_SWAP_FROM_NATIVE_ENDIAN == 1
+#ifdef FileTools_SwapEndian
         len = ftSwap16(len);
 #endif
 

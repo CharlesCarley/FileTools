@@ -44,6 +44,11 @@ else()
     set(FileTools_LIBRARY  ${TargetName})
     set(BlendFile_INCLUDE ${FileTools_SOURCE_DIR}/FileFormats/Blend)
     set(BlendFile_LIBRARY BlendFile)
+
+    if (FileTools_BUILD_DOCS)
+        add_subdirectory(Design)
+    endif()
+
 endif()
 
 add_subdirectory(File)

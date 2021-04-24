@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -23,20 +19,22 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+
 #include "ftEndianUtils.h"
 #include "Utils/skDisableWarnings.h"
 
 ftEndian ftEndianUtils::getEndian(void)
 {
-    ftEndianTest e;
-    e.test = (SKint32)FT_ENDIAN_IS_LITTLE;
-    return static_cast<ftEndian>(e.bo[0]);
+    ftEndianTest et{};
+    et.test = (SKint32)FT_ENDIAN_IS_LITTLE;
+
+    return static_cast<ftEndian>(et.bo[0]);
 }
 
 
 bool ftEndianUtils::isEndian(const ftEndian& endian)
 {
-    ftEndianTest e;
+    ftEndianTest e{};
     e.test = endian;
     return static_cast<ftEndian>(e.bo[0]) == endian;
 }

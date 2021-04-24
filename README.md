@@ -54,7 +54,7 @@ The following ASCII codes are reserved for bytes 7 and 8:
 
 The chunk header is a varying sized structure that is 20 or 24 bytes. Its size is dependent on the platform architecture at the time of saving because it stores the heap address of its data block.
 
-```c++
+```cpp
 struct ChunkNative
 {
     unsigned int code;      // 4 bytes
@@ -84,7 +84,7 @@ struct Chunk64
 ```
 
 | Member   | Description                                                              |
-|----------|:-------------------------------------------------------------------------|
+|:---------|:-------------------------------------------------------------------------|
 | code     | Is a unique identifier for determining how this block should be handled. |
 | length   | Is the size in bytes of the data block.                                  |
 | address  | Is the heap address of the data block at the time of saving.             |
@@ -121,7 +121,7 @@ Count  : 1
 The following are reserved codes that the loader internally uses when reading a file.  
 
 | CODE | Description                                                                                                                      |
-|------|:---------------------------------------------------------------------------------------------------------------------------------|
+|:-----|:---------------------------------------------------------------------------------------------------------------------------------|
 | DNA1 | Lets the loader know that it needs to load the API tables.                                                                       |
 | SDNA | API  Table header. This is unused outside of testing for the existence of the tables.                                            |
 | NAME | Indicates that a NAME table follows.                                                                                             |

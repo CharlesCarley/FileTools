@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -23,6 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+
 #include "ftLogger.h"
 #include <iomanip>
 #include <iostream>
@@ -30,11 +27,10 @@
 #include "Utils/skHexPrint.h"
 #include "Utils/skPlatformHeaders.h"
 #include "ftMember.h"
-#include "ftTables.h"
+#include "ftTable.h"
 
 using namespace std;
 using namespace ftFlags;
-
 
 void ftLogger::log(int status)
 {
@@ -49,9 +45,6 @@ void ftLogger::log(int status)
         break;
     case FS_INV_READ:
         cout << "FS_INV_READ";
-        break;
-    case FS_LINK_FAILED:
-        cout << "FS_LINK_FAILED";
         break;
     case FS_BAD_ALLOC:
         cout << "FS_BAD_ALLOC";
@@ -92,7 +85,7 @@ void ftLogger::log(int status)
     cout << endl;
 }
 
-void ftLogger::log(int status, const char *msg, ...)
+void ftLogger::log(int status, const char* msg, ...)
 {
     log(status);
     if (msg)
@@ -109,8 +102,7 @@ void ftLogger::log(int status, const char *msg, ...)
     }
 }
 
-
-void ftLogger::logF(const char *msg, ...)
+void ftLogger::logF(const char* msg, ...)
 {
     if (msg)
     {
@@ -128,8 +120,7 @@ void ftLogger::logF(const char *msg, ...)
     }
 }
 
-
-void ftLogger::seperator()
+void ftLogger::separator()
 {
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << setfill('-') << setw(FT_VOID8 ? 87 : 79) << '-';
@@ -145,9 +136,9 @@ void ftLogger::divider()
     skHexPrint::writeColor(CS_WHITE);
 }
 
-void ftLogger::log(const ftChunk &chunk)
+void ftLogger::log(const ftChunk& chunk)
 {
-    char *cp = (char *)&chunk.m_code;
+    char* cp = (char*)&chunk.code;
     char  buf[5];
     memcpy(buf, cp, 4);
     buf[4] = '\0';
@@ -156,58 +147,53 @@ void ftLogger::log(const ftChunk &chunk)
     cout << "Chunk" << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << "Code   : " << buf << endl;
-    cout << "Len    : " << dec << chunk.m_len << endl;
-    cout << "Old    : 0x" << hex << chunk.m_addr << endl;
-    cout << "TypeId : " << dec << chunk.m_structId << endl;
-    cout << "Count  : " << dec << chunk.m_nr << endl;
+    cout << "Len    : " << dec << chunk.length << endl;
+    cout << "Old    : 0x" << hex << chunk.address << endl;
+    cout << "TypeId : " << dec << chunk.structId << endl;
+    cout << "Count  : " << dec << chunk.count << endl;
     skHexPrint::writeColor(CS_WHITE);
 }
-
 
 void ftLogger::color(skConsoleColorSpace cs)
 {
     skHexPrint::writeColor(cs);
 }
 
-void ftLogger::log(const void *ptr, const SKsize len)
+void ftLogger::log(const void* ptr, const SKsize len)
 {
-    skHexPrint::dumpHex(
-        (char *)ptr,
+    dumpHex(
+        (char*)ptr,
         0,
         len,
         skHexPrint::PF_DEFAULT,
         -1);
 }
 
-
 void ftLogger::newline(int nr)
 {
-    int i;
-    for (i = 0; i < nr; ++i)
+    for (int i = 0; i < nr; ++i)
         cout << endl;
 }
 
-
-void ftLogger::log(ftStruct *strc)
+void ftLogger::log(ftStruct* strc)
 {
     skHexPrint::writeColor(CS_GREEN);
     cout << "Struct : " << strc->getName() << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
     skHexPrint::writeColor(CS_WHITE);
+
     cout << "Type          : " << strc->getTypeIndex() << endl;
     cout << "Hash          : " << strc->getHashedType() << endl;
     cout << "Size In Bytes : " << strc->getSizeInBytes() << endl;
-    cout << "Aligned 4     : " << (((strc->getSizeInBytes() % 4) == 0) ? 1 : 0) << endl;
+    cout << "Aligned 4     : " << (strc->getSizeInBytes() % 4 == 0 ? 1 : 0) << endl;
 }
 
-
-
-void ftLogger::log(ftMember *member)
+void ftLogger::log(ftMember* member)
 {
-    ftStruct *parent = member->getParent();
+    ftStruct* parent = member->getParent();
     if (parent != nullptr)
     {
-        seperator();
+        separator();
         skHexPrint::writeColor(CS_GREEN);
         cout << "Struct        : " << parent->getName() << endl;
         divider();
@@ -218,18 +204,16 @@ void ftLogger::log(ftMember *member)
     }
 }
 
-
-
-void ftLogger_logStructTable(ftStruct *strc)
+void ftLogger_logStructTable(ftStruct* structure)
 {
-    cout << "Struct        : " << strc->getName() << endl;
+    cout << "Struct        : " << structure->getName() << endl;
     ftLogger::divider();
 
     int                         nr = 0;
-    ftStruct::Members::Iterator it = strc->getMemberIterator();
+    ftStruct::Members::Iterator it = structure->getMemberIterator();
     while (it.hasMoreElements())
     {
-        ftMember *mbr = it.getNext();
+        ftMember* mbr = it.getNext();
         cout << setw(10) << nr;
         cout << setw(20) << mbr->getType();
         cout << setw(20) << mbr->getName();
@@ -238,9 +222,7 @@ void ftLogger_logStructTable(ftStruct *strc)
     }
 }
 
-
-
-string makeName(const char *name, size_t max)
+string makeName(const char* name, size_t max)
 {
     string rv = name;
     if (rv.size() > max - 2)
@@ -254,15 +236,13 @@ string makeName(const char *name, size_t max)
     return rv;
 }
 
-
-
-void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
+void ftLogger::log(ftStruct* fstrc, ftStruct* mstrc)
 {
     int A = fstrc->getMemberCount();
     int B = mstrc->getMemberCount();
     int C = skMax(A, B);
     int D = 0;
-    seperator();
+    separator();
     cout << left;
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << ' ';
@@ -274,7 +254,7 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
     cout << setw(10) << "Offset";
     cout << endl;
     skHexPrint::writeColor(CS_WHITE);
-    seperator();
+    separator();
 
     for (D = 0; D < C; ++D)
     {
@@ -304,7 +284,7 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
 
         cout << endl;
     }
-    seperator();
+    separator();
 
     skHexPrint::writeColor(CS_GREEN);
     cout << "Size in bytes:" << setw(17) << ' ';
@@ -316,60 +296,56 @@ void ftLogger::log(ftStruct *fstrc, ftStruct *mstrc)
     skHexPrint::writeColor(CS_WHITE);
 }
 
-
-void ftLogger::log(const ftName &name)
+void ftLogger::log(const ftName& name)
 {
-    seperator();
+    separator();
     skHexPrint::writeColor(CS_GREEN);
-    cout << "Name                 : " << name.m_name << endl;
+    cout << "Name                 : " << name.name << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
-    cout << "Hash                 : " << name.m_hash << endl;
-    cout << "Pointer Count        : " << name.m_ptrCount << endl;
-    cout << "Function pointer     : " << name.m_isFunctionPointer << endl;
-    cout << "Number Of Dimensions : " << name.m_numDimensions << endl;
+    cout << "Hash                 : " << name.hash << endl;
+    cout << "Pointer Count        : " << name.pointerCount << endl;
+    cout << "Function pointer     : " << name.isFunctionPointer << endl;
+    cout << "Number Of Dimensions : " << name.dimensionCount << endl;
     cout << "Dimension Size       : ";
 
-    for (int i = 0; i < skMin(name.m_numDimensions, FT_ARR_DIM_MAX); ++i)
+    for (int i = 0; i < skMin<SKint8>(name.dimensionCount, FileTools_MaxArrayDim); ++i)
     {
         if (i > 0)
             cout << ',' << ' ';
-        cout << name.m_dimensions[i];
+        cout << name.dimensions[i];
     }
     cout << endl;
     skHexPrint::writeColor(CS_WHITE);
 }
 
-
-void ftLogger::log(const ftType &type)
+void ftLogger::log(const ftType& type)
 {
-    seperator();
+    separator();
     skHexPrint::writeColor(CS_GREEN);
-    cout << "Name                 : " << type.m_name << endl;
+    cout << "Name                 : " << type.name << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
-    cout << "Hash                 : " << type.m_hash << endl;
-    cout << "Structure ID         : " << type.m_strcId << endl;
+    cout << "Hash                 : " << type.hash << endl;
+    cout << "Structure ID         : " << type.id << endl;
 }
 
-
-void ftLogger::log(const ftType &type, SKtype size)
+void ftLogger::log(const ftType& type, FTtype size)
 {
     cout << right << setw(10) << size << ' ';
     skHexPrint::writeColor(CS_LIGHT_GREY);
-    cout << left << type.m_name;
+    cout << left << type.name;
 
     cout << endl;
     skHexPrint::writeColor(CS_WHITE);
 }
 
-
-void ftLogger::logDiagnosticsCastHeader(const ftChunk &chunk,
-                                        ftStruct *     fstrc,
-                                        ftStruct *     mstrc)
+void ftLogger::logDiagnosticsCastHeader(const ftChunk& chunk,
+                                        ftStruct*      fstrc,
+                                        ftStruct*      mstrc)
 {
     newline(2);
-    seperator();
+    separator();
     log(chunk);
-    seperator();
+    separator();
     color(CS_GREEN);
     logF("Struct  : %s -> %s",
          fstrc->getName(),
@@ -377,9 +353,8 @@ void ftLogger::logDiagnosticsCastHeader(const ftChunk &chunk,
     log(fstrc, mstrc);
 }
 
-
-void ftLogger::logDiagnosticsCastMemberHeader(ftMember *dstmbr,
-                                              ftMember *srcmbr)
+void ftLogger::logDiagnosticsCastMemberHeader(ftMember* dstmbr,
+                                              ftMember* srcmbr)
 {
     newline();
     color(CS_DARKYELLOW);
@@ -392,63 +367,58 @@ void ftLogger::logDiagnosticsCastMemberHeader(ftMember *dstmbr,
          srcmbr->getOffset());
 }
 
-
-void ftLogger::logReadChunk(const ftChunk &chunk, const void *block, const SKsize &len)
+void ftLogger::logReadChunk(const ftChunk& chunk, const void* block, const SKsize& len)
 {
     newline();
     log(chunk);
-    seperator();
+    separator();
     log(block, len);
-    seperator();
+    separator();
 }
 
-
-void ftLogger::logSkipChunk(const ftChunk &chunk,
-                            ftStruct *     fstrc,
-                            const void *   block,
-                            const SKsize &len)
+void ftLogger::logSkipChunk(const ftChunk& chunk,
+                            ftStruct*      fstrc,
+                            const void*    block,
+                            const SKsize&  len)
 {
     newline();
     color(CS_RED);
     logF("Skipping Chunk for structure %s", fstrc->getName());
     newline();
     log(chunk);
-    seperator();
+    separator();
     log(block, len);
-    seperator();
+    separator();
 }
 
-
-void ftLogger::logUnresolvedStructure(ftMemoryChunk *bin, ftStruct *fstrc, ftStruct *mstrc)
+void ftLogger::logUnresolvedStructure(ftMemoryChunk* bin, ftStruct* fstrc, ftStruct* mstrc)
 {
-    seperator();
+    separator();
     logF("Failed to resolve both file and memory declarations for chunk:");
-    log(bin->m_chunk);
+    log(bin->chunk);
     logF("File   : %s", fstrc ? "Valid" : "Invalid");
     logF("Memory : %s", mstrc ? "Valid" : "Invalid");
 
     if (fstrc)
     {
         log(fstrc);
-        seperator();
-        log(bin->m_fblock, fstrc->getSizeInBytes());
+        separator();
+        log(bin->fileBlock, fstrc->getSizeInBytes());
     }
     if (mstrc)
     {
         log(mstrc);
-        seperator();
-        log(bin->m_mblock, mstrc->getSizeInBytes());
+        separator();
+        log(bin->memoryBlock, mstrc->getSizeInBytes());
     }
     newline(2);
 }
 
-
-
-void ftLogger::logInvalidInsert(ftMemoryChunk *bin)
+void ftLogger::logInvalidInsert(ftMemoryChunk* bin)
 {
-    seperator();
+    separator();
     logF("Failed to insert chunk");
-    log(bin->m_chunk);
-    seperator();
-    log(bin->m_fblock, bin->m_chunk.m_len);
+    log(bin->chunk);
+    separator();
+    log(bin->fileBlock, bin->chunk.length);
 }

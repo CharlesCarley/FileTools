@@ -26,7 +26,7 @@
 #ifndef _ftCompiler_h_
 #define _ftCompiler_h_
 
-#include "ftBuildInfo.h"
+#include "ftTableBuilder.h"
 
 class ftCompiler
 {
@@ -78,7 +78,7 @@ private:
 
     char*                  m_buffer;
     SKsize                m_pos;
-    ftBuildInfo*           m_build;
+    ftTableBuilder*           m_build;
     SKsize                m_start;
     ftPathArray            m_includes;
     ftStringPtrArray       m_namespaces, m_skip;

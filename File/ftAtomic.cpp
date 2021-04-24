@@ -24,9 +24,8 @@
 -------------------------------------------------------------------------------
 */
 #include "ftAtomic.h"
+#include "Utils/skPlatformHeaders.h"
 #include "ftHashTypes.h"
-#define FT_IN_SOURCE_FILE
-#include "ftPlatformHeaders.h"
 
 SKhash makeHash(const char* name)
 {
@@ -35,18 +34,18 @@ SKhash makeHash(const char* name)
     return ftCharHashKey(name).hash();
 }
 
-ftAtomic ftAtomicUtils::getPrimitiveType(SKhash typeKey)
+ftAtomic ftAtomicUtils::getPrimitiveType(const SKhash& typeKey)
 {
     ftAtomic res = ftAtomic::FT_ATOMIC_UNKNOWN;
     for (SKsize i = 0; i < NumberOfTypes && res == ftAtomic::FT_ATOMIC_UNKNOWN; ++i)
     {
-        if (Types[i].m_hash == typeKey)
-            res = Types[i].m_type;
+        if (Types[i].hash == typeKey)
+            res = Types[i].type;
     }
     return res;
 }
 
-bool ftAtomicUtils::canCast(SKhash typeKeyA, SKhash typeKeyB)
+bool ftAtomicUtils::canCast(const SKhash& typeKeyA, const SKhash& typeKeyB)
 {
     return isNumeric(typeKeyA) && isNumeric(typeKeyB);
 }
@@ -58,19 +57,19 @@ ftAtomic ftAtomicUtils::getPrimitiveType(const char* typeName)
     return getPrimitiveType(ftCharHashKey(typeName).hash());
 }
 
-bool ftAtomicUtils::isInteger(SKhash typeKey)
+bool ftAtomicUtils::isInteger(const SKhash& typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
     return tp < ftAtomic::FT_ATOMIC_FLOAT;
 }
 
-bool ftAtomicUtils::isReal(SKhash typeKey)
+bool ftAtomicUtils::isReal(const SKhash& typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
-    return tp == ftAtomic::FT_ATOMIC_FLOAT || tp == ftAtomic::FT_ATOMIC_DOUBLE;
+    return tp == ftAtomic::FT_ATOMIC_FLOAT || tp == ftAtomic::FT_ATOMIC_DOUBLE || tp == ftAtomic::FT_ATOMIC_SCALAR_T;
 }
 
-bool ftAtomicUtils::isNumeric(SKhash typeKey)
+bool ftAtomicUtils::isNumeric(const SKhash& typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
     return tp != ftAtomic::FT_ATOMIC_VOID && tp != ftAtomic::FT_ATOMIC_UNKNOWN;
@@ -137,7 +136,7 @@ void ftAtomicUtils::cast(char*    source,
                          char*    destination,
                          ftAtomic sourceType,
                          ftAtomic destinationType,
-                         SKsize  length)
+                         SKsize   length)
 {
     if (!source || !destination)
     {
@@ -145,7 +144,7 @@ void ftAtomicUtils::cast(char*    source,
         return;
     }
 
-    double  value = 0;
+    double value = 0;
     SKsize i     = 0;
 
     while (i < length)
@@ -196,12 +195,12 @@ void ftAtomicUtils::cast(char*    source,
 }
 
 void ftAtomicUtils::cast(char*    source,
-                         SKsize  srcOffs,
+                         SKsize   srcOffs,
                          char*    destination,
-                         SKsize  dstOffs,
+                         SKsize   dstOffs,
                          ftAtomic sourceType,
                          ftAtomic destinationType,
-                         SKsize  length)
+                         SKsize   length)
 {
     if (srcOffs != SK_NPOS && dstOffs != SK_NPOS)
     {

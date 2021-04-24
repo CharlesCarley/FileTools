@@ -23,9 +23,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define FT_IN_SOURCE_FILE
 #include "ftStreams.h"
-#include "ftPlatformHeaders.h"
+#include "Utils/skPlatformHeaders.h"
 
 #if FT_USE_ZLIB == 1
 #include "zconf.h"

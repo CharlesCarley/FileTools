@@ -25,6 +25,7 @@
 */
 #include "Blender.h"
 #include "ftBlend.h"
+#include "ftTable.h"
 #include "gtest/gtest.h"
 using namespace Blender;
 using namespace ftFlags;
@@ -45,6 +46,7 @@ GTEST_TEST(BlendFile, BasicLoad)
     fp.setCastFilter(reportFilter, sizeof(reportFilter) / sizeof(SKhash));
     const int status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
+    EXPECT_EQ(0, status);
 }
 
 GTEST_TEST(BlendFile, ExtractScene)
@@ -126,5 +128,32 @@ GTEST_TEST(BlendFile, IterateObjects)
             co = co->next;
         }
         EXPECT_EQ(cc->next, nullptr);
+    }
+}
+
+GTEST_TEST(BlendFile, AssertTypes)
+{
+    ftBlend   fp;
+    const int status = fp.load("Test.blend");
+    EXPECT_EQ(FS_OK, status);
+
+    ftTable* table = fp.getFileTable();
+    EXPECT_NE(table, nullptr);
+
+    const ftTable::Types& types = table->getTypes();
+    const SKuint32         nr    = table->getNumberOfTypes();
+
+    for (SKuint32 i = 0; i < nr; ++i)
+    {
+        const ftType& type = types[i];
+        if (i < table->getFirstStructType())
+            EXPECT_EQ(SK_NPOS32, type.id);
+        else
+        {
+            if (type.id != SK_NPOS32)
+            {
+                EXPECT_TRUE(type.id < table->getNumberOfStructs());
+            }
+        }
     }
 }

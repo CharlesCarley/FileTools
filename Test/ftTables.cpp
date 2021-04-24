@@ -46,7 +46,7 @@ GTEST_TEST(ftCompiler, Basic)
 
     ftLogger::log(stream.ptr(), stream.size());
 
-    ftTables tbl(sizeof(void*));
+    ftTable tbl(sizeof(void*));
     tbl.read(stream.ptr(), stream.size(), 0, 0);
 
     SKuint32 nr, i;
@@ -58,14 +58,14 @@ GTEST_TEST(ftCompiler, Basic)
     {
         const ftType& type = tbl.getTypeAt(i);
 
-        EXPECT_NE(nullptr, type.m_name);
-        EXPECT_NE(SK_NPOS, type.m_hash);
+        EXPECT_NE(nullptr, type.name);
+        EXPECT_NE(SK_NPOS, type.hash);
 
         // builtin types do not point to a structure
         if (i < compiler.getNumberOfBuiltinTypes())
-            EXPECT_EQ(type.m_strcId, SK_NPOS32);
+            EXPECT_EQ(type.id, SK_NPOS32);
         else
-            EXPECT_LT(type.m_strcId, tbl.getNumberOfStructs());
+            EXPECT_LT(type.id, tbl.getNumberOfStructs());
 
         ++i;
     }
@@ -76,10 +76,10 @@ GTEST_TEST(ftCompiler, Basic)
     {
         const ftName& name = tbl.getNameAt(i);
 
-        EXPECT_NE(nullptr, name.m_name);
+        EXPECT_NE(nullptr, name.name);
 
-        ftCharHashKey hk(name.m_name);
-        EXPECT_EQ(name.m_hash, hk.hash());
+        ftCharHashKey hk(name.name);
+        EXPECT_EQ(name.hash, hk.hash());
         ++i;
     }
 }
@@ -105,11 +105,11 @@ GTEST_TEST(ftCompiler, RebuildTest)
     compiler.writeStream(&stream);
     ftLogger::log(stream.ptr(), stream.size());
 
-    ftTables tbl(sizeof(void*));
+    ftTable tbl(sizeof(void*));
     status = tbl.read(stream.ptr(), stream.size(), 0, ftFlags::LF_DIAGNOSTICS);
     EXPECT_EQ(ftFlags::FS_OK, status);
 
-    ftTables::Structures::Iterator it = tbl.getStructIterator();
+    ftTable::Structures::Iterator it = tbl.getStructIterator();
     while (it.hasMoreElements())
     {
         ftStruct* structure = it.getNext();

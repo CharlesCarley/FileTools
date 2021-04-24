@@ -40,8 +40,8 @@ GTEST_TEST(ftAtomic, ftCharHashKey)
 #else
                 fmtString = "ftAtomicType (0x%08X, 0x%08X)\n";
 #endif
-                printf(fmtString, type1.m_hash, type2.m_hash);
-                EXPECT_NE(type1.m_hash, type2.m_hash);
+                printf(fmtString, type1.hash, type2.hash);
+                EXPECT_NE(type1.hash, type2.hash);
             }
         }
     }
@@ -132,15 +132,15 @@ GTEST_TEST(ftAtomic, Swap)
 {
     const SKsize srcElmSize = 8;
 
-    FBTByteInteger seed = {};
-    seed.m_byte[0]      = 51;
-    seed.m_byte[1]      = 26;
-    seed.m_byte[2]      = 37;
-    seed.m_byte[3]      = 98;
-    seed.m_byte[4]      = 89;
-    seed.m_byte[5]      = 73;
-    seed.m_byte[6]      = 62;
-    seed.m_byte[7]      = 15;
+    ftByteInteger seed = {};
+    seed.m_byte[0]     = 51;
+    seed.m_byte[1]     = 26;
+    seed.m_byte[2]     = 37;
+    seed.m_byte[3]     = 98;
+    seed.m_byte[4]     = 89;
+    seed.m_byte[5]     = 73;
+    seed.m_byte[6]     = 62;
+    seed.m_byte[7]     = 15;
 
     SKuint64 i64 = seed.m_ptr;
 
@@ -148,8 +148,8 @@ GTEST_TEST(ftAtomic, Swap)
     SKbyte* srcBPtr = (SKbyte*)&i64;
 
     memcpy(dstBuffer, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
-    FBTByteInteger before;
-    FBTByteInteger after;
+    ftByteInteger before;
+    ftByteInteger after;
     before.m_ptr = i64;
 
     ftEndianUtils::swap64((SKuint64*)&dstBuffer[0], 1);

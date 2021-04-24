@@ -32,16 +32,16 @@ ftToken::ftToken() :
 {
 }
 
-ftToken::ftToken(int id, const String& val) :
+ftToken::ftToken(int id, const String& value) :
     m_id(id),
-    m_value(val),
+    m_value(value),
     m_arrayConstant(0)
 {
 }
 
-ftToken::ftToken(const ftToken& tok) :
-    m_id(tok.m_id),
-    m_value(tok.m_value),
-    m_arrayConstant(tok.m_arrayConstant)
+ftToken::ftToken(const ftToken& token) :
+    m_id(token.m_id),
+    m_value(token.m_value),
+    m_arrayConstant(token.m_arrayConstant)
 {
 }

@@ -19,7 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define FT_IN_SOURCE_FILE
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -27,10 +26,11 @@
 #include "Utils/skStack.h"
 #include "Utils/skString.h"
 #include "Utils/skTimer.h"
-#include "ftCompiler.h"
 #include "ftMember.h"
-#include "ftPlatformHeaders.h"
+#include "Utils/skPlatformHeaders.h"
 #include "ftScanDNA.h"
+#include "ftStruct.h"
+#include "ftTable.h"
 
 typedef skArray<ftStruct*> StructArray;
 typedef skList<ftStruct*>  StructDeque;
@@ -44,16 +44,14 @@ struct ProgramInfo
     skString    outFile;
     skStream*   stream;
     void*       dna;
-    ftTables*   tables;
+    ftTable*   tables;
     char        header[13];
     bool        useNamespace;
     string      nameSpaceName;
-    bool        fixupBlend;
+    bool        fixBlendNaming;
     bool        initTypes;
     bool        writeHashCode;
-
-    // extra vars only valid in extract to file
-    string m_outName;
+    string      outName;  // only valid in extract to file
 };
 
 void writeFileHeader(ProgramInfo& ctx, ostream& out)
@@ -64,7 +62,6 @@ void writeFileHeader(ProgramInfo& ctx, ostream& out)
     string       name = ctx.inFile.c_str();
     const size_t last = name.find_last_of('/') + 1;
     name              = name.substr(last, name.size());
-
 
     out << "/*" << endl
         << endl;
@@ -80,7 +77,7 @@ void writeFileHeader(ProgramInfo& ctx, ostream& out)
 
     name = name.substr(0, name.find('.'));
 
-    ctx.m_outName = name.c_str();
+    ctx.outName = name.c_str();
     out << "#ifndef _" << name << "_h_" << endl;
     out << "#define _" << name << "_h_" << endl;
     out << endl;
@@ -91,7 +88,7 @@ void writeFileHeader(ProgramInfo& ctx, ostream& out)
         out << endl;
     }
 
-    if (ctx.fixupBlend)
+    if (ctx.fixBlendNaming)
     {
         out << "#ifdef near" << endl;
         out << "#undef near" << endl;
@@ -106,7 +103,7 @@ void writeFileHeader(ProgramInfo& ctx, ostream& out)
 
 void writeFileFooter(ProgramInfo& ctx, ostream& out)
 {
-    out << "#endif//_" << ctx.m_outName << "_h_" << endl;
+    out << "#endif//_" << ctx.outName << "_h_" << endl;
 }
 
 void writeIndent(ProgramInfo& ctx, ostream& out, int nr, int spacePerIndent = 4)
@@ -134,42 +131,42 @@ void writeStructure(ProgramInfo& ctx, ostream& out, ftStruct* structure)
     writeIndent(ctx, out, 1);
     out << "{" << endl;
 
-    SKtype* cs = ctx.tables->getStructAt(structure->getStructIndex());
+    FTtype* cs = ctx.tables->getStructAt(structure->getStructIndex());
 
     int maxLeft = -1;
     if (cs)
     {
-        const SKtype count = cs[1];
+        const FTtype count = cs[1];
         cs += 2;
-        for (SKtype i = 0; i < count; ++i, cs += 2)
+        for (FTtype i = 0; i < count; ++i, cs += 2)
         {
             const ftType& type = ctx.tables->getTypeAt(cs[0]);
 
-            maxLeft = skMax(maxLeft, (int)strlen(type.m_name));
+            maxLeft = skMax(maxLeft, (int)strlen(type.name));
         }
     }
 
     cs = ctx.tables->getStructAt(structure->getStructIndex());
     if (cs)
     {
-        const SKtype cnt = cs[1];
+        const FTtype cnt = cs[1];
         cs += 2;
-        for (SKtype i = 0; i < cnt; ++i, cs += 2)
+        for (FTtype i = 0; i < cnt; ++i, cs += 2)
         {
             const ftType& type = ctx.tables->getTypeAt(cs[0]);
             const ftName& name = ctx.tables->getNameAt(cs[1]);
 
             writeIndent(ctx, out, 2);
 
-            if (ctx.fixupBlend)
+            if (ctx.fixBlendNaming)
             {
-                if (string(type.m_name) == "anim")
-                    out << left << setw(maxLeft) << "Anim" << ' ' << name.m_name << ';' << endl;
+                if (string(type.name) == "anim")
+                    out << left << setw(maxLeft) << "Anim" << ' ' << name.name << ';' << endl;
                 else
-                    out << left << setw(maxLeft) << type.m_name << ' ' << name.m_name << ';' << endl;
+                    out << left << setw(maxLeft) << type.name << ' ' << name.name << ';' << endl;
             }
             else
-                out << left << setw(maxLeft) << type.m_name << ' ' << name.m_name << ';' << endl;
+                out << left << setw(maxLeft) << type.name << ' ' << name.name << ';' << endl;
         }
     }
     writeIndent(ctx, out, 1);
@@ -202,14 +199,14 @@ void writeHashCodes(ProgramInfo& ctx, ostream& out, const StructArray& structure
     out << endl;
 }
 
-void writeUnresolved(ProgramInfo& ctx, ostream& out, SKtype* typeNotFound)
+void writeUnresolved(ProgramInfo& ctx, ostream& out, FTtype* typeNotFound)
 {
     char*         typeName = ctx.tables->getTypeNameAt(typeNotFound[0]);
     const ftName& name     = ctx.tables->getNameAt(typeNotFound[1]);
 
-    if (name.m_ptrCount > 0)
+    if (name.pointerCount > 0)
     {
-        if (ctx.fixupBlend && string(typeName) == "anim")
+        if (ctx.fixBlendNaming && string(typeName) == "anim")
         {
             writeIndent(ctx, out, 1);
             out << "struct Anim" << endl;
@@ -241,15 +238,15 @@ void writeUnresolved(ProgramInfo& ctx, ostream& out, SKtype* typeNotFound)
     }
 }
 
-bool hasUnResolved(skArray<SKtype*>& unresolved, const SKtype* independent)
+bool hasUnResolved(skArray<FTtype*>& unresolved, const FTtype* independent)
 {
     bool found = false;
 
-    skArray<SKtype*>::Iterator it = unresolved.iterator();
+    skArray<FTtype*>::Iterator it = unresolved.iterator();
     while (!found && it.hasMoreElements())
     {
-        SKtype* type = it.getNext();
-        found         = type[0] == independent[0];
+        FTtype* type = it.getNext();
+        found        = type[0] == independent[0];
     }
     return found;
 }
@@ -259,25 +256,26 @@ bool structContains(ftStruct*    a,
                     StructArray& searchList,
                     StructArray& independent)
 {
-    ftTables* tables = a->getParent();
+    ftTable* tables = a->getOwner();
     bool      result = false;
     if (tables)
     {
-        SKtype* structure = tables->getStructAt(a->getStructIndex());
+        FTtype* structure = tables->getStructAt(a->getStructIndex());
         if (structure)
         {
-            const SKtype count = structure[1];
+            const FTtype count = structure[1];
             structure += 2;
-            for (SKtype i = 0; i < count && !result; ++i, structure += 2)
+            for (FTtype i = 0; i < count && !result; ++i, structure += 2)
             {
                 const ftType& type = tables->getTypeAt(structure[0]);
                 const ftName& name = tables->getNameAt(structure[1]);
 
-                if (type.m_strcId != SK_NPOS32)
+                if (type.id != SK_NPOS32)
                 {
-                    if (name.m_ptrCount <= 0)
+                    if (name.pointerCount <= 0)
                     {
-                        ftStruct* foundStruct = tables->findStructByName(type.m_name);
+                        ftCharHashKey chk(type.name);
+                        ftStruct* foundStruct = tables->findStructByName(chk);
 
                         if (foundStruct && foundStruct == b)
                         {
@@ -399,7 +397,7 @@ void organizeDependentStructs(StructArray& dependent, StructArray& independent)
 }
 
 void sortStructs(ProgramInfo&        ctx,
-                 skArray<SKtype*>&  unresolved,
+                 skArray<FTtype*>&   unresolved,
                  skArray<ftStruct*>& independent,
                  skArray<ftStruct*>& dependent)
 {
@@ -410,32 +408,32 @@ void sortStructs(ProgramInfo&        ctx,
     {
         ftStruct* cs = it.getNext();
 
-        SKtype* structure = ctx.tables->getStructAt(cs->getStructIndex());
+        FTtype* structure = ctx.tables->getStructAt(cs->getStructIndex());
         if (structure)
         {
-            const SKtype count = structure[1];
+            const FTtype count = structure[1];
             structure += 2;
 
             bool hasStructs           = false;
             bool hasNonPointerStructs = false;
 
-            for (SKtype i = 0; i < count; ++i, structure += 2)
+            for (FTtype i = 0; i < count; ++i, structure += 2)
             {
                 const ftType& type = ctx.tables->getTypeAt(structure[0]);
                 const ftName& name = ctx.tables->getNameAt(structure[1]);
 
-                if (type.m_strcId != SK_NPOS32 && name.m_ptrCount <= 0)
+                if (type.id != SK_NPOS32 && name.pointerCount <= 0)
                     hasNonPointerStructs = true;
 
-                if (type.m_strcId != SK_NPOS32)  // it's a valid struct
+                if (type.id != SK_NPOS32)  // it's a valid struct
                     hasStructs = true;
-                else if (name.m_ptrCount > 0)
+                else if (name.pointerCount > 0)
                 {
                     // if it's not a struct or an atomic type then it's unresolved.
-                    if (string(type.m_name) != "bool")
+                    if (string(type.name) != "bool")
                     {
                         const ftAtomic atomic = ftAtomicUtils::getPrimitiveType(
-                            ftCharHashKey(type.m_name).hash());
+                            ftCharHashKey(type.name).hash());
                         if (atomic == ftAtomic::FT_ATOMIC_UNKNOWN)
                         {
                             if (!hasUnResolved(unresolved, structure))
@@ -457,9 +455,9 @@ void sortStructs(ProgramInfo&        ctx,
 int extractToFile(ProgramInfo& ctx)
 {
     int       status = 0;
-    ftTables* tables = ctx.tables;
+    ftTable* tables = ctx.tables;
 
-    skArray<SKtype*>  unresolved;
+    skArray<FTtype*>   unresolved;
     skArray<ftStruct*> independent, dependent;
     sortStructs(ctx, unresolved, independent, dependent);
 
@@ -488,10 +486,10 @@ int extractToFile(ProgramInfo& ctx)
             writeForward(ctx, outStream, structure);
         }
 
-        skArray<SKtype*>::Iterator uit = unresolved.iterator();
+        skArray<FTtype*>::Iterator uit = unresolved.iterator();
         while (uit.hasMoreElements())
         {
-            SKtype* cur = uit.getNext();
+            FTtype* cur = uit.getNext();
             writeUnresolved(ctx, outStream, cur);
         }
         outStream << endl;
@@ -564,7 +562,7 @@ int parseCommandLine(ProgramInfo& ctx, int argc, char** argv)
                 ctx.nameSpaceName = argv[++i];
             }
             else if (*curArg == 'b')
-                ctx.fixupBlend = true;
+                ctx.fixBlendNaming = true;
             else if (*curArg == 's')
                 ctx.initTypes = true;
             else if (*curArg == 'c')
@@ -653,7 +651,7 @@ int main(int argc, char** argv)
             if (status == ftFlags::FS_OK)
             {
                 ctx.dna    = scanner.getDNA();
-                ctx.tables = new ftTables(scanner.is64Bit() ? 8 : 4);
+                ctx.tables = new ftTable(scanner.is64Bit() ? 8 : 4);
 
                 status = ctx.tables->read(ctx.dna,
                                           scanner.getLength(),

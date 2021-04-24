@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -31,6 +27,10 @@
 #include "ftHashTypes.h"
 #include "ftTypes.h"
 
+/// <summary>
+/// Base class for a file in this system.
+/// Derived classes should override the table methods and supply them to this class.
+/// </summary>
 class ftFile
 {
 public:
@@ -41,7 +41,7 @@ public:
 private:
     int         m_headerFlags;
     int         m_fileFlags;
-    const char* m_uhid;
+    const char* m_headerId;
     ftHeader    m_header;
     skString    m_curFile;
     void*       m_fileTableData;
@@ -56,40 +56,75 @@ protected:
     int          m_fileVersion;
     MemoryChunks m_chunks;
     ChunkMap     m_map;
-    ftTables*    m_memory;
-    ftTables*    m_file;
+    ftTable*     m_memory;
+    ftTable*     m_file;
 
 public:
-    ftFile(const char* uid);
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    /// <param name="header"></param>
+    explicit ftFile(const char* header);
     virtual ~ftFile();
 
-    int         load(const char* path, int mode = 0);
-    int         load(const void* memory, SKsize sizeInBytes);  //, int mode = 0);
+    /// <summary>
+    /// Attempts to load the file from the supplied file path.
+    /// </summary>
+    /// <param name="path">File system path to the file's location.</param>
+    /// <param name="mode">Mode to determine how the file should be read. It should be one of the ftFlags::ReadMode codes.</param>
+    /// <returns>A status code indicating the result. It should be one of the ftFlags::FileStatus codes.</returns>
+    int load(const char* path, int mode = 0);
+
+    /// <summary>
+    /// Attempts to load the file from the supplied memory.
+    /// </summary>
+    /// <param name="memory">A pointer to a block of memory that holds the file.</param>
+    /// <param name="sizeInBytes">The total size in bytes of the supplied block of memory.</param>
+    /// <returns>A status code indicating the result. It should be one of the ftFlags::FileStatus codes.</returns>
+    int load(const void* memory, SKsize sizeInBytes);
+
+    /// <summary>
+    /// Attempts to save the file to the supplied path.
+    /// </summary>
+    /// <param name="path">The output file system path.</param>
+    /// <param name="mode">Mode to determine how the file should be saved. It should be one of the ftFlags::ReadMode codes.</param>
+    /// <returns>A status code indicating the result. It should be one of the ftFlags::FileStatus codes.</returns>
     virtual int save(const char* path, int mode = 0);
 
-    ftTables* getMemoryTable(void);
+    /// <returns>Returns the current memory tables.</returns>
+    ftTable* getMemoryTable();
 
-    const ftHeader& getHeader(void) const
+    /// <returns>The file's complete header string</returns>
+    const ftHeader& getHeader() const
     {
         return m_header;
     }
 
-    const int& getVersion(void) const
+    /// <returns>Returns file's the integer version that
+    /// has been extracted from the header.</returns>
+    const int& getVersion() const
     {
         return m_fileVersion;
     }
 
-    const skString& getPath(void) const
+    /// <returns>
+    /// Returns the saved file path that was supplied with the call to load.
+    /// </returns>
+    const skString& getPath() const
     {
         return m_curFile;
     }
 
-    ftTables* getFileTable(void) const
+    /// <returns>
+    /// Returns the table that was saved in the file.
+    /// </returns>
+    ftTable* getFileTable() const
     {
         return m_file;
     }
 
-    MemoryChunks& getChunks(void)
+    /// <returns>A linked list of all chunks that have been extracted from the file.</returns>
+    MemoryChunks& getChunks()
     {
         return m_chunks;
     }
@@ -109,73 +144,101 @@ public:
         m_fileFlags |= v;
     }
 
-    // This enables a filter for structures.
-    // inclusive - true:  Filter everything except what is in the list.
-    // inclusive - false: Filter everything not in list.
-    //
-    // Internally struct types are stored by a hash of their unique type name.
-    //
-    // The filter list needs to be a zero terminated FBThash [] array.
-    //
-    // The hash function resides in the ftCharHashKey class
-    // Usage:
-    // FBThash filterList[] = {
-    //      ftCharHashKey("StructToFilter").hash(),
-    //      0
-    // };
+    /// <summary>
+    /// This enables a filter for structures.
+    /// </summary>
+    /// <param name="filter">The input filter.</param>
+    /// <param name="length">The number of structures in the filter</param>
+    /// <param name="inclusive">Sets whether the filter should include or exclude the supplied filter.</param>
+    /// <remarks>
+    /// Internally struct types are stored by a hash of their unique type name.
+    /// The filter list needs to be a null terminated SKhash [] array.
+    ///
+    /// The hash function resides in the ftCharHashKey class
+    /// Usage:
+    /// <code>
+    /// FBThash filterList[] = {
+    ///      ftCharHashKey("StructToFilter1").hash(),
+    ///      ftCharHashKey("StructToFilter2").hash(),
+    ///      nullptr
+    /// };
+    /// </code>
+    /// </remarks>
     void setFilterList(SKhash* filter, SKuint32 length, bool inclusive = false);
 
-    // use with dumping the results of casting
+    /// <summary>
+    /// When the diagnostic flag is set, this sets an inclusive output filter for supplied structures.
+    /// </summary>
+    /// <param name="filter">The structures that should be logged.</param>
+    /// <param name="length">The number of hash codes in the filter.</param>
     void setCastFilter(SKhash* filter, SKuint32 length);
 
     void serialize(skStream* stream, const char* id, SKuint32 code, SKsize len, void* writeData, int nr);
+
     void serialize(skStream* stream, const char* id, SKuint32 code, SKsize len, void* writeData);
-    void serialize(skStream* stream, SKtype index, SKuint32 code, SKsize len, void* writeData);
-    void serialize(skStream* stream, SKsize len, void* writeData, int nr = 1);
+
+    void serialize(skStream* stream, FTtype index, SKuint32 code, SKsize len, void* writeData) const;
+
+    void serialize(skStream* stream, SKsize len, void* writeData) const;
 
 protected:
-    bool isValidWriteData(void* writeData, SKsize len);
-    int  initializeTables(ftTables* tables);
-    int  initializeMemory(void);
+    bool isValidWriteData(void* writeData, const SKsize& len) const;
 
-    virtual void*  getTables(void)                            = 0;
-    virtual SKsize getTableSize(void)                         = 0;
-    virtual int    notifyDataRead(void* p, const ftChunk& id) = 0;
-    virtual int    serializeData(skStream* stream)            = 0;
+    int initializeTables(ftTable* tables);
+
+    int initializeMemory();
+
+    virtual void* getTables() = 0;
+
+    virtual SKsize getTableSize() = 0;
+
+    virtual int notifyDataRead(void* p, const ftChunk& id) = 0;
+
+    virtual int serializeData(skStream* stream) = 0;
 
 private:
-    bool searchFilter(const SKhash* searchIn, const SKhash& searchFor, const SKint32& len);
-    void setFilter(SKhash*& dest, SKint32& destLen, SKhash* filter, SKint32 length);
+    static bool searchFilter(const SKhash* searchIn, const SKhash& searchFor, const SKint32& len);
+
+    static void setFilter(SKhash*& dest, SKint32& destLen, SKhash* filter, SKint32 length);
 
     template <typename BaseType>
     void castPointer(SKsize*& dstPtr, SKsize* srcPtr, SKsize arrayLen);
 
-    void* findPointer(const ftPointerHashKey& iptr);
-    void* findPointer(const SKsize& iptr);
+    void* findPointer(const ftPointerHashKey& iPtr);
 
-    ftMemoryChunk*   findBlock(const SKsize& iptr);
+    void* findPointer(const SKsize& iPtr);
+
+    ftMemoryChunk* findBlock(const SKsize& iPtr);
+
     static skStream* openStream(const char* path, int mode);
-    bool             skip(const SKhash& id);
+
+    bool skip(const SKhash& id) const;
 
     void serializeChunk(skStream* stream,
                         SKuint32  code,
                         SKuint32  nr,
                         SKuint32  typeIndex,
                         SKsize    len,
-                        void*     writeData);
+                        void*     writeData) const;
 
-    void        handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
-    void        insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, bool addToRebuildList, int& status);
+    void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
+
+    void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, bool addToRebuildList, int& status);
+
     static void freeChunk(ftMemoryChunk*& chunk);
 
-    int runTableChecks(ftTables* check) const;
+    int runTableChecks(ftTable* check) const;
 
-    void clearStorage(void);
+    void clearStorage();
 
     int parseHeader(skStream* stream);
+
     int parseStreamImpl(skStream* stream);
+
     int preScan(skStream* stream);
+
     int rebuildStructures();
+
     int allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, const SKsize& len, bool zero);
 
     void castMember(
@@ -211,7 +274,7 @@ private:
         SKsize*&  dstPtr,
         ftMember* src,
         SKsize*&  srcPtr,
-        int&      status);
+        int&      status) const;
 
     void castAtomicMemberArray(
         ftMember* dst,
@@ -227,10 +290,11 @@ private:
         SKbyte*&  srcPtr,
         int&      status);
 
-    ftStruct* findInTable(ftStruct* fileStruct, ftTables* sourceTable, ftTables* findInTable);
+    static ftStruct* findInTable(ftStruct* findStruct, ftTable* sourceTable, ftTable* findInTable);
 
-    ftStruct* findInMemoryTable(ftStruct* fileStruct);
-    ftStruct* findInFileTable(ftStruct* memoryStruct);
+    ftStruct* findInMemoryTable(ftStruct* fileStruct) const;
+
+    ftStruct* findInFileTable(ftStruct* memoryStruct) const;
 };
 
 #endif  //_ftFile_h_

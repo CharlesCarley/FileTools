@@ -40,7 +40,7 @@
 
 #define FT_INLINE SK_INLINE
 
-using SKtype        = SKuint16;
+using FTtype        = SKuint16;
 const SKhash NoHash = SK_MKMX(SKhash);
 
 #ifdef ftSCALAR_DOUBLE
@@ -128,44 +128,90 @@ public:
 #define ftCharEqL(a, b, l) ((a && b) && (*a == *b) && !memcmp(a, b, l))
 #define ftStrLen(a) ::strlen(a)
 
-#define ftFixedString skFixedString
-
+/// <summary>
+/// Fixed character array for the file header.
+/// </summary>
 typedef skFixedString<12> ftHeader;
 
-typedef union FBTByteInteger
+/// <summary>
+/// Utility union to split a 64 bit integer into smaller bytes.
+/// </summary>
+union ftByteInteger
 {
     SKuint64 m_ptr;
     SKuint32 m_int[2];
     SKuint16 m_short[4];
     SKuint8  m_byte[8];
-} FBTByteInteger;
+};
 
 class skStream;
-class ftTables;
+class ftTable;
 class ftStruct;
 struct ftName;
 class ftMember;
-class ftTables;
+class ftTable;
 class ftStruct;
 
+/// <summary>
+/// Grouping namespace for flags
+/// </summary>
 namespace ftFlags
 {
+    /// <summary>
+    /// Enumerated values for the file's header string.
+    /// </summary>
     enum FileMagic
     {
-        FM_BIG_ENDIAN    = 0x56,
+        /// <summary>
+        /// Indicates that the file was saved on a big endian platform.
+        /// </summary>
+        FM_BIG_ENDIAN = 0x56,
+        /// <summary>
+        /// Indicates that the file was saved on a big endian platform.
+        /// </summary>
         FM_LITTLE_ENDIAN = 0x76,
-        FM_32_BIT        = 0x5F,
-        FM_64_BIT        = 0x2D,
-        HEADER_OFFSET    = 0x0C,
+        /// <summary>
+        /// Indicates that the file was saved on a 32bit platform.
+        /// </summary>
+        FM_32_BIT = 0x5F,
+        /// <summary>
+        /// Indicates that the file was saved on a 64bit platform.
+        /// </summary>
+        FM_64_BIT = 0x2D,
+
+        /// <summary>
+        /// Offset to the end of the file's header.
+        /// </summary>
+        HEADER_OFFSET = 0x0C,
     };
 
+    /// <summary>
+    /// Return status codes
+    /// </summary>
     enum FileStatus
     {
-        FS_STATUS_MIN = -18,
-        FS_LINK_FAILED,
+        /// <summary>
+        /// Start code for enumerated values.
+        /// </summary>
+        FS_STATUS_MIN = -17,
+
+        /// <summary>
+        /// Invalid insert.
+        /// This is set when inserting a chunk into the pointer lookup table.
+        /// </summary>
         FS_INV_INSERT,
+
+        /// <summary>
+        /// Invalid allocation.
+        /// Used to catch null values that are returned by malloc.
+        /// </summary>
         FS_BAD_ALLOC,
+
+        /// <summary>
+        /// Invalid Value.
+        /// </summary>
         FS_INV_VALUE,
+
         FS_INV_SIZE,
         FS_DUPLICATE_BLOCK,
         FS_INV_READ,
@@ -182,17 +228,17 @@ namespace ftFlags
         RS_BAD_ALLOC,
         RS_MIS_ALIGNED,
 
-        // This should always be zero
-        // until < 0 tests are removed
-        // and replaced with != FS_OK
+        /// This should always be zero
+        /// until < 0 tests are removed
+        /// and replaced with != FS_OK
         FS_OK,
     };
 
-    enum ParseMode
+    enum ReadMode
     {
-        PM_UNCOMPRESSED = 0,
-        PM_COMPRESSED,
-        PM_READTOMEMORY,
+        RM_UNCOMPRESSED = 0,
+        RM_COMPRESSED,
+        RM_READ_FROM_MEMORY,
     };
 
     enum FileHeader
@@ -222,16 +268,16 @@ namespace ftFlags
 
     enum LinkerIssues
     {
-        LNK_OK              = 0,
-        LNK_ASSERT          = (1 << 0),
-        LNK_ALIGNEMENT2     = (1 << 1),
-        LNK_ALIGNEMENT4     = (1 << 2),
-        LNK_ALIGNEMENT8     = (1 << 3),
-        LNK_ALIGNEMENTS     = (1 << 4),
-        LNK_ALIGNEMENTP     = (1 << 5),
-        LNK_UNKNOWN         = (1 << 6),
-        LNK_UNDEFINED_TYPES = (1 << 7),
-        LNK_DUPLICATE_TYPES = (1 << 8)
+        LNK_OK              = 0x000,
+        LNK_ASSERT          = 0x001,
+        LNK_ALIGNMENT_2     = 0x002,
+        LNK_ALIGNMENT_4     = 0x004,
+        LNK_ALIGNMENT_8     = 0x008,
+        LNK_ALIGNMENT_S     = 0x010,
+        LNK_ALIGNMENT_P     = 0x020,
+        LNK_UNKNOWN         = 0x040,
+        LNK_UNDEFINED_TYPES = 0x080,
+        LNK_DUPLICATE_TYPES = 0x100
     };
 
     enum WriteMode
@@ -245,17 +291,17 @@ namespace ftFlags
         FT_KEEP_GOING = -2,
         FT_NULL_TOKEN = -1,
         FT_EOF,
-        FT_COMMA    = ',',
-        FT_POINTER  = '*',
-        FT_LBRACE   = '[',
-        FT_COLON    = ':',
-        FT_RBRACE   = ']',
-        FT_LPARN    = '(',
-        FT_RPARN    = ')',
-        FT_LBRACKET = '{',
-        FT_RBRACKET = '}',
-        FT_TERM     = ';',
-        FT_ID       = 256,
+        FT_COMMA         = ',',
+        FT_POINTER       = '*',
+        FT_L_BRACE       = '[',
+        FT_COLON         = ':',
+        FT_RBRACE        = ']',
+        FT_L_PARENTHESIS = '(',
+        FT_R_PARENTHESIS = ')',
+        FT_L_BRACKET     = '{',
+        FT_R_BRACKET     = '}',
+        FT_TERM          = ';',
+        FT_ID            = 256,
         FT_CHAR,
         FT_SHORT,
         FT_INTEGER,
@@ -287,15 +333,15 @@ namespace ftFlags
 
 }  // namespace ftFlags
 
-typedef skFixedString<272>       ftPath;
-typedef skFixedString<FT_MAX_ID> ftId;
-typedef int                      ftArraySlots[FT_ARR_DIM_MAX];
-typedef void*                    ftParser;
-typedef skArray<ftId>            ftStringPtrArray;
-typedef skHashTable<ftId, ftId>  ftStringPtrTable;
-typedef skArray<ftPath>          ftPathArray;
+typedef skFixedString<272>                    ftPath;
+typedef skFixedString<FileTools_MaxCharArray> ftId;
+typedef int                                   ftArraySlots[FileTools_MaxArrayDim];
+typedef void*                                 ftParser;
+typedef skArray<ftId>                         ftStringPtrArray;
+typedef skHashTable<ftId, ftId>               ftStringPtrTable;
+typedef skArray<ftPath>                       ftPathArray;
 
-class ftBuildInfo;
+class ftTableBuilder;
 class ftScanner;
 class ftToken;
 

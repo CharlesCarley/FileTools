@@ -45,9 +45,7 @@ configure_file(
 
 set(File_SRC
     ftAtomic.cpp
-    ftBuildInfo.cpp
-    ftBuildMember.cpp
-    ftBuildStruct.cpp
+    ftTableBuilder.cpp
     ftChunk.cpp
     ftCompiler.cpp
     ftEndianUtils.cpp
@@ -58,16 +56,14 @@ set(File_SRC
     ftScanner.cpp
     ftStreams.cpp
     ftStruct.cpp
-    ftTables.cpp
+    ftTable.cpp
     ftToken.cpp
     ftTypes.cpp
 )
 
 set(File_HDR
     ftAtomic.h
-    ftBuildInfo.h
-    ftBuildMember.h
-    ftBuildStruct.h
+    ftTableBuilder.h
     ftChunk.h
     ftCompiler.h
     ftConfig.h
@@ -77,12 +73,11 @@ set(File_HDR
     ftHashTypes.h
     ftLogger.h
     ftMember.h
-    ftPlatformHeaders.h
     ftScanDNA.h
     ftScanner.h
     ftStreams.h
     ftStruct.h
-    ftTables.h
+    ftTable.h
     ftToken.h
     ftTypes.h
 )

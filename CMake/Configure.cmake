@@ -30,6 +30,7 @@ option(FileTools_BUILD_DECOMPILER     "Build the table decompiler." ON)
 option(FileTools_BUILD_RECOMPILE_TEST "Build the Decompile/Recompile test." OFF)
 option(FileTools_BLEND_FILE           "Build the Blend file loader." OFF)
 option(FileTools_BLEND_TEST           "Builds a test .blend program." OFF)
+option(FileTools_BUILD_DOCS           "Builds documentation." OFF)
 
 set(BUILD_GMOCK   OFF CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)

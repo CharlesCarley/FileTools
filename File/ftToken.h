@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -28,61 +24,107 @@
 
 #include "ftTypes.h"
 
+/// <summary>
+/// Lookup table for common c/c++ keywords and builtin data types.
+/// </summary>
 struct ftKeywordTable
 {
-    const char* m_name;
-    int         m_len;
-    int         m_token;
+    /// <summary>
+    /// Defines the name of the keyword.
+    /// </summary>
+    const char* name;
+
+    /// <summary>
+    /// Defines the length  of the keyword name.
+    /// </summary>
+    int len;
+
+    /// <summary>
+    /// Defines the enumerated TokenID for the keyword.
+    /// </summary>
+    int token;
 };
 
+/// <summary>
+/// Is a temporary data storage class to store a c/c++ language semantic.
+/// It is used when extracting member data with ftScanner.
+/// </summary>
 class ftToken
 {
 public:
-    typedef ftFixedString<FT_MAX_ID> String;
+    typedef skFixedString<FileTools_MaxCharArray> String;
+    friend class ftScanner;
 
 private:
     int    m_id;
     String m_value;
     int    m_arrayConstant;
 
-public:
-    ftToken();
-    ftToken(int id, const String& val);
-    ftToken(const ftToken& tok);
+    void setTokenId(int token)
+    {
+        m_id = token;
+    }
 
-    int getToken() const
+    void setArrayLen(int arrayLength)
+    {
+        m_arrayConstant = arrayLength;
+    }
+
+public:
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    ftToken();
+
+    /// <summary>
+    /// Constructs a token from an id and the string representation of the id.
+    /// </summary>
+    /// <param name="id">Should be one of the TokenID values.</param>
+    /// <param name="value">Should be a character array with a size less than FT_MAX_ID.</param>
+    ftToken(int id, const String& value);
+
+    /// <summary>
+    /// Definition for a copy constructor.
+    /// </summary>
+    /// <param name="token">A const reference to the token that will be copied into class members.</param>
+    ftToken(const ftToken& token);
+
+    /// <summary>
+    /// Gets the token identifier.
+    /// </summary>
+    /// <returns>The integer value of the token. The value should be one of ftFlags::TokenID enumerated values.</returns>
+    int getTokenId() const
     {
         return m_id;
     }
 
-    void setToken(int tok)
-    {
-        m_id = tok;
-    }
-
+    /// <summary>
+    /// Gets a const reference to the string data for this token.
+    /// </summary>
     const String& getValue() const
     {
         return m_value;
     }
 
-    const String& getConstRef() const
-    {
-        return m_value;
-    }
-
+    /// <summary>
+    /// Gets a writable reference to the string data for this token.
+    /// </summary>
     String& getRef()
     {
         return m_value;
     }
 
+    /// <summary>
+    /// Gets the defined array size of c/c++ data type.
+    /// </summary>
+    /// <remarks>
+    /// If the type is not defined as an array in c/c++, the array length
+    /// is defined to 1. Otherwise, the value that is returned should be less
+    /// than or equal to the FT_ARRAY_DIM_MAX value.
+    /// </remarks>
     int getArrayLen() const
     {
         return m_arrayConstant;
-    }
-
-    void setArrayLen(int alen)
-    {
-        m_arrayConstant = alen;
     }
 };
 

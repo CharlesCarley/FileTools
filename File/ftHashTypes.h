@@ -27,48 +27,66 @@
 #define _ftHashTypes_h_
 
 #include "Utils/skHash.h"
-#include "ftTypes.h"
+#include "ftConfig.h"
 
 
+/// <summary>
+/// Utility class to store a cached char hashed key. 
+/// </summary>
 class ftCharHashKey
 {
 protected:
-    char*           m_key;
+    char*          m_key;
     mutable SKhash m_hash;
 
 public:
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     ftCharHashKey() :
         m_key(nullptr),
         m_hash(SK_NPOS)
     {
     }
 
-
-    ftCharHashKey(char* k) :
-        m_key(k),
+    /// <summary>
+    /// Construct from a character pointer
+    /// </summary>
+    /// <param name="pointer">The character pointer to hash.</param>
+    explicit ftCharHashKey(char* pointer) :
+        m_key(pointer),
         m_hash(SK_NPOS)
     {
         (void)hash();
     }
 
-
-    ftCharHashKey(const char* k) :
-        m_key(const_cast<char*>(k)),
+    /// <summary>
+    /// Construct from a const character pointer
+    /// </summary>
+    /// <param name="pointer">The character pointer to hash.</param>
+    explicit ftCharHashKey(const char* pointer) :
+        m_key(const_cast<char*>(pointer)),
         m_hash(SK_NPOS)
     {
         (void)hash();
     }
 
-
-    ftCharHashKey(const ftCharHashKey& k) :
-        m_key(k.m_key),
+    /// <summary>
+    /// Default copy constructor.
+    /// Copies the other class's key and rehashes the internal key. 
+    /// </summary>
+    /// <param name="other">The character ftCharHashKey to copy.</param>
+    ftCharHashKey(const ftCharHashKey& other) :
+        m_key(other.m_key),
         m_hash(SK_NPOS)
     {
         (void)hash();
     }
 
-
-    SKhash hash(void) const
+    /// <summary>
+    /// Computes the hash of the internal key and remembers it then returns the result.
+    /// </summary>
+    SKhash hash() const
     {
         if (m_key == nullptr || !*m_key)
             return SK_NPOS;
@@ -77,71 +95,95 @@ public:
         if (m_hash != SK_NPOS)
             return m_hash;
 
-        m_hash = skHash(m_key, FT_MAX_ID);
+        m_hash = skHash(m_key, FileTools_MaxCharArray);
         return m_hash;
     }
 
+    /// <summary>
+    /// Provides access to the internal character pointer that was supplied during class construction.
+    /// </summary>
+    /// <returns>The internal key.</returns>
     const char* key() const
     {
         return m_key;
     }
 
-    bool operator==(const ftCharHashKey& v) const
+    /// <summary>
+    /// Tests for equality using the computed hashes. 
+    /// </summary>
+    /// <param name="rhs"></param>
+    /// <returns></returns>
+    bool operator==(const ftCharHashKey& rhs) const
     {
-        return hash() == v.hash();
+        return hash() == rhs.hash();
     }
 
-    bool operator!=(const ftCharHashKey& v) const
+
+    /// <summary>
+    /// Tests for inequality using the computed hashes.
+    /// </summary>
+    /// <param name="rhs"></param>
+    /// <returns></returns>
+    bool operator!=(const ftCharHashKey& rhs) const
     {
-        return hash() != v.hash();
+        return hash() != rhs.hash();
     }
 
-    bool operator==(const SKhash& v) const
+
+    /// <summary>
+    /// Tests for equality using the computed hash and a key computed elsewhere.
+    /// </summary>
+    /// <param name="rhs"></param>
+    /// <returns></returns>
+    bool operator==(const SKhash& rhs) const
     {
-        return hash() == v;
+        return hash() == rhs;
     }
 
-    bool operator!=(const SKhash& v) const
+    /// <summary>
+    /// Tests for inequality using the computed hash and a key computed elsewhere.
+    /// </summary>
+    /// <param name="rhs"></param>
+    /// <returns></returns>
+    bool operator!=(const SKhash& rhs) const
     {
-        return hash() != v;
+        return hash() != rhs;
     }
 };
-
 
 class ftPointerHashKey
 {
 protected:
-    void*           m_key;
+    void*          m_key;
     mutable SKhash m_hash;
 
 public:
     ftPointerHashKey() :
-        m_key(0),
+        m_key(nullptr),
         m_hash(SK_NPOS)
     {
     }
 
-
-    ftPointerHashKey(void* k) :
+    explicit ftPointerHashKey(void* k) :
         m_key(k),
         m_hash(SK_NPOS)
     {
-        hash();
+        (void)hash();
     }
 
-    ftPointerHashKey(SKsize k) :
+    explicit ftPointerHashKey(SKsize k) :
         m_key((void*)k),
         m_hash(SK_NPOS)
     {
-        hash();
+        (void)hash();
     }
 
     ftPointerHashKey(const ftPointerHashKey& k) :
         m_key(k.m_key),
         m_hash(k.m_hash)
     {
+        (void)hash();
     }
-
 
     SKhash hash(void) const
     {
@@ -152,8 +194,6 @@ public:
         if (m_hash != SK_NPOS)
             return m_hash;
 
-        //std::hash<void*> hk;
-        //m_hash = hk((void*)m_key);
         m_hash = skHash(m_key);
         return m_hash;
     }
@@ -186,6 +226,5 @@ public:
 
 extern SKhash skHash(const ftCharHashKey& hk);
 extern SKhash skHash(const ftPointerHashKey& hk);
-
 
 #endif  //_ftHashTypes_h_

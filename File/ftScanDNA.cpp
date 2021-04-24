@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -23,45 +19,40 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define FT_IN_SOURCE_FILE
-#include "ftPlatformHeaders.h"
-
 #include "ftScanDNA.h"
+#include "Utils/skPlatformHeaders.h"
 #include "ftChunk.h"
 #include "ftEndianUtils.h"
 #include "ftLogger.h"
-#include "ftTables.h"
+#include "ftTable.h"
 
 using namespace ftFlags;
 using namespace ftEndianUtils;
 
-
 ftScanDNA::ftScanDNA() :
-    m_foundBlock(0),
+    m_foundBlock(nullptr),
     m_foundLen(0),
     m_headerFlags(0)
 {
 }
 
-ftScanDNA::~ftScanDNA()
-{
-}
+ftScanDNA::~ftScanDNA() = default;
 
-int ftScanDNA::findHeaderFlags(skStream *stream)
+
+int ftScanDNA::findHeaderFlags(skStream* stream)
 {
     int status = FS_OK;
 
     char  buf[13] = {};
-    char *magic;
 
-    SKsize read = stream->read(buf, 12);
+    const SKsize read = stream->read(buf, 12);
     if (read != SK_NPOS && read > 0)
     {
-        magic = &buf[7];
+        char* magic = &buf[7];
 
         if (*magic == FM_64_BIT || *magic == FM_32_BIT)
         {
-            if (*(magic++) == FM_64_BIT)
+            if (*magic == FM_64_BIT)
             {
                 m_headerFlags |= FH_CHUNK_64;
                 if (FT_VOID4)
@@ -70,19 +61,19 @@ int ftScanDNA::findHeaderFlags(skStream *stream)
             else if (FT_VOID8)
                 m_headerFlags |= FH_VAR_BITS;
 
-            char endian = *(magic++);
+            const char endian = *++magic;
             if (endian == FM_BIG_ENDIAN || endian == FM_LITTLE_ENDIAN)
             {
-                int current = (int)getEndian();
+                const int current = (int)getEndian();
 
                 if (endian == FM_BIG_ENDIAN)
                 {
-                    if (current == ftEndian::FT_ENDIAN_IS_LITTLE)
+                    if (current == FT_ENDIAN_IS_LITTLE)
                         m_headerFlags |= FH_ENDIAN_SWAP;
                 }
                 else if (endian == FM_LITTLE_ENDIAN)
                 {
-                    if (current == ftEndian::FT_ENDIAN_IS_BIG)
+                    if (current == FT_ENDIAN_IS_BIG)
                         m_headerFlags |= FH_ENDIAN_SWAP;
                 }
                 else
@@ -103,32 +94,31 @@ int ftScanDNA::findHeaderFlags(skStream *stream)
     return status;
 }
 
-int ftScanDNA::scan(skStream *stream)
+int ftScanDNA::scan(skStream* stream)
 {
     int         status = FS_OK;
-    SKsize     bytesRead;
-    ftChunkScan scan = {0, 0};
+    ftChunkScan scan   = {0, 0};
 
-    while (scan.m_code != ftIdNames::ENDB &&
-           scan.m_code != ftIdNames::DNA1 &&
+    while (scan.code != ftIdNames::ENDB &&
+           scan.code != ftIdNames::DNA1 &&
            status == FS_OK && !stream->eof())
     {
-        bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags);
+        const SKsize bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags);
         if (bytesRead <= 0 || bytesRead == SK_NPOS)
             status = FS_INV_READ;
-        else if (scan.m_code != ftIdNames::ENDB)
+        else if (scan.code != ftIdNames::ENDB)
         {
-            if (scan.m_code == ftIdNames::DNA1)
+            if (scan.code == ftIdNames::DNA1)
             {
                 // This block needs to stay alive as long as m_file is valid.
                 // The names of the types and the names of the type-name
                 // declarations are referenced out of this block.
-                void *found = ::malloc(scan.m_len);
+                void* found = malloc(scan.length);
                 if (!found)
                     status = FS_BAD_ALLOC;
                 else
                 {
-                    if (stream->read(found, scan.m_len) <= 0)
+                    if (stream->read(found, scan.length) <= 0)
                     {
                         free(found);
                         status = FS_INV_READ;
@@ -136,15 +126,15 @@ int ftScanDNA::scan(skStream *stream)
                     else
                     {
                         m_foundBlock = found;
-                        m_foundLen   = scan.m_len;
+                        m_foundLen   = scan.length;
                     }
                 }
             }
             else
             {
-                if (scan.m_len > 0 && scan.m_len != SK_NPOS32)
+                if (scan.length > 0 && scan.length != SK_NPOS32)
                 {
-                    if (!stream->seek(scan.m_len, SEEK_CUR))
+                    if (!stream->seek(scan.length, SEEK_CUR))
                         status = FS_INV_READ;
                 }
                 else
@@ -155,8 +145,7 @@ int ftScanDNA::scan(skStream *stream)
     return status;
 }
 
-
-bool ftScanDNA::is64Bit()
+bool ftScanDNA::is64Bit() const
 {
-    return (m_headerFlags & ftFlags::FH_CHUNK_64) != 0;
+    return (m_headerFlags & FH_CHUNK_64) != 0;
 }

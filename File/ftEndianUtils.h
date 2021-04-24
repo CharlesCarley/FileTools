@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -28,38 +24,109 @@
 
 #include "ftTypes.h"
 
-
-typedef enum ftEndian
+/// <summary>
+/// Enumerated value for handling byte order
+/// </summary>
+enum ftEndian
 {
     FT_ENDIAN_IS_BIG    = 0,
     FT_ENDIAN_IS_LITTLE = 1,
     FT_ENDIAN_NATIVE,
-} ftEndian;
+};
 
-typedef union ftEndianTest {
-    SKbyte  bo[4];
+/// <summary>
+/// Union to test the byte order.
+/// </summary>
+union ftEndianTest
+{
+    SKbyte bo[4];
     SKint32 test;
-} ftEndianTest;
+};
 
 namespace ftEndianUtils
 {
-    // Swap64 needs 8 bytes to switch endian.
-    // If there is ever a need to swap more than eight bytes
-    // at a time this will have to change
-    const SKsize MaxSwapSpace = 8; 
+    const SKsize MaxSwapSpace = 8;
 
-    extern ftEndian  getEndian(void);
-    extern bool      isEndian(const ftEndian& endian);
+    /// <summary>
+    /// Returns the current platforms byte order.
+    /// </summary>
+    /// <returns>The order if the MSB</returns>
+    extern ftEndian getEndian();
+
+    /// <summary>
+    /// Tests the current platform's byte order against
+    /// the supplied argument.
+    /// </summary>
+    /// <param name="endian">The desired byte order to test.</param>
+    /// <returns>
+    /// True if the current platform matches the supplied argument otherwise
+    /// returns false.
+    /// </returns>
+    extern bool isEndian(const ftEndian& endian);
+
+    /// <summary>
+    /// Swaps the supplied 16bit unsigned integer.
+    /// </summary>
+    /// <param name="in">The input integer that should be swapped.</param>
+    /// <returns>A swapped copy of the input.</returns>
     extern SKuint16 swap16(SKuint16 in);
-    extern SKuint32 swap32(const SKuint32& in);
-    extern SKint16  swap16(SKint16 in);
-    extern SKint32  swap32(const SKint32& in);
-    extern SKuint64 swap64(const SKuint64& in);
-    extern void      swap16(SKuint16* sp, SKsize len);
-    extern void      swap32(SKuint32* ip, SKsize len);
-    extern void      swap64(SKuint64* dp, SKsize len);
-    extern SKint64  swap64(const SKint64& in);
-};
 
+    /// <summary>
+    /// Swaps the supplied 32bit unsigned integer.
+    /// </summary>
+    /// <param name="in">The input integer that should be swapped.</param>
+    /// <returns>A swapped copy of the input.</returns>
+    extern SKuint32 swap32(const SKuint32& in);
+
+    /// <summary>
+    /// Swaps the supplied 16bit signed integer.
+    /// </summary>
+    /// <param name="in">The input integer that should be swapped.</param>
+    /// <returns>A swapped copy of the input.</returns>
+    extern SKint16 swap16(SKint16 in);
+
+    /// <summary>
+    /// Swaps the supplied 32bit signed integer.
+    /// </summary>
+    /// <param name="in">The input integer that should be swapped.</param>
+    /// <returns>A swapped copy of the input.</returns>
+    extern SKint32 swap32(const SKint32& in);
+
+    /// <summary>
+    /// Swaps the supplied 64bit unsigned integer.
+    /// </summary>
+    /// <param name="in">The input integer that should be swapped.</param>
+    /// <returns>A swapped copy of the input.</returns>
+    extern SKuint64 swap64(const SKuint64& in);
+
+    /// <summary>
+    /// Swaps the supplied 64bit signed integer.
+    /// </summary>
+    /// <param name="in">The input integer that should be swapped.</param>
+    /// <returns>A swapped copy of the input.</returns>
+    extern SKint64 swap64(const SKint64& in);
+
+    /// <summary>
+    /// Preforms a swap on the supplied array of 16bit unsigned integers.
+    /// </summary>
+    /// <param name="sp">The input integer array that should be swapped.</param>
+    /// <param name="len">The number of elements in the array.</param>
+    extern void swap16(SKuint16* sp, SKsize len);
+
+    /// <summary>
+    /// Preforms a swap on the supplied array of 32bit unsigned integers.
+    /// </summary>
+    /// <param name="ip">The input integer array that should be swapped.</param>
+    /// <param name="len">The number of elements in the array.</param>
+    extern void swap32(SKuint32* ip, SKsize len);
+
+    /// <summary>
+    /// Preforms a swap on the supplied array of 64bit unsigned integers.
+    /// </summary>
+    /// <param name="dp">The input integer array that should be swapped.</param>
+    /// <param name="len">The number of elements in the array.</param>
+    extern void swap64(SKuint64* dp, SKsize len);
+
+};  // namespace ftEndianUtils
 
 #endif  //_ftEndianUtils_h_
