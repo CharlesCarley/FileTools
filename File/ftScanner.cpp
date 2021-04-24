@@ -24,6 +24,7 @@
 -------------------------------------------------------------------------------
 */
 #include "ftScanner.h"
+#include <cstddef>
 
 using namespace ftFlags;
 
