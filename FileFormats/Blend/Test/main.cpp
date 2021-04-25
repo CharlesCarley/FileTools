@@ -25,6 +25,7 @@
 */
 #include "Blender.h"
 #include "ftBlend.h"
+#include "ftLogger.h"
 #include "ftTable.h"
 #include "gtest/gtest.h"
 using namespace Blender;
@@ -141,7 +142,7 @@ GTEST_TEST(BlendFile, AssertTypes)
     EXPECT_NE(table, nullptr);
 
     const ftTable::Types& types = table->getTypes();
-    const SKuint32         nr    = table->getNumberOfTypes();
+    const SKuint32        nr    = table->getNumberOfTypes();
 
     for (SKuint32 i = 0; i < nr; ++i)
     {

@@ -32,7 +32,7 @@
 using namespace std;
 using namespace ftFlags;
 
-void ftLogger::log(int status)
+void ftLogger::log(const int status)
 {
     cout << "Exit status: ";
     switch (status)
@@ -82,15 +82,15 @@ void ftLogger::log(int status)
     cout << endl;
 }
 
-void ftLogger::log(int status, const char* msg, ...)
+void ftLogger::log(int status, const char* format, ...)
 {
     log(status);
-    if (msg)
+    if (format)
     {
         char    buf[513];
         va_list lst;
-        va_start(lst, msg);
-        int size = skp_printf(buf, 512, msg, lst);
+        va_start(lst, format);
+        int size = skp_printf(buf, 512, format, lst);
         va_end(lst);
         if (size < 0)
             size = 0;
@@ -99,15 +99,15 @@ void ftLogger::log(int status, const char* msg, ...)
     }
 }
 
-void ftLogger::logF(const char* msg, ...)
+void ftLogger::logF(const char* format, ...)
 {
-    if (msg)
+    if (format)
     {
         char buf[513] = {};
 
         va_list lst;
-        va_start(lst, msg);
-        int size = skp_printf(buf, 512, msg, lst);
+        va_start(lst, format);
+        int size = skp_printf(buf, 512, format, lst);
         va_end(lst);
         if (size < 0)
             size = 0;
@@ -166,23 +166,23 @@ void ftLogger::log(const void* ptr, const SKsize& len)
         -1);
 }
 
-void ftLogger::newline(int nr)
+void ftLogger::newline(int n)
 {
-    for (int i = 0; i < nr; ++i)
+    for (int i = 0; i < n; ++i)
         cout << endl;
 }
 
-void ftLogger::log(ftStruct* strc)
+void ftLogger::log(ftStruct* structure)
 {
     skHexPrint::writeColor(CS_GREEN);
-    cout << "Struct : " << strc->getName() << endl;
+    cout << "Struct : " << structure->getName() << endl;
     skHexPrint::writeColor(CS_LIGHT_GREY);
     skHexPrint::writeColor(CS_WHITE);
 
-    cout << "Type          : " << strc->getTypeIndex() << endl;
-    cout << "Hash          : " << strc->getHashedType() << endl;
-    cout << "Size In Bytes : " << strc->getSizeInBytes() << endl;
-    cout << "Aligned 4     : " << (strc->getSizeInBytes() % 4 == 0 ? 1 : 0) << endl;
+    cout << "Type          : " << structure->getTypeIndex() << endl;
+    cout << "Hash          : " << structure->getHashedType() << endl;
+    cout << "Size In Bytes : " << structure->getSizeInBytes() << endl;
+    cout << "Aligned 4     : " << (structure->getSizeInBytes() % 4 == 0 ? 1 : 0) << endl;
 }
 
 void ftLogger::log(ftMember* member)
@@ -233,12 +233,11 @@ string makeName(const char* name, size_t max)
     return rv;
 }
 
-void ftLogger::log(ftStruct* fstrc, ftStruct* mstrc)
+void ftLogger::log(ftStruct* fileStruct, ftStruct* memoryStruct)
 {
-    int A = fstrc->getMemberCount();
-    int B = mstrc->getMemberCount();
-    int C = skMax(A, B);
-    int D = 0;
+    const int a = fileStruct->getMemberCount();
+    const int b = memoryStruct->getMemberCount();
+    const int c = skMax(a, b);
     separator();
     cout << left;
     skHexPrint::writeColor(CS_LIGHT_GREY);
@@ -253,28 +252,29 @@ void ftLogger::log(ftStruct* fstrc, ftStruct* mstrc)
     skHexPrint::writeColor(CS_WHITE);
     separator();
 
-    for (D = 0; D < C; ++D)
+    for (int d = 0; d < c; ++d)
     {
-        ftMember *fmbr = 0, *mmbr = 0;
-        if (D < A)
-            fmbr = fstrc->getMember(D);
-        if (D < B)
-            mmbr = mstrc->getMember(D);
+        ftMember *fileMember = nullptr, *memoryMember = nullptr;
+        if (d < a)
+            fileMember = fileStruct->getMember(d);
+        if (d < b)
+            memoryMember = memoryStruct->getMember(d);
 
         cout << ' ';
-        if (fmbr != 0)
+        if (fileMember != nullptr)
         {
-            cout << setw(15) << makeName(fmbr->getType(), 15);
-            cout << setw(15) << makeName(fmbr->getName(), 15);
-            cout << setw(10) << fmbr->getOffset();
+            cout << setw(15) << makeName(fileMember->getType(), 15);
+            cout << setw(15) << makeName(fileMember->getName(), 15);
+            cout << setw(10) << fileMember->getOffset();
         }
         else
             cout << setw(40) << ' ';
-        if (mmbr != 0)
+
+        if (memoryMember != nullptr)
         {
-            cout << setw(15) << makeName(mmbr->getType(), 15);
-            cout << setw(15) << makeName(mmbr->getName(), 15);
-            cout << setw(10) << mmbr->getOffset();
+            cout << setw(15) << makeName(memoryMember->getType(), 15);
+            cout << setw(15) << makeName(memoryMember->getName(), 15);
+            cout << setw(10) << memoryMember->getOffset();
         }
         else
             cout << setw(40) << ' ';
@@ -285,9 +285,9 @@ void ftLogger::log(ftStruct* fstrc, ftStruct* mstrc)
 
     skHexPrint::writeColor(CS_GREEN);
     cout << "Size in bytes:" << setw(17) << ' ';
-    cout << setw(10) << fstrc->getSizeInBytes();
+    cout << setw(10) << fileStruct->getSizeInBytes();
     cout << setw(30) << ' ';
-    cout << setw(10) << mstrc->getSizeInBytes();
+    cout << setw(10) << memoryStruct->getSizeInBytes();
     cout << endl;
     cout << left;
     skHexPrint::writeColor(CS_WHITE);
@@ -325,9 +325,9 @@ void ftLogger::log(const ftType& type)
     cout << "Structure ID         : " << type.id << endl;
 }
 
-void ftLogger::log(const ftType& type, FTtype size)
+void ftLogger::log(const ftType& type, FTtype spacing)
 {
-    cout << right << setw(10) << size << ' ';
+    cout << right << setw(10) << spacing << ' ';
     skHexPrint::writeColor(CS_LIGHT_GREY);
     cout << left << type.name;
 
@@ -336,8 +336,8 @@ void ftLogger::log(const ftType& type, FTtype size)
 }
 
 void ftLogger::logDiagnosticsCastHeader(const ftChunk& chunk,
-                                        ftStruct*      fstrc,
-                                        ftStruct*      mstrc)
+                                        ftStruct*      fileStruct,
+                                        ftStruct*      memoryStruct)
 {
     newline(2);
     separator();
@@ -345,23 +345,23 @@ void ftLogger::logDiagnosticsCastHeader(const ftChunk& chunk,
     separator();
     color(CS_GREEN);
     logF("Struct  : %s -> %s",
-         fstrc->getName(),
-         mstrc->getName());
-    log(fstrc, mstrc);
+         fileStruct->getName(),
+         memoryStruct->getName());
+    log(fileStruct, memoryStruct);
 }
 
-void ftLogger::logDiagnosticsCastMemberHeader(ftMember* dstmbr,
-                                              ftMember* srcmbr)
+void ftLogger::logDiagnosticsCastMemberHeader(ftMember* destMember,
+                                              ftMember* sourceMember)
 {
     newline();
     color(CS_DARKYELLOW);
     logF("%s %s (%d) ==> %s %s (%d)",
-         srcmbr->getType(),
-         srcmbr->getName(),
-         srcmbr->getOffset(),
-         dstmbr->getType(),
-         dstmbr->getName(),
-         srcmbr->getOffset());
+         sourceMember->getType(),
+         sourceMember->getName(),
+         sourceMember->getOffset(),
+         destMember->getType(),
+         destMember->getName(),
+         sourceMember->getOffset());
 }
 
 void ftLogger::logReadChunk(const ftChunk& chunk, const void* block, const SKsize& len)
@@ -374,13 +374,13 @@ void ftLogger::logReadChunk(const ftChunk& chunk, const void* block, const SKsiz
 }
 
 void ftLogger::logSkipChunk(const ftChunk& chunk,
-                            ftStruct*      fstrc,
+                            ftStruct*      fileStruct,
                             const void*    block,
                             const SKsize&  len)
 {
     newline();
     color(CS_RED);
-    logF("Skipping Chunk for structure %s", fstrc->getName());
+    logF("Skipping Chunk for structure %s", fileStruct->getName());
     newline();
     log(chunk);
     separator();
@@ -388,25 +388,25 @@ void ftLogger::logSkipChunk(const ftChunk& chunk,
     separator();
 }
 
-void ftLogger::logUnresolvedStructure(ftMemoryChunk* bin, ftStruct* fstrc, ftStruct* mstrc)
+void ftLogger::logUnresolvedStructure(ftMemoryChunk* bin, ftStruct* fileStruct, ftStruct* memoryStruct)
 {
     separator();
     logF("Failed to resolve both file and memory declarations for chunk:");
     log(bin->chunk);
-    logF("File   : %s", fstrc ? "Valid" : "Invalid");
-    logF("Memory : %s", mstrc ? "Valid" : "Invalid");
+    logF("File   : %s", fileStruct ? "Valid" : "Invalid");
+    logF("Memory : %s", memoryStruct ? "Valid" : "Invalid");
 
-    if (fstrc)
+    if (fileStruct)
     {
-        log(fstrc);
+        log(fileStruct);
         separator();
-        log(bin->fileBlock, fstrc->getSizeInBytes());
+        log(bin->fileBlock, fileStruct->getSizeInBytes());
     }
-    if (mstrc)
+    if (memoryStruct)
     {
-        log(mstrc);
+        log(memoryStruct);
         separator();
-        log(bin->memoryBlock, mstrc->getSizeInBytes());
+        log(bin->memoryBlock, memoryStruct->getSizeInBytes());
     }
     newline(2);
 }

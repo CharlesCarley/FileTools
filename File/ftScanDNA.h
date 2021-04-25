@@ -28,59 +28,93 @@
 
 #include "ftTypes.h"
 
-class ftScanDNA
+/// <summary>
+/// ftScanDna is a utility class to read minimal information from the file by
+/// skipping from chunk to chunk.
+/// </summary>
+/// <remarks>
+/// The idea of the DNA scan is to jump to the
+/// DNA1 block first, extract the table data,
+/// then seek back to the file header offset
+/// and read the chunks up to the DNA1 block.
+/// Then, create associations with the structure
+/// and member declarations along with every chunk.
+/// </remarks>
+class ftScanDna
 {
-    // The idea of the DNA scan is to jump to the
-    // DNA1 block first, extract the table data,
-    // then seek back to the file header offset
-    // and read the chunks up to the DNA1 block.
-    // Then, create associations with the structure
-    // and member declarations along with every chunk.
+private:
+    void*  m_foundBlock;
+    SKsize m_foundLen;
+    int    m_headerFlags;
 
 public:
-    ftScanDNA();
-    ~ftScanDNA();
+    ftScanDna();
+    ~ftScanDna();
 
-    // Extracts the needed flags from the file header
-    // or an error status if the flags are not found.
-    int findHeaderFlags(skStream *stream);
+    /// <summary>
+    /// Extracts the needed flags from the file header
+    /// or an error status if the flags are not found.
+    /// </summary>
+    /// <param name="stream">The stream to use for reading.</param>
+    /// <returns>ftFlags::FileHeader</returns>
+    int findHeaderFlags(skStream* stream);
 
-    // An option to set the required flags if they have
-    // already been extracted from the file
+    /// <summary>
+    /// This is here to provide an option to set the required flags if they have
+    /// already been extracted from the file
+    /// </summary>
+    /// <param name="headerFlags">ftFlags::FileHeader</param>
     void setFlags(int headerFlags)
     {
         m_headerFlags = headerFlags;
     }
 
-    int scan(skStream *stream);
-
-    // Access to the found block
-    // Note: that this class does not manage the
-    //       memory allocated for m_foundBlock
-    //       It was allocated with malloc. The
-    //       memory should be released with a call
-    //       to free
-    void *getDNA() const
-    {
-        return m_foundBlock;
-    }
-
-    SKsize getLength() const
-    {
-        return m_foundLen;
-    }
-
+    /// <summary>
+    /// Returns a copy of the internal ftFlags::FileHeader flags>
+    /// </summary>
     int getFlags() const
     {
         return m_headerFlags;
     }
 
-    bool is64Bit() const;
+    /// <summary>
+    /// Preforms the scan of the file. Execution stops on any error, or when the DNA1 chunk has been read.
+    /// </summary>
+    /// <param name="stream">The stream to use for reading.</param>
+    /// <returns>ftFlags::FileStatus</returns>
+    int scan(skStream* stream);
 
-private:
-    void *  m_foundBlock;
-    SKsize m_foundLen;
-    int     m_headerFlags;
+    // Access to the found block
+
+
+    /// <summary>
+    /// If the DNA1 block is found, this will contain the memory that was extracted.
+    /// </summary>
+    /// <returns>Null if it was not found or not read yet.</returns>
+    /// <remarks>
+    /// `Note`: that this class does not manage the
+    ///       memory allocated for the DNA1 block.
+    ///       It was allocated with malloc and the memory should be released
+    ///       with a call to free.
+    /// </remarks>
+    void* getDNA() const
+    {
+        return m_foundBlock;
+    }
+
+    /// <summary>
+    /// Returns the length of the DNA1 block.
+    /// </summary>
+    SKsize getLength() const
+    {
+        return m_foundLen;
+    }
+
+
+    /// <summary>
+    /// A test to see if the file is a 64bit file. 
+    /// </summary>
+    bool is64Bit() const;
 };
 
 #endif  //_ftScanDNA_h_

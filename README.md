@@ -35,7 +35,7 @@ The file structure is a simple chunk based format. It consists of a 12-byte file
 The file header determines the file type, the architecture of the saving platform, and the API version.
 
 | Byte(s) | Data Type | Description                                                      |
-|:-------:|-----------|:-----------------------------------------------------------------|
+|:-------:|:----------|:-----------------------------------------------------------------|
 |  [0,6]  | char[7]   | Used to determine the type of file.                              |
 |    7    | char      | Byte 7 is used to determine whether to load 32 or 64 bit chunks. |
 |    8    | char      | Byte 8 identifies the byte-order of the file.                    |
@@ -44,7 +44,7 @@ The file header determines the file type, the architecture of the saving platfor
 The following ASCII codes are reserved for bytes 7 and 8:
 
 | ASCII | Hex  | Description                                                   |
-|-------|------|---------------------------------------------------------------|
+|:------|:-----|:--------------------------------------------------------------|
 | '-'   | 0x2D | Indicates that the file was saved with 64-bit chunks.         |
 | '_'   | 0x5F | Indicates that the file was saved with 32-bit chunks.         |
 | 'V'   | 0x56 | Indicates that the file was saved on a big-endian machine.    |

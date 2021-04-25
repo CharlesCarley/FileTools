@@ -1,12 +1,12 @@
 var a00161 =
 [
-    [ "ftScanDNA", "a00161.html#ab5808e8dc92bfb313879f3c46fd3d9d6", null ],
-    [ "~ftScanDNA", "a00161.html#ae4c3a42423f195a4fb00bc44a55fd5bd", null ],
-    [ "findHeaderFlags", "a00161.html#ad4d1845097ee0789f6d2aa38c263befe", null ],
-    [ "getDNA", "a00161.html#a18d92e93dd60ef9fb6874255a1528d72", null ],
-    [ "getFlags", "a00161.html#a75e2a119674da27e3339aebef29e3b72", null ],
-    [ "getLength", "a00161.html#a07a34824b3796ecdc427352edbf5b367", null ],
-    [ "is64Bit", "a00161.html#aa65f1819d7901a58e2f302efd7c9e835", null ],
-    [ "scan", "a00161.html#aac07b47af436641000ae8060dbba1574", null ],
-    [ "setFlags", "a00161.html#acf1b0760b3aa8cbad7063019808ccf7b", null ]
+    [ "ftScanDna", "a00161.html#a3302437967b5288634750ce54ccab086", null ],
+    [ "~ftScanDna", "a00161.html#a0c3ba90a17cdaaf2fc509ffe237f6be1", null ],
+    [ "findHeaderFlags", "a00161.html#aba261232516bf6f714ace21cbda5a9d3", null ],
+    [ "getDNA", "a00161.html#a5baa8a9570f03a26df4b9d8b6732ca90", null ],
+    [ "getFlags", "a00161.html#afb31283d9536412858d380ccb75dfd1a", null ],
+    [ "getLength", "a00161.html#a9a0274780bd8ff501da25b261d6c2a3d", null ],
+    [ "is64Bit", "a00161.html#ad8763f6390c6fbcb4a35120c8d16ff32", null ],
+    [ "scan", "a00161.html#a763f321acda63f106394ca88c35029b1", null ],
+    [ "setFlags", "a00161.html#a4af624123016a0a05fe7c0b25072911a", null ]
 ];

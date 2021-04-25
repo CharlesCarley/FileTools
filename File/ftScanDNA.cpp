@@ -29,17 +29,17 @@
 using namespace ftFlags;
 using namespace ftEndianUtils;
 
-ftScanDNA::ftScanDNA() :
+ftScanDna::ftScanDna() :
     m_foundBlock(nullptr),
     m_foundLen(0),
     m_headerFlags(0)
 {
 }
 
-ftScanDNA::~ftScanDNA() = default;
+ftScanDna::~ftScanDna() = default;
 
 
-int ftScanDNA::findHeaderFlags(skStream* stream)
+int ftScanDna::findHeaderFlags(skStream* stream)
 {
     int status = FS_OK;
 
@@ -94,7 +94,7 @@ int ftScanDNA::findHeaderFlags(skStream* stream)
     return status;
 }
 
-int ftScanDNA::scan(skStream* stream)
+int ftScanDna::scan(skStream* stream)
 {
     int         status = FS_OK;
     ftChunkScan scan   = {0, 0};
@@ -145,7 +145,7 @@ int ftScanDNA::scan(skStream* stream)
     return status;
 }
 
-bool ftScanDNA::is64Bit() const
+bool ftScanDna::is64Bit() const
 {
     return (m_headerFlags & FH_CHUNK_64) != 0;
 }

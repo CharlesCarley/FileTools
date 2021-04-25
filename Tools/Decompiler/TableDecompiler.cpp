@@ -632,7 +632,7 @@ int main(int argc, char** argv)
     fp.open(ctx.inFile.c_str(), skStream::READ);
     if (fp.isOpen())
     {
-        ftScanDNA scanner;
+        ftScanDna scanner;
         status = scanner.findHeaderFlags(&fp);
         if (status != ftFlags::FS_OK)
         {

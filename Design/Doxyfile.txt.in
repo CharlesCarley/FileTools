@@ -138,7 +138,8 @@ EXCLUDE_SYMBOLS        = SK_INLINE \
                          serialize \
                          isValidWriteData \
                          initializeTables \
-                         initializeMemory 
+                         initializeMemory \
+                         logUnresolvedStructure
 EXAMPLE_PATH           = "${CMAKE_CURRENT_SOURCE_DIR}/Source/Images"
 EXAMPLE_PATTERNS       = *.cpp \
                          *.h \

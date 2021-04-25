@@ -183,7 +183,7 @@ int ftFile::parseHeader(skStream* stream)
 
 int ftFile::preScan(skStream* stream)
 {
-    ftScanDNA scanner;
+    ftScanDna scanner;
     scanner.setFlags(m_headerFlags);
 
     int status = scanner.scan(stream);

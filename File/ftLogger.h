@@ -35,50 +35,147 @@ namespace ftLogger
     /// <summary>
     /// Logs the enumerated name a predetermined status return code.
     /// </summary>
-    /// <param name="status">code defined in <see cref="ftFlags::FileStatus">ftFlags::FileStatus</see></param>
+    /// <param name="status">The ftFlags::FileStatus code</param>
     extern void log(int status);
 
-    extern void log(int status, const char *msg, ...);
+    /// <summary>
+    /// Logs the supplied status code along with a printf style message.
+    /// </summary>
+    /// <param name="status">The ftFlags::FileStatus code</param>
+    /// <param name="format">A message format string.</param>
+    /// <param name="...">Variable arguments.</param>
+    extern void log(int status, const char* format, ...);
 
+    /// <summary>
+    /// General printf style message.
+    /// </summary>
+    /// <param name="format">A message format string.</param>
+    /// <param name="...">Variable arguments.</param>
+    extern void logF(const char* format, ...);
 
-    extern void logF(const char *msg, ...);
-
+    /// <summary>
+    /// Logs a line to the console.
+    /// </summary>
     extern void separator();
+
+    /// <summary>
+    /// Logs a smaller line to the console.
+    /// </summary>
     extern void divider();
-    extern void newline(int nr = 1);
+
+    /// <summary>
+    /// Adds n number of line breaks to the console.
+    /// </summary>
+    extern void newline(int n = 1);
+
+    /// <summary>
+    /// Sets the current text foreground color.
+    /// </summary>
+    /// <param name="cs"></param>
     extern void color(skConsoleColorSpace cs);
 
-    extern void log(const ftChunk &chunk);
-    extern void log(const void *ptr, const SKsize& len);
-    extern void log(ftStruct *strc);
-    extern void log(ftMember *strc);
-    extern void log(ftStruct *fstrc, ftStruct *mstrc);
-    extern void log(const ftName &name);
-    extern void log(const ftType &type);
-    extern void log(const ftType &type, FTtype size);
+    /// <summary>
+    /// Logs the chunk's members to the console.
+    /// </summary>
+    /// <param name="chunk"></param>
+    extern void log(const ftChunk& chunk);
+
+    /// <summary>
+    /// Logs a hex dump of the supplied memory to the console.
+    /// </summary>
+    /// <param name="ptr">The memory to output.</param>
+    /// <param name="len">The length of the supplied memory.</param>
+    extern void log(const void* ptr, const SKsize& len);
+
+    /// <summary>
+    /// Logs basic information about a structure.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// Struct : Object
+    /// Type          : 125
+    /// Hash          : 12108760437263257774
+    /// Size In Bytes : 1432
+    /// Aligned 4     : 1
+    /// </code>
+    /// </example>
+    extern void log(ftStruct* structure);
+
+    /// <summary>
+    /// Logs basic information about a specific structure member.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// Struct        : Object
+    /// Type          : char
+    /// Name          : name[66]
+    /// Pointer Count : 0
+    /// Array Size    : 66
+    /// </code>
+    /// </example>
+    extern void log(ftMember* member);
 
 
-    extern void logDiagnosticsCastHeader(const ftChunk &chunk,
-                                         ftStruct *     fstrc,
-                                         ftStruct *     mstrc);
-    extern void logDiagnosticsCastMemberHeader(ftMember *fstrc,
-                                               ftMember *mstrc);
-
-    extern void logReadChunk(const ftChunk &chunk,
-                             const void *   block,
-                             const SKsize &len);
-
-    extern void logSkipChunk(const ftChunk &chunk,
-                             ftStruct *     fstrc,
-                             const void *   block,
-                             const SKsize &len);
+    /// <summary>
+    /// Logs the file memory structures side by side.
+    /// </summary>
+    extern void log(ftStruct* fileStruct, ftStruct* memoryStruct);
 
 
-    extern void logUnresolvedStructure(ftMemoryChunk *bin, ftStruct *fstrc, ftStruct *mstrc);
+    /// <summary>
+    /// Logs the ftName structure.
+    /// </summary>
+    extern void log(const ftName& name);
 
-    extern void logInvalidInsert(ftMemoryChunk *bin);
+
+    /// <summary>
+    /// Logs the ftType structure.
+    /// </summary>
+    extern void log(const ftType& type);
+
+    /// <summary>
+    /// Logs the ftType structure.
+    /// </summary>
+    extern void log(const ftType& type, FTtype spacing);
+
+
+    /// <summary>
+    /// Logs the chunk as well as a side by side log of the file and memory structures.    
+    /// </summary>
+    extern void logDiagnosticsCastHeader(const ftChunk& chunk,
+                                         ftStruct*      fileStruct,
+                                         ftStruct*      memoryStruct);
+
+
+    /// <summary>
+    /// Logs side by side information about the supplied members. 
+    /// </summary>
+    extern void logDiagnosticsCastMemberHeader(ftMember* destMember,
+                                               ftMember* sourceMember);
+
+    /// <summary>
+    /// Logs the chunk header as well as a hex dump of the chunks data.
+    /// </summary>
+    extern void logReadChunk(const ftChunk& chunk,
+                             const void*    block,
+                             const SKsize&  len);
+
+
+    /// <summary>
+    /// Prints a message stating that the chunk has been skipped. 
+    /// Logs the chunk header as well as a hex dump of the chunks data.
+    /// </summary>
+    extern void logSkipChunk(const ftChunk& chunk,
+                             ftStruct*      fileStruct,
+                             const void*    block,
+                             const SKsize&  len);
+    extern void logUnresolvedStructure(ftMemoryChunk* bin, ftStruct* fileStruct, ftStruct* memoryStruct);
+
+    /// <summary>
+    /// Logs detailed information on a chunk that was not inserted into the hash table. 
+    /// </summary>
+    extern void logInvalidInsert(ftMemoryChunk* bin);
 
 }  // namespace ftLogger
-
 
 #endif  //_ftLogger_h_

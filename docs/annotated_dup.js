@@ -21,7 +21,7 @@ var annotated_dup =
     [ "ftMemoryChunk", "a00133.html", "a00133" ],
     [ "ftName", "a00169.html", "a00169" ],
     [ "ftPointerHashKey", "a00153.html", "a00153" ],
-    [ "ftScanDNA", "a00161.html", "a00161" ],
+    [ "ftScanDna", "a00161.html", "a00161" ],
     [ "ftScanner", "a00165.html", "a00165" ],
     [ "ftStruct", "a00181.html", "a00181" ],
     [ "ftTable", "a00185.html", "a00185" ],
