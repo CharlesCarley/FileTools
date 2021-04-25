@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftScanDNA Class Reference</title>
+<title>FileTools: ftScanner Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -58,97 +58,67 @@ $(document).ready(function(){initNavTree('a00165.html','');});
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="a00162.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftScanDNA Class Reference</div>  </div>
+<div class="title">ftScanner Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;ftScanDNA.h&gt;</code></p>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A basic c/c++ scanner to that is used to extract class members. </p>
+</div>
+<p><code>#include &lt;ftScanner.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab5808e8dc92bfb313879f3c46fd3d9d6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#ab5808e8dc92bfb313879f3c46fd3d9d6">ftScanDNA</a> ()</td></tr>
-<tr class="separator:ab5808e8dc92bfb313879f3c46fd3d9d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4c3a42423f195a4fb00bc44a55fd5bd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#ae4c3a42423f195a4fb00bc44a55fd5bd">~ftScanDNA</a> ()</td></tr>
-<tr class="separator:ae4c3a42423f195a4fb00bc44a55fd5bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4d1845097ee0789f6d2aa38c263befe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#ad4d1845097ee0789f6d2aa38c263befe">findHeaderFlags</a> (skStream *stream)</td></tr>
-<tr class="separator:ad4d1845097ee0789f6d2aa38c263befe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf1b0760b3aa8cbad7063019808ccf7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#acf1b0760b3aa8cbad7063019808ccf7b">setFlags</a> (int headerFlags)</td></tr>
-<tr class="separator:acf1b0760b3aa8cbad7063019808ccf7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac07b47af436641000ae8060dbba1574"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#aac07b47af436641000ae8060dbba1574">scan</a> (skStream *stream)</td></tr>
-<tr class="separator:aac07b47af436641000ae8060dbba1574"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a609a8194e4200b3d5c2641278e997c6b"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#a609a8194e4200b3d5c2641278e997c6b">getDNA</a> ()</td></tr>
-<tr class="separator:a609a8194e4200b3d5c2641278e997c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61b7a7d73869b1dce66fa181f939bb54"><td class="memItemLeft" align="right" valign="top">SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#a61b7a7d73869b1dce66fa181f939bb54">getLength</a> ()</td></tr>
-<tr class="separator:a61b7a7d73869b1dce66fa181f939bb54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf384c49a61ffe8b01ec69bb9f7049b3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#adf384c49a61ffe8b01ec69bb9f7049b3">getFlags</a> ()</td></tr>
-<tr class="separator:adf384c49a61ffe8b01ec69bb9f7049b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa65f1819d7901a58e2f302efd7c9e835"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#aa65f1819d7901a58e2f302efd7c9e835">is64Bit</a> () const</td></tr>
-<tr class="separator:aa65f1819d7901a58e2f302efd7c9e835"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab565d615ade99055b1dc950f6caa2c09"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#ab565d615ade99055b1dc950f6caa2c09">ftScanner</a> (const char *ptr, SKsize length)</td></tr>
+<tr class="memdesc:ab565d615ade99055b1dc950f6caa2c09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#ab565d615ade99055b1dc950f6caa2c09">More...</a><br /></td></tr>
+<tr class="separator:ab565d615ade99055b1dc950f6caa2c09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79730e4e04c68fc406d384328dd2edd5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#a79730e4e04c68fc406d384328dd2edd5">lex</a> (<a class="el" href="a00209.html">ftToken</a> &amp;token)</td></tr>
+<tr class="memdesc:a79730e4e04c68fc406d384328dd2edd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scans the source for a token.  <a href="#a79730e4e04c68fc406d384328dd2edd5">More...</a><br /></td></tr>
+<tr class="separator:a79730e4e04c68fc406d384328dd2edd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7db1f3935cc59bb3814e49ed553d4a22"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00165.html#a7db1f3935cc59bb3814e49ed553d4a22">getLine</a> () const</td></tr>
+<tr class="memdesc:a7db1f3935cc59bb3814e49ed553d4a22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to retrieve the line number for error reporting.  <a href="#a7db1f3935cc59bb3814e49ed553d4a22">More...</a><br /></td></tr>
+<tr class="separator:a7db1f3935cc59bb3814e49ed553d4a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab5808e8dc92bfb313879f3c46fd3d9d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5808e8dc92bfb313879f3c46fd3d9d6">&#9670;&nbsp;</a></span>ftScanDNA()</h2>
+<a id="ab565d615ade99055b1dc950f6caa2c09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab565d615ade99055b1dc950f6caa2c09">&#9670;&nbsp;</a></span>ftScanner()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ftScanDNA::ftScanDNA </td>
+          <td class="memname">ftScanner::ftScanner </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
         </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae4c3a42423f195a4fb00bc44a55fd5bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae4c3a42423f195a4fb00bc44a55fd5bd">&#9670;&nbsp;</a></span>~ftScanDNA()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
         <tr>
-          <td class="memname">ftScanDNA::~ftScanDNA </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">SKsize&#160;</td>
+          <td class="paramname"><em>length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
+
+<p>Default constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>A memory buffer that contains the source that should be parsed.</td></tr>
+    <tr><td class="paramname">length</td><td>The size in bytes of the memory buffer.</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad4d1845097ee0789f6d2aa38c263befe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4d1845097ee0789f6d2aa38c263befe">&#9670;&nbsp;</a></span>findHeaderFlags()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftScanDNA::findHeaderFlags </td>
-          <td>(</td>
-          <td class="paramtype">skStream *&#160;</td>
-          <td class="paramname"><em>stream</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a609a8194e4200b3d5c2641278e997c6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a609a8194e4200b3d5c2641278e997c6b">&#9670;&nbsp;</a></span>getDNA()</h2>
+<a id="a7db1f3935cc59bb3814e49ed553d4a22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7db1f3935cc59bb3814e49ed553d4a22">&#9670;&nbsp;</a></span>getLine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,129 +127,48 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void* ftScanDNA::getDNA </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adf384c49a61ffe8b01ec69bb9f7049b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf384c49a61ffe8b01ec69bb9f7049b3">&#9670;&nbsp;</a></span>getFlags()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftScanDNA::getFlags </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a61b7a7d73869b1dce66fa181f939bb54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61b7a7d73869b1dce66fa181f939bb54">&#9670;&nbsp;</a></span>getLength()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">SKsize ftScanDNA::getLength </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa65f1819d7901a58e2f302efd7c9e835"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa65f1819d7901a58e2f302efd7c9e835">&#9670;&nbsp;</a></span>is64Bit()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool ftScanDNA::is64Bit </td>
+          <td class="memname">int ftScanner::getLine </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aac07b47af436641000ae8060dbba1574"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac07b47af436641000ae8060dbba1574">&#9670;&nbsp;</a></span>scan()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftScanDNA::scan </td>
-          <td>(</td>
-          <td class="paramtype">skStream *&#160;</td>
-          <td class="paramname"><em>stream</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acf1b0760b3aa8cbad7063019808ccf7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf1b0760b3aa8cbad7063019808ccf7b">&#9670;&nbsp;</a></span>setFlags()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftScanDNA::setFlags </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>headerFlags</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Used to retrieve the line number for error reporting. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns the last read line.</dd></dl>
+
+</div>
+</div>
+<a id="a79730e4e04c68fc406d384328dd2edd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79730e4e04c68fc406d384328dd2edd5">&#9670;&nbsp;</a></span>lex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ftScanner::lex </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="a00209.html">ftToken</a> &amp;&#160;</td>
+          <td class="paramname"><em>token</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Scans the source for a token. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">token</td><td>Is a reference to a <a class="el" href="a00209.html" title="Is a temporary data storage class to store a c/c++ language semantic. It is used when extracting memb...">ftToken</a> class that will temporally hold the result.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The enumerated TokenID of the result.</dd></dl>
 
 </div>
 </div>
@@ -289,8 +178,8 @@ Public Member Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00165.html">ftScanDNA</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:50 for FileTools by
+    <li class="navelem"><a class="el" href="a00165.html">ftScanner</a></li>
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

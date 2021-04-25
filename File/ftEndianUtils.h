@@ -34,14 +34,6 @@ enum ftEndian
     FT_ENDIAN_NATIVE,
 };
 
-/// <summary>
-/// Union to test the byte order.
-/// </summary>
-union ftEndianTest
-{
-    SKbyte bo[4];
-    SKint32 test;
-};
 
 namespace ftEndianUtils
 {
@@ -50,7 +42,6 @@ namespace ftEndianUtils
     /// <summary>
     /// Returns the current platforms byte order.
     /// </summary>
-    /// <returns>The order if the MSB</returns>
     extern ftEndian getEndian();
 
     /// <summary>
@@ -127,6 +118,6 @@ namespace ftEndianUtils
     /// <param name="len">The number of elements in the array.</param>
     extern void swap64(SKuint64* dp, SKsize len);
 
-};  // namespace ftEndianUtils
+}  // namespace ftEndianUtils
 
 #endif  //_ftEndianUtils_h_

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftCharHashKey Class Reference</title>
+<title>FileTools: ftPointerHashKey Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -56,60 +56,52 @@ $(document).ready(function(){initNavTree('a00153.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="a00150.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftCharHashKey Class Reference</div>  </div>
+<div class="title">ftPointerHashKey Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Utility class to store a cached char hashed key. </p>
+<div class="textblock"><p>Utility class to store a cached void pointer. </p>
 </div>
 <p><code>#include &lt;ftHashTypes.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a052854c3b22b427dc459c0ca7e6e299c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a052854c3b22b427dc459c0ca7e6e299c">ftCharHashKey</a> ()</td></tr>
-<tr class="memdesc:a052854c3b22b427dc459c0ca7e6e299c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a052854c3b22b427dc459c0ca7e6e299c">More...</a><br /></td></tr>
-<tr class="separator:a052854c3b22b427dc459c0ca7e6e299c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a470329da3c930edc3183e0a01b52174c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a470329da3c930edc3183e0a01b52174c">ftCharHashKey</a> (char *pointer)</td></tr>
-<tr class="memdesc:a470329da3c930edc3183e0a01b52174c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from a character pointer  <a href="#a470329da3c930edc3183e0a01b52174c">More...</a><br /></td></tr>
-<tr class="separator:a470329da3c930edc3183e0a01b52174c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed67c207580e4cca0fe4dd378084ab19"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#aed67c207580e4cca0fe4dd378084ab19">ftCharHashKey</a> (const char *pointer)</td></tr>
-<tr class="memdesc:aed67c207580e4cca0fe4dd378084ab19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from a const character pointer  <a href="#aed67c207580e4cca0fe4dd378084ab19">More...</a><br /></td></tr>
-<tr class="separator:aed67c207580e4cca0fe4dd378084ab19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0566def5b5c5b21fe67f255d1963232"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#ae0566def5b5c5b21fe67f255d1963232">ftCharHashKey</a> (const <a class="el" href="a00153.html">ftCharHashKey</a> &amp;other)</td></tr>
-<tr class="memdesc:ae0566def5b5c5b21fe67f255d1963232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default copy constructor. Copies the other class's key and rehashes the internal key.  <a href="#ae0566def5b5c5b21fe67f255d1963232">More...</a><br /></td></tr>
-<tr class="separator:ae0566def5b5c5b21fe67f255d1963232"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3eb59f68f7128b663ca35a3780c69d55"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a3eb59f68f7128b663ca35a3780c69d55">hash</a> () const</td></tr>
-<tr class="memdesc:a3eb59f68f7128b663ca35a3780c69d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the hash of the internal key and remembers it then returns the result.  <a href="#a3eb59f68f7128b663ca35a3780c69d55">More...</a><br /></td></tr>
-<tr class="separator:a3eb59f68f7128b663ca35a3780c69d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98958f746787aae5cfe706b095bde497"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a98958f746787aae5cfe706b095bde497">key</a> () const</td></tr>
-<tr class="memdesc:a98958f746787aae5cfe706b095bde497"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides access to the internal character pointer that was supplied during class construction.  <a href="#a98958f746787aae5cfe706b095bde497">More...</a><br /></td></tr>
-<tr class="separator:a98958f746787aae5cfe706b095bde497"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf12484572fdaca02075ccd458134ce6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#abf12484572fdaca02075ccd458134ce6">operator==</a> (const <a class="el" href="a00153.html">ftCharHashKey</a> &amp;rhs) const</td></tr>
-<tr class="memdesc:abf12484572fdaca02075ccd458134ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for equality using the computed hashes.  <a href="#abf12484572fdaca02075ccd458134ce6">More...</a><br /></td></tr>
-<tr class="separator:abf12484572fdaca02075ccd458134ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a863d30eb57a01c501389896139bdfa7c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a863d30eb57a01c501389896139bdfa7c">operator!=</a> (const <a class="el" href="a00153.html">ftCharHashKey</a> &amp;rhs) const</td></tr>
-<tr class="memdesc:a863d30eb57a01c501389896139bdfa7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for inequality using the computed hashes.  <a href="#a863d30eb57a01c501389896139bdfa7c">More...</a><br /></td></tr>
-<tr class="separator:a863d30eb57a01c501389896139bdfa7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4754604f16cb3e06f7e860f5675a2b55"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a4754604f16cb3e06f7e860f5675a2b55">operator==</a> (const SKhash &amp;rhs) const</td></tr>
-<tr class="memdesc:a4754604f16cb3e06f7e860f5675a2b55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for equality using the computed hash and a key computed elsewhere.  <a href="#a4754604f16cb3e06f7e860f5675a2b55">More...</a><br /></td></tr>
-<tr class="separator:a4754604f16cb3e06f7e860f5675a2b55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaac9704069692522a5f04f3a44fa5f8c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#aaac9704069692522a5f04f3a44fa5f8c">operator!=</a> (const SKhash &amp;rhs) const</td></tr>
-<tr class="memdesc:aaac9704069692522a5f04f3a44fa5f8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for inequality using the computed hash and a key computed elsewhere.  <a href="#aaac9704069692522a5f04f3a44fa5f8c">More...</a><br /></td></tr>
-<tr class="separator:aaac9704069692522a5f04f3a44fa5f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a66a648b289ffb3f0deb3481db62b0e17"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a66a648b289ffb3f0deb3481db62b0e17">m_key</a></td></tr>
-<tr class="separator:a66a648b289ffb3f0deb3481db62b0e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09f200b74eeaffe27715f1c437ab32f9"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a09f200b74eeaffe27715f1c437ab32f9">m_hash</a></td></tr>
-<tr class="separator:a09f200b74eeaffe27715f1c437ab32f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf5940df867f80afdcc799dbbf5cfeb5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#abf5940df867f80afdcc799dbbf5cfeb5">ftPointerHashKey</a> ()</td></tr>
+<tr class="memdesc:abf5940df867f80afdcc799dbbf5cfeb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#abf5940df867f80afdcc799dbbf5cfeb5">More...</a><br /></td></tr>
+<tr class="separator:abf5940df867f80afdcc799dbbf5cfeb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81adf5fe60b066e41e08561a4d1be46b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a81adf5fe60b066e41e08561a4d1be46b">ftPointerHashKey</a> (void *pointer)</td></tr>
+<tr class="memdesc:a81adf5fe60b066e41e08561a4d1be46b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs from a pointer  <a href="#a81adf5fe60b066e41e08561a4d1be46b">More...</a><br /></td></tr>
+<tr class="separator:a81adf5fe60b066e41e08561a4d1be46b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad53725dba3201ea8b30007861d87248a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#ad53725dba3201ea8b30007861d87248a">ftPointerHashKey</a> (const SKsize &amp;pointer)</td></tr>
+<tr class="memdesc:ad53725dba3201ea8b30007861d87248a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs from a pointer address  <a href="#ad53725dba3201ea8b30007861d87248a">More...</a><br /></td></tr>
+<tr class="separator:ad53725dba3201ea8b30007861d87248a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a447bdea859f637459671860ba06ffe4a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a447bdea859f637459671860ba06ffe4a">ftPointerHashKey</a> (const <a class="el" href="a00153.html">ftPointerHashKey</a> &amp;other)</td></tr>
+<tr class="memdesc:a447bdea859f637459671860ba06ffe4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default copy constructor. Copies the other class's key and rehashes the internal key.  <a href="#a447bdea859f637459671860ba06ffe4a">More...</a><br /></td></tr>
+<tr class="separator:a447bdea859f637459671860ba06ffe4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35683725705805b6a32330e67731223b"><td class="memItemLeft" align="right" valign="top">const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a35683725705805b6a32330e67731223b">key</a> () const</td></tr>
+<tr class="memdesc:a35683725705805b6a32330e67731223b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides access to the internal pointer that was supplied during class construction.  <a href="#a35683725705805b6a32330e67731223b">More...</a><br /></td></tr>
+<tr class="separator:a35683725705805b6a32330e67731223b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83a043ae2c00966e291061c8aaf6fc8e"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a83a043ae2c00966e291061c8aaf6fc8e">hash</a> (void) const</td></tr>
+<tr class="memdesc:a83a043ae2c00966e291061c8aaf6fc8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the hash of the internal key, remembers it, and returns the result.  <a href="#a83a043ae2c00966e291061c8aaf6fc8e">More...</a><br /></td></tr>
+<tr class="separator:a83a043ae2c00966e291061c8aaf6fc8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af959d6d0ec2f48ebf9dfd26a702819ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#af959d6d0ec2f48ebf9dfd26a702819ba">operator==</a> (const <a class="el" href="a00153.html">ftPointerHashKey</a> &amp;rhs) const</td></tr>
+<tr class="memdesc:af959d6d0ec2f48ebf9dfd26a702819ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for equality using the computed hashes.  <a href="#af959d6d0ec2f48ebf9dfd26a702819ba">More...</a><br /></td></tr>
+<tr class="separator:af959d6d0ec2f48ebf9dfd26a702819ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95f4a9d15ef0f91ec4b3207b1c5309f1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a95f4a9d15ef0f91ec4b3207b1c5309f1">operator!=</a> (const <a class="el" href="a00153.html">ftPointerHashKey</a> &amp;rhs) const</td></tr>
+<tr class="memdesc:a95f4a9d15ef0f91ec4b3207b1c5309f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for inequality using the computed hashes.  <a href="#a95f4a9d15ef0f91ec4b3207b1c5309f1">More...</a><br /></td></tr>
+<tr class="separator:a95f4a9d15ef0f91ec4b3207b1c5309f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f94f881e7e3cff386fb08213c19edff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a8f94f881e7e3cff386fb08213c19edff">operator==</a> (const SKhash &amp;rhs) const</td></tr>
+<tr class="memdesc:a8f94f881e7e3cff386fb08213c19edff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for equality using the computed hash and a key computed elsewhere.  <a href="#a8f94f881e7e3cff386fb08213c19edff">More...</a><br /></td></tr>
+<tr class="separator:a8f94f881e7e3cff386fb08213c19edff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f85e645946d815b8250e72d32b3d720"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00153.html#a1f85e645946d815b8250e72d32b3d720">operator!=</a> (const SKhash &amp;rhs) const</td></tr>
+<tr class="memdesc:a1f85e645946d815b8250e72d32b3d720"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for inequality using the computed hash and a key computed elsewhere.  <a href="#a1f85e645946d815b8250e72d32b3d720">More...</a><br /></td></tr>
+<tr class="separator:a1f85e645946d815b8250e72d32b3d720"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a052854c3b22b427dc459c0ca7e6e299c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a052854c3b22b427dc459c0ca7e6e299c">&#9670;&nbsp;</a></span>ftCharHashKey() <span class="overload">[1/4]</span></h2>
+<a id="abf5940df867f80afdcc799dbbf5cfeb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf5940df867f80afdcc799dbbf5cfeb5">&#9670;&nbsp;</a></span>ftPointerHashKey() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -118,7 +110,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ftCharHashKey::ftCharHashKey </td>
+          <td class="memname">ftPointerHashKey::ftPointerHashKey </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -135,8 +127,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a470329da3c930edc3183e0a01b52174c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a470329da3c930edc3183e0a01b52174c">&#9670;&nbsp;</a></span>ftCharHashKey() <span class="overload">[2/4]</span></h2>
+<a id="a81adf5fe60b066e41e08561a4d1be46b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81adf5fe60b066e41e08561a4d1be46b">&#9670;&nbsp;</a></span>ftPointerHashKey() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -145,9 +137,9 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ftCharHashKey::ftCharHashKey </td>
+          <td class="memname">ftPointerHashKey::ftPointerHashKey </td>
           <td>(</td>
-          <td class="paramtype">char *&#160;</td>
+          <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>pointer</em></td><td>)</td>
           <td></td>
         </tr>
@@ -159,18 +151,18 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Construct from a character pointer </p>
+<p>Constructs from a pointer </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pointer</td><td>The character pointer to hash.</td></tr>
+    <tr><td class="paramname">pointer</td><td>The pointer to hash.</td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="aed67c207580e4cca0fe4dd378084ab19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed67c207580e4cca0fe4dd378084ab19">&#9670;&nbsp;</a></span>ftCharHashKey() <span class="overload">[3/4]</span></h2>
+<a id="ad53725dba3201ea8b30007861d87248a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad53725dba3201ea8b30007861d87248a">&#9670;&nbsp;</a></span>ftPointerHashKey() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -179,9 +171,9 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ftCharHashKey::ftCharHashKey </td>
+          <td class="memname">ftPointerHashKey::ftPointerHashKey </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
+          <td class="paramtype">const SKsize &amp;&#160;</td>
           <td class="paramname"><em>pointer</em></td><td>)</td>
           <td></td>
         </tr>
@@ -193,18 +185,18 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Construct from a const character pointer </p>
+<p>Constructs from a pointer address </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pointer</td><td>The character pointer to hash.</td></tr>
+    <tr><td class="paramname">pointer</td><td>The pointer to hash.</td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="ae0566def5b5c5b21fe67f255d1963232"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0566def5b5c5b21fe67f255d1963232">&#9670;&nbsp;</a></span>ftCharHashKey() <span class="overload">[4/4]</span></h2>
+<a id="a447bdea859f637459671860ba06ffe4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a447bdea859f637459671860ba06ffe4a">&#9670;&nbsp;</a></span>ftPointerHashKey() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,9 +205,9 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ftCharHashKey::ftCharHashKey </td>
+          <td class="memname">ftPointerHashKey::ftPointerHashKey </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00153.html">ftCharHashKey</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="a00153.html">ftPointerHashKey</a> &amp;&#160;</td>
           <td class="paramname"><em>other</em></td><td>)</td>
           <td></td>
         </tr>
@@ -230,7 +222,7 @@ Protected Attributes</h2></td></tr>
 <p>Default copy constructor. Copies the other class's key and rehashes the internal key. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">other</td><td>The character <a class="el" href="a00153.html" title="Utility class to store a cached char hashed key. ">ftCharHashKey</a> to copy.</td></tr>
+    <tr><td class="paramname">other</td><td>The <a class="el" href="a00153.html" title="Utility class to store a cached void pointer. ">ftPointerHashKey</a> to copy.</td></tr>
   </table>
   </dd>
 </dl>
@@ -238,8 +230,8 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3eb59f68f7128b663ca35a3780c69d55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3eb59f68f7128b663ca35a3780c69d55">&#9670;&nbsp;</a></span>hash()</h2>
+<a id="a83a043ae2c00966e291061c8aaf6fc8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83a043ae2c00966e291061c8aaf6fc8e">&#9670;&nbsp;</a></span>hash()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -248,7 +240,35 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SKhash ftCharHashKey::hash </td>
+          <td class="memname">SKhash ftPointerHashKey::hash </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Computes the hash of the internal key, remembers it, and returns the result. </p>
+
+</div>
+</div>
+<a id="a35683725705805b6a32330e67731223b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35683725705805b6a32330e67731223b">&#9670;&nbsp;</a></span>key()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const void* ftPointerHashKey::key </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -261,40 +281,13 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Computes the hash of the internal key and remembers it then returns the result. </p>
-
-</div>
-</div>
-<a id="a98958f746787aae5cfe706b095bde497"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98958f746787aae5cfe706b095bde497">&#9670;&nbsp;</a></span>key()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char* ftCharHashKey::key </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Provides access to the internal character pointer that was supplied during class construction. </p>
+<p>Provides access to the internal pointer that was supplied during class construction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The internal key.</dd></dl>
 
 </div>
 </div>
-<a id="a863d30eb57a01c501389896139bdfa7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a863d30eb57a01c501389896139bdfa7c">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[1/2]</span></h2>
+<a id="a95f4a9d15ef0f91ec4b3207b1c5309f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95f4a9d15ef0f91ec4b3207b1c5309f1">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -303,9 +296,9 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool ftCharHashKey::operator!= </td>
+          <td class="memname">bool ftPointerHashKey::operator!= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00153.html">ftCharHashKey</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="a00153.html">ftPointerHashKey</a> &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -318,18 +311,11 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Tests for inequality using the computed hashes. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">rhs</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
-<a id="aaac9704069692522a5f04f3a44fa5f8c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaac9704069692522a5f04f3a44fa5f8c">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[2/2]</span></h2>
+<a id="a1f85e645946d815b8250e72d32b3d720"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f85e645946d815b8250e72d32b3d720">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -338,7 +324,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool ftCharHashKey::operator!= </td>
+          <td class="memname">bool ftPointerHashKey::operator!= </td>
           <td>(</td>
           <td class="paramtype">const SKhash &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
@@ -353,18 +339,11 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Tests for inequality using the computed hash and a key computed elsewhere. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">rhs</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
-<a id="abf12484572fdaca02075ccd458134ce6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf12484572fdaca02075ccd458134ce6">&#9670;&nbsp;</a></span>operator==() <span class="overload">[1/2]</span></h2>
+<a id="af959d6d0ec2f48ebf9dfd26a702819ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af959d6d0ec2f48ebf9dfd26a702819ba">&#9670;&nbsp;</a></span>operator==() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,9 +352,9 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool ftCharHashKey::operator== </td>
+          <td class="memname">bool ftPointerHashKey::operator== </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00153.html">ftCharHashKey</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="a00153.html">ftPointerHashKey</a> &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -388,18 +367,11 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Tests for equality using the computed hashes. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">rhs</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
-<a id="a4754604f16cb3e06f7e860f5675a2b55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4754604f16cb3e06f7e860f5675a2b55">&#9670;&nbsp;</a></span>operator==() <span class="overload">[2/2]</span></h2>
+<a id="a8f94f881e7e3cff386fb08213c19edff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f94f881e7e3cff386fb08213c19edff">&#9670;&nbsp;</a></span>operator==() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -408,7 +380,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool ftCharHashKey::operator== </td>
+          <td class="memname">bool ftPointerHashKey::operator== </td>
           <td>(</td>
           <td class="paramtype">const SKhash &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
@@ -423,58 +395,6 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Tests for equality using the computed hash and a key computed elsewhere. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">rhs</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a09f200b74eeaffe27715f1c437ab32f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09f200b74eeaffe27715f1c437ab32f9">&#9670;&nbsp;</a></span>m_hash</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">SKhash ftCharHashKey::m_hash</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a66a648b289ffb3f0deb3481db62b0e17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66a648b289ffb3f0deb3481db62b0e17">&#9670;&nbsp;</a></span>m_key</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">char* ftCharHashKey::m_key</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
 
 </div>
 </div>
@@ -484,8 +404,8 @@ Protected Attributes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00153.html">ftCharHashKey</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:49 for FileTools by
+    <li class="navelem"><a class="el" href="a00153.html">ftPointerHashKey</a></li>
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

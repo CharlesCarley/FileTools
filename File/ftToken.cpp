@@ -27,7 +27,6 @@
 
 ftToken::ftToken() :
     m_id(ftFlags::FT_NULL_TOKEN),
-    m_value(),
     m_arrayConstant(0)
 {
 }
@@ -36,12 +35,5 @@ ftToken::ftToken(int id, const String& value) :
     m_id(id),
     m_value(value),
     m_arrayConstant(0)
-{
-}
-
-ftToken::ftToken(const ftToken& token) :
-    m_id(token.m_id),
-    m_value(token.m_value),
-    m_arrayConstant(token.m_arrayConstant)
 {
 }

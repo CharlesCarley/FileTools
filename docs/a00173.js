@@ -1,11 +1,7 @@
 var a00173 =
 [
-    [ "ftName", "a00173.html#a0a845b23c57297cb73d6f7945f474be2", null ],
-    [ "arraySize", "a00173.html#a888da94fed456ebefea9f5b88f5da759", null ],
-    [ "dimensionCount", "a00173.html#a6707696dac01c8986d31e85cd569fd9c", null ],
-    [ "dimensions", "a00173.html#a35d8de5213348c85515ac8f478b184cf", null ],
-    [ "hash", "a00173.html#a839a278a20cfd0628bb4a8b85d54b08f", null ],
-    [ "isFunctionPointer", "a00173.html#a83793c5a3fc739c1c7cfa7ba4017544e", null ],
-    [ "name", "a00173.html#a5ef8703c03fbe30682d9d1a760f97b2d", null ],
-    [ "pointerCount", "a00173.html#adb1d06e179405b57d8cd9ee43c8c2264", null ]
+    [ "ftType", "a00173.html#af1c7979c59a339c89a5ba574108888c1", null ],
+    [ "hash", "a00173.html#a54402c2dc7ccebbca43655a64254fa2b", null ],
+    [ "id", "a00173.html#a4b2ea4327930bd6888d6c67e2ecb5109", null ],
+    [ "name", "a00173.html#a439d9a8a8f5ae59945d7cc59326d4d5e", null ]
 ];

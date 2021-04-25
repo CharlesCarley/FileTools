@@ -1,12 +1,21 @@
 var a00201 =
 [
-    [ "Array", "a00201.html#addc5842653e0c67ef646d7c2cd0fd10a", null ],
-    [ "Variables", "a00201.html#a55bae02dea64e0e03f3f2e64693c3dca", null ],
-    [ "ftBuildStruct", "a00201.html#a6448724f4793a071d9ab894bad15242a", null ],
-    [ "data", "a00201.html#a882c5c5e7a40ed7cbc337eb6e9f85173", null ],
-    [ "line", "a00201.html#a47a05445d4e5f9baa09fd09fe075c3d7", null ],
-    [ "name", "a00201.html#a88dc58a47c963588b0e1908196c88fa6", null ],
-    [ "nrDependentTypes", "a00201.html#a729d925407f65aaeff76180ec2aa9a4b", null ],
-    [ "path", "a00201.html#a8ffc3e1b3b5762a2ed71031c6a76a4f4", null ],
-    [ "structureId", "a00201.html#aec3893cfd50b6aecf76d34404fd22b78", null ]
+    [ "IntPtrArray", "a00201.html#ad95bb370b420fc3b52b18c824d90995d", null ],
+    [ "TypeArray", "a00201.html#a92c5195c0adbfc4894af6cd1b81d11a8", null ],
+    [ "ftTableBuilder", "a00201.html#a09cd2f53348419de50749caca5838a6a", null ],
+    [ "~ftTableBuilder", "a00201.html#a191cb724a5d3d7ccc14595d7c1aee91b", null ],
+    [ "addName", "a00201.html#a9d9c897735e746914fee5eef3259ffda", null ],
+    [ "addType", "a00201.html#afa1eac2dd1146dffa46aea91ea34fd0a", null ],
+    [ "getLengths", "a00201.html#a0ea29defca95e568d0cc8f42c20ddc6b", null ],
+    [ "getTLengths", "a00201.html#aba47cbd405903670fb958468e324af0c", null ],
+    [ "hasType", "a00201.html#a1007088ffa6ed59d094315f7d8809362", null ],
+    [ "makeBuiltinTypes", "a00201.html#aa4d9effac310d2306d0a0ad9741066ee", null ],
+    [ "allocationSizes", "a00201.html#ad6f6dcb2a4a3a04105a4d041171ed6b2", null ],
+    [ "name", "a00201.html#a5a3590807c8ee832088d32d2fa73e41e", null ],
+    [ "numberOfBuiltIn", "a00201.html#adaabddee293a2df44313bd770975c755", null ],
+    [ "structures", "a00201.html#acaab008ab1a1b0140433e8cedfc32f16", null ],
+    [ "typeLengths", "a00201.html#a3f1355e2fe825330a75e2c1441f1c629", null ],
+    [ "typeLengths64Bit", "a00201.html#ad477bf03c80e1aba7307d548193a9ce7", null ],
+    [ "typeLookup", "a00201.html#a2a326ddef628541e0dd71ad1624ed91c", null ],
+    [ "undefined", "a00201.html#a84148d630e4d79111749cf32178cd616", null ]
 ];

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftList::Link Struct Reference</title>
+<title>FileTools: ftByteInteger Union Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -58,42 +58,76 @@ $(document).ready(function(){initNavTree('a00221.html','');});
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="a00218.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftList::Link Struct Reference</div>  </div>
+<div class="title">ftByteInteger Union Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Utility union to split a 64 bit integer into smaller bytes. </p>
+</div>
 <p><code>#include &lt;ftTypes.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a7cec12d313847900e2000446eea9b6c7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00221.html">Link</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00221.html#a7cec12d313847900e2000446eea9b6c7">next</a></td></tr>
-<tr class="separator:a7cec12d313847900e2000446eea9b6c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec613c8f7cd65526c1419834faede74f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00221.html">Link</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00221.html#aec613c8f7cd65526c1419834faede74f">prev</a></td></tr>
-<tr class="separator:aec613c8f7cd65526c1419834faede74f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af94797a2b8e87fc39931afa80b0a09e9"><td class="memItemLeft" align="right" valign="top">SKuint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00221.html#af94797a2b8e87fc39931afa80b0a09e9">int64</a></td></tr>
+<tr class="separator:af94797a2b8e87fc39931afa80b0a09e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a491722762ab7bea140b3903fe1344f14"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00221.html#a491722762ab7bea140b3903fe1344f14">int32</a> [2]</td></tr>
+<tr class="separator:a491722762ab7bea140b3903fe1344f14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9adc408dea36ea748e4bde87e9a6b0aa"><td class="memItemLeft" align="right" valign="top">SKuint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00221.html#a9adc408dea36ea748e4bde87e9a6b0aa">int16</a> [4]</td></tr>
+<tr class="separator:a9adc408dea36ea748e4bde87e9a6b0aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8700a6bd97a33dfe25b8cbe5046e0f5"><td class="memItemLeft" align="right" valign="top">SKuint8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00221.html#ad8700a6bd97a33dfe25b8cbe5046e0f5">int8</a> [8]</td></tr>
+<tr class="separator:ad8700a6bd97a33dfe25b8cbe5046e0f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a7cec12d313847900e2000446eea9b6c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cec12d313847900e2000446eea9b6c7">&#9670;&nbsp;</a></span>next</h2>
+<a id="a9adc408dea36ea748e4bde87e9a6b0aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9adc408dea36ea748e4bde87e9a6b0aa">&#9670;&nbsp;</a></span>int16</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="a00221.html">Link</a>* ftList::Link::next</td>
+          <td class="memname">SKuint16 ftByteInteger::int16[4]</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aec613c8f7cd65526c1419834faede74f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec613c8f7cd65526c1419834faede74f">&#9670;&nbsp;</a></span>prev</h2>
+<a id="a491722762ab7bea140b3903fe1344f14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a491722762ab7bea140b3903fe1344f14">&#9670;&nbsp;</a></span>int32</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="a00221.html">Link</a>* ftList::Link::prev</td>
+          <td class="memname">SKuint32 ftByteInteger::int32[2]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af94797a2b8e87fc39931afa80b0a09e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af94797a2b8e87fc39931afa80b0a09e9">&#9670;&nbsp;</a></span>int64</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKuint64 ftByteInteger::int64</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad8700a6bd97a33dfe25b8cbe5046e0f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8700a6bd97a33dfe25b8cbe5046e0f5">&#9670;&nbsp;</a></span>int8</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKuint8 ftByteInteger::int8[8]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -106,8 +140,8 @@ Public Attributes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00217.html">ftList</a></li><li class="navelem"><a class="el" href="a00221.html">Link</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:50 for FileTools by
+    <li class="navelem"><a class="el" href="a00221.html">ftByteInteger</a></li>
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

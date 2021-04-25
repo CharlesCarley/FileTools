@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftScanner Class Reference</title>
+<title>FileTools: ftName Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -56,69 +56,50 @@ $(document).ready(function(){initNavTree('a00169.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="a00166.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftScanner Class Reference</div>  </div>
+<div class="title">ftName Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A basic c/c++ scanner to that is used to extract class members. </p>
-</div>
-<p><code>#include &lt;ftScanner.h&gt;</code></p>
+<div class="textblock"><p>Structure to hold information about a c/c++ member. </p>
+<p>The name is defined with the following semantics: </p><div class="fragment"><div class="line">(type) [(<a class="code" href="a00169.html#adb1d06e179405b57d8cd9ee43c8c2264">pointerCount</a>)(<a class="code" href="a00169.html#a5ef8703c03fbe30682d9d1a760f97b2d">name</a>)(<a class="code" href="a00169.html#a888da94fed456ebefea9f5b88f5da759">arraySize</a>:<a class="code" href="a00169.html#a35d8de5213348c85515ac8f478b184cf">dimensions</a>)]</div></div><!-- fragment --> </div>
+<p><code>#include &lt;ftStruct.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab565d615ade99055b1dc950f6caa2c09"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#ab565d615ade99055b1dc950f6caa2c09">ftScanner</a> (const char *ptr, SKsize length)</td></tr>
-<tr class="memdesc:ab565d615ade99055b1dc950f6caa2c09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#ab565d615ade99055b1dc950f6caa2c09">More...</a><br /></td></tr>
-<tr class="separator:ab565d615ade99055b1dc950f6caa2c09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79730e4e04c68fc406d384328dd2edd5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a79730e4e04c68fc406d384328dd2edd5">lex</a> (<a class="el" href="a00213.html">ftToken</a> &amp;token)</td></tr>
-<tr class="memdesc:a79730e4e04c68fc406d384328dd2edd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scans the source for a token.  <a href="#a79730e4e04c68fc406d384328dd2edd5">More...</a><br /></td></tr>
-<tr class="separator:a79730e4e04c68fc406d384328dd2edd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7db1f3935cc59bb3814e49ed553d4a22"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a7db1f3935cc59bb3814e49ed553d4a22">getLine</a> () const</td></tr>
-<tr class="memdesc:a7db1f3935cc59bb3814e49ed553d4a22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to retrieve the line number for error reporting.  <a href="#a7db1f3935cc59bb3814e49ed553d4a22">More...</a><br /></td></tr>
-<tr class="separator:a7db1f3935cc59bb3814e49ed553d4a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a845b23c57297cb73d6f7945f474be2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a0a845b23c57297cb73d6f7945f474be2">ftName</a> ()</td></tr>
+<tr class="memdesc:a0a845b23c57297cb73d6f7945f474be2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a0a845b23c57297cb73d6f7945f474be2">More...</a><br /></td></tr>
+<tr class="separator:a0a845b23c57297cb73d6f7945f474be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a5ef8703c03fbe30682d9d1a760f97b2d"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a5ef8703c03fbe30682d9d1a760f97b2d">name</a></td></tr>
+<tr class="memdesc:a5ef8703c03fbe30682d9d1a760f97b2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the name of the c/c++ member.  <a href="#a5ef8703c03fbe30682d9d1a760f97b2d">More...</a><br /></td></tr>
+<tr class="separator:a5ef8703c03fbe30682d9d1a760f97b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a839a278a20cfd0628bb4a8b85d54b08f"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a839a278a20cfd0628bb4a8b85d54b08f">hash</a></td></tr>
+<tr class="memdesc:a839a278a20cfd0628bb4a8b85d54b08f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the hashed version of the 'char* name' member  <a href="#a839a278a20cfd0628bb4a8b85d54b08f">More...</a><br /></td></tr>
+<tr class="separator:a839a278a20cfd0628bb4a8b85d54b08f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb1d06e179405b57d8cd9ee43c8c2264"><td class="memItemLeft" align="right" valign="top">SKint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#adb1d06e179405b57d8cd9ee43c8c2264">pointerCount</a></td></tr>
+<tr class="memdesc:adb1d06e179405b57d8cd9ee43c8c2264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the number of pointers that are attached to the name.  <a href="#adb1d06e179405b57d8cd9ee43c8c2264">More...</a><br /></td></tr>
+<tr class="separator:adb1d06e179405b57d8cd9ee43c8c2264"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6707696dac01c8986d31e85cd569fd9c"><td class="memItemLeft" align="right" valign="top">SKint8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a6707696dac01c8986d31e85cd569fd9c">dimensionCount</a></td></tr>
+<tr class="memdesc:a6707696dac01c8986d31e85cd569fd9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the number of array dimensions that are attached to the name.  <a href="#a6707696dac01c8986d31e85cd569fd9c">More...</a><br /></td></tr>
+<tr class="separator:a6707696dac01c8986d31e85cd569fd9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83793c5a3fc739c1c7cfa7ba4017544e"><td class="memItemLeft" align="right" valign="top">SKint8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a83793c5a3fc739c1c7cfa7ba4017544e">isFunctionPointer</a></td></tr>
+<tr class="memdesc:a83793c5a3fc739c1c7cfa7ba4017544e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains a true or false value if the member is defined to be a function pointer.  <a href="#a83793c5a3fc739c1c7cfa7ba4017544e">More...</a><br /></td></tr>
+<tr class="separator:a83793c5a3fc739c1c7cfa7ba4017544e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a888da94fed456ebefea9f5b88f5da759"><td class="memItemLeft" align="right" valign="top">SKint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a888da94fed456ebefea9f5b88f5da759">arraySize</a></td></tr>
+<tr class="memdesc:a888da94fed456ebefea9f5b88f5da759"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the total number of array dimensions.  <a href="#a888da94fed456ebefea9f5b88f5da759">More...</a><br /></td></tr>
+<tr class="separator:a888da94fed456ebefea9f5b88f5da759"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35d8de5213348c85515ac8f478b184cf"><td class="memItemLeft" align="right" valign="top">SKint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a35d8de5213348c85515ac8f478b184cf">dimensions</a> [FileTools_MaxArrayDim]</td></tr>
+<tr class="memdesc:a35d8de5213348c85515ac8f478b184cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is an array that holds the individual dimension for multi-dimensional arrays.  <a href="#a35d8de5213348c85515ac8f478b184cf">More...</a><br /></td></tr>
+<tr class="separator:a35d8de5213348c85515ac8f478b184cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab565d615ade99055b1dc950f6caa2c09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab565d615ade99055b1dc950f6caa2c09">&#9670;&nbsp;</a></span>ftScanner()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ftScanner::ftScanner </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>ptr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKsize&#160;</td>
-          <td class="paramname"><em>length</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Default constructor. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ptr</td><td>A memory buffer that contains the source that should be parsed.</td></tr>
-    <tr><td class="paramname">length</td><td>The size in bytes of the memory buffer.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7db1f3935cc59bb3814e49ed553d4a22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7db1f3935cc59bb3814e49ed553d4a22">&#9670;&nbsp;</a></span>getLine()</h2>
+<a id="a0a845b23c57297cb73d6f7945f474be2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a845b23c57297cb73d6f7945f474be2">&#9670;&nbsp;</a></span>ftName()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -127,10 +108,10 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int ftScanner::getLine </td>
+          <td class="memname">ftName::ftName </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -140,35 +121,120 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Used to retrieve the line number for error reporting. </p>
-<dl class="section return"><dt>Returns</dt><dd>Returns the last read line.</dd></dl>
+<p>Default constructor. </p>
 
 </div>
 </div>
-<a id="a79730e4e04c68fc406d384328dd2edd5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79730e4e04c68fc406d384328dd2edd5">&#9670;&nbsp;</a></span>lex()</h2>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a888da94fed456ebefea9f5b88f5da759"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a888da94fed456ebefea9f5b88f5da759">&#9670;&nbsp;</a></span>arraySize</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ftScanner::lex </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="a00213.html">ftToken</a> &amp;&#160;</td>
-          <td class="paramname"><em>token</em></td><td>)</td>
-          <td></td>
+          <td class="memname">SKint16 ftName::arraySize</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Scans the source for a token. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">token</td><td>Is a reference to a <a class="el" href="a00213.html" title="Is a temporary data storage class to store a c/c++ language semantic. It is used when extracting memb...">ftToken</a> class that will temporally hold the result.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The enumerated TokenID of the result.</dd></dl>
+<p>Contains the total number of array dimensions. </p>
+
+</div>
+</div>
+<a id="a6707696dac01c8986d31e85cd569fd9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6707696dac01c8986d31e85cd569fd9c">&#9670;&nbsp;</a></span>dimensionCount</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKint8 ftName::dimensionCount</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains the number of array dimensions that are attached to the name. </p>
+
+</div>
+</div>
+<a id="a35d8de5213348c85515ac8f478b184cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35d8de5213348c85515ac8f478b184cf">&#9670;&nbsp;</a></span>dimensions</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKint32 ftName::dimensions[FileTools_MaxArrayDim]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Is an array that holds the individual dimension for multi-dimensional arrays. </p>
+
+</div>
+</div>
+<a id="a839a278a20cfd0628bb4a8b85d54b08f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a839a278a20cfd0628bb4a8b85d54b08f">&#9670;&nbsp;</a></span>hash</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKhash ftName::hash</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains the hashed version of the 'char* name' member </p>
+
+</div>
+</div>
+<a id="a83793c5a3fc739c1c7cfa7ba4017544e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83793c5a3fc739c1c7cfa7ba4017544e">&#9670;&nbsp;</a></span>isFunctionPointer</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKint8 ftName::isFunctionPointer</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains a true or false value if the member is defined to be a function pointer. </p>
+
+</div>
+</div>
+<a id="a5ef8703c03fbe30682d9d1a760f97b2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ef8703c03fbe30682d9d1a760f97b2d">&#9670;&nbsp;</a></span>name</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* ftName::name</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains the name of the c/c++ member. </p>
+
+</div>
+</div>
+<a id="adb1d06e179405b57d8cd9ee43c8c2264"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb1d06e179405b57d8cd9ee43c8c2264">&#9670;&nbsp;</a></span>pointerCount</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKint32 ftName::pointerCount</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains the number of pointers that are attached to the name. </p>
 
 </div>
 </div>
@@ -178,8 +244,8 @@ Public Member Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00169.html">ftScanner</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:50 for FileTools by
+    <li class="navelem"><a class="el" href="a00169.html">ftName</a></li>
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

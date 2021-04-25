@@ -1,5 +1,7 @@
 var a00221 =
 [
-    [ "next", "a00221.html#a7cec12d313847900e2000446eea9b6c7", null ],
-    [ "prev", "a00221.html#aec613c8f7cd65526c1419834faede74f", null ]
+    [ "int16", "a00221.html#a9adc408dea36ea748e4bde87e9a6b0aa", null ],
+    [ "int32", "a00221.html#a491722762ab7bea140b3903fe1344f14", null ],
+    [ "int64", "a00221.html#af94797a2b8e87fc39931afa80b0a09e9", null ],
+    [ "int8", "a00221.html#ad8700a6bd97a33dfe25b8cbe5046e0f5", null ]
 ];

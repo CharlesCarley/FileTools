@@ -1,12 +1,12 @@
 var a00213 =
 [
-    [ "String", "a00213.html#a2b7e140773eaf5dec7ff4412f234374d", null ],
-    [ "ftToken", "a00213.html#a3c9d275df325dc82398827efd1fdbc31", null ],
-    [ "ftToken", "a00213.html#abdef2fcd34bdd736d3bf235fcc6366c1", null ],
-    [ "ftToken", "a00213.html#ae478931db9253e62393efcb1537e05d1", null ],
-    [ "getArrayLen", "a00213.html#a6ff4cfc3d59fcb21afc1ba10a05646dd", null ],
-    [ "getRef", "a00213.html#a2574fec1361069d3706289568ab7b222", null ],
-    [ "getTokenId", "a00213.html#a004b8df2b4fb3496742d3d95e5cd87ad", null ],
-    [ "getValue", "a00213.html#a80bf2e6a5daa40dd31874c263359c8dc", null ],
-    [ "ftScanner", "a00213.html#a78898aed95e8e9ff9a6270d4ad1b6d5f", null ]
+    [ "Link", "a00217.html", "a00217" ],
+    [ "ftList", "a00213.html#a69ee1cc62e6ff264482802cbc1ee47af", null ],
+    [ "~ftList", "a00213.html#a7fab9e0689a12b197a20e8956e60100b", null ],
+    [ "clear", "a00213.html#a32092e991d594711d57f6c0c2f83ded6", null ],
+    [ "erase", "a00213.html#a195c63ecba8ffbd027fdef635b50c37c", null ],
+    [ "push_back", "a00213.html#a317f5db046eb72db542c3832971e2a72", null ],
+    [ "remove", "a00213.html#a605d71a267457894beb78420e8191a6f", null ],
+    [ "first", "a00213.html#aaa855918e73c5a6a5d759ee0cd317a79", null ],
+    [ "last", "a00213.html#a10418a3d3b008f9fc68c0c80eb303a5c", null ]
 ];

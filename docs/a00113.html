@@ -63,23 +63,23 @@ $(document).ready(function(){initNavTree('a00113.html','');});
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Utility class to aid with casting struct members. </p>
+<div class="textblock"><p><a class="el" href="a00113.html" title="ftAtomicUtils is a utility class to aid with casting struct members. ">ftAtomicUtils</a> is a utility class to aid with casting struct members. </p>
 </div>
 <p><code>#include &lt;ftAtomic.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aa49e4907720930ebb5121c5cbc363e4b"><td class="memItemLeft" align="right" valign="top">static ftAtomic&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#aa49e4907720930ebb5121c5cbc363e4b">getPrimitiveType</a> (const SKhash &amp;typeKey)</td></tr>
-<tr class="memdesc:aa49e4907720930ebb5121c5cbc363e4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preforms a linear search of the builtin types to determine if the supplied key matches a builtin type.  <a href="#aa49e4907720930ebb5121c5cbc363e4b">More...</a><br /></td></tr>
+<tr class="memdesc:aa49e4907720930ebb5121c5cbc363e4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preforms a linear search of the builtin types to determine if the supplied key matches a predefined builtin type.  <a href="#aa49e4907720930ebb5121c5cbc363e4b">More...</a><br /></td></tr>
 <tr class="separator:aa49e4907720930ebb5121c5cbc363e4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa91c1f64d1413c32394db62ba474614"><td class="memItemLeft" align="right" valign="top">static ftAtomic&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#aaa91c1f64d1413c32394db62ba474614">getPrimitiveType</a> (const char *typeName)</td></tr>
-<tr class="memdesc:aaa91c1f64d1413c32394db62ba474614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hashes the type name then calls getPrimitiveType with the hash key.  <a href="#aaa91c1f64d1413c32394db62ba474614">More...</a><br /></td></tr>
+<tr class="memdesc:aaa91c1f64d1413c32394db62ba474614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hashes the supplied type name then calls <a class="el" href="a00113.html#aa49e4907720930ebb5121c5cbc363e4b" title="Preforms a linear search of the builtin types to determine if the supplied key matches a predefined b...">ftAtomicUtils::getPrimitiveType</a> with the hash result.  <a href="#aaa91c1f64d1413c32394db62ba474614">More...</a><br /></td></tr>
 <tr class="separator:aaa91c1f64d1413c32394db62ba474614"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26c0f1908b058eb1f0145dd867d8cc95"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#a26c0f1908b058eb1f0145dd867d8cc95">isInteger</a> (const SKhash &amp;typeKey)</td></tr>
-<tr class="memdesc:a26c0f1908b058eb1f0145dd867d8cc95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the supplied key is an integer type.  <a href="#a26c0f1908b058eb1f0145dd867d8cc95">More...</a><br /></td></tr>
+<tr class="memdesc:a26c0f1908b058eb1f0145dd867d8cc95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the supplied key is an integer data type.  <a href="#a26c0f1908b058eb1f0145dd867d8cc95">More...</a><br /></td></tr>
 <tr class="separator:a26c0f1908b058eb1f0145dd867d8cc95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64f12efd1ef90e7b87a7e53a78269298"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#a64f12efd1ef90e7b87a7e53a78269298">isReal</a> (const SKhash &amp;typeKey)</td></tr>
-<tr class="memdesc:a64f12efd1ef90e7b87a7e53a78269298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the supplied key is a floating point type.  <a href="#a64f12efd1ef90e7b87a7e53a78269298">More...</a><br /></td></tr>
+<tr class="memdesc:a64f12efd1ef90e7b87a7e53a78269298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the supplied key is a floating point data type.  <a href="#a64f12efd1ef90e7b87a7e53a78269298">More...</a><br /></td></tr>
 <tr class="separator:a64f12efd1ef90e7b87a7e53a78269298"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0d536dd8bbf3c04417e96fb8c5c016b"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#ad0d536dd8bbf3c04417e96fb8c5c016b">isNumeric</a> (const SKhash &amp;typeKey)</td></tr>
 <tr class="memdesc:ad0d536dd8bbf3c04417e96fb8c5c016b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if it is an integer or a real number.  <a href="#ad0d536dd8bbf3c04417e96fb8c5c016b">More...</a><br /></td></tr>
@@ -88,10 +88,10 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:ae3f4e31a1e51455653f1eec6ef6c9022"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the types can be cast together.  <a href="#ae3f4e31a1e51455653f1eec6ef6c9022">More...</a><br /></td></tr>
 <tr class="separator:ae3f4e31a1e51455653f1eec6ef6c9022"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69b4c5db263da18944d8ae7c973c1f51"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#a69b4c5db263da18944d8ae7c973c1f51">cast</a> (char *source, char *destination, ftAtomic sourceType, ftAtomic destinationType, SKsize length)</td></tr>
-<tr class="memdesc:a69b4c5db263da18944d8ae7c973c1f51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts the memory from the source into the destination memory.  <a href="#a69b4c5db263da18944d8ae7c973c1f51">More...</a><br /></td></tr>
+<tr class="memdesc:a69b4c5db263da18944d8ae7c973c1f51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts the source memory into the destination memory.  <a href="#a69b4c5db263da18944d8ae7c973c1f51">More...</a><br /></td></tr>
 <tr class="separator:a69b4c5db263da18944d8ae7c973c1f51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7ecccfedf538419ae1dc7cad145fc9e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#ae7ecccfedf538419ae1dc7cad145fc9e">cast</a> (char *source, SKsize srcOffs, char *destination, SKsize dstOffs, ftAtomic sourceType, ftAtomic destinationType, SKsize length)</td></tr>
-<tr class="memdesc:ae7ecccfedf538419ae1dc7cad145fc9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts the memory from the source into the destination memory with the option of separate offsets.  <a href="#ae7ecccfedf538419ae1dc7cad145fc9e">More...</a><br /></td></tr>
+<tr class="memdesc:ae7ecccfedf538419ae1dc7cad145fc9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts the source memory into the destination memory with the option of separate offsets. This is used when the file structure and memory structure are different.  <a href="#ae7ecccfedf538419ae1dc7cad145fc9e">More...</a><br /></td></tr>
 <tr class="separator:ae7ecccfedf538419ae1dc7cad145fc9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
@@ -141,8 +141,8 @@ Static Public Attributes</h2></td></tr>
 <p>Test to determine if the types can be cast together. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">typeKeyA</td><td>The LHS key to test.</td></tr>
-    <tr><td class="paramname">typeKeyB</td><td>The RHS key to test.</td></tr>
+    <tr><td class="paramname">typeKeyA</td><td>The first key to test.</td></tr>
+    <tr><td class="paramname">typeKeyB</td><td>The second key to test. This should be compatible with the first key.</td></tr>
   </table>
   </dd>
 </dl>
@@ -202,7 +202,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Casts the memory from the source into the destination memory. </p>
+<p>Casts the source memory into the destination memory. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">source</td><td>The source memory.</td></tr>
@@ -280,7 +280,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Casts the memory from the source into the destination memory with the option of separate offsets. </p>
+<p>Casts the source memory into the destination memory with the option of separate offsets. This is used when the file structure and memory structure are different. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">source</td><td>The source memory.</td></tr>
@@ -320,14 +320,14 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Preforms a linear search of the builtin types to determine if the supplied key matches a builtin type. </p>
+<p>Preforms a linear search of the builtin types to determine if the supplied key matches a predefined builtin type. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">typeKey</td><td>The key to test.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN if it is not a primitive type. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN if it is not a primitive type defined in this system. </dd></dl>
 
 </div>
 </div>
@@ -355,14 +355,14 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Hashes the type name then calls getPrimitiveType with the hash key. </p>
+<p>Hashes the supplied type name then calls <a class="el" href="a00113.html#aa49e4907720930ebb5121c5cbc363e4b" title="Preforms a linear search of the builtin types to determine if the supplied key matches a predefined b...">ftAtomicUtils::getPrimitiveType</a> with the hash result. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">typeName</td><td>The name to hash.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN if it is not a primitive type. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN if it is not a primitive type defined in this system. </dd></dl>
 
 </div>
 </div>
@@ -390,14 +390,14 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Test to determine if the supplied key is an integer type. </p>
+<p>Test to determine if the supplied key is an integer data type. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">typeKey</td><td>The key to test.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if it is an integer type in the range of [FT_ATOMIC_CHAR, FT_ATOMIC_SCALAR_T)</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if it is an integer type in the range of [FT_ATOMIC_CHAR, FT_ATOMIC_SCALAR_T).</dd></dl>
 
 </div>
 </div>
@@ -460,14 +460,14 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Test to determine if the supplied key is a floating point type. </p>
+<p>Test to determine if the supplied key is a floating point data type. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">typeKey</td><td>The key to test.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if it is a type in the range of [FT_ATOMIC_FLOAT, FT_ATOMIC_SCALAR_T]</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if it is a type in the range of [FT_ATOMIC_FLOAT, FT_ATOMIC_SCALAR_T].</dd></dl>
 
 </div>
 </div>
@@ -515,7 +515,7 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    {<span class="stringliteral">&quot;char&quot;</span>, <span class="keyword">sizeof</span>(char), ftAtomic::FT_ATOMIC_CHAR, makeHash(<span class="stringliteral">&quot;char&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;uchar&quot;</span>, <span class="keyword">sizeof</span>(char), ftAtomic::FT_ATOMIC_UCHAR, makeHash(<span class="stringliteral">&quot;uchar&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;short&quot;</span>, <span class="keyword">sizeof</span>(short), ftAtomic::FT_ATOMIC_SHORT, makeHash(<span class="stringliteral">&quot;short&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;ushort&quot;</span>, <span class="keyword">sizeof</span>(short), ftAtomic::FT_ATOMIC_USHORT, makeHash(<span class="stringliteral">&quot;ushort&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;int&quot;</span>, <span class="keyword">sizeof</span>(int), ftAtomic::FT_ATOMIC_INT, makeHash(<span class="stringliteral">&quot;int&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;long&quot;</span>, <span class="keyword">sizeof</span>(long), ftAtomic::FT_ATOMIC_LONG, makeHash(<span class="stringliteral">&quot;long&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;ulong&quot;</span>, <span class="keyword">sizeof</span>(long), ftAtomic::FT_ATOMIC_ULONG, makeHash(<span class="stringliteral">&quot;ulong&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;float&quot;</span>, <span class="keyword">sizeof</span>(float), ftAtomic::FT_ATOMIC_FLOAT, makeHash(<span class="stringliteral">&quot;float&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;double&quot;</span>, <span class="keyword">sizeof</span>(double), ftAtomic::FT_ATOMIC_DOUBLE, makeHash(<span class="stringliteral">&quot;double&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;int64_t&quot;</span>, <span class="keyword">sizeof</span>(SKint64), ftAtomic::FT_ATOMIC_INT64_T, makeHash(<span class="stringliteral">&quot;int64_t&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;uint64_t&quot;</span>, <span class="keyword">sizeof</span>(SKint64), ftAtomic::FT_ATOMIC_UINT64_T, makeHash(<span class="stringliteral">&quot;uint64_t&quot;</span>)},</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    {<span class="stringliteral">&quot;scalar_t&quot;</span>, <span class="keyword">sizeof</span>(float), ftAtomic::FT_ATOMIC_SCALAR_T, makeHash(<span class="stringliteral">&quot;scalar_t&quot;</span>)},</div><div class="line"></div><div class="line">    {<span class="stringliteral">&quot;void&quot;</span>, 0, ftAtomic::FT_ATOMIC_VOID, makeHash(<span class="stringliteral">&quot;void&quot;</span>)},</div><div class="line">}</div></div><!-- fragment -->
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    {<span class="stringliteral">&quot;char&quot;</span>,     <span class="keyword">sizeof</span>(char),     FT_ATOMIC_CHAR,     makeHash(<span class="stringliteral">&quot;char&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;uchar&quot;</span>,    <span class="keyword">sizeof</span>(char),     FT_ATOMIC_UCHAR,    makeHash(<span class="stringliteral">&quot;uchar&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;short&quot;</span>,    <span class="keyword">sizeof</span>(short),    FT_ATOMIC_SHORT,    makeHash(<span class="stringliteral">&quot;short&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;ushort&quot;</span>,   <span class="keyword">sizeof</span>(short),    FT_ATOMIC_USHORT,   makeHash(<span class="stringliteral">&quot;ushort&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;int&quot;</span>,      <span class="keyword">sizeof</span>(int),      FT_ATOMIC_INT,      makeHash(<span class="stringliteral">&quot;int&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;long&quot;</span>,     <span class="keyword">sizeof</span>(long),     FT_ATOMIC_LONG,     makeHash(<span class="stringliteral">&quot;long&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;ulong&quot;</span>,    <span class="keyword">sizeof</span>(long),     FT_ATOMIC_ULONG,    makeHash(<span class="stringliteral">&quot;ulong&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;float&quot;</span>,    <span class="keyword">sizeof</span>(float),    FT_ATOMIC_FLOAT,    makeHash(<span class="stringliteral">&quot;float&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;double&quot;</span>,   <span class="keyword">sizeof</span>(double),   FT_ATOMIC_DOUBLE,   makeHash(<span class="stringliteral">&quot;double&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;int64_t&quot;</span>,  <span class="keyword">sizeof</span>(SKint64),  FT_ATOMIC_INT64_T,  makeHash(<span class="stringliteral">&quot;int64_t&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;uint64_t&quot;</span>, <span class="keyword">sizeof</span>(SKuint64), FT_ATOMIC_UINT64_T, makeHash(<span class="stringliteral">&quot;uint64_t&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;scalar_t&quot;</span>, scalar_t_size,    FT_ATOMIC_SCALAR_T, makeHash(<span class="stringliteral">&quot;scalar_t&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;void&quot;</span>,     0,                FT_ATOMIC_VOID,     makeHash(<span class="stringliteral">&quot;void&quot;</span>)},</div><div class="line">}</div></div><!-- fragment -->
 <p>Static type table for the builtin atomic types. </p>
 
 </div>
@@ -527,7 +527,7 @@ Static Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="a00113.html">ftAtomicUtils</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:49 for FileTools by
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

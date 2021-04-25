@@ -49,7 +49,7 @@ namespace ftLogger
     extern void color(skConsoleColorSpace cs);
 
     extern void log(const ftChunk &chunk);
-    extern void log(const void *ptr, const SKsize len);
+    extern void log(const void *ptr, const SKsize& len);
     extern void log(ftStruct *strc);
     extern void log(ftMember *strc);
     extern void log(ftStruct *fstrc, ftStruct *mstrc);

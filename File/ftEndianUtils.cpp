@@ -25,18 +25,17 @@
 
 ftEndian ftEndianUtils::getEndian(void)
 {
-    ftEndianTest et{};
-    et.test = (SKint32)FT_ENDIAN_IS_LITTLE;
-
-    return static_cast<ftEndian>(et.bo[0]);
+    ftByteInteger et{};
+    et.int64 = (SKint64)FT_ENDIAN_IS_LITTLE;
+    return static_cast<ftEndian>(et.int8[0]);
 }
 
 
 bool ftEndianUtils::isEndian(const ftEndian& endian)
 {
-    ftEndianTest e{};
-    e.test = endian;
-    return static_cast<ftEndian>(e.bo[0]) == endian;
+    ftByteInteger et{};
+    et.int64 = (SKint64)FT_ENDIAN_IS_LITTLE;
+    return static_cast<ftEndian>(et.int8[0]) == endian;
 }
 
 

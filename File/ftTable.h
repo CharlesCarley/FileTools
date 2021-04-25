@@ -49,19 +49,45 @@ namespace ftIdNames
     const SKuint32 TEST = FT_TYPEID('T', 'E', 'S', 'T');
 }  // namespace ftIdNames
 
-
 /// <summary>
 /// Class for handling the structure table.
 /// </summary>
 class ftTable
 {
 public:
-    typedef ftName*                            Names;  // < FT_MAX_TABLE
-    typedef ftType*                            Types;  // < FT_MAX_TABLE
-    typedef FTtype*                            TypeL;  // < FT_MAX_TABLE
-    typedef FTtype**                           Strcs;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
-    typedef skArray<SKsize>                    NameHash;
-    typedef skArray<ftStruct*>                 Structures;
+    /// <summary>
+    /// 
+    /// </summary>
+    typedef ftName* Names;  // < FT_MAX_TABLE
+
+    /// <summary>
+    ///
+    /// </summary>
+    typedef ftType* Types;  // < FT_MAX_TABLE
+
+    /// <summary>
+    ///
+    /// </summary>
+    typedef FTtype* TypeLengths;  // < FT_MAX_TABLE
+
+    /// <summary>
+    ///
+    /// </summary>
+    typedef FTtype** StructurePointers;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
+
+    /// <summary>
+    ///
+    /// </summary>
+    typedef skArray<SKsize> NameHash;
+
+    /// <summary>
+    ///
+    /// </summary>
+    typedef skArray<ftStruct*> StructureArray;
+
+    /// <summary>
+    ///
+    /// </summary>
     typedef skHashTable<ftCharHashKey, ftType> TypeFinder;
 
     static const ftName InvalidName;
@@ -71,21 +97,31 @@ public:
     ftTable(SKuint8 pointerLength);
     ~ftTable();
 
-    int read(const void* tableSource, const SKsize& tableLength, int headerFlags, int fileFlags);
 
-    SKuint32      findTypeId(const ftCharHashKey& cp);
+    int read(const void*   tableSource,
+             const SKsize& tableLength,
+             int           headerFlags,
+             int           fileFlags);
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    SKuint32 findTypeId(const ftCharHashKey& type);
+
     ftCharHashKey getStructHashByType(const SKuint16& type) const;
 
     const ftName& getStructNameByIdx(const SKuint16& idx) const;
     SKhash        getTypeHash(const SKuint16& type) const;
     bool          isPointer(const SKuint16& name) const;
 
-    const Structures& getStructureArray() const
+    const StructureArray& getStructureArray() const
     {
         return m_structures;
     }
 
-    Structures::Iterator getStructIterator()
+    StructureArray::Iterator getStructIterator()
     {
         return m_structures.iterator();
     }
@@ -98,9 +134,9 @@ public:
         return m_ptrLength;
     }
 
-    bool isValidType(const SKuint32& typeidx) const
+    bool isValidType(const SKuint32& typeIdx) const
     {
-        return typeidx < m_strcCount && typeidx < m_structures.size();
+        return typeIdx < m_strcCount && typeIdx < m_structures.size();
     }
 
     ftStruct* findStructByName(const ftCharHashKey& kvp);
@@ -185,19 +221,19 @@ private:
     friend class ftStruct;
     friend class ftMember;
 
-    Names m_names;
-    Types m_types;
-    TypeL m_tlens;
-    Strcs m_strcs;
+    Names             m_names;
+    Types             m_types;
+    TypeLengths       m_tlens;
+    StructurePointers m_strcs;
 
-    NameHash   m_hashedNames;
-    SKuint16   m_nameCount;
-    SKuint16   m_typeCount;
-    SKuint16   m_strcCount;
-    SKuint16   m_firstStruct;
-    Structures m_structures;
-    SKuint8    m_ptrLength;
-    TypeFinder m_typeFinder;
+    NameHash       m_hashedNames;
+    SKuint16       m_nameCount;
+    SKuint16       m_typeCount;
+    SKuint16       m_strcCount;
+    SKuint16       m_firstStruct;
+    StructureArray m_structures;
+    SKuint8        m_ptrLength;
+    TypeFinder     m_typeFinder;
 
     static int readTableHeader(
         ftMemoryStream& stream,

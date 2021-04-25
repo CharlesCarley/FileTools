@@ -148,8 +148,8 @@ GTEST_TEST(ftAtomic, Swap)
     SKbyte* srcBPtr = (SKbyte*)&i64;
 
     memcpy(dstBuffer, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
-    ftByteInteger before;
-    ftByteInteger after;
+    ftByteInteger before{};
+    ftByteInteger after{};
     before.int64 = i64;
 
     ftEndianUtils::swap64((SKuint64*)&dstBuffer[0], 1);

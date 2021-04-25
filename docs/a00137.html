@@ -63,23 +63,28 @@ $(document).ready(function(){initNavTree('a00137.html','');});
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Utility class to read, write, and scan chunks. </p>
+<div class="textblock"><p><a class="el" href="a00137.html" title="ftChunkUtils is a utility class to read, write, and scan chunks. ">ftChunkUtils</a> is a utility class to read, write, and scan chunks. </p>
 </div>
 <p><code>#include &lt;ftChunk.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ae974096933e10a719720b1b5d9535230"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230">Size</a> { <a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230ac5951b5c1a75fd4c418a926195c2aa9a">BlockSize</a> = sizeof(ftChunk), 
-<a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230a08db7325338a60bd901b47c40844b082">Block32</a> = sizeof(ftChunk32), 
-<a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230afe2f74f461063e0437fc64a42b13d02c">Block64</a> = sizeof(ftChunk64), 
-<a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230a4eedb9df85a572799789b6d15fe54f77">BlockScan</a> = sizeof(ftChunkScan)
+<tr class="memitem:ae974096933e10a719720b1b5d9535230"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230">Size</a> { <br />
+&#160;&#160;<a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230ac5951b5c1a75fd4c418a926195c2aa9a">BlockSize</a> = sizeof(ftChunk), 
+<br />
+&#160;&#160;<a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230a08db7325338a60bd901b47c40844b082">Block32</a> = sizeof(ftChunk32), 
+<br />
+&#160;&#160;<a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230afe2f74f461063e0437fc64a42b13d02c">Block64</a> = sizeof(ftChunk64), 
+<br />
+&#160;&#160;<a class="el" href="a00137.html#ae974096933e10a719720b1b5d9535230a4eedb9df85a572799789b6d15fe54f77">BlockScan</a> = sizeof(ftChunkScan)
+<br />
  }</td></tr>
 <tr class="separator:ae974096933e10a719720b1b5d9535230"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a58bafa7847b5efdd2b2952e935b8d7c3">read</a> (<a class="el" href="a00129.html">ftChunk</a> *dest, skStream *stream, int headerFlags)</td></tr>
-<tr class="memdesc:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to read a chunk from the supplied stream.  <a href="#a58bafa7847b5efdd2b2952e935b8d7c3">More...</a><br /></td></tr>
+<tr class="memdesc:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a chunk from the supplied stream.  <a href="#a58bafa7847b5efdd2b2952e935b8d7c3">More...</a><br /></td></tr>
 <tr class="separator:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeab84d89020f5dadd359278a98d35e9e"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#aeab84d89020f5dadd359278a98d35e9e">write</a> (<a class="el" href="a00129.html">ftChunk</a> *source, skStream *stream)</td></tr>
 <tr class="memdesc:aeab84d89020f5dadd359278a98d35e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to write a chunk to the supplied stream.  <a href="#aeab84d89020f5dadd359278a98d35e9e">More...</a><br /></td></tr>
@@ -150,7 +155,8 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Utility to read a chunk from the supplied stream. </p>
+<p>Reads a chunk from the supplied stream. </p>
+<p>FIXME: This should not return FS_INV_READ.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dest</td><td>The destination memory.</td></tr>
@@ -159,7 +165,8 @@ Static Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The total number of bytes that were read from the stream. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The total number of bytes that were read from the stream.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="a00104.html#a06ef5b36d1ad90d34db38fcdf528e606" title="FileHeader defines conditional flags that are set based on the file&#39;s header string. ">ftFlags::FileHeader</a></dd></dl>
 
 </div>
 </div>
@@ -204,6 +211,7 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Utility to scan over chunks from the supplied stream. </p>
+<p>FIXME: This should not return FS_INV_READ.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dest</td><td>The destination memory.</td></tr>
@@ -269,7 +277,7 @@ Static Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="a00137.html">ftChunkUtils</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:49 for FileTools by
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

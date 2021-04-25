@@ -63,7 +63,9 @@ public:
     /// <summary>
     /// Default constructor
     /// </summary>
-    /// <param name="header"></param>
+    /// <param name="header">
+    /// This should be the first seven bytes of the file header.
+    /// </param>
     explicit ftFile(const char* header);
     virtual ~ftFile();
 
@@ -71,8 +73,14 @@ public:
     /// Attempts to load the file from the supplied file path.
     /// </summary>
     /// <param name="path">File system path to the file's location.</param>
-    /// <param name="mode">Mode to determine how the file should be read. It should be one of the ftFlags::ReadMode codes.</param>
-    /// <returns>A status code indicating the result. It should be one of the ftFlags::FileStatus codes.</returns>
+    /// <param name="mode">
+    /// Mode to determine how the file should be read.
+    /// It should be one of the ftFlags::ReadMode values.
+    /// </param>
+    /// <returns>
+    /// A status code indicating the result.
+    /// It should be one of the ftFlags::FileStatus values.
+    /// </returns>
     int load(const char* path, int mode = 0);
 
     /// <summary>
@@ -80,7 +88,10 @@ public:
     /// </summary>
     /// <param name="memory">A pointer to a block of memory that holds the file.</param>
     /// <param name="sizeInBytes">The total size in bytes of the supplied block of memory.</param>
-    /// <returns>A status code indicating the result. It should be one of the ftFlags::FileStatus codes.</returns>
+    /// <returns>
+    /// A status code indicating the result.
+    /// It should be one of the ftFlags::FileStatus values.
+    /// </returns>
     int load(const void* memory, SKsize sizeInBytes);
 
     /// <summary>
@@ -91,57 +102,83 @@ public:
     /// <returns>A status code indicating the result. It should be one of the ftFlags::FileStatus codes.</returns>
     virtual int save(const char* path, int mode = 0);
 
-    /// <returns>Returns the current memory tables.</returns>
+    /// <summary>
+    /// Returns a pointer to the current memory tables.
+    /// </summary>
     ftTable* getMemoryTable();
 
-    /// <returns>The file's complete header string</returns>
+    /// <summary>Returns the file's complete header string</summary>
     const ftHeader& getHeader() const
     {
         return m_header;
     }
 
-    /// <returns>Returns file's the integer version that
-    /// has been extracted from the header.</returns>
+    /// <summary>
+    /// Returns the file's integer version that
+    /// was extracted from the header.
+    /// </summary>
     const int& getVersion() const
     {
         return m_fileVersion;
     }
 
-    /// <returns>
-    /// Returns the saved file path that was supplied with the call to load.
-    /// </returns>
+    /// <summary>
+    /// Returns the file path that was supplied during the call to load.
+    /// </summary>
     const skString& getPath() const
     {
         return m_curFile;
     }
 
-    /// <returns>
+    /// <summary>
     /// Returns the table that was saved in the file.
-    /// </returns>
+    /// </summary>
     ftTable* getFileTable() const
     {
         return m_file;
     }
 
-    /// <returns>A linked list of all chunks that have been extracted from the file.</returns>
+    /// <summary>
+    /// Returns a linked list of all chunks that
+    /// have been extracted from the file.<
+    /// /summary>
     MemoryChunks& getChunks()
     {
         return m_chunks;
     }
 
+
+    /// <summary>
+    /// Gets the flags that are currently set for the file.
+    /// </summary>
+    /// <returns>
+    /// An integer that contains one or more of the bit flags found in
+    /// ftFlags::LogFlags
+    /// </returns>
     int getFileFlags() const
     {
         return m_fileFlags;
     }
 
-    void setFileFlags(int v)
+
+    /// <summary>
+    /// Sets the flags that for the file.
+    /// </summary>
+    /// <param name="flags">The flags value should contain one or more
+    /// of the bit flags found in ftFlags::LogFlags</param>
+    void setFileFlags(const int flags)
     {
-        m_fileFlags = v;
+        m_fileFlags = flags;
     }
 
-    void addFileFlag(int v)
+    /// <summary>
+    /// Attaches a flag to the current flag. 
+    /// </summary>
+    /// <param name="flag">The flag value should contain one or more
+    /// of the bit flags found in ftFlags::LogFlags</param>
+    void addFileFlag(const int flag)
     {
-        m_fileFlags |= v;
+        m_fileFlags |= flag;
     }
 
     /// <summary>
@@ -182,19 +219,49 @@ public:
     void serialize(skStream* stream, SKsize len, void* writeData) const;
 
 protected:
+
+    /// <summary>
+    /// This is an abstract method that allows this class to gain access
+    /// to the memory tables. 
+    /// </summary>
+    /// <returns>
+    /// The return value should be the character array that was generated
+    /// by the TableCompiler.
+    /// </returns>
+    virtual void* getTables() = 0;
+
+    /// <summary>
+    /// Allows this class to access the size of the table output.
+    /// </summary>
+    /// <returns>
+    /// The return value should be the total size in bytes of the character array that
+    /// was generated by the TableCompiler.
+    /// </returns>
+    virtual SKsize getTableSize() = 0;
+
+
+    /// <summary>
+    /// This is a notification callback which allows derived classes
+    /// a chance to handle a chunk further. This method is invoked after
+    /// each successful chunk read.
+    /// </summary>
+    /// <param name="pointer">Contains the memory of the reconstructed data.</param>
+    /// <param name="chunk">Is the chunk that was read from the file for the reconstructed memory.</param>
+    /// <returns>
+    /// This method should return one of the status codes found in ftFlags::FileStatus.
+    /// A return code of FS_OK lets this class know that it should keep reading.
+    /// Any other code will force an exit.
+    /// </returns>
+    virtual int notifyDataRead(void* pointer, const ftChunk& chunk) = 0;
+
+    virtual int serializeData(skStream* stream) = 0;
+
+
     bool isValidWriteData(void* writeData, const SKsize& len) const;
 
     int initializeTables(ftTable* tables);
 
     int initializeMemory();
-
-    virtual void* getTables() = 0;
-
-    virtual SKsize getTableSize() = 0;
-
-    virtual int notifyDataRead(void* p, const ftChunk& id) = 0;
-
-    virtual int serializeData(skStream* stream) = 0;
 
 private:
     static bool searchFilter(const SKhash* searchIn, const SKhash& searchFor, const SKint32& len);

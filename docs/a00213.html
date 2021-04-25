@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftToken Class Reference</title>
+<title>FileTools: ftList Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -55,154 +55,100 @@ $(document).ready(function(){initNavTree('a00213.html','');});
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#friends">Friends</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="a00210.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftToken Class Reference</div>  </div>
+<div class="title">ftList Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Is a temporary data storage class to store a c/c++ language semantic. It is used when extracting member data with <a class="el" href="a00169.html" title="A basic c/c++ scanner to that is used to extract class members. ">ftScanner</a>. </p>
+<div class="textblock"><p>Utility list class </p>
 </div>
-<p><code>#include &lt;ftToken.h&gt;</code></p>
+<p><code>#include &lt;ftTypes.h&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:a2b7e140773eaf5dec7ff4412f234374d"><td class="memItemLeft" align="right" valign="top">typedef skFixedString&lt; FileTools_MaxCharArray &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a2b7e140773eaf5dec7ff4412f234374d">String</a></td></tr>
-<tr class="separator:a2b7e140773eaf5dec7ff4412f234374d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00217.html">Link</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3c9d275df325dc82398827efd1fdbc31"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a3c9d275df325dc82398827efd1fdbc31">ftToken</a> ()</td></tr>
-<tr class="memdesc:a3c9d275df325dc82398827efd1fdbc31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a3c9d275df325dc82398827efd1fdbc31">More...</a><br /></td></tr>
-<tr class="separator:a3c9d275df325dc82398827efd1fdbc31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abdef2fcd34bdd736d3bf235fcc6366c1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#abdef2fcd34bdd736d3bf235fcc6366c1">ftToken</a> (int id, const <a class="el" href="a00213.html#a2b7e140773eaf5dec7ff4412f234374d">String</a> &amp;value)</td></tr>
-<tr class="memdesc:abdef2fcd34bdd736d3bf235fcc6366c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a token from an id and the string representation of the id.  <a href="#abdef2fcd34bdd736d3bf235fcc6366c1">More...</a><br /></td></tr>
-<tr class="separator:abdef2fcd34bdd736d3bf235fcc6366c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae478931db9253e62393efcb1537e05d1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#ae478931db9253e62393efcb1537e05d1">ftToken</a> (const <a class="el" href="a00213.html">ftToken</a> &amp;token)</td></tr>
-<tr class="memdesc:ae478931db9253e62393efcb1537e05d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition for a copy constructor.  <a href="#ae478931db9253e62393efcb1537e05d1">More...</a><br /></td></tr>
-<tr class="separator:ae478931db9253e62393efcb1537e05d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a004b8df2b4fb3496742d3d95e5cd87ad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a004b8df2b4fb3496742d3d95e5cd87ad">getTokenId</a> () const</td></tr>
-<tr class="memdesc:a004b8df2b4fb3496742d3d95e5cd87ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the token identifier.  <a href="#a004b8df2b4fb3496742d3d95e5cd87ad">More...</a><br /></td></tr>
-<tr class="separator:a004b8df2b4fb3496742d3d95e5cd87ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80bf2e6a5daa40dd31874c263359c8dc"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="a00213.html#a2b7e140773eaf5dec7ff4412f234374d">String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a80bf2e6a5daa40dd31874c263359c8dc">getValue</a> () const</td></tr>
-<tr class="memdesc:a80bf2e6a5daa40dd31874c263359c8dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a const reference to the string data for this token.  <a href="#a80bf2e6a5daa40dd31874c263359c8dc">More...</a><br /></td></tr>
-<tr class="separator:a80bf2e6a5daa40dd31874c263359c8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2574fec1361069d3706289568ab7b222"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00213.html#a2b7e140773eaf5dec7ff4412f234374d">String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a2574fec1361069d3706289568ab7b222">getRef</a> ()</td></tr>
-<tr class="memdesc:a2574fec1361069d3706289568ab7b222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a writable reference to the string data for this token.  <a href="#a2574fec1361069d3706289568ab7b222">More...</a><br /></td></tr>
-<tr class="separator:a2574fec1361069d3706289568ab7b222"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ff4cfc3d59fcb21afc1ba10a05646dd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a6ff4cfc3d59fcb21afc1ba10a05646dd">getArrayLen</a> () const</td></tr>
-<tr class="memdesc:a6ff4cfc3d59fcb21afc1ba10a05646dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the defined array size of c/c++ data type.  <a href="#a6ff4cfc3d59fcb21afc1ba10a05646dd">More...</a><br /></td></tr>
-<tr class="separator:a6ff4cfc3d59fcb21afc1ba10a05646dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69ee1cc62e6ff264482802cbc1ee47af"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a69ee1cc62e6ff264482802cbc1ee47af">ftList</a> ()</td></tr>
+<tr class="separator:a69ee1cc62e6ff264482802cbc1ee47af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fab9e0689a12b197a20e8956e60100b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a7fab9e0689a12b197a20e8956e60100b">~ftList</a> ()</td></tr>
+<tr class="separator:a7fab9e0689a12b197a20e8956e60100b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32092e991d594711d57f6c0c2f83ded6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a32092e991d594711d57f6c0c2f83ded6">clear</a> (void)</td></tr>
+<tr class="separator:a32092e991d594711d57f6c0c2f83ded6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a317f5db046eb72db542c3832971e2a72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a317f5db046eb72db542c3832971e2a72">push_back</a> (void *v)</td></tr>
+<tr class="separator:a317f5db046eb72db542c3832971e2a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a195c63ecba8ffbd027fdef635b50c37c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a195c63ecba8ffbd027fdef635b50c37c">erase</a> (void *vp)</td></tr>
+<tr class="separator:a195c63ecba8ffbd027fdef635b50c37c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a605d71a267457894beb78420e8191a6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a605d71a267457894beb78420e8191a6f">remove</a> (void *vp)</td></tr>
+<tr class="separator:a605d71a267457894beb78420e8191a6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:a78898aed95e8e9ff9a6270d4ad1b6d5f"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a78898aed95e8e9ff9a6270d4ad1b6d5f">ftScanner</a></td></tr>
-<tr class="separator:a78898aed95e8e9ff9a6270d4ad1b6d5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:aaa855918e73c5a6a5d759ee0cd317a79"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00217.html">Link</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#aaa855918e73c5a6a5d759ee0cd317a79">first</a></td></tr>
+<tr class="separator:aaa855918e73c5a6a5d759ee0cd317a79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10418a3d3b008f9fc68c0c80eb303a5c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00217.html">Link</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00213.html#a10418a3d3b008f9fc68c0c80eb303a5c">last</a></td></tr>
+<tr class="separator:a10418a3d3b008f9fc68c0c80eb303a5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a2b7e140773eaf5dec7ff4412f234374d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b7e140773eaf5dec7ff4412f234374d">&#9670;&nbsp;</a></span>String</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef skFixedString&lt;FileTools_MaxCharArray&gt; <a class="el" href="a00213.html#a2b7e140773eaf5dec7ff4412f234374d">ftToken::String</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3c9d275df325dc82398827efd1fdbc31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c9d275df325dc82398827efd1fdbc31">&#9670;&nbsp;</a></span>ftToken() <span class="overload">[1/3]</span></h2>
+<a id="a69ee1cc62e6ff264482802cbc1ee47af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69ee1cc62e6ff264482802cbc1ee47af">&#9670;&nbsp;</a></span>ftList()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ftToken::ftToken </td>
+          <td class="memname">ftList::ftList </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Default constructor. </p>
-
 </div>
 </div>
-<a id="abdef2fcd34bdd736d3bf235fcc6366c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abdef2fcd34bdd736d3bf235fcc6366c1">&#9670;&nbsp;</a></span>ftToken() <span class="overload">[2/3]</span></h2>
+<a id="a7fab9e0689a12b197a20e8956e60100b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7fab9e0689a12b197a20e8956e60100b">&#9670;&nbsp;</a></span>~ftList()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ftToken::ftToken </td>
+          <td class="memname">ftList::~ftList </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>id</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="a00213.html#a2b7e140773eaf5dec7ff4412f234374d">String</a> &amp;&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Constructs a token from an id and the string representation of the id. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">id</td><td>Should be one of the TokenID values.</td></tr>
-    <tr><td class="paramname">value</td><td>Should be a character array with a size less than FT_MAX_ID.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ae478931db9253e62393efcb1537e05d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae478931db9253e62393efcb1537e05d1">&#9670;&nbsp;</a></span>ftToken() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ftToken::ftToken </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00213.html">ftToken</a> &amp;&#160;</td>
-          <td class="paramname"><em>token</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
-
-<p>Definition for a copy constructor. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">token</td><td>A const reference to the token that will be copied into class members.</td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6ff4cfc3d59fcb21afc1ba10a05646dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ff4cfc3d59fcb21afc1ba10a05646dd">&#9670;&nbsp;</a></span>getArrayLen()</h2>
+<a id="a32092e991d594711d57f6c0c2f83ded6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32092e991d594711d57f6c0c2f83ded6">&#9670;&nbsp;</a></span>clear()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -211,36 +157,9 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int ftToken::getArrayLen </td>
+          <td class="memname">void ftList::clear </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the defined array size of c/c++ data type. </p>
-<p>If the type is not defined as an array in c/c++, the array length is defined to 1. Otherwise, the value that is returned should be less than or equal to the FT_ARRAY_DIM_MAX value. </p>
-
-</div>
-</div>
-<a id="a2574fec1361069d3706289568ab7b222"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2574fec1361069d3706289568ab7b222">&#9670;&nbsp;</a></span>getRef()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="a00213.html#a2b7e140773eaf5dec7ff4412f234374d">String</a>&amp; ftToken::getRef </td>
-          <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -252,12 +171,10 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets a writable reference to the string data for this token. </p>
-
 </div>
 </div>
-<a id="a004b8df2b4fb3496742d3d95e5cd87ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a004b8df2b4fb3496742d3d95e5cd87ad">&#9670;&nbsp;</a></span>getTokenId()</h2>
+<a id="a195c63ecba8ffbd027fdef635b50c37c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a195c63ecba8ffbd027fdef635b50c37c">&#9670;&nbsp;</a></span>erase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -266,10 +183,11 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int ftToken::getTokenId </td>
+          <td class="memname">bool ftList::erase </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>vp</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -279,13 +197,10 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets the token identifier. </p>
-<dl class="section return"><dt>Returns</dt><dd>The integer value of the token. The value should be one of <a class="el" href="a00104.html#a0683799a8d789a69478c660013cd2c92">ftFlags::TokenID</a> enumerated values.</dd></dl>
-
 </div>
 </div>
-<a id="a80bf2e6a5daa40dd31874c263359c8dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80bf2e6a5daa40dd31874c263359c8dc">&#9670;&nbsp;</a></span>getValue()</h2>
+<a id="a317f5db046eb72db542c3832971e2a72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a317f5db046eb72db542c3832971e2a72">&#9670;&nbsp;</a></span>push_back()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -294,10 +209,11 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="a00213.html#a2b7e140773eaf5dec7ff4412f234374d">String</a>&amp; ftToken::getValue </td>
+          <td class="memname">void ftList::push_back </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -307,13 +223,10 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets a const reference to the string data for this token. </p>
-
 </div>
 </div>
-<h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="a78898aed95e8e9ff9a6270d4ad1b6d5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78898aed95e8e9ff9a6270d4ad1b6d5f">&#9670;&nbsp;</a></span>ftScanner</h2>
+<a id="a605d71a267457894beb78420e8191a6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a605d71a267457894beb78420e8191a6f">&#9670;&nbsp;</a></span>remove()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -322,14 +235,47 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">friend class <a class="el" href="a00169.html">ftScanner</a></td>
+          <td class="memname">bool ftList::remove </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>vp</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="aaa855918e73c5a6a5d759ee0cd317a79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa855918e73c5a6a5d759ee0cd317a79">&#9670;&nbsp;</a></span>first</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00217.html">Link</a>* ftList::first</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a10418a3d3b008f9fc68c0c80eb303a5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10418a3d3b008f9fc68c0c80eb303a5c">&#9670;&nbsp;</a></span>last</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00217.html">Link</a>* ftList::last</td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 
 </div>
@@ -340,8 +286,8 @@ Friends</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00213.html">ftToken</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:50 for FileTools by
+    <li class="navelem"><a class="el" href="a00213.html">ftList</a></li>
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

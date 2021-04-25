@@ -35,12 +35,12 @@ struct ftKeywordTable
     const char* name;
 
     /// <summary>
-    /// Defines the length  of the keyword name.
+    /// Defines the length of the keyword name.
     /// </summary>
     int len;
 
     /// <summary>
-    /// Defines the enumerated TokenID for the keyword.
+    /// Defines the enumerated ftFlags::TokenID for the keyword.
     /// </summary>
     int token;
 };
@@ -87,7 +87,7 @@ public:
     /// Definition for a copy constructor.
     /// </summary>
     /// <param name="token">A const reference to the token that will be copied into class members.</param>
-    ftToken(const ftToken& token);
+    ftToken(const ftToken& token) = default;
 
     /// <summary>
     /// Gets the token identifier.

@@ -38,6 +38,7 @@ SKsize ftChunkUtils::write(ftChunk* source, skStream* stream)
     return size;
 }
 
+/// FIXME: This should not return FS_INV_READ
 SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int headerFlags)
 {
     SKsize bytesRead = 0;
@@ -70,6 +71,7 @@ SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int headerFlags)
     return bytesRead;
 }
 
+/// FIXME: This should not return FS_INV_READ
 SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags)
 {
     SKsize   bytesRead = 0;
@@ -99,7 +101,7 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags)
                 return FS_INV_READ;
         }
 
-        tmp = (ftChunk*)(&c64);
+        tmp = (ftChunk*)&c64;
     }
     else
     {
@@ -128,7 +130,7 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags)
                 return FS_INV_READ;
         }
 
-        tmp = (ftChunk*)(&c32);
+        tmp = (ftChunk*)&c32;
     }
 
     if (headerFlags & FH_ENDIAN_SWAP)

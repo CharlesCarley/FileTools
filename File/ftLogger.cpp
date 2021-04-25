@@ -156,7 +156,7 @@ void ftLogger::color(skConsoleColorSpace cs)
     skHexPrint::writeColor(cs);
 }
 
-void ftLogger::log(const void* ptr, const SKsize len)
+void ftLogger::log(const void* ptr, const SKsize& len)
 {
     dumpHex(
         (char*)ptr,

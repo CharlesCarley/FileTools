@@ -80,7 +80,7 @@ void ftTable::clearTables(void)
 {
     if (!m_structures.empty())
     {
-        Structures::Iterator it = m_structures.iterator();
+        StructureArray::Iterator it = m_structures.iterator();
         while (it.hasMoreElements())
             delete it.getNext();
     }
@@ -920,9 +920,9 @@ ftStruct* ftTable::findStructByType(const SKint32& type)
     return nullptr;
 }
 
-SKuint32 ftTable::findTypeId(const ftCharHashKey& cp)
+SKuint32 ftTable::findTypeId(const ftCharHashKey& type)
 {
-    const SKsize pos = m_typeFinder.find(cp);
+    const SKsize pos = m_typeFinder.find(type);
     if (pos != m_typeFinder.npos)
         return m_typeFinder.at(pos).id;
     return SK_NPOS32;

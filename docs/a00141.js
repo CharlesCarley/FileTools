@@ -8,5 +8,5 @@ var a00141 =
     [ "setWriteMode", "a00141.html#a436acdecc4dbf7e57d4b160669a15d45", null ],
     [ "writeFile", "a00141.html#a036cbfd9529063d2db797e68c88b0728", null ],
     [ "writeFile", "a00141.html#ae28c48acfdb2a4f8b5d370b8d70dd512", null ],
-    [ "writeStream", "a00141.html#ac556b7deddb52cd52e317af76adb355a", null ]
+    [ "writeStream", "a00141.html#a0e0d5533070218b59feced053c1c51b1", null ]
 ];

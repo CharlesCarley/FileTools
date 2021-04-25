@@ -334,8 +334,8 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         }
         else
         {
-            bin->fileBlock = block;
-            ftStruct *fstrc, *mstrc = nullptr;
+            bin->fileBlock  = block;
+            ftStruct* memoryStruct = nullptr;
 
             if (bin->chunk.code == ftIdNames::DATA && bin->chunk.structId <= m_file->getFirstStructType())
             {
@@ -346,17 +346,17 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
             }
             else
             {
-                fstrc = m_file->findStructByType(bin->chunk.structId);
-                if (fstrc)
-                    mstrc = findInMemoryTable(fstrc);
+                ftStruct* fileStruct = m_file->findStructByType(bin->chunk.structId);
+                if (fileStruct)
+                    memoryStruct = findInMemoryTable(fileStruct);
 
-                if (fstrc && mstrc)
+                if (fileStruct && memoryStruct)
                 {
-                    bin->fileStruct   = fstrc;
-                    bin->memoryStruct = mstrc;
+                    bin->fileStruct   = fileStruct;
+                    bin->memoryStruct = memoryStruct;
                     bin->newTypeId    = bin->memoryStruct->getStructIndex();
 
-                    if (!skip(fstrc->getHashedType()))
+                    if (!skip(fileStruct->getHashedType()))
                     {
                         status = allocateMBlock(phk,
                                                 bin,
@@ -366,14 +366,14 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                     else
                     {
                         if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_DUMP_SKIP)
-                            ftLogger::logSkipChunk(bin->chunk, fstrc, bin->fileBlock, bin->chunk.length);
+                            ftLogger::logSkipChunk(bin->chunk, fileStruct, bin->fileBlock, bin->chunk.length);
                         freeChunk(bin);
                     }
                 }
                 else
                 {
                     if (m_fileFlags & LF_DIAGNOSTICS && m_fileFlags & LF_UNRESOLVED)
-                        ftLogger::logUnresolvedStructure(bin, fstrc, mstrc);
+                        ftLogger::logUnresolvedStructure(bin, fileStruct, memoryStruct);
                     freeChunk(bin);
                 }
             }
@@ -593,7 +593,7 @@ int ftFile::rebuildStructures()
         if (node->memoryBlock && status == FS_OK)
         {
             node->flag |= ftMemoryChunk::BLK_LINKED;
-            notifyDataRead(node->memoryBlock, node->chunk);
+            status = notifyDataRead(node->memoryBlock, node->chunk);
         }
     }
 

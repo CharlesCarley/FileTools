@@ -23,9 +23,11 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "Utils/skDisableWarnings.h"
 #include "ftAtomic.h"
 #include "Utils/skPlatformHeaders.h"
 #include "ftHashTypes.h"
+using namespace ftFlags;
 
 SKhash makeHash(const char* name)
 {
@@ -36,8 +38,8 @@ SKhash makeHash(const char* name)
 
 ftAtomic ftAtomicUtils::getPrimitiveType(const SKhash& typeKey)
 {
-    ftAtomic res = ftAtomic::FT_ATOMIC_UNKNOWN;
-    for (SKsize i = 0; i < NumberOfTypes && res == ftAtomic::FT_ATOMIC_UNKNOWN; ++i)
+    ftAtomic res = FT_ATOMIC_UNKNOWN;
+    for (SKsize i = 0; i < NumberOfTypes && res == FT_ATOMIC_UNKNOWN; ++i)
     {
         if (Types[i].hash == typeKey)
             res = Types[i].type;
@@ -53,26 +55,26 @@ bool ftAtomicUtils::canCast(const SKhash& typeKeyA, const SKhash& typeKeyB)
 ftAtomic ftAtomicUtils::getPrimitiveType(const char* typeName)
 {
     if (!typeName || !*typeName)
-        return ftAtomic::FT_ATOMIC_UNKNOWN;
+        return FT_ATOMIC_UNKNOWN;
     return getPrimitiveType(ftCharHashKey(typeName).hash());
 }
 
 bool ftAtomicUtils::isInteger(const SKhash& typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
-    return tp < ftAtomic::FT_ATOMIC_FLOAT;
+    return tp < FT_ATOMIC_FLOAT;
 }
 
 bool ftAtomicUtils::isReal(const SKhash& typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
-    return tp == ftAtomic::FT_ATOMIC_FLOAT || tp == ftAtomic::FT_ATOMIC_DOUBLE || tp == ftAtomic::FT_ATOMIC_SCALAR_T;
+    return tp == FT_ATOMIC_FLOAT || tp == FT_ATOMIC_DOUBLE || tp == FT_ATOMIC_SCALAR_T;
 }
 
 bool ftAtomicUtils::isNumeric(const SKhash& typeKey)
 {
     const ftAtomic tp = getPrimitiveType(typeKey);
-    return tp != ftAtomic::FT_ATOMIC_VOID && tp != ftAtomic::FT_ATOMIC_UNKNOWN;
+    return tp != FT_ATOMIC_VOID && tp != FT_ATOMIC_UNKNOWN;
 }
 
 template <typename T>
@@ -94,40 +96,40 @@ void ftAtomicUtils_set(char*& destination, ftAtomic destinationType, const doubl
 {
     switch (destinationType)
     {
-    case ftAtomic::FT_ATOMIC_UCHAR:
-    case ftAtomic::FT_ATOMIC_CHAR:
+    case FT_ATOMIC_UCHAR:
+    case FT_ATOMIC_CHAR:
         ftAtomicUtils_setValue<char>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_SHORT:
+    case FT_ATOMIC_SHORT:
         ftAtomicUtils_setValue<short>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_USHORT:
+    case FT_ATOMIC_USHORT:
         ftAtomicUtils_setValue<unsigned short>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_INT:
+    case FT_ATOMIC_INT:
         ftAtomicUtils_setValue<int>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_ULONG:
-    case ftAtomic::FT_ATOMIC_LONG:
+    case FT_ATOMIC_ULONG:
+    case FT_ATOMIC_LONG:
         ftAtomicUtils_setValue<long>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_FLOAT:
+    case FT_ATOMIC_FLOAT:
         ftAtomicUtils_setValue<float>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_DOUBLE:
+    case FT_ATOMIC_DOUBLE:
         ftAtomicUtils_setValue<double>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_INT64_T:
+    case FT_ATOMIC_INT64_T:
         ftAtomicUtils_setValue<SKint64>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_UINT64_T:
+    case FT_ATOMIC_UINT64_T:
         ftAtomicUtils_setValue<SKuint64>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_SCALAR_T:
+    case FT_ATOMIC_SCALAR_T:
         ftAtomicUtils_setValue<scalar_t>(destination, value);
         break;
-    case ftAtomic::FT_ATOMIC_VOID:
-    case ftAtomic::FT_ATOMIC_UNKNOWN:
+    case FT_ATOMIC_VOID:
+    case FT_ATOMIC_UNKNOWN:
         break;
     }
 }
@@ -151,40 +153,40 @@ void ftAtomicUtils::cast(char*    source,
     {
         switch (sourceType)
         {
-        case ftAtomic::FT_ATOMIC_UCHAR:
-        case ftAtomic::FT_ATOMIC_CHAR:
+        case FT_ATOMIC_UCHAR:
+        case FT_ATOMIC_CHAR:
             value = ftAtomicUtils_getValue<char>(source);
             break;
-        case ftAtomic::FT_ATOMIC_SHORT:
+        case FT_ATOMIC_SHORT:
             value = ftAtomicUtils_getValue<short>(source);
             break;
-        case ftAtomic::FT_ATOMIC_USHORT:
+        case FT_ATOMIC_USHORT:
             value = ftAtomicUtils_getValue<unsigned short>(source);
             break;
-        case ftAtomic::FT_ATOMIC_INT:
+        case FT_ATOMIC_INT:
             value = ftAtomicUtils_getValue<int>(source);
             break;
-        case ftAtomic::FT_ATOMIC_ULONG:
-        case ftAtomic::FT_ATOMIC_LONG:
+        case FT_ATOMIC_ULONG:
+        case FT_ATOMIC_LONG:
             value = ftAtomicUtils_getValue<long>(source);
             break;
-        case ftAtomic::FT_ATOMIC_FLOAT:
+        case FT_ATOMIC_FLOAT:
             value = ftAtomicUtils_getValue<float>(source);
             break;
-        case ftAtomic::FT_ATOMIC_DOUBLE:
+        case FT_ATOMIC_DOUBLE:
             value = ftAtomicUtils_getValue<double>(source);
             break;
-        case ftAtomic::FT_ATOMIC_INT64_T:
+        case FT_ATOMIC_INT64_T:
             value = ftAtomicUtils_getValue<SKint64>(source);
             break;
-        case ftAtomic::FT_ATOMIC_UINT64_T:
+        case FT_ATOMIC_UINT64_T:
             value = ftAtomicUtils_getValue<SKuint64>(source);
             break;
-        case ftAtomic::FT_ATOMIC_SCALAR_T:
+        case FT_ATOMIC_SCALAR_T:
             value = ftAtomicUtils_getValue<scalar_t>(source);
             break;
-        case ftAtomic::FT_ATOMIC_VOID:
-        case ftAtomic::FT_ATOMIC_UNKNOWN:
+        case FT_ATOMIC_VOID:
+        case FT_ATOMIC_UNKNOWN:
             value = 0;
             break;
         }
@@ -212,24 +214,28 @@ void ftAtomicUtils::cast(char*    source,
     }
 }
 
-const ftAtomicType ftAtomicUtils::Types[] = {
-    {"char", sizeof(char), ftAtomic::FT_ATOMIC_CHAR, makeHash("char")},
-    {"uchar", sizeof(char), ftAtomic::FT_ATOMIC_UCHAR, makeHash("uchar")},
-    {"short", sizeof(short), ftAtomic::FT_ATOMIC_SHORT, makeHash("short")},
-    {"ushort", sizeof(short), ftAtomic::FT_ATOMIC_USHORT, makeHash("ushort")},
-    {"int", sizeof(int), ftAtomic::FT_ATOMIC_INT, makeHash("int")},
-    {"long", sizeof(long), ftAtomic::FT_ATOMIC_LONG, makeHash("long")},
-    {"ulong", sizeof(long), ftAtomic::FT_ATOMIC_ULONG, makeHash("ulong")},
-    {"float", sizeof(float), ftAtomic::FT_ATOMIC_FLOAT, makeHash("float")},
-    {"double", sizeof(double), ftAtomic::FT_ATOMIC_DOUBLE, makeHash("double")},
-    {"int64_t", sizeof(SKint64), ftAtomic::FT_ATOMIC_INT64_T, makeHash("int64_t")},
-    {"uint64_t", sizeof(SKint64), ftAtomic::FT_ATOMIC_UINT64_T, makeHash("uint64_t")},
 #ifdef ftSCALAR_DOUBLE
-    {"scalar_t", sizeof(double), ftAtomic::FT_ATOMIC_SCALAR_T, mkhash("scalar_t")},
+#define scalar_t_size sizeof(double)
 #else
-    {"scalar_t", sizeof(float), ftAtomic::FT_ATOMIC_SCALAR_T, makeHash("scalar_t")},
+#define scalar_t_size sizeof(float)
 #endif
-    {"void", 0, ftAtomic::FT_ATOMIC_VOID, makeHash("void")},
+
+// clang-format off
+const ftAtomicType ftAtomicUtils::Types[] = {
+    {"char",     sizeof(char),     FT_ATOMIC_CHAR,     makeHash("char")},
+    {"uchar",    sizeof(char),     FT_ATOMIC_UCHAR,    makeHash("uchar")},
+    {"short",    sizeof(short),    FT_ATOMIC_SHORT,    makeHash("short")},
+    {"ushort",   sizeof(short),    FT_ATOMIC_USHORT,   makeHash("ushort")},
+    {"int",      sizeof(int),      FT_ATOMIC_INT,      makeHash("int")},
+    {"long",     sizeof(long),     FT_ATOMIC_LONG,     makeHash("long")},
+    {"ulong",    sizeof(long),     FT_ATOMIC_ULONG,    makeHash("ulong")},
+    {"float",    sizeof(float),    FT_ATOMIC_FLOAT,    makeHash("float")},
+    {"double",   sizeof(double),   FT_ATOMIC_DOUBLE,   makeHash("double")},
+    {"int64_t",  sizeof(SKint64),  FT_ATOMIC_INT64_T,  makeHash("int64_t")},
+    {"uint64_t", sizeof(SKuint64), FT_ATOMIC_UINT64_T, makeHash("uint64_t")},
+    {"scalar_t", scalar_t_size,    FT_ATOMIC_SCALAR_T, makeHash("scalar_t")},
+    {"void",     0,                FT_ATOMIC_VOID,     makeHash("void")},
 };
 
 const SKsize ftAtomicUtils::NumberOfTypes = sizeof Types / sizeof(ftAtomicType);
+// clang-format on

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftFile Class Reference</title>
+<title>FileTools: ftCharHashKey Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -55,146 +55,53 @@ $(document).ready(function(){initNavTree('a00149.html','');});
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="a00146.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftFile Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
+<div class="title">ftCharHashKey Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Base class for a file in this system. Derived classes should override the table methods and supply them to this class. </p>
+<div class="textblock"><p>Utility class to store a cached char hashed key. </p>
 </div>
-<p><code>#include &lt;ftFile.h&gt;</code></p>
+<p><code>#include &lt;ftHashTypes.h&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:ae962e7bfe9b67ca077a033fb35b1f5c1"><td class="memItemLeft" align="right" valign="top">typedef skHashTable&lt; <a class="el" href="a00157.html">ftPointerHashKey</a>, <a class="el" href="a00133.html">ftMemoryChunk</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#ae962e7bfe9b67ca077a033fb35b1f5c1">ChunkMap</a></td></tr>
-<tr class="separator:ae962e7bfe9b67ca077a033fb35b1f5c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fc01fec576ea2ec87e483e4bbd0552e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="a00217.html">ftList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a6fc01fec576ea2ec87e483e4bbd0552e">MemoryChunks</a></td></tr>
-<tr class="separator:a6fc01fec576ea2ec87e483e4bbd0552e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a56be5ce0966df728e7295897138bd529"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a56be5ce0966df728e7295897138bd529">ftFile</a> (const char *header)</td></tr>
-<tr class="memdesc:a56be5ce0966df728e7295897138bd529"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor  <a href="#a56be5ce0966df728e7295897138bd529">More...</a><br /></td></tr>
-<tr class="separator:a56be5ce0966df728e7295897138bd529"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac07be71b7669fe255e9e108453113bb6"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#ac07be71b7669fe255e9e108453113bb6">~ftFile</a> ()</td></tr>
-<tr class="separator:ac07be71b7669fe255e9e108453113bb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b1c6e9dac21ef033c9b0b79caea528f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a9b1c6e9dac21ef033c9b0b79caea528f">load</a> (const char *path, int mode=0)</td></tr>
-<tr class="memdesc:a9b1c6e9dac21ef033c9b0b79caea528f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to load the file from the supplied file path.  <a href="#a9b1c6e9dac21ef033c9b0b79caea528f">More...</a><br /></td></tr>
-<tr class="separator:a9b1c6e9dac21ef033c9b0b79caea528f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65802ab14c1b2f3a8a5caafe657cc0dd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a65802ab14c1b2f3a8a5caafe657cc0dd">load</a> (const void *memory, SKsize sizeInBytes)</td></tr>
-<tr class="memdesc:a65802ab14c1b2f3a8a5caafe657cc0dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to load the file from the supplied memory.  <a href="#a65802ab14c1b2f3a8a5caafe657cc0dd">More...</a><br /></td></tr>
-<tr class="separator:a65802ab14c1b2f3a8a5caafe657cc0dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9495150f7eae643e4ca7d32df34d0cb3"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a9495150f7eae643e4ca7d32df34d0cb3">save</a> (const char *path, int mode=0)</td></tr>
-<tr class="memdesc:a9495150f7eae643e4ca7d32df34d0cb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to save the file to the supplied path.  <a href="#a9495150f7eae643e4ca7d32df34d0cb3">More...</a><br /></td></tr>
-<tr class="separator:a9495150f7eae643e4ca7d32df34d0cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf60f9f85d5428afdb1f5c8e37ab5e23"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00189.html">ftTable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#aaf60f9f85d5428afdb1f5c8e37ab5e23">getMemoryTable</a> ()</td></tr>
-<tr class="memdesc:aaf60f9f85d5428afdb1f5c8e37ab5e23"><td class="mdescLeft">&#160;</td><td class="mdescRight"><dl class="section return"><dt>Returns</dt><dd>Returns the current memory tables.</dd></dl>
- <a href="#aaf60f9f85d5428afdb1f5c8e37ab5e23">More...</a><br /></td></tr>
-<tr class="separator:aaf60f9f85d5428afdb1f5c8e37ab5e23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a857f18513e2b6fb96f8df359c48cfb7f"><td class="memItemLeft" align="right" valign="top">const ftHeader &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a857f18513e2b6fb96f8df359c48cfb7f">getHeader</a> () const</td></tr>
-<tr class="memdesc:a857f18513e2b6fb96f8df359c48cfb7f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><dl class="section return"><dt>Returns</dt><dd>The file's complete header string</dd></dl>
- <a href="#a857f18513e2b6fb96f8df359c48cfb7f">More...</a><br /></td></tr>
-<tr class="separator:a857f18513e2b6fb96f8df359c48cfb7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3f719a3ff6df269cba5b9e8a49084ae"><td class="memItemLeft" align="right" valign="top">const int &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#aa3f719a3ff6df269cba5b9e8a49084ae">getVersion</a> () const</td></tr>
-<tr class="separator:aa3f719a3ff6df269cba5b9e8a49084ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0a86979055e8f9349fe78f5e01f6781"><td class="memItemLeft" align="right" valign="top">const skString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#ab0a86979055e8f9349fe78f5e01f6781">getPath</a> () const</td></tr>
-<tr class="separator:ab0a86979055e8f9349fe78f5e01f6781"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa31e7141b5a85291a411218a811c698c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00189.html">ftTable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#aa31e7141b5a85291a411218a811c698c">getFileTable</a> () const</td></tr>
-<tr class="separator:aa31e7141b5a85291a411218a811c698c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78a60e4fdf479f69f1dd04ea65b709ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00149.html#a6fc01fec576ea2ec87e483e4bbd0552e">MemoryChunks</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a78a60e4fdf479f69f1dd04ea65b709ea">getChunks</a> ()</td></tr>
-<tr class="memdesc:a78a60e4fdf479f69f1dd04ea65b709ea"><td class="mdescLeft">&#160;</td><td class="mdescRight"><dl class="section return"><dt>Returns</dt><dd>A linked list of all chunks that have been extracted from the file.</dd></dl>
- <a href="#a78a60e4fdf479f69f1dd04ea65b709ea">More...</a><br /></td></tr>
-<tr class="separator:a78a60e4fdf479f69f1dd04ea65b709ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d835efb2c560b1602c10ab36b41e999"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a4d835efb2c560b1602c10ab36b41e999">getFileFlags</a> () const</td></tr>
-<tr class="separator:a4d835efb2c560b1602c10ab36b41e999"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56dae63c2ee6f0a21bb3b5a4ce786f43"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a56dae63c2ee6f0a21bb3b5a4ce786f43">setFileFlags</a> (int v)</td></tr>
-<tr class="separator:a56dae63c2ee6f0a21bb3b5a4ce786f43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc217cc13b187f8f3267c8425fcdc8f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#abc217cc13b187f8f3267c8425fcdc8f5">addFileFlag</a> (int v)</td></tr>
-<tr class="separator:abc217cc13b187f8f3267c8425fcdc8f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f308e8ef35def5f7684f7105212fdae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a9f308e8ef35def5f7684f7105212fdae">setFilterList</a> (SKhash *filter, SKuint32 length, bool inclusive=false)</td></tr>
-<tr class="memdesc:a9f308e8ef35def5f7684f7105212fdae"><td class="mdescLeft">&#160;</td><td class="mdescRight">This enables a filter for structures.  <a href="#a9f308e8ef35def5f7684f7105212fdae">More...</a><br /></td></tr>
-<tr class="separator:a9f308e8ef35def5f7684f7105212fdae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3489eb0ad2d5c5a06a1a0cfff12cffb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#ab3489eb0ad2d5c5a06a1a0cfff12cffb">setCastFilter</a> (SKhash *filter, SKuint32 length)</td></tr>
-<tr class="memdesc:ab3489eb0ad2d5c5a06a1a0cfff12cffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the diagnostic flag is set, this sets an inclusive output filter for supplied structures.  <a href="#ab3489eb0ad2d5c5a06a1a0cfff12cffb">More...</a><br /></td></tr>
-<tr class="separator:ab3489eb0ad2d5c5a06a1a0cfff12cffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b6de4bc7f18e6d6f141646c89befead"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a6b6de4bc7f18e6d6f141646c89befead">serialize</a> (skStream *stream, const char *id, SKuint32 code, SKsize len, void *writeData, int nr)</td></tr>
-<tr class="separator:a6b6de4bc7f18e6d6f141646c89befead"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a918e8a0a507cc8efedbfcd20f0f5fb04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a918e8a0a507cc8efedbfcd20f0f5fb04">serialize</a> (skStream *stream, const char *id, SKuint32 code, SKsize len, void *writeData)</td></tr>
-<tr class="separator:a918e8a0a507cc8efedbfcd20f0f5fb04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a538e517ec86b9de3ae27ca397b1601"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a1a538e517ec86b9de3ae27ca397b1601">serialize</a> (skStream *stream, FTtype index, SKuint32 code, SKsize len, void *writeData) const</td></tr>
-<tr class="separator:a1a538e517ec86b9de3ae27ca397b1601"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa82fbdc999c6202280cd80436ed5f7c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#aa82fbdc999c6202280cd80436ed5f7c7">serialize</a> (skStream *stream, SKsize len, void *writeData) const</td></tr>
-<tr class="separator:aa82fbdc999c6202280cd80436ed5f7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:aef47701d54fe4cf151a111a6c5eb582b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#aef47701d54fe4cf151a111a6c5eb582b">isValidWriteData</a> (void *writeData, const SKsize &amp;len) const</td></tr>
-<tr class="separator:aef47701d54fe4cf151a111a6c5eb582b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a889807efd9a6437af27bd6fe0b13f2d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a889807efd9a6437af27bd6fe0b13f2d0">initializeTables</a> (<a class="el" href="a00189.html">ftTable</a> *tables)</td></tr>
-<tr class="separator:a889807efd9a6437af27bd6fe0b13f2d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a561048248e35ad162f3833be8f449cde"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a561048248e35ad162f3833be8f449cde">initializeMemory</a> ()</td></tr>
-<tr class="separator:a561048248e35ad162f3833be8f449cde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d09fe373cd001a2c488d8a8d9ec9878"><td class="memItemLeft" align="right" valign="top">virtual void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a2d09fe373cd001a2c488d8a8d9ec9878">getTables</a> ()=0</td></tr>
-<tr class="separator:a2d09fe373cd001a2c488d8a8d9ec9878"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a845d55027ca8babfa37fe9f57ac20497"><td class="memItemLeft" align="right" valign="top">virtual SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a845d55027ca8babfa37fe9f57ac20497">getTableSize</a> ()=0</td></tr>
-<tr class="separator:a845d55027ca8babfa37fe9f57ac20497"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8ab22d5e9d3cb0cd0fa00f4f2fb3937"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#ab8ab22d5e9d3cb0cd0fa00f4f2fb3937">notifyDataRead</a> (void *p, const <a class="el" href="a00129.html">ftChunk</a> &amp;id)=0</td></tr>
-<tr class="separator:ab8ab22d5e9d3cb0cd0fa00f4f2fb3937"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81b1d632dbc771b7e1b220433c5e56a5"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a81b1d632dbc771b7e1b220433c5e56a5">serializeData</a> (skStream *stream)=0</td></tr>
-<tr class="separator:a81b1d632dbc771b7e1b220433c5e56a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a35f4a8b4099e720eea554d8d9c2dfac7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a35f4a8b4099e720eea554d8d9c2dfac7">m_memoryVersion</a></td></tr>
-<tr class="separator:a35f4a8b4099e720eea554d8d9c2dfac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a185cf337aea013a94ed1c848c316962e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a185cf337aea013a94ed1c848c316962e">m_fileVersion</a></td></tr>
-<tr class="separator:a185cf337aea013a94ed1c848c316962e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fb114a72af296c208eb57afe52236cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00149.html#a6fc01fec576ea2ec87e483e4bbd0552e">MemoryChunks</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a8fb114a72af296c208eb57afe52236cd">m_chunks</a></td></tr>
-<tr class="separator:a8fb114a72af296c208eb57afe52236cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afea8dca54a5669f3b31b38ef842fc779"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00149.html#ae962e7bfe9b67ca077a033fb35b1f5c1">ChunkMap</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#afea8dca54a5669f3b31b38ef842fc779">m_map</a></td></tr>
-<tr class="separator:afea8dca54a5669f3b31b38ef842fc779"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85e9adf9d07c6ad2f894ed5a768f1cf3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00189.html">ftTable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a85e9adf9d07c6ad2f894ed5a768f1cf3">m_memory</a></td></tr>
-<tr class="separator:a85e9adf9d07c6ad2f894ed5a768f1cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c1f58e5cab45f3b7a3aa63b9e45fc22"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00189.html">ftTable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a5c1f58e5cab45f3b7a3aa63b9e45fc22">m_file</a></td></tr>
-<tr class="separator:a5c1f58e5cab45f3b7a3aa63b9e45fc22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a052854c3b22b427dc459c0ca7e6e299c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a052854c3b22b427dc459c0ca7e6e299c">ftCharHashKey</a> ()</td></tr>
+<tr class="memdesc:a052854c3b22b427dc459c0ca7e6e299c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a052854c3b22b427dc459c0ca7e6e299c">More...</a><br /></td></tr>
+<tr class="separator:a052854c3b22b427dc459c0ca7e6e299c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a470329da3c930edc3183e0a01b52174c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a470329da3c930edc3183e0a01b52174c">ftCharHashKey</a> (char *pointer)</td></tr>
+<tr class="memdesc:a470329da3c930edc3183e0a01b52174c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from a character pointer  <a href="#a470329da3c930edc3183e0a01b52174c">More...</a><br /></td></tr>
+<tr class="separator:a470329da3c930edc3183e0a01b52174c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed67c207580e4cca0fe4dd378084ab19"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#aed67c207580e4cca0fe4dd378084ab19">ftCharHashKey</a> (const char *pointer)</td></tr>
+<tr class="memdesc:aed67c207580e4cca0fe4dd378084ab19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from a const character pointer  <a href="#aed67c207580e4cca0fe4dd378084ab19">More...</a><br /></td></tr>
+<tr class="separator:aed67c207580e4cca0fe4dd378084ab19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0566def5b5c5b21fe67f255d1963232"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#ae0566def5b5c5b21fe67f255d1963232">ftCharHashKey</a> (const <a class="el" href="a00149.html">ftCharHashKey</a> &amp;other)</td></tr>
+<tr class="memdesc:ae0566def5b5c5b21fe67f255d1963232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default copy constructor. Copies the other class's key and rehashes the internal key.  <a href="#ae0566def5b5c5b21fe67f255d1963232">More...</a><br /></td></tr>
+<tr class="separator:ae0566def5b5c5b21fe67f255d1963232"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3eb59f68f7128b663ca35a3780c69d55"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a3eb59f68f7128b663ca35a3780c69d55">hash</a> () const</td></tr>
+<tr class="memdesc:a3eb59f68f7128b663ca35a3780c69d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the hash of the internal key, remembers it, and returns the result.  <a href="#a3eb59f68f7128b663ca35a3780c69d55">More...</a><br /></td></tr>
+<tr class="separator:a3eb59f68f7128b663ca35a3780c69d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98958f746787aae5cfe706b095bde497"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a98958f746787aae5cfe706b095bde497">key</a> () const</td></tr>
+<tr class="memdesc:a98958f746787aae5cfe706b095bde497"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides access to the internal character pointer that was supplied during class construction.  <a href="#a98958f746787aae5cfe706b095bde497">More...</a><br /></td></tr>
+<tr class="separator:a98958f746787aae5cfe706b095bde497"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf12484572fdaca02075ccd458134ce6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#abf12484572fdaca02075ccd458134ce6">operator==</a> (const <a class="el" href="a00149.html">ftCharHashKey</a> &amp;rhs) const</td></tr>
+<tr class="memdesc:abf12484572fdaca02075ccd458134ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for equality using the computed hashes.  <a href="#abf12484572fdaca02075ccd458134ce6">More...</a><br /></td></tr>
+<tr class="separator:abf12484572fdaca02075ccd458134ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a863d30eb57a01c501389896139bdfa7c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a863d30eb57a01c501389896139bdfa7c">operator!=</a> (const <a class="el" href="a00149.html">ftCharHashKey</a> &amp;rhs) const</td></tr>
+<tr class="memdesc:a863d30eb57a01c501389896139bdfa7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for inequality using the computed hashes.  <a href="#a863d30eb57a01c501389896139bdfa7c">More...</a><br /></td></tr>
+<tr class="separator:a863d30eb57a01c501389896139bdfa7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4754604f16cb3e06f7e860f5675a2b55"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a4754604f16cb3e06f7e860f5675a2b55">operator==</a> (const SKhash &amp;rhs) const</td></tr>
+<tr class="memdesc:a4754604f16cb3e06f7e860f5675a2b55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for equality using the computed hash and a key computed elsewhere.  <a href="#a4754604f16cb3e06f7e860f5675a2b55">More...</a><br /></td></tr>
+<tr class="separator:a4754604f16cb3e06f7e860f5675a2b55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaac9704069692522a5f04f3a44fa5f8c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#aaac9704069692522a5f04f3a44fa5f8c">operator!=</a> (const SKhash &amp;rhs) const</td></tr>
+<tr class="memdesc:aaac9704069692522a5f04f3a44fa5f8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for inequality using the computed hash and a key computed elsewhere.  <a href="#aaac9704069692522a5f04f3a44fa5f8c">More...</a><br /></td></tr>
+<tr class="separator:aaac9704069692522a5f04f3a44fa5f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="ae962e7bfe9b67ca077a033fb35b1f5c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae962e7bfe9b67ca077a033fb35b1f5c1">&#9670;&nbsp;</a></span>ChunkMap</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef skHashTable&lt;<a class="el" href="a00157.html">ftPointerHashKey</a>, <a class="el" href="a00133.html">ftMemoryChunk</a>*&gt; <a class="el" href="a00149.html#ae962e7bfe9b67ca077a033fb35b1f5c1">ftFile::ChunkMap</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a6fc01fec576ea2ec87e483e4bbd0552e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6fc01fec576ea2ec87e483e4bbd0552e">&#9670;&nbsp;</a></span>MemoryChunks</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="a00217.html">ftList</a> <a class="el" href="a00149.html#a6fc01fec576ea2ec87e483e4bbd0552e">ftFile::MemoryChunks</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a56be5ce0966df728e7295897138bd529"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56be5ce0966df728e7295897138bd529">&#9670;&nbsp;</a></span>ftFile()</h2>
+<a id="a052854c3b22b427dc459c0ca7e6e299c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a052854c3b22b427dc459c0ca7e6e299c">&#9670;&nbsp;</a></span>ftCharHashKey() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -203,41 +110,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ftFile::ftFile </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>header</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Default constructor </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">header</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ac07be71b7669fe255e9e108453113bb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac07be71b7669fe255e9e108453113bb6">&#9670;&nbsp;</a></span>~ftFile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ftFile::~ftFile </td>
+          <td class="memname">ftCharHashKey::ftCharHashKey </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -245,16 +118,120 @@ Protected Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Default constructor. </p>
+
+</div>
+</div>
+<a id="a470329da3c930edc3183e0a01b52174c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a470329da3c930edc3183e0a01b52174c">&#9670;&nbsp;</a></span>ftCharHashKey() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ftCharHashKey::ftCharHashKey </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>pointer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct from a character pointer </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointer</td><td>The character pointer to hash.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aed67c207580e4cca0fe4dd378084ab19"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed67c207580e4cca0fe4dd378084ab19">&#9670;&nbsp;</a></span>ftCharHashKey() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ftCharHashKey::ftCharHashKey </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>pointer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct from a const character pointer </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointer</td><td>The character pointer to hash.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae0566def5b5c5b21fe67f255d1963232"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0566def5b5c5b21fe67f255d1963232">&#9670;&nbsp;</a></span>ftCharHashKey() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ftCharHashKey::ftCharHashKey </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="a00149.html">ftCharHashKey</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default copy constructor. Copies the other class's key and rehashes the internal key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>The character <a class="el" href="a00149.html" title="Utility class to store a cached char hashed key. ">ftCharHashKey</a> to copy.</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="abc217cc13b187f8f3267c8425fcdc8f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc217cc13b187f8f3267c8425fcdc8f5">&#9670;&nbsp;</a></span>addFileFlag()</h2>
+<a id="a3eb59f68f7128b663ca35a3780c69d55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3eb59f68f7128b663ca35a3780c69d55">&#9670;&nbsp;</a></span>hash()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -263,61 +240,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ftFile::addFileFlag </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>v</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a78a60e4fdf479f69f1dd04ea65b709ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78a60e4fdf479f69f1dd04ea65b709ea">&#9670;&nbsp;</a></span>getChunks()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="a00149.html#a6fc01fec576ea2ec87e483e4bbd0552e">MemoryChunks</a>&amp; ftFile::getChunks </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p><dl class="section return"><dt>Returns</dt><dd>A linked list of all chunks that have been extracted from the file.</dd></dl>
-</p>
-
-</div>
-</div>
-<a id="a4d835efb2c560b1602c10ab36b41e999"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d835efb2c560b1602c10ab36b41e999">&#9670;&nbsp;</a></span>getFileFlags()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftFile::getFileFlags </td>
+          <td class="memname">SKhash ftCharHashKey::hash </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -330,10 +253,12 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Computes the hash of the internal key, remembers it, and returns the result. </p>
+
 </div>
 </div>
-<a id="aa31e7141b5a85291a411218a811c698c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa31e7141b5a85291a411218a811c698c">&#9670;&nbsp;</a></span>getFileTable()</h2>
+<a id="a98958f746787aae5cfe706b095bde497"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98958f746787aae5cfe706b095bde497">&#9670;&nbsp;</a></span>key()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -342,33 +267,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="a00189.html">ftTable</a>* ftFile::getFileTable </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Returns the table that was saved in the file. </dd></dl>
-
-</div>
-</div>
-<a id="a857f18513e2b6fb96f8df359c48cfb7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a857f18513e2b6fb96f8df359c48cfb7f">&#9670;&nbsp;</a></span>getHeader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const ftHeader&amp; ftFile::getHeader </td>
+          <td class="memname">const char* ftCharHashKey::key </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -381,34 +280,13 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p><dl class="section return"><dt>Returns</dt><dd>The file's complete header string</dd></dl>
-</p>
+<p>Provides access to the internal character pointer that was supplied during class construction. </p>
+<dl class="section return"><dt>Returns</dt><dd>The internal key.</dd></dl>
 
 </div>
 </div>
-<a id="aaf60f9f85d5428afdb1f5c8e37ab5e23"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf60f9f85d5428afdb1f5c8e37ab5e23">&#9670;&nbsp;</a></span>getMemoryTable()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="a00189.html">ftTable</a> * ftFile::getMemoryTable </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p><dl class="section return"><dt>Returns</dt><dd>Returns the current memory tables.</dd></dl>
-</p>
-
-</div>
-</div>
-<a id="ab0a86979055e8f9349fe78f5e01f6781"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0a86979055e8f9349fe78f5e01f6781">&#9670;&nbsp;</a></span>getPath()</h2>
+<a id="a863d30eb57a01c501389896139bdfa7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a863d30eb57a01c501389896139bdfa7c">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -417,9 +295,10 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const skString&amp; ftFile::getPath </td>
+          <td class="memname">bool ftCharHashKey::operator!= </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="a00149.html">ftCharHashKey</a> &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -429,37 +308,13 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Returns the saved file path that was supplied with the call to load. </dd></dl>
+
+<p>Tests for inequality using the computed hashes. </p>
 
 </div>
 </div>
-<a id="a2d09fe373cd001a2c488d8a8d9ec9878"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d09fe373cd001a2c488d8a8d9ec9878">&#9670;&nbsp;</a></span>getTables()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void* ftFile::getTables </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a845d55027ca8babfa37fe9f57ac20497"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a845d55027ca8babfa37fe9f57ac20497">&#9670;&nbsp;</a></span>getTableSize()</h2>
+<a id="aaac9704069692522a5f04f3a44fa5f8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaac9704069692522a5f04f3a44fa5f8c">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -468,34 +323,10 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual SKsize ftFile::getTableSize </td>
+          <td class="memname">bool ftCharHashKey::operator!= </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa3f719a3ff6df269cba5b9e8a49084ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3f719a3ff6df269cba5b9e8a49084ae">&#9670;&nbsp;</a></span>getVersion()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const int&amp; ftFile::getVersion </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const SKhash &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -505,12 +336,13 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Returns file's the integer version that has been extracted from the header.</dd></dl>
+
+<p>Tests for inequality using the computed hash and a key computed elsewhere. </p>
 
 </div>
 </div>
-<a id="a561048248e35ad162f3833be8f449cde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a561048248e35ad162f3833be8f449cde">&#9670;&nbsp;</a></span>initializeMemory()</h2>
+<a id="abf12484572fdaca02075ccd458134ce6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf12484572fdaca02075ccd458134ce6">&#9670;&nbsp;</a></span>operator==() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -519,498 +351,11 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int ftFile::initializeMemory </td>
+          <td class="memname">bool ftCharHashKey::operator== </td>
           <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a889807efd9a6437af27bd6fe0b13f2d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a889807efd9a6437af27bd6fe0b13f2d0">&#9670;&nbsp;</a></span>initializeTables()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftFile::initializeTables </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="a00189.html">ftTable</a> *&#160;</td>
-          <td class="paramname"><em>tables</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aef47701d54fe4cf151a111a6c5eb582b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef47701d54fe4cf151a111a6c5eb582b">&#9670;&nbsp;</a></span>isValidWriteData()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool ftFile::isValidWriteData </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>writeData</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const SKsize &amp;&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9b1c6e9dac21ef033c9b0b79caea528f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b1c6e9dac21ef033c9b0b79caea528f">&#9670;&nbsp;</a></span>load() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftFile::load </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>path</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>mode</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Attempts to load the file from the supplied file path. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">path</td><td>File system path to the file's location.</td></tr>
-    <tr><td class="paramname">mode</td><td>Mode to determine how the file should be read. It should be one of the <a class="el" href="a00104.html#a074fd57eb82147dd99e7e4cdb772b04c">ftFlags::ReadMode</a> codes.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A status code indicating the result. It should be one of the <a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732" title="Return status codes ">ftFlags::FileStatus</a> codes.</dd></dl>
-
-</div>
-</div>
-<a id="a65802ab14c1b2f3a8a5caafe657cc0dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65802ab14c1b2f3a8a5caafe657cc0dd">&#9670;&nbsp;</a></span>load() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftFile::load </td>
-          <td>(</td>
-          <td class="paramtype">const void *&#160;</td>
-          <td class="paramname"><em>memory</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKsize&#160;</td>
-          <td class="paramname"><em>sizeInBytes</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Attempts to load the file from the supplied memory. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">memory</td><td>A pointer to a block of memory that holds the file.</td></tr>
-    <tr><td class="paramname">sizeInBytes</td><td>The total size in bytes of the supplied block of memory.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A status code indicating the result. It should be one of the <a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732" title="Return status codes ">ftFlags::FileStatus</a> codes.</dd></dl>
-
-</div>
-</div>
-<a id="ab8ab22d5e9d3cb0cd0fa00f4f2fb3937"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8ab22d5e9d3cb0cd0fa00f4f2fb3937">&#9670;&nbsp;</a></span>notifyDataRead()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual int ftFile::notifyDataRead </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="a00129.html">ftChunk</a> &amp;&#160;</td>
-          <td class="paramname"><em>id</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9495150f7eae643e4ca7d32df34d0cb3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9495150f7eae643e4ca7d32df34d0cb3">&#9670;&nbsp;</a></span>save()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftFile::save </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>path</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>mode</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Attempts to save the file to the supplied path. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">path</td><td>The output file system path.</td></tr>
-    <tr><td class="paramname">mode</td><td>Mode to determine how the file should be saved. It should be one of the <a class="el" href="a00104.html#a074fd57eb82147dd99e7e4cdb772b04c">ftFlags::ReadMode</a> codes.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A status code indicating the result. It should be one of the <a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732" title="Return status codes ">ftFlags::FileStatus</a> codes.</dd></dl>
-
-</div>
-</div>
-<a id="a6b6de4bc7f18e6d6f141646c89befead"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b6de4bc7f18e6d6f141646c89befead">&#9670;&nbsp;</a></span>serialize() <span class="overload">[1/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftFile::serialize </td>
-          <td>(</td>
-          <td class="paramtype">skStream *&#160;</td>
-          <td class="paramname"><em>stream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>id</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKuint32&#160;</td>
-          <td class="paramname"><em>code</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKsize&#160;</td>
-          <td class="paramname"><em>len</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>writeData</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>nr</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a918e8a0a507cc8efedbfcd20f0f5fb04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a918e8a0a507cc8efedbfcd20f0f5fb04">&#9670;&nbsp;</a></span>serialize() <span class="overload">[2/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftFile::serialize </td>
-          <td>(</td>
-          <td class="paramtype">skStream *&#160;</td>
-          <td class="paramname"><em>stream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>id</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKuint32&#160;</td>
-          <td class="paramname"><em>code</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKsize&#160;</td>
-          <td class="paramname"><em>len</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>writeData</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a1a538e517ec86b9de3ae27ca397b1601"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a538e517ec86b9de3ae27ca397b1601">&#9670;&nbsp;</a></span>serialize() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftFile::serialize </td>
-          <td>(</td>
-          <td class="paramtype">skStream *&#160;</td>
-          <td class="paramname"><em>stream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">FTtype&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKuint32&#160;</td>
-          <td class="paramname"><em>code</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKsize&#160;</td>
-          <td class="paramname"><em>len</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>writeData</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa82fbdc999c6202280cd80436ed5f7c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa82fbdc999c6202280cd80436ed5f7c7">&#9670;&nbsp;</a></span>serialize() <span class="overload">[4/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftFile::serialize </td>
-          <td>(</td>
-          <td class="paramtype">skStream *&#160;</td>
-          <td class="paramname"><em>stream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKsize&#160;</td>
-          <td class="paramname"><em>len</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>writeData</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a81b1d632dbc771b7e1b220433c5e56a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81b1d632dbc771b7e1b220433c5e56a5">&#9670;&nbsp;</a></span>serializeData()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual int ftFile::serializeData </td>
-          <td>(</td>
-          <td class="paramtype">skStream *&#160;</td>
-          <td class="paramname"><em>stream</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab3489eb0ad2d5c5a06a1a0cfff12cffb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3489eb0ad2d5c5a06a1a0cfff12cffb">&#9670;&nbsp;</a></span>setCastFilter()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftFile::setCastFilter </td>
-          <td>(</td>
-          <td class="paramtype">SKhash *&#160;</td>
-          <td class="paramname"><em>filter</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKuint32&#160;</td>
-          <td class="paramname"><em>length</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>When the diagnostic flag is set, this sets an inclusive output filter for supplied structures. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">filter</td><td>The structures that should be logged.</td></tr>
-    <tr><td class="paramname">length</td><td>The number of hash codes in the filter.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a56dae63c2ee6f0a21bb3b5a4ce786f43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56dae63c2ee6f0a21bb3b5a4ce786f43">&#9670;&nbsp;</a></span>setFileFlags()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftFile::setFileFlags </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>v</em></td><td>)</td>
-          <td></td>
+          <td class="paramtype">const <a class="el" href="a00149.html">ftCharHashKey</a> &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -1020,183 +365,35 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Tests for equality using the computed hashes. </p>
+
 </div>
 </div>
-<a id="a9f308e8ef35def5f7684f7105212fdae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f308e8ef35def5f7684f7105212fdae">&#9670;&nbsp;</a></span>setFilterList()</h2>
+<a id="a4754604f16cb3e06f7e860f5675a2b55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4754604f16cb3e06f7e860f5675a2b55">&#9670;&nbsp;</a></span>operator==() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ftFile::setFilterList </td>
+          <td class="memname">bool ftCharHashKey::operator== </td>
           <td>(</td>
-          <td class="paramtype">SKhash *&#160;</td>
-          <td class="paramname"><em>filter</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SKuint32&#160;</td>
-          <td class="paramname"><em>length</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>inclusive</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>This enables a filter for structures. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">filter</td><td>The input filter.</td></tr>
-    <tr><td class="paramname">length</td><td>The number of structures in the filter</td></tr>
-    <tr><td class="paramname">inclusive</td><td>Sets whether the filter should include or exclude the supplied filter.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>Internally struct types are stored by a hash of their unique type name. The filter list needs to be a null terminated SKhash [] array.</p>
-<p>The hash function resides in the <a class="el" href="a00153.html" title="Utility class to store a cached char hashed key. ">ftCharHashKey</a> class Usage: </p><div class="fragment"><div class="line">FBThash filterList[] = {</div><div class="line">     <a class="code" href="a00153.html">ftCharHashKey</a>(<span class="stringliteral">&quot;StructToFilter1&quot;</span>).<a class="code" href="a00153.html#a3eb59f68f7128b663ca35a3780c69d55">hash</a>(),</div><div class="line">     <a class="code" href="a00153.html">ftCharHashKey</a>(<span class="stringliteral">&quot;StructToFilter2&quot;</span>).<a class="code" href="a00153.html#a3eb59f68f7128b663ca35a3780c69d55">hash</a>(),</div><div class="line">     <span class="keyword">nullptr</span></div><div class="line">};</div></div><!-- fragment --> 
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a8fb114a72af296c208eb57afe52236cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8fb114a72af296c208eb57afe52236cd">&#9670;&nbsp;</a></span>m_chunks</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="a00149.html#a6fc01fec576ea2ec87e483e4bbd0552e">MemoryChunks</a> ftFile::m_chunks</td>
+          <td class="paramtype">const SKhash &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a5c1f58e5cab45f3b7a3aa63b9e45fc22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c1f58e5cab45f3b7a3aa63b9e45fc22">&#9670;&nbsp;</a></span>m_file</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="a00189.html">ftTable</a>* ftFile::m_file</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a185cf337aea013a94ed1c848c316962e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a185cf337aea013a94ed1c848c316962e">&#9670;&nbsp;</a></span>m_fileVersion</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftFile::m_fileVersion</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="afea8dca54a5669f3b31b38ef842fc779"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afea8dca54a5669f3b31b38ef842fc779">&#9670;&nbsp;</a></span>m_map</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="a00149.html#ae962e7bfe9b67ca077a033fb35b1f5c1">ChunkMap</a> ftFile::m_map</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a85e9adf9d07c6ad2f894ed5a768f1cf3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85e9adf9d07c6ad2f894ed5a768f1cf3">&#9670;&nbsp;</a></span>m_memory</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="a00189.html">ftTable</a>* ftFile::m_memory</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a35f4a8b4099e720eea554d8d9c2dfac7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35f4a8b4099e720eea554d8d9c2dfac7">&#9670;&nbsp;</a></span>m_memoryVersion</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ftFile::m_memoryVersion</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Tests for equality using the computed hash and a key computed elsewhere. </p>
 
 </div>
 </div>
@@ -1206,8 +403,8 @@ Protected Attributes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00149.html">ftFile</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:50 for FileTools by
+    <li class="navelem"><a class="el" href="a00149.html">ftCharHashKey</a></li>
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

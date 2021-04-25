@@ -174,7 +174,8 @@ class ftStruct;
 namespace ftFlags
 {
     /// <summary>
-    /// Enumerated values for the file's header string.
+    /// FileMagic contains values that have been extracted from
+    /// file's header string.
     /// </summary>
     enum FileMagic
     {
@@ -183,7 +184,7 @@ namespace ftFlags
         /// </summary>
         FM_BIG_ENDIAN = 0x56,
         /// <summary>
-        /// Indicates that the file was saved on a big endian platform.
+        /// Indicates that the file was saved on a little endian platform.
         /// </summary>
         FM_LITTLE_ENDIAN = 0x76,
         /// <summary>
@@ -253,7 +254,7 @@ namespace ftFlags
         FS_TABLE_INIT_FAILED,
 
         /// <summary>
-        /// A diagnostics check error. A zeroed block of memory contains something other than zeros.   
+        /// A diagnostics check error. A zeroed block of memory contains something other than zeros.
         /// </summary>
         FS_OVERFLOW,
 
@@ -283,29 +284,48 @@ namespace ftFlags
         RM_READ_FROM_MEMORY,
     };
 
+    /// <summary>
+    /// FileHeader defines conditional flags that are set based
+    /// on the file's header string.
+    /// </summary>
     enum FileHeader
     {
-        FH_ENDIAN_SWAP = 1 << 0,
-        FH_CHUNK_64    = 1 << 1,
-        FH_VAR_BITS    = 1 << 2,
+        /// <summary>
+        /// Is a flag that indicates that the byte order in the file
+        /// is different than the byte order of the platform that is
+        /// loading the file.
+        /// </summary>
+        FH_ENDIAN_SWAP = 0x01,
+
+        /// <summary>
+        /// Is a flag that indicates that the chunk size in the file
+        /// was saved on a 64 bit platform.
+        /// </summary>
+        FH_CHUNK_64 = 0x02,
+
+        /// <summary>
+        /// Is a flag that indicates that the chunk size in the file
+        /// does not match the chunk size on the current platform.
+        /// </summary>
+        FH_VAR_BITS = 0x04,
     };
 
     enum LogFlags
     {
-        LF_NONE             = 0,
-        LF_ONLY_ERR         = 1 << 0,
-        LF_READ_CHUNKS      = 1 << 1,  // Logs the chunks as they are read
-        LF_WRITE_CHUNKS     = 1 << 2,  // Logs the chunks as they are written
-        LF_DO_CHECKS        = 1 << 3,
-        LF_DIAGNOSTICS      = 1 << 4,   // Enable diagnostics printout
-        LF_DUMP_NAME_TABLE  = 1 << 5,   // Output the contents of the name table.
-        LF_DUMP_TYPE_TABLE  = 1 << 6,   // Output the contents of the type table.
-        LF_DUMP_SIZE_TABLE  = 1 << 7,   // Output the contents of the size table.
-        LF_DUMP_MEMBER_HASH = 1 << 8,   // Output member search key
-        LF_DUMP_SKIP        = 1 << 9,   // Log the blocks being skipped.
-        LF_DUMP_CAST        = 1 << 10,  // Log the before and after buffers while casting.
-        LF_UNRESOLVED       = 1 << 11,  // Log cases where there is not a memory structure associated with a file structure.
-        LF_MISSING_PTR_PTR  = 1 << 12,  // Log cases where the pointer to pointer lookup address is valid but was not found.
+        LF_NONE             = 0x0000,
+        LF_ONLY_ERR         = 0x0001,
+        LF_READ_CHUNKS      = 0x0002,  // Logs the chunks as they are read
+        LF_WRITE_CHUNKS     = 0x0004,  // Logs the chunks as they are written
+        LF_DO_CHECKS        = 0x0008,
+        LF_DIAGNOSTICS      = 0x0010,  // Enable diagnostics printout
+        LF_DUMP_NAME_TABLE  = 0x0020,  // Output the contents of the name table.
+        LF_DUMP_TYPE_TABLE  = 0x0040,  // Output the contents of the type table.
+        LF_DUMP_SIZE_TABLE  = 0x0080,  // Output the contents of the size table.
+        LF_DUMP_MEMBER_HASH = 0x0100,  // Output member search key
+        LF_DUMP_SKIP        = 0x0200,  // Log the blocks being skipped.
+        LF_DUMP_CAST        = 0x0400,  // Log the before and after buffers while casting.
+        LF_UNRESOLVED       = 0x0800,  // Log cases where there is not a memory structure associated with a file structure.
+        LF_MISSING_PTR_PTR  = 0x1000,  // Log cases where the pointer to pointer lookup address is valid but was not found.
     };
 
     enum LinkerIssues
@@ -322,10 +342,29 @@ namespace ftFlags
         LNK_DUPLICATE_TYPES = 0x100
     };
 
+    /// <summary>
+    /// WriteMode is a flag that is used to control
+    /// how ftCompiler formats the output in write methods.
+    /// </summary>
     enum WriteMode
     {
-        WRITE_ARRAY = 0,  // Writes table as a c/c++ array. (the default mode)
-        WRITE_STREAM,     // Writes table to the specified stream. (raw data only)
+        /// <summary>
+        /// Writes the table as a c/c++ array.
+        /// </summary>
+        /// <remarks>
+        /// The table is written back to c/c++ to be compiled as a source file.
+        ///  <code>
+        ///  const unsigned char ${TableName}Table[] = {
+        ///     ...
+        ///  }
+        ///  const int ${TableName}Len=sizeof(${TableName}Table);
+        ///  </code>
+        /// </remarks>
+        WRITE_ARRAY = 0,
+        /// <summary>
+        /// Writes the table as binary memory.
+        /// </summary>
+        WRITE_STREAM,
     };
 
     enum TokenID

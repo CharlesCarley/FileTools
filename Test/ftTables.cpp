@@ -107,7 +107,7 @@ GTEST_TEST(ftCompiler, RebuildTest)
     status = tbl.read(stream.ptr(), stream.size(), 0, ftFlags::LF_DIAGNOSTICS);
     EXPECT_EQ(ftFlags::FS_OK, status);
 
-    ftTable::Structures::Iterator it = tbl.getStructIterator();
+    ftTable::StructureArray::Iterator it = tbl.getStructIterator();
     while (it.hasMoreElements())
     {
         ftStruct* structure = it.getNext();

@@ -60,17 +60,17 @@ public:
     //       It was allocated with malloc. The
     //       memory should be released with a call
     //       to free
-    inline void *getDNA()
+    void *getDNA() const
     {
         return m_foundBlock;
     }
 
-    inline SKsize getLength()
+    SKsize getLength() const
     {
         return m_foundLen;
     }
 
-    inline int getFlags()
+    int getFlags() const
     {
         return m_headerFlags;
     }

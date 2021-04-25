@@ -25,10 +25,15 @@
 #include "ftTypes.h"
 
 /// <summary>
-/// Is a structure that contains the minimum amount of
+/// ftChunkScan is a structure that contains the minimum amount of
 /// information to jump around the file.
 /// </summary>
-/// <remarks>Used when scanning for a specific data block.</remarks>
+/// <remarks>
+/// This is used when scanning for a specific data block.
+/// The code is the specific chunk id that is being searched for.
+/// The length is used to seek over the current chunk's data so that
+/// the next chunk can be found.
+/// </remarks>
 struct ftChunkScan
 {
     SKuint32 code;
@@ -36,7 +41,8 @@ struct ftChunkScan
 };
 
 /// <summary>
-/// Structure to represent a chunk saved on a 32bit platform.
+/// ftChunk32 is a structure that represents
+/// a chunk saved on a 32bit platform.
 /// </summary>
 struct ftChunk32
 {
@@ -46,10 +52,12 @@ struct ftChunk32
     SKuint32 structId;
     SKuint32 count;
 };
+
 SK_ASSERTCOMP(ChunkLen32, sizeof(ftChunk32) == 20);
 
 /// <summary>
-/// Structure to represent a chunk saved on a 64bit platform.
+/// ftChunk64 is a structure that represents
+/// a chunk saved on a 64bit platform.
 /// </summary>
 struct ftChunk64
 {
@@ -62,20 +70,11 @@ struct ftChunk64
 SK_ASSERTCOMP(ChunkLen64, sizeof(ftChunk64) == 24);
 
 /// <summary>
-/// Structure to represent a chunk saved on a
-/// 32 bit platform or a 64bit platform.
+/// ftChunk is a varying size structure that
+/// represent a chunk saved on a 32bit or a 64bit platform.
 /// </summary>
 struct ftChunk
 {
-    ftChunk() :
-        code(0),
-        length(0),
-        address(0),
-        structId(0),
-        count(0)
-    {
-    }
-
     SKuint32 code;
     SKuint32 length;
     SKsize   address;
@@ -90,7 +89,9 @@ SK_ASSERTCOMP(ChunkLenNative, sizeof(ftChunk64) == sizeof(ftChunk));
 #endif
 
 /// <summary>
-/// Structure to hold a chunk and it's subsequent data
+/// ftMemoryChunk is a structure that is used during the
+/// loading process that contains the chunk read from the
+/// file as well as its subsequent data.
 /// </summary>
 struct ftMemoryChunk
 {
@@ -113,6 +114,7 @@ struct ftMemoryChunk
     ftMemoryChunk() :
         next(nullptr),
         prev(nullptr),
+        chunk{},
         fileBlock(nullptr),
         memoryBlock(nullptr),
         pointerBlock(nullptr),
@@ -135,7 +137,7 @@ struct ftMemoryChunk
     ftMemoryChunk* prev;
 
     /// <summary>
-    /// Information about this chunk.
+    /// Contains chunk information that was read from the file.
     /// </summary>
     ftChunk chunk;
 
@@ -143,14 +145,14 @@ struct ftMemoryChunk
     /// Is the block of memory that was allocated and read
     /// from the file. It contains the data of the structure at
     /// the time of saving.
+    /// Its length is the size of the corresponding structure in the file table.
     /// </summary>
     void* fileBlock;
 
     /// <summary>
     /// Is the block of memory allocated for conversion.
-    /// Its length is the size of the corresponding structure in its
-    /// current state. If the file an memory structures are different,
-    /// the data from fileBlock gets cast into memoryBlock one member at a time.
+    /// Its length is the size of the corresponding structure in the memory table.
+    /// If the file and memory structures are different, the data from fileBlock gets cast into memoryBlock one member at a time.
     /// </summary>
     void* memoryBlock;
 
@@ -159,17 +161,17 @@ struct ftMemoryChunk
     /// When casting fileBlock into memoryBlock, if the current member is
     /// a pointer to a pointer, this block provides the storage location
     /// for each of the pointers. The address of pointerBlock is assigned to
-    /// memoryBlock at the offset for the pointer to pointer member.
+    /// memoryBlock at the offset to the specific pointer to pointer member.
     /// </summary>
     void* pointerBlock;
 
     /// <summary>
-    /// Contains the total length of allocated memory for pointerBlock
+    /// Contains the total length of allocated memory for pointerBlock.
     /// </summary>
     SKuint32 pointerBlockLen;
 
     /// <summary>
-    /// Contains the Flags for this chunk.
+    /// Contains the Flags that have been set for this chunk.
     /// </summary>
     SKuint8 flag;
 
@@ -184,16 +186,19 @@ struct ftMemoryChunk
     ftStruct* fileStruct;
 
     /// <summary>
-    /// A reference to the current structure from the memory.
+    /// A reference to the current structure from the memory table.
     /// </summary>
     ftStruct* memoryStruct;
 };
 
+
 /// <summary>
-/// Utility class to read, write, and scan chunks.
+/// ftChunkUtils is a utility class to read, write, and scan chunks.
 /// </summary>
 struct ftChunkUtils
 {
+
+
     enum Size
     {
         BlockSize = sizeof(ftChunk),
@@ -203,14 +208,14 @@ struct ftChunkUtils
     };
 
     /// <summary>
-    /// Utility to read a chunk from the supplied stream.
+    /// Reads a chunk from the supplied stream.
     /// </summary>
     /// <param name="dest">The destination memory.</param>
     /// <param name="stream">The stream to read from.</param>
     /// <param name="headerFlags">A copy of the file's header flags.</param>
-    /// <returns>The total number of bytes that were read from the stream. </returns>
+    /// <returns>The total number of bytes that were read from the stream.</returns>
+    /// <seealso cref="ftFlags::FileHeader"/>
     static SKsize read(ftChunk* dest, skStream* stream, int headerFlags);
-
 
     /// <summary>
     /// Utility to write a chunk to the supplied stream.

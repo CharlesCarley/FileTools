@@ -29,13 +29,12 @@
 #include "Utils/skHash.h"
 #include "ftConfig.h"
 
-
 /// <summary>
-/// Utility class to store a cached char hashed key. 
+/// Utility class to store a cached char hashed key.
 /// </summary>
 class ftCharHashKey
 {
-protected:
+private:
     char*          m_key;
     mutable SKhash m_hash;
 
@@ -73,7 +72,7 @@ public:
 
     /// <summary>
     /// Default copy constructor.
-    /// Copies the other class's key and rehashes the internal key. 
+    /// Copies the other class's key and rehashes the internal key.
     /// </summary>
     /// <param name="other">The character ftCharHashKey to copy.</param>
     ftCharHashKey(const ftCharHashKey& other) :
@@ -84,7 +83,7 @@ public:
     }
 
     /// <summary>
-    /// Computes the hash of the internal key and remembers it then returns the result.
+    /// Computes the hash of the internal key, remembers it, and returns the result.
     /// </summary>
     SKhash hash() const
     {
@@ -109,32 +108,24 @@ public:
     }
 
     /// <summary>
-    /// Tests for equality using the computed hashes. 
+    /// Tests for equality using the computed hashes.
     /// </summary>
-    /// <param name="rhs"></param>
-    /// <returns></returns>
     bool operator==(const ftCharHashKey& rhs) const
     {
         return hash() == rhs.hash();
     }
 
-
     /// <summary>
     /// Tests for inequality using the computed hashes.
     /// </summary>
-    /// <param name="rhs"></param>
-    /// <returns></returns>
     bool operator!=(const ftCharHashKey& rhs) const
     {
         return hash() != rhs.hash();
     }
 
-
     /// <summary>
     /// Tests for equality using the computed hash and a key computed elsewhere.
     /// </summary>
-    /// <param name="rhs"></param>
-    /// <returns></returns>
     bool operator==(const SKhash& rhs) const
     {
         return hash() == rhs;
@@ -143,48 +134,77 @@ public:
     /// <summary>
     /// Tests for inequality using the computed hash and a key computed elsewhere.
     /// </summary>
-    /// <param name="rhs"></param>
-    /// <returns></returns>
     bool operator!=(const SKhash& rhs) const
     {
         return hash() != rhs;
     }
 };
 
+/// <summary>
+/// Utility class to store a cached void pointer.
+/// </summary>
 class ftPointerHashKey
 {
-protected:
+private:
     void*          m_key;
     mutable SKhash m_hash;
 
 public:
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     ftPointerHashKey() :
         m_key(nullptr),
         m_hash(SK_NPOS)
     {
     }
 
-    explicit ftPointerHashKey(void* k) :
-        m_key(k),
+    /// <summary>
+    /// Constructs from a pointer
+    /// </summary>
+    /// <param name="pointer">The pointer to hash.</param>
+    explicit ftPointerHashKey(void* pointer) :
+        m_key(pointer),
         m_hash(SK_NPOS)
     {
         (void)hash();
     }
 
-    explicit ftPointerHashKey(SKsize k) :
-        m_key((void*)k),
+    /// <summary>
+    /// Constructs from a pointer address
+    /// </summary>
+    /// <param name="pointer">The pointer to hash.</param>
+    explicit ftPointerHashKey(const SKsize& pointer) :
+        m_key((void*)pointer),
         m_hash(SK_NPOS)
     {
         (void)hash();
     }
 
-    ftPointerHashKey(const ftPointerHashKey& k) :
-        m_key(k.m_key),
-        m_hash(k.m_hash)
+    /// <summary>
+    /// Default copy constructor.
+    /// Copies the other class's key and rehashes the internal key.
+    /// </summary>
+    /// <param name="other">The ftPointerHashKey to copy.</param>
+    ftPointerHashKey(const ftPointerHashKey& other) :
+        m_key(other.m_key),
+        m_hash(other.m_hash)
     {
         (void)hash();
     }
 
+    /// <summary>
+    /// Provides access to the internal pointer that was supplied during class construction.
+    /// </summary>
+    /// <returns>The internal key.</returns>
+    const void* key() const
+    {
+        return m_key;
+    }
+
+    /// <summary>
+    /// Computes the hash of the internal key, remembers it, and returns the result.
+    /// </summary>
     SKhash hash(void) const
     {
         if (m_key == nullptr)
@@ -198,29 +218,36 @@ public:
         return m_hash;
     }
 
-    const void* key() const
+    /// <summary>
+    /// Tests for equality using the computed hashes.
+    /// </summary>
+    bool operator==(const ftPointerHashKey& rhs) const
     {
-        return m_key;
+        return hash() == rhs.hash();
     }
 
-    bool operator==(const ftCharHashKey& v) const
+    /// <summary>
+    /// Tests for inequality using the computed hashes.
+    /// </summary>
+    bool operator!=(const ftPointerHashKey& rhs) const
     {
-        return hash() == v.hash();
+        return hash() != rhs.hash();
     }
 
-    bool operator!=(const ftCharHashKey& v) const
+    /// <summary>
+    /// Tests for equality using the computed hash and a key computed elsewhere.
+    /// </summary>
+    bool operator==(const SKhash& rhs) const
     {
-        return hash() != v.hash();
+        return hash() == rhs;
     }
 
-    bool operator==(const SKhash& v) const
+    /// <summary>
+    /// Tests for inequality using the computed hash and a key computed elsewhere.
+    /// </summary>
+    bool operator!=(const SKhash& rhs) const
     {
-        return hash() == v;
-    }
-
-    bool operator!=(const SKhash& v) const
-    {
-        return hash() != v;
+        return hash() != rhs;
     }
 };
 

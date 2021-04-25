@@ -25,74 +25,74 @@
 #include "ftTypes.h"
 
 /// <summary>
-/// Enumeration of the builtin primitive data types.
+/// The ftAtomic enumeration is used to describe the primitive data types.
 /// </summary>
-enum class ftAtomic
+/// <remarks>
+/// The placement order of the enumerated types does matter. 
+/// The type ids for structures start directly after FT_ATOMIC_VOID.
+/// </remarks>
+enum ftAtomic
 {
     /// <summary>
-    /// Definition for the 'char' data type
+    /// `char` data type.
     /// </summary>
     FT_ATOMIC_CHAR,
     /// <summary>
-    /// Definition for the 'uchar' data type
+    /// 'uchar' data type.
     /// </summary>
     FT_ATOMIC_UCHAR,
     /// <summary>
-    /// Definition for the 'short' data type
+    /// 'short' data type.
     /// </summary>
     FT_ATOMIC_SHORT,
     /// <summary>
-    /// Definition for the 'ushort' data type
+    /// 'ushort' data type.
     /// </summary>
     FT_ATOMIC_USHORT,
     /// <summary>
-    /// Definition for the 'int' data type
+    /// 'int' data type.
     /// </summary>
     FT_ATOMIC_INT,
     /// <summary>
-    /// Definition for the 'long' data type
+    /// 'long' data type.
     /// </summary>
     FT_ATOMIC_LONG,
     /// <summary>
-    /// Definition for the 'ulong' data type
+    /// 'ulong' data type.
     /// </summary>
     FT_ATOMIC_ULONG,
     /// <summary>
-    /// Definition for the 'float' data type
+    /// 'float' data type.
     /// </summary>
     FT_ATOMIC_FLOAT,
     /// <summary>
-    /// Definition for the 'double' data type
+    /// 'double' data type.
     /// </summary>
     FT_ATOMIC_DOUBLE,
     /// <summary>
-    /// Definition for the 'int64_t' data type
+    /// 'int64_t' data type.
     /// </summary>
     FT_ATOMIC_INT64_T,
     /// <summary>
-    /// Definition for the 'uint64_t' data type
+    /// 'uint64_t' data type.
     /// </summary>
     FT_ATOMIC_UINT64_T,
     /// <summary>
-    /// Definition for the 'scalar_t' varying data type
+    /// 'scalar_t' varying data type.
     /// </summary>
     FT_ATOMIC_SCALAR_T,
     /// <summary>
-    /// Definition for the 'scalar_t' varying data type
+    /// 'void' .
     /// </summary>
-    /// <remarks>
-    /// Placement order of the enumerated types matter.
-    /// Valid types are tested to be less than FT_ATOMIC_VOID.
-    /// </remarks>
     FT_ATOMIC_VOID,
     /// <summary>
     /// Max value to indicate an unknown data type.
     /// </summary>
     FT_ATOMIC_UNKNOWN
 };
-
 /// <summary>
-/// Structure to manage the default data types
+
+/// ftAtomicType is a structure that is used to manage the default data types.
 /// </summary>
 struct ftAtomicType
 {
@@ -118,42 +118,42 @@ struct ftAtomicType
 };
 
 /// <summary>
-/// Utility class to aid with casting struct members.
+/// ftAtomicUtils is a utility class to aid with casting struct members.
 /// </summary>
 class ftAtomicUtils
 {
 public:
     /// <summary>
     /// Preforms a linear search of the builtin types to determine if
-    /// the supplied key matches a builtin type.
+    /// the supplied key matches a predefined builtin type.
     /// </summary>
     /// <param name="typeKey">The key to test.</param>
-    /// <returns>the corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN
-    /// if it is not a primitive type.
+    /// <returns>The corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN
+    /// if it is not a primitive type defined in this system.
     /// </returns>
     static ftAtomic getPrimitiveType(const SKhash& typeKey);
 
     /// <summary>
-    /// Hashes the type name then calls getPrimitiveType with the hash key.
+    /// Hashes the supplied type name then calls ftAtomicUtils::getPrimitiveType with the hash result.
     /// </summary>
     /// <param name="typeName">The name to hash.</param>
-    /// <returns>the corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN
-    /// if it is not a primitive type.
+    /// <returns>The corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN
+    /// if it is not a primitive type defined in this system.
     /// </returns>
     static ftAtomic getPrimitiveType(const char* typeName);
 
     /// <summary>
-    /// Test to determine if the supplied key is an integer type.
+    /// Test to determine if the supplied key is an integer data type.
     /// </summary>
     /// <param name="typeKey">The key to test.</param>
-    /// <returns>True if it is an integer type in the range of [FT_ATOMIC_CHAR,  FT_ATOMIC_SCALAR_T)</returns>
+    /// <returns>True if it is an integer type in the range of [FT_ATOMIC_CHAR,  FT_ATOMIC_SCALAR_T).</returns>
     static bool isInteger(const SKhash& typeKey);
 
     /// <summary>
-    /// Test to determine if the supplied key is a floating point type.
+    /// Test to determine if the supplied key is a floating point data type.
     /// </summary>
     /// <param name="typeKey">The key to test.</param>
-    /// <returns>True if it is a type in the range of [FT_ATOMIC_FLOAT,  FT_ATOMIC_SCALAR_T]</returns>
+    /// <returns>True if it is a type in the range of [FT_ATOMIC_FLOAT,  FT_ATOMIC_SCALAR_T].</returns>
     static bool isReal(const SKhash& typeKey);
 
     /// <summary>
@@ -166,17 +166,17 @@ public:
     /// <summary>
     /// Test to determine if the types can be cast together.
     /// </summary>
-    /// <param name="typeKeyA">The LHS key to test.</param>
-    /// <param name="typeKeyB">The RHS key to test.</param>
+    /// <param name="typeKeyA">The first key to test.</param>
+    /// <param name="typeKeyB">The second key to test. This should be compatible with the first key.</param>
     /// <returns>True if the types are compatible otherwise returns false.</returns>
     static bool canCast(const SKhash& typeKeyA, const SKhash& typeKeyB);
 
     /// <summary>
-    /// Casts the memory from the source into the destination memory.
+    /// Casts the source memory into the destination memory.
     /// </summary>
     /// <param name="source">The source memory.</param>
     /// <param name="destination">The destination memory.</param>
-    /// <param name="sourceType">The atomic type  for the source memory.</param>
+    /// <param name="sourceType">The atomic type for the source memory.</param>
     /// <param name="destinationType">The atomic type for the destination memory.</param>
     /// <param name="length">The total length of the memory.</param>
     static void cast(char*    source,
@@ -186,13 +186,14 @@ public:
                      SKsize   length);
 
     /// <summary>
-    /// Casts the memory from the source into the destination memory with the option of separate offsets.
+    /// Casts the source memory into the destination memory with the option of separate offsets.
+    /// This is used when the file structure and memory structure are different.
     /// </summary>
     /// <param name="source">The source memory.</param>
     /// <param name="srcOffs">The offset to the address in the source memory.</param>
     /// <param name="destination">The destination memory.</param>
     /// <param name="dstOffs">The offset to the address in the destination memory.</param>
-    /// <param name="sourceType">The atomic type  for the source memory.</param>
+    /// <param name="sourceType">The atomic type for the source memory.</param>
     /// <param name="destinationType">The atomic type for the destination memory.</param>
     /// <param name="length">The total length of the memory.</param>
     static void cast(char*    source,

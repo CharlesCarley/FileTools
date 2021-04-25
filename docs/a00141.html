@@ -62,7 +62,7 @@ $(document).ready(function(){initNavTree('a00141.html','');});
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Utility class to aid in building the tables. </p>
+<div class="textblock"><p><a class="el" href="a00141.html" title="ftCompiler is a utility class to aid in building the memory tables. ">ftCompiler</a> is a utility class to aid in building the memory tables. </p>
 </div>
 <p><code>#include &lt;ftCompiler.h&gt;</code></p>
 <table class="memberdecls">
@@ -82,14 +82,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a3c240ae40ea43bc151464ebad4df5b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compiles the tables.  <a href="#a3c240ae40ea43bc151464ebad4df5b50">More...</a><br /></td></tr>
 <tr class="separator:a3c240ae40ea43bc151464ebad4df5b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a036cbfd9529063d2db797e68c88b0728"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a036cbfd9529063d2db797e68c88b0728">writeFile</a> (const ftId &amp;tableName, class skStream *fp)</td></tr>
-<tr class="memdesc:a036cbfd9529063d2db797e68c88b0728"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the table to the supplied file path.  <a href="#a036cbfd9529063d2db797e68c88b0728">More...</a><br /></td></tr>
+<tr class="memdesc:a036cbfd9529063d2db797e68c88b0728"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the table to the supplied stream.  <a href="#a036cbfd9529063d2db797e68c88b0728">More...</a><br /></td></tr>
 <tr class="separator:a036cbfd9529063d2db797e68c88b0728"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae28c48acfdb2a4f8b5d370b8d70dd512"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#ae28c48acfdb2a4f8b5d370b8d70dd512">writeFile</a> (const ftId &amp;tableName, const ftPath &amp;path)</td></tr>
 <tr class="memdesc:ae28c48acfdb2a4f8b5d370b8d70dd512"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the table to the supplied file path.  <a href="#ae28c48acfdb2a4f8b5d370b8d70dd512">More...</a><br /></td></tr>
 <tr class="separator:ae28c48acfdb2a4f8b5d370b8d70dd512"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac556b7deddb52cd52e317af76adb355a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#ac556b7deddb52cd52e317af76adb355a">writeStream</a> (class skStream *fp)</td></tr>
-<tr class="memdesc:ac556b7deddb52cd52e317af76adb355a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the table directly to the stream without formatting the output to be recompiled in c++.  <a href="#ac556b7deddb52cd52e317af76adb355a">More...</a><br /></td></tr>
-<tr class="separator:ac556b7deddb52cd52e317af76adb355a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e0d5533070218b59feced053c1c51b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a0e0d5533070218b59feced053c1c51b1">writeStream</a> (class skStream *stream)</td></tr>
+<tr class="memdesc:a0e0d5533070218b59feced053c1c51b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the table directly to the stream without any extra formatting.  <a href="#a0e0d5533070218b59feced053c1c51b1">More...</a><br /></td></tr>
+<tr class="separator:a0e0d5533070218b59feced053c1c51b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a436acdecc4dbf7e57d4b160669a15d45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a436acdecc4dbf7e57d4b160669a15d45">setWriteMode</a> (int mode)</td></tr>
 <tr class="memdesc:a436acdecc4dbf7e57d4b160669a15d45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the internal write mode  <a href="#a436acdecc4dbf7e57d4b160669a15d45">More...</a><br /></td></tr>
 <tr class="separator:a436acdecc4dbf7e57d4b160669a15d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,7 +173,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Negative one on an error, otherwise returns last token id that was read.</dd></dl>
 
 </div>
 </div>
@@ -218,7 +218,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Negative one on an error, otherwise returns last token id that was read.</dd></dl>
 
 </div>
 </div>
@@ -249,7 +249,7 @@ Public Member Functions</h2></td></tr>
 <p>Sets the internal write mode </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mode</td><td>A value of <a class="el" href="a00104.html#a2b32205b1862ee7b2204557e0bf074c4">ftFlags::WriteMode</a></td></tr>
+    <tr><td class="paramname">mode</td><td>A value of <a class="el" href="a00104.html#a2b32205b1862ee7b2204557e0bf074c4" title="WriteMode is a flag that is used to control how ftCompiler formats the output in write methods...">ftFlags::WriteMode</a></td></tr>
   </table>
   </dd>
 </dl>
@@ -282,10 +282,10 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Writes the table to the supplied file path. </p>
+<p>Writes the table to the supplied stream. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tableName</td><td>The name of the table to use when writing the memory buffer.</td></tr>
+    <tr><td class="paramname">tableName</td><td>The name of the table to use when writing the memory table.</td></tr>
     <tr><td class="paramname">fp</td><td>An output stream to use to write to.</td></tr>
   </table>
   </dd>
@@ -322,7 +322,7 @@ Public Member Functions</h2></td></tr>
 <p>Writes the table to the supplied file path. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tableName</td><td>The name of the table to use when writing the memory buffer.</td></tr>
+    <tr><td class="paramname">tableName</td><td>The name of the table to use when writing the memory table.</td></tr>
     <tr><td class="paramname">path</td><td>The file path of the file to write.</td></tr>
   </table>
   </dd>
@@ -330,8 +330,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ac556b7deddb52cd52e317af76adb355a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac556b7deddb52cd52e317af76adb355a">&#9670;&nbsp;</a></span>writeStream()</h2>
+<a id="a0e0d5533070218b59feced053c1c51b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e0d5533070218b59feced053c1c51b1">&#9670;&nbsp;</a></span>writeStream()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -340,16 +340,16 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void ftCompiler::writeStream </td>
           <td>(</td>
           <td class="paramtype">class skStream *&#160;</td>
-          <td class="paramname"><em>fp</em></td><td>)</td>
+          <td class="paramname"><em>stream</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Writes the table directly to the stream without formatting the output to be recompiled in c++. </p>
+<p>Writes the table directly to the stream without any extra formatting. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fp</td><td>An output stream to use to write to.</td></tr>
+    <tr><td class="paramname">stream</td><td>An output stream that is used to write.</td></tr>
   </table>
   </dd>
 </dl>
@@ -363,7 +363,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="a00141.html">ftCompiler</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:49 for FileTools by
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

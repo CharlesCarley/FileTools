@@ -19,10 +19,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "Utils/skDisableWarnings.h"
 #include "ftMember.h"
 #include "ftAtomic.h"
 #include "ftStruct.h"
 #include "ftTable.h"
+
+using namespace ftFlags;
 
 ftMember::ftMember(ftStruct* owner) :
     m_parent(owner),
@@ -92,27 +95,27 @@ bool ftMember::isArray() const
 
 bool ftMember::isCharacter()
 {
-    return getAtomicType() == ftAtomic::FT_ATOMIC_CHAR;
+    return getAtomicType() == FT_ATOMIC_CHAR;
 }
 
 bool ftMember::isInteger16()
 {
     const ftAtomic atomic = getAtomicType();
-    return atomic == ftAtomic::FT_ATOMIC_SHORT || atomic == ftAtomic::FT_ATOMIC_USHORT;
+    return atomic == FT_ATOMIC_SHORT || atomic == FT_ATOMIC_USHORT;
 }
 
 bool ftMember::isInteger32()
 {
     // TODO: ftSCALAR_DOUBLE
     const ftAtomic atomic = getAtomicType();
-    return atomic >= ftAtomic::FT_ATOMIC_INT && atomic <= ftAtomic::FT_ATOMIC_FLOAT;
+    return atomic >= FT_ATOMIC_INT && atomic <= FT_ATOMIC_FLOAT;
 }
 
 bool ftMember::isInteger64()
 {
     // TODO: ftSCALAR_DOUBLE
     const ftAtomic atomic = getAtomicType();
-    return atomic >= ftAtomic::FT_ATOMIC_DOUBLE && atomic <= ftAtomic::FT_ATOMIC_UINT64_T;
+    return atomic >= FT_ATOMIC_DOUBLE && atomic <= FT_ATOMIC_UINT64_T;
 }
 
 int ftMember::getArraySize() const

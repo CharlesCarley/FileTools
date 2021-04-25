@@ -64,14 +64,17 @@ $(document).ready(function(){initNavTree('a00133.html','');});
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Structure to hold a chunk and it's subsequent data </p>
+<div class="textblock"><p><a class="el" href="a00133.html" title="ftMemoryChunk is a structure that is used during the loading process that contains the chunk read fro...">ftMemoryChunk</a> is a structure that is used during the loading process that contains the chunk read from the file as well as its subsequent data. </p>
 </div>
 <p><code>#include &lt;ftChunk.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a3cb1eba218e3cf8a439b7d424b1a2226"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a3cb1eba218e3cf8a439b7d424b1a2226">Flag</a> { <a class="el" href="a00133.html#a3cb1eba218e3cf8a439b7d424b1a2226a3c5164245fe53db23f86278ee97dd97c">BLK_MODIFIED</a> = 0x01, 
-<a class="el" href="a00133.html#a3cb1eba218e3cf8a439b7d424b1a2226a742ec1811f4085fa9570928d4f1d7ef9">BLK_LINKED</a> = 0x02
+<tr class="memitem:a3cb1eba218e3cf8a439b7d424b1a2226"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a3cb1eba218e3cf8a439b7d424b1a2226">Flag</a> { <br />
+&#160;&#160;<a class="el" href="a00133.html#a3cb1eba218e3cf8a439b7d424b1a2226a3c5164245fe53db23f86278ee97dd97c">BLK_MODIFIED</a> = 0x01, 
+<br />
+&#160;&#160;<a class="el" href="a00133.html#a3cb1eba218e3cf8a439b7d424b1a2226a742ec1811f4085fa9570928d4f1d7ef9">BLK_LINKED</a> = 0x02
+<br />
  }</td></tr>
 <tr class="separator:a3cb1eba218e3cf8a439b7d424b1a2226"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -90,31 +93,31 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a32fa331e817eda8216a20dd30a2bc3ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the previous chunk in the list.  <a href="#a32fa331e817eda8216a20dd30a2bc3ee">More...</a><br /></td></tr>
 <tr class="separator:a32fa331e817eda8216a20dd30a2bc3ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afce3ab21e7df8b47ac0bee234cd7a128"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00129.html">ftChunk</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#afce3ab21e7df8b47ac0bee234cd7a128">chunk</a></td></tr>
-<tr class="memdesc:afce3ab21e7df8b47ac0bee234cd7a128"><td class="mdescLeft">&#160;</td><td class="mdescRight">Information about this chunk.  <a href="#afce3ab21e7df8b47ac0bee234cd7a128">More...</a><br /></td></tr>
+<tr class="memdesc:afce3ab21e7df8b47ac0bee234cd7a128"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains chunk information that was read from the file.  <a href="#afce3ab21e7df8b47ac0bee234cd7a128">More...</a><br /></td></tr>
 <tr class="separator:afce3ab21e7df8b47ac0bee234cd7a128"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a671821f43a54e71ca95301acfd8c6097"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a671821f43a54e71ca95301acfd8c6097">fileBlock</a></td></tr>
-<tr class="memdesc:a671821f43a54e71ca95301acfd8c6097"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the block of memory that was allocated and read from the file. It contains the data of the structure at the time of saving.  <a href="#a671821f43a54e71ca95301acfd8c6097">More...</a><br /></td></tr>
+<tr class="memdesc:a671821f43a54e71ca95301acfd8c6097"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the block of memory that was allocated and read from the file. It contains the data of the structure at the time of saving. Its length is the size of the corresponding structure in the file table.  <a href="#a671821f43a54e71ca95301acfd8c6097">More...</a><br /></td></tr>
 <tr class="separator:a671821f43a54e71ca95301acfd8c6097"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e25e65e0124a7efad9e48e36fa499e4"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a9e25e65e0124a7efad9e48e36fa499e4">memoryBlock</a></td></tr>
-<tr class="memdesc:a9e25e65e0124a7efad9e48e36fa499e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the block of memory allocated for conversion. Its length is the size of the corresponding structure in its current state. If the file an memory structures are different, the data from fileBlock gets cast into memoryBlock one member at a time.  <a href="#a9e25e65e0124a7efad9e48e36fa499e4">More...</a><br /></td></tr>
+<tr class="memdesc:a9e25e65e0124a7efad9e48e36fa499e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the block of memory allocated for conversion. Its length is the size of the corresponding structure in the memory table. If the file and memory structures are different, the data from fileBlock gets cast into memoryBlock one member at a time.  <a href="#a9e25e65e0124a7efad9e48e36fa499e4">More...</a><br /></td></tr>
 <tr class="separator:a9e25e65e0124a7efad9e48e36fa499e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cb87fe02431349d96926a7b8ad13e7d"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a2cb87fe02431349d96926a7b8ad13e7d">pointerBlock</a></td></tr>
-<tr class="memdesc:a2cb87fe02431349d96926a7b8ad13e7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the storage location for pointers to pointers. When casting fileBlock into memoryBlock, if the current member is a pointer to a pointer, this block provides the storage location for each of the pointers. The address of pointerBlock is assigned to memoryBlock at the offset for the pointer to pointer member.  <a href="#a2cb87fe02431349d96926a7b8ad13e7d">More...</a><br /></td></tr>
+<tr class="memdesc:a2cb87fe02431349d96926a7b8ad13e7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the storage location for pointers to pointers. When casting fileBlock into memoryBlock, if the current member is a pointer to a pointer, this block provides the storage location for each of the pointers. The address of pointerBlock is assigned to memoryBlock at the offset to the specific pointer to pointer member.  <a href="#a2cb87fe02431349d96926a7b8ad13e7d">More...</a><br /></td></tr>
 <tr class="separator:a2cb87fe02431349d96926a7b8ad13e7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb2f799672d9ec0d57ab9cc6dbf518ca"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#adb2f799672d9ec0d57ab9cc6dbf518ca">pointerBlockLen</a></td></tr>
-<tr class="memdesc:adb2f799672d9ec0d57ab9cc6dbf518ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the total length of allocated memory for pointerBlock  <a href="#adb2f799672d9ec0d57ab9cc6dbf518ca">More...</a><br /></td></tr>
+<tr class="memdesc:adb2f799672d9ec0d57ab9cc6dbf518ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the total length of allocated memory for pointerBlock.  <a href="#adb2f799672d9ec0d57ab9cc6dbf518ca">More...</a><br /></td></tr>
 <tr class="separator:adb2f799672d9ec0d57ab9cc6dbf518ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10e812b3c3a92197faceede1d1aaf67f"><td class="memItemLeft" align="right" valign="top">SKuint8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a10e812b3c3a92197faceede1d1aaf67f">flag</a></td></tr>
-<tr class="memdesc:a10e812b3c3a92197faceede1d1aaf67f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the Flags for this chunk.  <a href="#a10e812b3c3a92197faceede1d1aaf67f">More...</a><br /></td></tr>
+<tr class="memdesc:a10e812b3c3a92197faceede1d1aaf67f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the Flags that have been set for this chunk.  <a href="#a10e812b3c3a92197faceede1d1aaf67f">More...</a><br /></td></tr>
 <tr class="separator:a10e812b3c3a92197faceede1d1aaf67f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59be8b369dae6b9eb81b3859e3f1cb6e"><td class="memItemLeft" align="right" valign="top">FTtype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a59be8b369dae6b9eb81b3859e3f1cb6e">newTypeId</a></td></tr>
 <tr class="memdesc:a59be8b369dae6b9eb81b3859e3f1cb6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the chunk's type index into the memory table's type array.  <a href="#a59be8b369dae6b9eb81b3859e3f1cb6e">More...</a><br /></td></tr>
 <tr class="separator:a59be8b369dae6b9eb81b3859e3f1cb6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab91a4b34aa0d76aac00fbc1dc61b9bae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00185.html">ftStruct</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#ab91a4b34aa0d76aac00fbc1dc61b9bae">fileStruct</a></td></tr>
+<tr class="memitem:ab91a4b34aa0d76aac00fbc1dc61b9bae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00181.html">ftStruct</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#ab91a4b34aa0d76aac00fbc1dc61b9bae">fileStruct</a></td></tr>
 <tr class="memdesc:ab91a4b34aa0d76aac00fbc1dc61b9bae"><td class="mdescLeft">&#160;</td><td class="mdescRight">A reference to the current structure from the file table.  <a href="#ab91a4b34aa0d76aac00fbc1dc61b9bae">More...</a><br /></td></tr>
 <tr class="separator:ab91a4b34aa0d76aac00fbc1dc61b9bae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28c7a6669fb325aadc01521daf40a7e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00185.html">ftStruct</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a28c7a6669fb325aadc01521daf40a7e9">memoryStruct</a></td></tr>
-<tr class="memdesc:a28c7a6669fb325aadc01521daf40a7e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A reference to the current structure from the memory.  <a href="#a28c7a6669fb325aadc01521daf40a7e9">More...</a><br /></td></tr>
+<tr class="memitem:a28c7a6669fb325aadc01521daf40a7e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00181.html">ftStruct</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a28c7a6669fb325aadc01521daf40a7e9">memoryStruct</a></td></tr>
+<tr class="memdesc:a28c7a6669fb325aadc01521daf40a7e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A reference to the current structure from the memory table.  <a href="#a28c7a6669fb325aadc01521daf40a7e9">More...</a><br /></td></tr>
 <tr class="separator:a28c7a6669fb325aadc01521daf40a7e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Enumeration Documentation</h2>
@@ -179,7 +182,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Information about this chunk. </p>
+<p>Contains chunk information that was read from the file. </p>
 
 </div>
 </div>
@@ -195,7 +198,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Is the block of memory that was allocated and read from the file. It contains the data of the structure at the time of saving. </p>
+<p>Is the block of memory that was allocated and read from the file. It contains the data of the structure at the time of saving. Its length is the size of the corresponding structure in the file table. </p>
 
 </div>
 </div>
@@ -206,7 +209,7 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="a00185.html">ftStruct</a>* ftMemoryChunk::fileStruct</td>
+          <td class="memname"><a class="el" href="a00181.html">ftStruct</a>* ftMemoryChunk::fileStruct</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -227,7 +230,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Contains the Flags for this chunk. </p>
+<p>Contains the Flags that have been set for this chunk. </p>
 
 </div>
 </div>
@@ -243,7 +246,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Is the block of memory allocated for conversion. Its length is the size of the corresponding structure in its current state. If the file an memory structures are different, the data from fileBlock gets cast into memoryBlock one member at a time. </p>
+<p>Is the block of memory allocated for conversion. Its length is the size of the corresponding structure in the memory table. If the file and memory structures are different, the data from fileBlock gets cast into memoryBlock one member at a time. </p>
 
 </div>
 </div>
@@ -254,12 +257,12 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="a00185.html">ftStruct</a>* ftMemoryChunk::memoryStruct</td>
+          <td class="memname"><a class="el" href="a00181.html">ftStruct</a>* ftMemoryChunk::memoryStruct</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>A reference to the current structure from the memory. </p>
+<p>A reference to the current structure from the memory table. </p>
 
 </div>
 </div>
@@ -307,7 +310,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Is the storage location for pointers to pointers. When casting fileBlock into memoryBlock, if the current member is a pointer to a pointer, this block provides the storage location for each of the pointers. The address of pointerBlock is assigned to memoryBlock at the offset for the pointer to pointer member. </p>
+<p>Is the storage location for pointers to pointers. When casting fileBlock into memoryBlock, if the current member is a pointer to a pointer, this block provides the storage location for each of the pointers. The address of pointerBlock is assigned to memoryBlock at the offset to the specific pointer to pointer member. </p>
 
 </div>
 </div>
@@ -323,7 +326,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Contains the total length of allocated memory for pointerBlock </p>
+<p>Contains the total length of allocated memory for pointerBlock. </p>
 
 </div>
 </div>
@@ -350,7 +353,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="a00133.html">ftMemoryChunk</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 20:07:50 for FileTools by
+    <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

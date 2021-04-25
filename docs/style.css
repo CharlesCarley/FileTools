@@ -21,9 +21,14 @@ h1.groupheader {
     .main-title a {
         background-color: #222;
         font-size: 22pt;
-        color: #555;
+        color: #777;
+        /*    color: #66B322;
+        */ 
         text-decoration: none;
     }
+.main-title a:visited {
+    text-decoration: none;
+}
 
 .title {
     font-size: 15pt;
@@ -122,7 +127,7 @@ a {
 }
 
 a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 a.qindex {
@@ -648,7 +653,6 @@ span.mlabel {
     color: white;
     margin-right: 4px;
     padding: 2px 3px;
-    border-radius: 3px;
     font-size: 7pt;
     white-space: nowrap;
     vertical-align: middle;
@@ -697,7 +701,7 @@ div.directory {
         padding-left: 6px;
         padding-right: 6px;
         padding-top: 3px;
-        border-left: 1px solid rgba(0,0,0,0.05);
+        border-left: 1px solid #444;
     }
 
 .directory tr.even {
@@ -716,12 +720,12 @@ div.directory {
     font-size: 9pt;
 }
 
-    .directory .levels span {
-        cursor: pointer;
-        padding-left: 2px;
-        padding-right: 2px;
-        color: #8EAC52;
-    }
+.directory .levels span {
+    cursor: pointer;
+    padding-left: 2px;
+    padding-right: 2px;
+    color: #8EAC52;
+}
 
 .arrow {
     /*color: #CEDBB4;*/
@@ -887,9 +891,6 @@ table.fieldtable {
     top: 0;
     left: 10px;
     height: 36px;
-    /*
-    background-image: url('tab_b.png');
-    */
     z-index: 101;
     overflow: hidden;
     font-size: 13px;

@@ -200,7 +200,7 @@ void ftCompiler::parseClass(int& token, ftToken& tokenPtr)
             }
         }
 
-    } while ((token != FT_R_BRACKET && token != FT_TERM) &&
+    } while (token != FT_R_BRACKET && token != FT_TERM &&
              FT_IS_VALID_TOKEN(token));
 }
 
@@ -358,59 +358,59 @@ void ftCompiler::writeFile(const ftId& tableName, const ftPath& path)
 #endif
 }
 
-void ftCompiler::writeStream(skStream* fp)
+void ftCompiler::writeStream(skStream* stream)
 {
     int i;
     m_curBuf = -1;
 
-    writeBinPtr(fp, (void*)&ftIdNames::FT_SDNA[0], 4);
-    writeBinPtr(fp, (void*)&ftIdNames::FT_NAME[0], 4);
+    writeBinPtr(stream, (void*)&ftIdNames::FT_SDNA[0], 4);
+    writeBinPtr(stream, (void*)&ftIdNames::FT_NAME[0], 4);
     i = m_build->name.size();
 
 #ifdef FileTools_SwapEndian
     i = ftSwap32(i);
 #endif
 
-    writeBinPtr(fp, &i, 4);
-    writeCharPtr(fp, m_build->name);
+    writeBinPtr(stream, &i, 4);
+    writeCharPtr(stream, m_build->name);
 
-    writeBinPtr(fp, (void*)&ftIdNames::FT_TYPE[0], 4);
+    writeBinPtr(stream, (void*)&ftIdNames::FT_TYPE[0], 4);
     i = m_build->typeLookup.size();
 
 #ifdef FileTools_SwapEndian
     i = ftSwap32(i);
 #endif
 
-    writeBinPtr(fp, &i, 4);
-    writeCharPtr(fp, m_build->typeLookup);
-    writeBinPtr(fp, (void*)&ftIdNames::FT_TLEN[0], 4);
+    writeBinPtr(stream, &i, 4);
+    writeCharPtr(stream, m_build->typeLookup);
+    writeBinPtr(stream, (void*)&ftIdNames::FT_TLEN[0], 4);
 
 #ifdef FileTools_SwapEndian
     for (i = 0; i < (int)m_build->m_tlen.size(); i++)
         m_build->m_tlen.at(i) = ftSwap16(m_build->m_tlen.at(i));
 #endif
 
-    writeBinPtr(fp, m_build->typeLengths.ptr(), m_build->allocationSizes.lengths);
+    writeBinPtr(stream, m_build->typeLengths.ptr(), m_build->allocationSizes.lengths);
     if (m_build->typeLengths.size() & 1)
     {
         char pad[2] = {'@', '@'};
-        writeBinPtr(fp, (void*)&pad[0], 2);
+        writeBinPtr(stream, (void*)&pad[0], 2);
     }
 
-    writeBinPtr(fp, (void*)&ftIdNames::FT_STRC[0], 4);
+    writeBinPtr(stream, (void*)&ftIdNames::FT_STRC[0], 4);
     i = m_builders.size();
 
 #ifdef FileTools_SwapEndian
     i = ftSwap32(i);
 #endif
-    writeBinPtr(fp, &i, 4);
+    writeBinPtr(stream, &i, 4);
 
 #ifdef FileTools_SwapEndian
     for (i = 0; i < (int)m_build->m_strc.size(); i++)
         m_build->m_strc.at(i) = ftSwap16(m_build->m_strc.at(i));
 #endif
 
-    writeBinPtr(fp, m_build->structures.ptr(), m_build->allocationSizes.structures);
+    writeBinPtr(stream, m_build->structures.ptr(), m_build->allocationSizes.structures);
 }
 
 void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& pointers)
@@ -434,7 +434,7 @@ void ftCompiler::writeCharPtr(skStream* fp, const ftStringPtrArray& pointers)
     if (len - t)
     {
         ftId id;
-        for (SKuint32 p = 0; p < (len - t); p++)
+        for (SKuint32 p = 0; p < len - t; p++)
             id.push_back(pad[p % 4]);
 
         writeBinPtr(fp, (void*)id.c_str(), id.size());
