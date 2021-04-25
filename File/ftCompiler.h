@@ -28,33 +28,68 @@
 
 #include "ftTableBuilder.h"
 
+/// <summary>
+/// Utility class to aid in building the tables.
+/// </summary>
 class ftCompiler
 {
 public:
     ftCompiler();
     ~ftCompiler();
 
-    int parse(const ftPath& id);
-    int parse(const ftPath& id, const char* data, SKsize len);
+    /// <summary>
+    /// Parses the source file at the supplied path.
+    /// </summary>
+    /// <param name="path">Path to the source that should be parsed</param>
+    /// <returns></returns>
+    int parse(const char* path);
 
-    int buildTypes(void);
-    
-    SKuint32 getNumberOfBuiltinTypes(void) const;
+    /// <summary>
+    /// Parses the supplied memory buffer.
+    /// </summary>
+    /// <param name="path">A path name for the memory buffer. Used to track a list of needed include files.</param>
+    /// <param name="data">The memory that should be read.</param>
+    /// <param name="len">The size in bytes of the supplied memory.</param>
+    /// <returns></returns>
+    int parse(const char* path, const char* data, SKsize len);
 
-    
-    inline void setWriteMode(int mode)
+    /// <summary>
+    /// Compiles the tables.
+    /// </summary>
+    /// <remarks>This should be called after a successful parse.</remarks>
+    int compile();
+
+    /// <summary>
+    /// Writes the table to the supplied file path.
+    /// </summary>
+    /// <param name="tableName">The name of the table to use when writing the memory buffer.</param>
+    /// <param name="fp">An output stream to use to write to.</param>
+    void writeFile(const ftId& tableName, class skStream* fp);
+
+    /// <summary>
+    /// Writes the table to the supplied file path.
+    /// </summary>
+    /// <param name="tableName">The name of the table to use when writing the memory buffer.</param>
+    /// <param name="path">The file path of the file to write.</param>
+    void writeFile(const ftId& tableName, const ftPath& path);
+
+    /// <summary>
+    /// Writes the table directly to the stream without formatting the output to be recompiled in c++.
+    /// </summary>
+    /// <param name="fp">An output stream to use to write to.</param>
+    void writeStream(class skStream* fp);
+
+    /// <summary>
+    /// Sets the internal write mode
+    /// </summary>
+    /// <param name="mode">A value of ftFlags::WriteMode</param>
+    void setWriteMode(int mode)
     {
         m_writeMode = mode;
     }
 
-    void writeFile(const ftId& id, class skStream* fp);
-    void writeFile(const ftId& id, const ftPath& path);
-    void writeStream(class skStream* fp);
-
-    // ftTables* write(void);
-
 private:
-    int  parse(void);
+    int  parse();
     void parseClass(int& token, ftToken& tokenPtr);
     void parseIdentifier(int& token, ftToken& tokenPtr, ftBuildStruct& buildStruct);
 
@@ -70,21 +105,17 @@ private:
 
     void errorUnknown(int& token, ftToken& tokenPtr);
 
-
     void        writeBinPtr(skStream* fp, void* ptr, int len);
     void        writeCharPtr(skStream* fp, const ftStringPtrArray& pointers);
     void        writeValidationProgram(const ftPath& path);
     static void makeName(ftBuildMember&, bool);
 
-    char*                  m_buffer;
-    SKsize                m_pos;
-    ftTableBuilder*           m_build;
-    SKsize                m_start;
-    ftPathArray            m_includes;
-    ftStringPtrArray       m_namespaces, m_skip;
+    ftTableBuilder*      m_build;
+    ftPathArray          m_includes;
+    ftStringPtrArray     m_namespaces, m_skip;
     ftBuildStruct::Array m_builders;
-    int                    m_curBuf, m_writeMode;
-    ftScanner*             m_scanner;
+    int                  m_curBuf, m_writeMode;
+    ftScanner*           m_scanner;
 };
 
 #endif  //_ftCompiler_h_

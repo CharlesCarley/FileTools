@@ -133,16 +133,16 @@ GTEST_TEST(ftAtomic, Swap)
     const SKsize srcElmSize = 8;
 
     ftByteInteger seed = {};
-    seed.m_byte[0]     = 51;
-    seed.m_byte[1]     = 26;
-    seed.m_byte[2]     = 37;
-    seed.m_byte[3]     = 98;
-    seed.m_byte[4]     = 89;
-    seed.m_byte[5]     = 73;
-    seed.m_byte[6]     = 62;
-    seed.m_byte[7]     = 15;
+    seed.int8[0]     = 51;
+    seed.int8[1]     = 26;
+    seed.int8[2]     = 37;
+    seed.int8[3]     = 98;
+    seed.int8[4]     = 89;
+    seed.int8[5]     = 73;
+    seed.int8[6]     = 62;
+    seed.int8[7]     = 15;
 
-    SKuint64 i64 = seed.m_ptr;
+    SKuint64 i64 = seed.int64;
 
     SKbyte  dstBuffer[ftEndianUtils::MaxSwapSpace];
     SKbyte* srcBPtr = (SKbyte*)&i64;
@@ -150,14 +150,14 @@ GTEST_TEST(ftAtomic, Swap)
     memcpy(dstBuffer, srcBPtr, skMin(ftEndianUtils::MaxSwapSpace, srcElmSize));
     ftByteInteger before;
     ftByteInteger after;
-    before.m_ptr = i64;
+    before.int64 = i64;
 
     ftEndianUtils::swap64((SKuint64*)&dstBuffer[0], 1);
 
-    after.m_ptr = *(SKuint64*)dstBuffer;
+    after.int64 = *(SKuint64*)dstBuffer;
 
-    EXPECT_EQ(before.m_byte[0], after.m_byte[7]);
-    EXPECT_EQ(before.m_byte[1], after.m_byte[6]);
-    EXPECT_EQ(before.m_byte[2], after.m_byte[5]);
-    EXPECT_EQ(before.m_byte[3], after.m_byte[4]);
+    EXPECT_EQ(before.int8[0], after.int8[7]);
+    EXPECT_EQ(before.int8[1], after.int8[6]);
+    EXPECT_EQ(before.int8[2], after.int8[5]);
+    EXPECT_EQ(before.int8[3], after.int8[4]);
 }

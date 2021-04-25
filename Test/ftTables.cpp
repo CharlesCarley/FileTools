@@ -35,10 +35,9 @@ GTEST_TEST(ftCompiler, Basic)
     status = compiler.parse("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
     EXPECT_GE(status, 0);
 
-    status = compiler.buildTypes();
+    status = compiler.compile();
 
     EXPECT_EQ(ftFlags::LNK_OK, status);
-    EXPECT_EQ(compiler.getNumberOfBuiltinTypes(), ftAtomicUtils::NumberOfTypes);
 
     compiler.setWriteMode(ftFlags::WRITE_STREAM);
     skMemoryStream stream;
@@ -62,7 +61,7 @@ GTEST_TEST(ftCompiler, Basic)
         EXPECT_NE(SK_NPOS, type.hash);
 
         // builtin types do not point to a structure
-        if (i < compiler.getNumberOfBuiltinTypes())
+        if (i < ftAtomicUtils::NumberOfTypes)
             EXPECT_EQ(type.id, SK_NPOS32);
         else
             EXPECT_LT(type.id, tbl.getNumberOfStructs());
@@ -94,10 +93,9 @@ GTEST_TEST(ftCompiler, RebuildTest)
     status = compiler.parse("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
     EXPECT_GE(status, 0);
 
-    status = compiler.buildTypes();
+    status = compiler.compile();
 
     EXPECT_EQ(ftFlags::LNK_OK, status);
-    EXPECT_EQ(compiler.getNumberOfBuiltinTypes(), ftAtomicUtils::NumberOfTypes);
 
     compiler.setWriteMode(ftFlags::WRITE_STREAM);
     skMemoryStream stream(skStream::WRITE);

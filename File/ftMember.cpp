@@ -40,7 +40,6 @@ ftMember::ftMember(ftStruct* owner) :
 {
 }
 
-ftMember::~ftMember() = default;
 
 const char* ftMember::getName() const
 {

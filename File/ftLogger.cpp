@@ -52,9 +52,6 @@ void ftLogger::log(int status)
     case FS_INV_INSERT:
         cout << "FS_INV_INSERT";
         break;
-    case FS_DUPLICATE_BLOCK:
-        cout << "FS_DUPLICATE_BLOCK";
-        break;
     case FS_TABLE_INIT_FAILED:
         cout << "FS_TABLE_INIT_FAILED";
         break;
@@ -123,7 +120,7 @@ void ftLogger::logF(const char* msg, ...)
 void ftLogger::separator()
 {
     skHexPrint::writeColor(CS_LIGHT_GREY);
-    cout << setfill('-') << setw(FT_VOID8 ? 87 : 79) << '-';
+    cout << setfill('-') << setw(FT_VOID_8 ? 87 : 79) << '-';
     cout << setfill(' ') << endl;
     skHexPrint::writeColor(CS_WHITE);
 }
@@ -131,7 +128,7 @@ void ftLogger::separator()
 void ftLogger::divider()
 {
     skHexPrint::writeColor(CS_LIGHT_GREY);
-    cout << setfill('-') << setw(FT_VOID8 ? 47 : 39) << '-';
+    cout << setfill('-') << setw(FT_VOID_8 ? 47 : 39) << '-';
     cout << setfill(' ') << endl;
     skHexPrint::writeColor(CS_WHITE);
 }

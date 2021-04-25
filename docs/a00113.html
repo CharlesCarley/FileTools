@@ -69,10 +69,10 @@ $(document).ready(function(){initNavTree('a00113.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aa49e4907720930ebb5121c5cbc363e4b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#aa49e4907720930ebb5121c5cbc363e4b">getPrimitiveType</a> (const SKhash &amp;typeKey)</td></tr>
+<tr class="memitem:aa49e4907720930ebb5121c5cbc363e4b"><td class="memItemLeft" align="right" valign="top">static ftAtomic&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#aa49e4907720930ebb5121c5cbc363e4b">getPrimitiveType</a> (const SKhash &amp;typeKey)</td></tr>
 <tr class="memdesc:aa49e4907720930ebb5121c5cbc363e4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preforms a linear search of the builtin types to determine if the supplied key matches a builtin type.  <a href="#aa49e4907720930ebb5121c5cbc363e4b">More...</a><br /></td></tr>
 <tr class="separator:aa49e4907720930ebb5121c5cbc363e4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa91c1f64d1413c32394db62ba474614"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#aaa91c1f64d1413c32394db62ba474614">getPrimitiveType</a> (const char *typeName)</td></tr>
+<tr class="memitem:aaa91c1f64d1413c32394db62ba474614"><td class="memItemLeft" align="right" valign="top">static ftAtomic&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#aaa91c1f64d1413c32394db62ba474614">getPrimitiveType</a> (const char *typeName)</td></tr>
 <tr class="memdesc:aaa91c1f64d1413c32394db62ba474614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hashes the type name then calls getPrimitiveType with the hash key.  <a href="#aaa91c1f64d1413c32394db62ba474614">More...</a><br /></td></tr>
 <tr class="separator:aaa91c1f64d1413c32394db62ba474614"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26c0f1908b058eb1f0145dd867d8cc95"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#a26c0f1908b058eb1f0145dd867d8cc95">isInteger</a> (const SKhash &amp;typeKey)</td></tr>
@@ -87,10 +87,10 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ae3f4e31a1e51455653f1eec6ef6c9022"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#ae3f4e31a1e51455653f1eec6ef6c9022">canCast</a> (const SKhash &amp;typeKeyA, const SKhash &amp;typeKeyB)</td></tr>
 <tr class="memdesc:ae3f4e31a1e51455653f1eec6ef6c9022"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the types can be cast together.  <a href="#ae3f4e31a1e51455653f1eec6ef6c9022">More...</a><br /></td></tr>
 <tr class="separator:ae3f4e31a1e51455653f1eec6ef6c9022"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69b4c5db263da18944d8ae7c973c1f51"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#a69b4c5db263da18944d8ae7c973c1f51">cast</a> (char *source, char *destination, <a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a> sourceType, <a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a> destinationType, SKsize length)</td></tr>
+<tr class="memitem:a69b4c5db263da18944d8ae7c973c1f51"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#a69b4c5db263da18944d8ae7c973c1f51">cast</a> (char *source, char *destination, ftAtomic sourceType, ftAtomic destinationType, SKsize length)</td></tr>
 <tr class="memdesc:a69b4c5db263da18944d8ae7c973c1f51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts the memory from the source into the destination memory.  <a href="#a69b4c5db263da18944d8ae7c973c1f51">More...</a><br /></td></tr>
 <tr class="separator:a69b4c5db263da18944d8ae7c973c1f51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7ecccfedf538419ae1dc7cad145fc9e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#ae7ecccfedf538419ae1dc7cad145fc9e">cast</a> (char *source, SKsize srcOffs, char *destination, SKsize dstOffs, <a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a> sourceType, <a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a> destinationType, SKsize length)</td></tr>
+<tr class="memitem:ae7ecccfedf538419ae1dc7cad145fc9e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00113.html#ae7ecccfedf538419ae1dc7cad145fc9e">cast</a> (char *source, SKsize srcOffs, char *destination, SKsize dstOffs, ftAtomic sourceType, ftAtomic destinationType, SKsize length)</td></tr>
 <tr class="memdesc:ae7ecccfedf538419ae1dc7cad145fc9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts the memory from the source into the destination memory with the option of separate offsets.  <a href="#ae7ecccfedf538419ae1dc7cad145fc9e">More...</a><br /></td></tr>
 <tr class="separator:ae7ecccfedf538419ae1dc7cad145fc9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -174,13 +174,13 @@ Static Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a>&#160;</td>
+          <td class="paramtype">ftAtomic&#160;</td>
           <td class="paramname"><em>sourceType</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a>&#160;</td>
+          <td class="paramtype">ftAtomic&#160;</td>
           <td class="paramname"><em>destinationType</em>, </td>
         </tr>
         <tr>
@@ -252,13 +252,13 @@ Static Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a>&#160;</td>
+          <td class="paramtype">ftAtomic&#160;</td>
           <td class="paramname"><em>sourceType</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a>&#160;</td>
+          <td class="paramtype">ftAtomic&#160;</td>
           <td class="paramname"><em>destinationType</em>, </td>
         </tr>
         <tr>
@@ -306,7 +306,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a> ftAtomicUtils::getPrimitiveType </td>
+          <td class="memname">ftAtomic ftAtomicUtils::getPrimitiveType </td>
           <td>(</td>
           <td class="paramtype">const SKhash &amp;&#160;</td>
           <td class="paramname"><em>typeKey</em></td><td>)</td>
@@ -341,7 +341,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63">ftAtomic</a> ftAtomicUtils::getPrimitiveType </td>
+          <td class="memname">ftAtomic ftAtomicUtils::getPrimitiveType </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>typeName</em></td><td>)</td>
@@ -515,7 +515,7 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    {<span class="stringliteral">&quot;char&quot;</span>, <span class="keyword">sizeof</span>(char), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63aad4033d38643aaf490ba779adab98c62">ftAtomic::FT_ATOMIC_CHAR</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;char&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;uchar&quot;</span>, <span class="keyword">sizeof</span>(char), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63a84984770ec56e62280f44dc572b4a804">ftAtomic::FT_ATOMIC_UCHAR</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;uchar&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;short&quot;</span>, <span class="keyword">sizeof</span>(short), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63ad86e7dfd787049e9ebc8ecf8c51e82f3">ftAtomic::FT_ATOMIC_SHORT</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;short&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;ushort&quot;</span>, <span class="keyword">sizeof</span>(short), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63a11f15ac28bd4d496e4a4e8e4f6bc4109">ftAtomic::FT_ATOMIC_USHORT</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;ushort&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;int&quot;</span>, <span class="keyword">sizeof</span>(int), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63ab9b3d6fbad8fa104bbec1fff186f2535">ftAtomic::FT_ATOMIC_INT</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;int&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;long&quot;</span>, <span class="keyword">sizeof</span>(long), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63ab8771a648bd0f9c6a8797e711d0b190f">ftAtomic::FT_ATOMIC_LONG</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;long&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;ulong&quot;</span>, <span class="keyword">sizeof</span>(long), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63aeee65df108767a2aacfbd2557b38ee39">ftAtomic::FT_ATOMIC_ULONG</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;ulong&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;float&quot;</span>, <span class="keyword">sizeof</span>(float), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63a651056e134abec358bd17157ddc8f8e6">ftAtomic::FT_ATOMIC_FLOAT</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;float&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;double&quot;</span>, <span class="keyword">sizeof</span>(double), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63a48c38f8e1e564ff30f9b32c9c1d08c0b">ftAtomic::FT_ATOMIC_DOUBLE</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;double&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;int64_t&quot;</span>, <span class="keyword">sizeof</span>(SKint64), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63ae596442064f25bb7f6a54874db017578">ftAtomic::FT_ATOMIC_INT64_T</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;int64_t&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;uint64_t&quot;</span>, <span class="keyword">sizeof</span>(SKint64), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63a7b4a1bb10202b43020f524da873a6e94">ftAtomic::FT_ATOMIC_UINT64_T</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;uint64_t&quot;</span>)},</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    {<span class="stringliteral">&quot;scalar_t&quot;</span>, <span class="keyword">sizeof</span>(float), <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63a74ab30db89509acb228ffcaf5c19ebe3">ftAtomic::FT_ATOMIC_SCALAR_T</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;scalar_t&quot;</span>)},</div><div class="line"></div><div class="line">    {<span class="stringliteral">&quot;void&quot;</span>, 0, <a class="code" href="a00005.html#a6ab1607bf33d165e1044ed02dda10d63a5a4c1d025e36ae7829c67621bc77cd67">ftAtomic::FT_ATOMIC_VOID</a>, <a class="code" href="a00002.html#a79a8576a7b8f74c13e4c6fc041c325cd">makeHash</a>(<span class="stringliteral">&quot;void&quot;</span>)},</div><div class="line">}</div></div><!-- fragment -->
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    {<span class="stringliteral">&quot;char&quot;</span>, <span class="keyword">sizeof</span>(char), ftAtomic::FT_ATOMIC_CHAR, makeHash(<span class="stringliteral">&quot;char&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;uchar&quot;</span>, <span class="keyword">sizeof</span>(char), ftAtomic::FT_ATOMIC_UCHAR, makeHash(<span class="stringliteral">&quot;uchar&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;short&quot;</span>, <span class="keyword">sizeof</span>(short), ftAtomic::FT_ATOMIC_SHORT, makeHash(<span class="stringliteral">&quot;short&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;ushort&quot;</span>, <span class="keyword">sizeof</span>(short), ftAtomic::FT_ATOMIC_USHORT, makeHash(<span class="stringliteral">&quot;ushort&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;int&quot;</span>, <span class="keyword">sizeof</span>(int), ftAtomic::FT_ATOMIC_INT, makeHash(<span class="stringliteral">&quot;int&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;long&quot;</span>, <span class="keyword">sizeof</span>(long), ftAtomic::FT_ATOMIC_LONG, makeHash(<span class="stringliteral">&quot;long&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;ulong&quot;</span>, <span class="keyword">sizeof</span>(long), ftAtomic::FT_ATOMIC_ULONG, makeHash(<span class="stringliteral">&quot;ulong&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;float&quot;</span>, <span class="keyword">sizeof</span>(float), ftAtomic::FT_ATOMIC_FLOAT, makeHash(<span class="stringliteral">&quot;float&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;double&quot;</span>, <span class="keyword">sizeof</span>(double), ftAtomic::FT_ATOMIC_DOUBLE, makeHash(<span class="stringliteral">&quot;double&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;int64_t&quot;</span>, <span class="keyword">sizeof</span>(SKint64), ftAtomic::FT_ATOMIC_INT64_T, makeHash(<span class="stringliteral">&quot;int64_t&quot;</span>)},</div><div class="line">    {<span class="stringliteral">&quot;uint64_t&quot;</span>, <span class="keyword">sizeof</span>(SKint64), ftAtomic::FT_ATOMIC_UINT64_T, makeHash(<span class="stringliteral">&quot;uint64_t&quot;</span>)},</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    {<span class="stringliteral">&quot;scalar_t&quot;</span>, <span class="keyword">sizeof</span>(float), ftAtomic::FT_ATOMIC_SCALAR_T, makeHash(<span class="stringliteral">&quot;scalar_t&quot;</span>)},</div><div class="line"></div><div class="line">    {<span class="stringliteral">&quot;void&quot;</span>, 0, ftAtomic::FT_ATOMIC_VOID, makeHash(<span class="stringliteral">&quot;void&quot;</span>)},</div><div class="line">}</div></div><!-- fragment -->
 <p>Static type table for the builtin atomic types. </p>
 
 </div>
@@ -527,7 +527,7 @@ Static Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="a00113.html">ftAtomicUtils</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 17:09:27 for FileTools by
+    <li class="footer">Generated on Sat Apr 24 2021 20:07:49 for FileTools by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

@@ -57,14 +57,13 @@ $(document).ready(function(){initNavTree('a00137.html','');});
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="a00134.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">ftChunkUtils Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Utility class to read write and scan chunks. </p>
+<div class="textblock"><p>Utility class to read, write, and scan chunks. </p>
 </div>
 <p><code>#include &lt;ftChunk.h&gt;</code></p>
 <table class="memberdecls">
@@ -79,17 +78,15 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a66e66fae1bec879ea08e7b1c61028fb3"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a66e66fae1bec879ea08e7b1c61028fb3">read</a> (<a class="el" href="a00129.html">ftChunk</a> *dest, skStream *stream, int flags)</td></tr>
-<tr class="separator:a66e66fae1bec879ea08e7b1c61028fb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dee25c0f1b356b26cab8502b45dc15f"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a5dee25c0f1b356b26cab8502b45dc15f">write</a> (<a class="el" href="a00129.html">ftChunk</a> *src, skStream *stream)</td></tr>
-<tr class="separator:a5dee25c0f1b356b26cab8502b45dc15f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48ae487f104a31a1fe444bb89e717865"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a48ae487f104a31a1fe444bb89e717865">scan</a> (<a class="el" href="a00117.html">ftChunkScan</a> *dest, skStream *stream, int flags)</td></tr>
-<tr class="separator:a48ae487f104a31a1fe444bb89e717865"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a4fde5daa8487da26b365f2b0ac682254"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="a00129.html">ftChunk</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a4fde5daa8487da26b365f2b0ac682254">BlankChunk</a> = {}</td></tr>
-<tr class="separator:a4fde5daa8487da26b365f2b0ac682254"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a58bafa7847b5efdd2b2952e935b8d7c3">read</a> (<a class="el" href="a00129.html">ftChunk</a> *dest, skStream *stream, int headerFlags)</td></tr>
+<tr class="memdesc:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to read a chunk from the supplied stream.  <a href="#a58bafa7847b5efdd2b2952e935b8d7c3">More...</a><br /></td></tr>
+<tr class="separator:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeab84d89020f5dadd359278a98d35e9e"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#aeab84d89020f5dadd359278a98d35e9e">write</a> (<a class="el" href="a00129.html">ftChunk</a> *source, skStream *stream)</td></tr>
+<tr class="memdesc:aeab84d89020f5dadd359278a98d35e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to write a chunk to the supplied stream.  <a href="#aeab84d89020f5dadd359278a98d35e9e">More...</a><br /></td></tr>
+<tr class="separator:aeab84d89020f5dadd359278a98d35e9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad30deec08b6f3683772fc3c597a4a3e3"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#ad30deec08b6f3683772fc3c597a4a3e3">scan</a> (<a class="el" href="a00117.html">ftChunkScan</a> *dest, skStream *stream, int headerFlags)</td></tr>
+<tr class="memdesc:ad30deec08b6f3683772fc3c597a4a3e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to scan over chunks from the supplied stream.  <a href="#ad30deec08b6f3683772fc3c597a4a3e3">More...</a><br /></td></tr>
+<tr class="separator:ad30deec08b6f3683772fc3c597a4a3e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="ae974096933e10a719720b1b5d9535230"></a>
@@ -113,8 +110,8 @@ Static Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a66e66fae1bec879ea08e7b1c61028fb3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66e66fae1bec879ea08e7b1c61028fb3">&#9670;&nbsp;</a></span>read()</h2>
+<a id="a58bafa7847b5efdd2b2952e935b8d7c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58bafa7847b5efdd2b2952e935b8d7c3">&#9670;&nbsp;</a></span>read()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -138,7 +135,7 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>flags</em>&#160;</td>
+          <td class="paramname"><em>headerFlags</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -153,10 +150,21 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Utility to read a chunk from the supplied stream. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dest</td><td>The destination memory.</td></tr>
+    <tr><td class="paramname">stream</td><td>The stream to read from.</td></tr>
+    <tr><td class="paramname">headerFlags</td><td>A copy of the file's header flags.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The total number of bytes that were read from the stream. </dd></dl>
+
 </div>
 </div>
-<a id="a48ae487f104a31a1fe444bb89e717865"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48ae487f104a31a1fe444bb89e717865">&#9670;&nbsp;</a></span>scan()</h2>
+<a id="ad30deec08b6f3683772fc3c597a4a3e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad30deec08b6f3683772fc3c597a4a3e3">&#9670;&nbsp;</a></span>scan()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,7 +188,7 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>flags</em>&#160;</td>
+          <td class="paramname"><em>headerFlags</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -195,10 +203,21 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Utility to scan over chunks from the supplied stream. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dest</td><td>The destination memory.</td></tr>
+    <tr><td class="paramname">stream</td><td>The stream to read from.</td></tr>
+    <tr><td class="paramname">headerFlags</td><td>A copy of the file's header flags.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The total number of bytes that were read from the stream. </dd></dl>
+
 </div>
 </div>
-<a id="a5dee25c0f1b356b26cab8502b45dc15f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5dee25c0f1b356b26cab8502b45dc15f">&#9670;&nbsp;</a></span>write()</h2>
+<a id="aeab84d89020f5dadd359278a98d35e9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeab84d89020f5dadd359278a98d35e9e">&#9670;&nbsp;</a></span>write()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -210,7 +229,7 @@ Static Public Attributes</h2></td></tr>
           <td class="memname">SKsize ftChunkUtils::write </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="a00129.html">ftChunk</a> *&#160;</td>
-          <td class="paramname"><em>src</em>, </td>
+          <td class="paramname"><em>source</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -231,28 +250,15 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a4fde5daa8487da26b365f2b0ac682254"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fde5daa8487da26b365f2b0ac682254">&#9670;&nbsp;</a></span>BlankChunk</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="a00129.html">ftChunk</a> ftChunkUtils::BlankChunk = {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Utility to write a chunk to the supplied stream. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>The source memory to write</td></tr>
+    <tr><td class="paramname">stream</td><td>The stream to write to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The total number of bytes that were read from the stream. </dd></dl>
 
 </div>
 </div>
@@ -263,7 +269,7 @@ Static Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="a00137.html">ftChunkUtils</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 17:09:27 for FileTools by
+    <li class="footer">Generated on Sat Apr 24 2021 20:07:49 for FileTools by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

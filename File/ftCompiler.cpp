@@ -33,10 +33,7 @@
 using namespace ftFlags;
 
 ftCompiler::ftCompiler() :
-    m_buffer(nullptr),
-    m_pos(0),
     m_build(new ftTableBuilder()),
-    m_start(0),
     m_curBuf(0),
     m_writeMode(WRITE_ARRAY),
     m_scanner(nullptr)
@@ -93,14 +90,17 @@ void ftCompiler::makeName(ftBuildMember& v, bool forceArray)
     v.name = newName;
 }
 
-int ftCompiler::parse(const ftPath& name, const char* data, SKsize len)
+int ftCompiler::parse(const char* path, const char* data, SKsize len)
 {
+    if (!path)
+        return -1;
+
     ftScanner scanner(data, (SKsize)len);
 
     // Only enable the scanner
     // in the scope of parsing.
     m_scanner = &scanner;
-    m_includes.push_back(name.c_str());
+    m_includes.push_back(path);
 
     const int ret = parse();
 
@@ -108,13 +108,13 @@ int ftCompiler::parse(const ftPath& name, const char* data, SKsize len)
     return ret;
 }
 
-int ftCompiler::parse(const ftPath& id)
+int ftCompiler::parse(const char* path)
 {
     skFileStream fp;
-    fp.open(id.c_str(), skStream::READ);
+    fp.open(path, skStream::READ);
     if (!fp.isOpen())
     {
-        printf("Error: File loading failed: %s\n", id.c_str());
+        printf("Error: File loading failed: %s\n", path);
         return -1;
     }
 
@@ -122,7 +122,7 @@ int ftCompiler::parse(const ftPath& id)
     int          rc  = -1;
 
     if (len == SK_NPOS)
-        printf("Error: Failed to determine the length of the file: %s\n", id.c_str());
+        printf("Error: Failed to determine the length of the file: %s\n", path);
     else
     {
         char* buffer = new char[len + 1];
@@ -132,17 +132,17 @@ int ftCompiler::parse(const ftPath& id)
         {
             buffer[br] = 0;
 
-            rc = parse(id.c_str(), buffer, len + 1);
+            rc = parse(path, buffer, len + 1);
         }
         else
-            printf("Error: Failed to read from the file: %s\n", id.c_str());
+            printf("Error: Failed to read from the file: %s\n", path);
 
         delete[] buffer;
     }
     return rc;
 }
 
-int ftCompiler::parse(void)
+int ftCompiler::parse()
 {
     int     token;
     ftToken tokenPtr;
@@ -314,25 +314,20 @@ void ftCompiler::errorUnknown(int& token, ftToken& tokenPtr)
     token = FT_NULL_TOKEN;
 }
 
-SKuint32 ftCompiler::getNumberOfBuiltinTypes(void) const
-{
-    return m_build->numberOfBuiltIn;
-}
-
-int ftCompiler::buildTypes(void)
+int ftCompiler::compile()
 {
     return m_build->getLengths(m_builders);
 }
 
-void ftCompiler::writeFile(const ftId& id, skStream* fp)
+void ftCompiler::writeFile(const ftId& tableName, skStream* fp)
 {
     if (fp)
     {
-        fp->writef("const unsigned char %sTable[]={\n", id.c_str());
+        fp->writef("const unsigned char %sTable[]={\n", tableName.c_str());
         m_writeMode = WRITE_ARRAY;
         writeStream(fp);
         fp->writef("\n};\n");
-        fp->writef("const int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
+        fp->writef("const int %sLen=sizeof(%sTable);\n", tableName.c_str(), tableName.c_str());
     }
     else
     {
@@ -340,7 +335,7 @@ void ftCompiler::writeFile(const ftId& id, skStream* fp)
     }
 }
 
-void ftCompiler::writeFile(const ftId& id, const ftPath& path)
+void ftCompiler::writeFile(const ftId& tableName, const ftPath& path)
 {
     skFileStream fp;
     fp.open(path.c_str(), skStream::WRITE);
@@ -350,13 +345,13 @@ void ftCompiler::writeFile(const ftId& id, const ftPath& path)
         return;
     }
 
-    fp.writef("const unsigned char %sTable[]={\n", id.c_str());
+    fp.writef("const unsigned char %sTable[]={\n", tableName.c_str());
 
     m_writeMode = WRITE_ARRAY;
     writeStream(&fp);
 
     fp.writef("\n};\n");
-    fp.writef("const int %sLen=sizeof(%sTable);\n", id.c_str(), id.c_str());
+    fp.writef("const int %sLen=sizeof(%sTable);\n", tableName.c_str(), tableName.c_str());
 
 #if FileTools_TypeLengthValidate == 1
     writeValidationProgram(path.c_str());

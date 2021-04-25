@@ -96,7 +96,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aaf60f9f85d5428afdb1f5c8e37ab5e23"><td class="mdescLeft">&#160;</td><td class="mdescRight"><dl class="section return"><dt>Returns</dt><dd>Returns the current memory tables.</dd></dl>
  <a href="#aaf60f9f85d5428afdb1f5c8e37ab5e23">More...</a><br /></td></tr>
 <tr class="separator:aaf60f9f85d5428afdb1f5c8e37ab5e23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a857f18513e2b6fb96f8df359c48cfb7f"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="a00095.html#a3bf38a809805e9feb30d58ac1440d487">ftHeader</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a857f18513e2b6fb96f8df359c48cfb7f">getHeader</a> () const</td></tr>
+<tr class="memitem:a857f18513e2b6fb96f8df359c48cfb7f"><td class="memItemLeft" align="right" valign="top">const ftHeader &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a857f18513e2b6fb96f8df359c48cfb7f">getHeader</a> () const</td></tr>
 <tr class="memdesc:a857f18513e2b6fb96f8df359c48cfb7f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><dl class="section return"><dt>Returns</dt><dd>The file's complete header string</dd></dl>
  <a href="#a857f18513e2b6fb96f8df359c48cfb7f">More...</a><br /></td></tr>
 <tr class="separator:a857f18513e2b6fb96f8df359c48cfb7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,15 +120,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a9f308e8ef35def5f7684f7105212fdae"><td class="mdescLeft">&#160;</td><td class="mdescRight">This enables a filter for structures.  <a href="#a9f308e8ef35def5f7684f7105212fdae">More...</a><br /></td></tr>
 <tr class="separator:a9f308e8ef35def5f7684f7105212fdae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3489eb0ad2d5c5a06a1a0cfff12cffb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#ab3489eb0ad2d5c5a06a1a0cfff12cffb">setCastFilter</a> (SKhash *filter, SKuint32 length)</td></tr>
+<tr class="memdesc:ab3489eb0ad2d5c5a06a1a0cfff12cffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the diagnostic flag is set, this sets an inclusive output filter for supplied structures.  <a href="#ab3489eb0ad2d5c5a06a1a0cfff12cffb">More...</a><br /></td></tr>
 <tr class="separator:ab3489eb0ad2d5c5a06a1a0cfff12cffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b6de4bc7f18e6d6f141646c89befead"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a6b6de4bc7f18e6d6f141646c89befead">serialize</a> (skStream *stream, const char *id, SKuint32 code, SKsize len, void *writeData, int nr)</td></tr>
 <tr class="separator:a6b6de4bc7f18e6d6f141646c89befead"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a918e8a0a507cc8efedbfcd20f0f5fb04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a918e8a0a507cc8efedbfcd20f0f5fb04">serialize</a> (skStream *stream, const char *id, SKuint32 code, SKsize len, void *writeData)</td></tr>
 <tr class="separator:a918e8a0a507cc8efedbfcd20f0f5fb04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af68dc93ec86f8f8dffcd6574fa9e39a6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#af68dc93ec86f8f8dffcd6574fa9e39a6">serialize</a> (skStream *stream, <a class="el" href="a00095.html#a84a0e6732cb0db721a17ad1a500d9b3b">FTtype</a> index, SKuint32 code, SKsize len, void *writeData)</td></tr>
-<tr class="separator:af68dc93ec86f8f8dffcd6574fa9e39a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e8634c3b612ac0f218a2420375ef4a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a4e8634c3b612ac0f218a2420375ef4a5">serialize</a> (skStream *stream, SKsize len, void *writeData, int nr=1)</td></tr>
-<tr class="separator:a4e8634c3b612ac0f218a2420375ef4a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a538e517ec86b9de3ae27ca397b1601"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#a1a538e517ec86b9de3ae27ca397b1601">serialize</a> (skStream *stream, FTtype index, SKuint32 code, SKsize len, void *writeData) const</td></tr>
+<tr class="separator:a1a538e517ec86b9de3ae27ca397b1601"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa82fbdc999c6202280cd80436ed5f7c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00149.html#aa82fbdc999c6202280cd80436ed5f7c7">serialize</a> (skStream *stream, SKsize len, void *writeData) const</td></tr>
+<tr class="separator:aa82fbdc999c6202280cd80436ed5f7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -367,7 +368,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="a00095.html#a3bf38a809805e9feb30d58ac1440d487">ftHeader</a>&amp; ftFile::getHeader </td>
+          <td class="memname">const ftHeader&amp; ftFile::getHeader </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -852,8 +853,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="af68dc93ec86f8f8dffcd6574fa9e39a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af68dc93ec86f8f8dffcd6574fa9e39a6">&#9670;&nbsp;</a></span>serialize() <span class="overload">[3/4]</span></h2>
+<a id="a1a538e517ec86b9de3ae27ca397b1601"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a538e517ec86b9de3ae27ca397b1601">&#9670;&nbsp;</a></span>serialize() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -867,7 +868,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="a00095.html#a84a0e6732cb0db721a17ad1a500d9b3b">FTtype</a>&#160;</td>
+          <td class="paramtype">FTtype&#160;</td>
           <td class="paramname"><em>index</em>, </td>
         </tr>
         <tr>
@@ -891,15 +892,15 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td>
+          <td></td><td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a4e8634c3b612ac0f218a2420375ef4a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e8634c3b612ac0f218a2420375ef4a5">&#9670;&nbsp;</a></span>serialize() <span class="overload">[4/4]</span></h2>
+<a id="aa82fbdc999c6202280cd80436ed5f7c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa82fbdc999c6202280cd80436ed5f7c7">&#9670;&nbsp;</a></span>serialize() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -920,18 +921,12 @@ Protected Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>writeData</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>nr</em> = <code>1</code>&#160;</td>
+          <td class="paramname"><em>writeData</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td>
+          <td></td><td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -989,6 +984,15 @@ Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>When the diagnostic flag is set, this sets an inclusive output filter for supplied structures. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filter</td><td>The structures that should be logged.</td></tr>
+    <tr><td class="paramname">length</td><td>The number of hash codes in the filter.</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1203,7 +1207,7 @@ Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="a00149.html">ftFile</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 17:09:27 for FileTools by
+    <li class="footer">Generated on Sat Apr 24 2021 20:07:50 for FileTools by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

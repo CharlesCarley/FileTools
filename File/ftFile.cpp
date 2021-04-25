@@ -157,10 +157,10 @@ int ftFile::parseHeader(skStream* stream)
     if (*magic++ == FM_64_BIT)
     {
         m_headerFlags |= FH_CHUNK_64;
-        if (FT_VOID4)
+        if (FT_VOID_4)
             m_headerFlags |= FH_VAR_BITS;
     }
-    else if (FT_VOID8)
+    else if (FT_VOID_8)
         m_headerFlags |= FH_VAR_BITS;
 
     const int  current = (int)getEndian();
@@ -752,7 +752,7 @@ void ftFile::castMemberVariable(ftMember* dst,
                            srcElmSize,
                            dstElmSize,
                            FileTools_MaxStructMember);
-        status = FS_INV_SIZE;
+        status = FS_INV_LENGTH;
     }
     else if (!src->isBuiltinType() || !dst->isBuiltinType())
     {
@@ -760,7 +760,7 @@ void ftFile::castMemberVariable(ftMember* dst,
             ftLogger::logF("Invalid atomic type src(%d), dst(%d)",
                            src->getAtomicType(),
                            dst->getAtomicType());
-        status = FS_INV_SIZE;
+        status = FS_INV_LENGTH;
     }
     else
     {
@@ -1065,7 +1065,7 @@ int ftFile::save(const char* path, const int mode)
         return FS_FAILED;
     }
 
-    const SKuint8 cp = FT_VOID8 ? FM_64_BIT : FM_32_BIT;
+    const SKuint8 cp = FT_VOID_8 ? FM_64_BIT : FM_32_BIT;
     SKuint8 ce = getEndian();
     if (ce == FT_ENDIAN_IS_BIG)
         ce = FM_BIG_ENDIAN;

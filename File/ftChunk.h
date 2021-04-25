@@ -96,10 +96,20 @@ struct ftMemoryChunk
 {
     enum Flag
     {
-        BLK_MODIFIED = 1 << 0,
-        BLK_LINKED   = 1 << 1,
+        /// <summary>
+        /// Flag to indicate that this chunk was modified
+        /// </summary>
+        BLK_MODIFIED = 0x01,
+
+        /// <summary>
+        /// Flag to indicate that this chunk has been reconstructed.
+        /// </summary>
+        BLK_LINKED = 0x02,
     };
 
+    /// <summary>
+    /// Default constructor to initialize fields.
+    /// </summary>
     ftMemoryChunk() :
         next(nullptr),
         prev(nullptr),
@@ -114,10 +124,20 @@ struct ftMemoryChunk
     {
     }
 
-    ftMemoryChunk *next, *prev;
+    /// <summary>
+    /// Pointer to the next chunk in the list.
+    /// </summary>
+    ftMemoryChunk* next;
 
+    /// <summary>
+    /// Pointer to the previous chunk in the list.
+    /// </summary>
+    ftMemoryChunk* prev;
 
-    ftChunk        chunk;
+    /// <summary>
+    /// Information about this chunk.
+    /// </summary>
+    ftChunk chunk;
 
     /// <summary>
     /// Is the block of memory that was allocated and read
@@ -148,16 +168,29 @@ struct ftMemoryChunk
     /// </summary>
     SKuint32 pointerBlockLen;
 
+    /// <summary>
+    /// Contains the Flags for this chunk.
+    /// </summary>
     SKuint8 flag;
-    FTtype  newTypeId;
 
+    /// <summary>
+    /// Contains the chunk's type index into the memory table's type array.
+    /// </summary>
+    FTtype newTypeId;
+
+    /// <summary>
+    /// A reference to the current structure from the file table.
+    /// </summary>
     ftStruct* fileStruct;
+
+    /// <summary>
+    /// A reference to the current structure from the memory.
+    /// </summary>
     ftStruct* memoryStruct;
 };
 
-
 /// <summary>
-/// Utility class to read write and scan chunks.
+/// Utility class to read, write, and scan chunks.
 /// </summary>
 struct ftChunkUtils
 {
@@ -169,9 +202,32 @@ struct ftChunkUtils
         BlockScan = sizeof(ftChunkScan),
     };
 
-    static SKsize read(ftChunk* dest, skStream* stream, int flags);
-    static SKsize write(ftChunk* src, skStream* stream);
-    static SKsize scan(ftChunkScan* dest, skStream* stream, int flags);
+    /// <summary>
+    /// Utility to read a chunk from the supplied stream.
+    /// </summary>
+    /// <param name="dest">The destination memory.</param>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="headerFlags">A copy of the file's header flags.</param>
+    /// <returns>The total number of bytes that were read from the stream. </returns>
+    static SKsize read(ftChunk* dest, skStream* stream, int headerFlags);
+
+
+    /// <summary>
+    /// Utility to write a chunk to the supplied stream.
+    /// </summary>
+    /// <param name="source">The source memory to write</param>
+    /// <param name="stream">The stream to write to.</param>
+    /// <returns>The total number of bytes that were read from the stream. </returns>
+    static SKsize write(ftChunk* source, skStream* stream);
+
+    /// <summary>
+    /// Utility to scan over chunks from the supplied stream.
+    /// </summary>
+    /// <param name="dest">The destination memory.</param>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="headerFlags">A copy of the file's header flags.</param>
+    /// <returns>The total number of bytes that were read from the stream. </returns>
+    static SKsize scan(ftChunkScan* dest, skStream* stream, int headerFlags);
 
     static const ftChunk BlankChunk;
 };

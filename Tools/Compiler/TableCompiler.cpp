@@ -47,7 +47,7 @@ int main(int argc, char** argv)
         }
     }
 
-    const int code = tables.buildTypes();
+    const int code = tables.compile();
     if (code != ftFlags::LNK_OK)
     {
         printf("%s -> Link Error(%08X): When compiling table %s\n", base, code, argv[1]);

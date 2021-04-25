@@ -25,12 +25,15 @@ var NAVTREE =
 [
   [ "FileTools", "index.html", [
     [ "FileTools", "a00354.html", null ],
-    [ "Namespace Members", "namespacemembers.html", [
-      [ "All", "namespacemembers.html", null ],
-      [ "Functions", "namespacemembers_func.html", null ],
-      [ "Variables", "namespacemembers_vars.html", null ],
-      [ "Enumerations", "namespacemembers_enum.html", null ],
-      [ "Enumerator", "namespacemembers_eval.html", null ]
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ],
+        [ "Enumerator", "namespacemembers_eval.html", null ]
+      ] ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
@@ -43,27 +46,14 @@ var NAVTREE =
         [ "Enumerator", "functions_eval.html", null ],
         [ "Related Functions", "functions_rela.html", null ]
       ] ]
-    ] ],
-    [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ],
-      [ "File Members", "globals.html", [
-        [ "All", "globals.html", null ],
-        [ "Functions", "globals_func.html", null ],
-        [ "Variables", "globals_vars.html", null ],
-        [ "Typedefs", "globals_type.html", null ],
-        [ "Enumerations", "globals_enum.html", null ],
-        [ "Enumerator", "globals_eval.html", null ],
-        [ "Macros", "globals_defs.html", null ]
-      ] ]
     ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"a00002.html",
-"a00109.html#ab5185ef5b35832b7010382df6e54d1ad",
-"a00189.html#aa4cf2817550d3873e72080e50787644e"
+"a00101.html",
+"a00189.html#a7c8d2f7a81eed6b1ed19a966628a8cc9"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

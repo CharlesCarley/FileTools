@@ -1,7 +1,7 @@
 var a00225 =
 [
-    [ "m_byte", "a00225.html#a30b4e21a89b431df37c34b5f2bd1baec", null ],
-    [ "m_int", "a00225.html#ad23e23eabdfe04e5fc4f954cf149bf2a", null ],
-    [ "m_ptr", "a00225.html#a3a0c9904f7530f826099f6813cea20e7", null ],
-    [ "m_short", "a00225.html#aa986bf2b9fea29a625b21f060297f099", null ]
+    [ "int16", "a00225.html#a9adc408dea36ea748e4bde87e9a6b0aa", null ],
+    [ "int32", "a00225.html#a491722762ab7bea140b3903fe1344f14", null ],
+    [ "int64", "a00225.html#af94797a2b8e87fc39931afa80b0a09e9", null ],
+    [ "int8", "a00225.html#ad8700a6bd97a33dfe25b8cbe5046e0f5", null ]
 ];

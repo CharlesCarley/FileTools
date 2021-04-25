@@ -49,13 +49,29 @@ const SKhash NoHash = SK_MKMX(SKhash);
 #define scalar_t float
 #endif
 
+/// <summary>
+/// Utility to test the platform pointer length.
+/// </summary>
 enum ftPointerLen
 {
-    FT_VOIDP = sizeof(void*),
-    FT_VOID4 = FT_VOIDP == 4,
-    FT_VOID8 = FT_VOIDP == 8,
+    /// <summary>
+    /// Defines the size of void* for the current platform.
+    /// </summary>
+    FT_VOID_P = sizeof(void*),
+
+    /// <summary>
+    /// Defined to 1 if the current platform is 32 bits.
+    /// </summary>
+    FT_VOID_4 = FT_VOID_P == 4,
+    /// <summary>
+    /// Defined to 1 if the current platform is 64 bits.
+    /// </summary>
+    FT_VOID_8 = FT_VOID_P == 8,
 };
 
+/// <summary>
+/// Utility list class
+/// </summary>
 class ftList
 {
 public:
@@ -87,7 +103,7 @@ public:
 
     void push_back(void* v)
     {
-        Link* link = ((Link*)v);
+        Link* link = (Link*)v;
         if (!link)
             return;
         link->prev = last;
@@ -102,7 +118,7 @@ public:
 
     bool erase(void* vp)
     {
-        Link* link = ((Link*)vp);
+        Link* link = (Link*)vp;
         if (!link)
             return false;
 
@@ -138,10 +154,10 @@ typedef skFixedString<12> ftHeader;
 /// </summary>
 union ftByteInteger
 {
-    SKuint64 m_ptr;
-    SKuint32 m_int[2];
-    SKuint16 m_short[4];
-    SKuint8  m_byte[8];
+    SKuint64 int64;
+    SKuint32 int32[2];
+    SKuint16 int16[4];
+    SKuint8  int8[8];
 };
 
 class skStream;
@@ -193,7 +209,7 @@ namespace ftFlags
         /// <summary>
         /// Start code for enumerated values.
         /// </summary>
-        FS_STATUS_MIN = -17,
+        FS_STATUS_MIN = -15,
 
         /// <summary>
         /// Invalid insert.
@@ -212,17 +228,43 @@ namespace ftFlags
         /// </summary>
         FS_INV_VALUE,
 
-        FS_INV_SIZE,
-        FS_DUPLICATE_BLOCK,
+        /// <summary>
+        /// Invalid read.
+        /// A stream read failed.
+        /// </summary>
         FS_INV_READ,
+
+        /// <summary>
+        /// Invalid size.
+        /// An expected size constraint was not met.
+        /// </summary>
         FS_INV_LENGTH,
+
+        /// <summary>
+        /// Invalid header.
+        /// An unexpected header was read.
+        /// </summary>
         FS_INV_HEADER_STR,
+
+        /// <summary>
+        /// Table read error.
+        /// Failed to read any structures from the table.
+        /// </summary>
         FS_TABLE_INIT_FAILED,
+
+        /// <summary>
+        /// A diagnostics check error. A zeroed block of memory contains something other than zeros.   
+        /// </summary>
         FS_OVERFLOW,
+
+        /// <summary>
+        /// A general fail status.
+        /// </summary>
         FS_FAILED,
 
         // Table codes
         RS_INVALID_PTR,
+
         RS_INVALID_CODE,
         RS_LIMIT_REACHED,
         RS_BAD_ALLOC,

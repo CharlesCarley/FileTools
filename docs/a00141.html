@@ -61,7 +61,9 @@ $(document).ready(function(){initNavTree('a00141.html','');});
 <div class="title">ftCompiler Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Utility class to aid in building the tables. </p>
+</div>
 <p><code>#include &lt;ftCompiler.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -70,22 +72,27 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a76b2f93a5184e2cdb54ec0c757a91d10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dfd4afe50349d5936b8f84e17970c47"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a9dfd4afe50349d5936b8f84e17970c47">~ftCompiler</a> ()</td></tr>
 <tr class="separator:a9dfd4afe50349d5936b8f84e17970c47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa8420df7348576ea1aa066395562a7b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#aaa8420df7348576ea1aa066395562a7b">parse</a> (const <a class="el" href="a00095.html#a3b212fa71eb0ab9df59ae7eb8e90d30a">ftPath</a> &amp;id)</td></tr>
-<tr class="separator:aaa8420df7348576ea1aa066395562a7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa14b24b15caef7c264ef4150e23a00f3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#aa14b24b15caef7c264ef4150e23a00f3">parse</a> (const <a class="el" href="a00095.html#a3b212fa71eb0ab9df59ae7eb8e90d30a">ftPath</a> &amp;id, const char *data, SKsize len)</td></tr>
-<tr class="separator:aa14b24b15caef7c264ef4150e23a00f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa842a3a18f249bc1ed825f1cf1796ef4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#aa842a3a18f249bc1ed825f1cf1796ef4">buildTypes</a> (void)</td></tr>
-<tr class="separator:aa842a3a18f249bc1ed825f1cf1796ef4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c5ddb230e1f34745e67a36f25732b38"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a9c5ddb230e1f34745e67a36f25732b38">getNumberOfBuiltinTypes</a> (void) const</td></tr>
-<tr class="separator:a9c5ddb230e1f34745e67a36f25732b38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a436acdecc4dbf7e57d4b160669a15d45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a436acdecc4dbf7e57d4b160669a15d45">setWriteMode</a> (int mode)</td></tr>
-<tr class="separator:a436acdecc4dbf7e57d4b160669a15d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2674773d914c3cc4e46c13f75d04db01"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a2674773d914c3cc4e46c13f75d04db01">writeFile</a> (const <a class="el" href="a00095.html#afe93cba430ef81cf8b40e7ed67b8ed61">ftId</a> &amp;id, class skStream *fp)</td></tr>
-<tr class="separator:a2674773d914c3cc4e46c13f75d04db01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab603e755d656f6e0c30555d0684114d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#aab603e755d656f6e0c30555d0684114d">writeFile</a> (const <a class="el" href="a00095.html#afe93cba430ef81cf8b40e7ed67b8ed61">ftId</a> &amp;id, const <a class="el" href="a00095.html#a3b212fa71eb0ab9df59ae7eb8e90d30a">ftPath</a> &amp;path)</td></tr>
-<tr class="separator:aab603e755d656f6e0c30555d0684114d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86fd0acf8ef4f80a489a0f89125993c5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a86fd0acf8ef4f80a489a0f89125993c5">parse</a> (const char *path)</td></tr>
+<tr class="memdesc:a86fd0acf8ef4f80a489a0f89125993c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the source file at the supplied path.  <a href="#a86fd0acf8ef4f80a489a0f89125993c5">More...</a><br /></td></tr>
+<tr class="separator:a86fd0acf8ef4f80a489a0f89125993c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0dc3d97843faeb6ef5df59c0a9f8b3b0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a0dc3d97843faeb6ef5df59c0a9f8b3b0">parse</a> (const char *path, const char *data, SKsize len)</td></tr>
+<tr class="memdesc:a0dc3d97843faeb6ef5df59c0a9f8b3b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the supplied memory buffer.  <a href="#a0dc3d97843faeb6ef5df59c0a9f8b3b0">More...</a><br /></td></tr>
+<tr class="separator:a0dc3d97843faeb6ef5df59c0a9f8b3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c240ae40ea43bc151464ebad4df5b50"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a3c240ae40ea43bc151464ebad4df5b50">compile</a> ()</td></tr>
+<tr class="memdesc:a3c240ae40ea43bc151464ebad4df5b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compiles the tables.  <a href="#a3c240ae40ea43bc151464ebad4df5b50">More...</a><br /></td></tr>
+<tr class="separator:a3c240ae40ea43bc151464ebad4df5b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a036cbfd9529063d2db797e68c88b0728"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a036cbfd9529063d2db797e68c88b0728">writeFile</a> (const ftId &amp;tableName, class skStream *fp)</td></tr>
+<tr class="memdesc:a036cbfd9529063d2db797e68c88b0728"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the table to the supplied file path.  <a href="#a036cbfd9529063d2db797e68c88b0728">More...</a><br /></td></tr>
+<tr class="separator:a036cbfd9529063d2db797e68c88b0728"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae28c48acfdb2a4f8b5d370b8d70dd512"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#ae28c48acfdb2a4f8b5d370b8d70dd512">writeFile</a> (const ftId &amp;tableName, const ftPath &amp;path)</td></tr>
+<tr class="memdesc:ae28c48acfdb2a4f8b5d370b8d70dd512"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the table to the supplied file path.  <a href="#ae28c48acfdb2a4f8b5d370b8d70dd512">More...</a><br /></td></tr>
+<tr class="separator:ae28c48acfdb2a4f8b5d370b8d70dd512"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac556b7deddb52cd52e317af76adb355a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#ac556b7deddb52cd52e317af76adb355a">writeStream</a> (class skStream *fp)</td></tr>
+<tr class="memdesc:ac556b7deddb52cd52e317af76adb355a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the table directly to the stream without formatting the output to be recompiled in c++.  <a href="#ac556b7deddb52cd52e317af76adb355a">More...</a><br /></td></tr>
 <tr class="separator:ac556b7deddb52cd52e317af76adb355a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a436acdecc4dbf7e57d4b160669a15d45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00141.html#a436acdecc4dbf7e57d4b160669a15d45">setWriteMode</a> (int mode)</td></tr>
+<tr class="memdesc:a436acdecc4dbf7e57d4b160669a15d45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the internal write mode  <a href="#a436acdecc4dbf7e57d4b160669a15d45">More...</a><br /></td></tr>
+<tr class="separator:a436acdecc4dbf7e57d4b160669a15d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a76b2f93a5184e2cdb54ec0c757a91d10"></a>
@@ -123,44 +130,28 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa842a3a18f249bc1ed825f1cf1796ef4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa842a3a18f249bc1ed825f1cf1796ef4">&#9670;&nbsp;</a></span>buildTypes()</h2>
+<a id="a3c240ae40ea43bc151464ebad4df5b50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c240ae40ea43bc151464ebad4df5b50">&#9670;&nbsp;</a></span>compile()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ftCompiler::buildTypes </td>
+          <td class="memname">int ftCompiler::compile </td>
           <td>(</td>
-          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a9c5ddb230e1f34745e67a36f25732b38"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9c5ddb230e1f34745e67a36f25732b38">&#9670;&nbsp;</a></span>getNumberOfBuiltinTypes()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SKuint32 ftCompiler::getNumberOfBuiltinTypes </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Compiles the tables. </p>
+<p>This should be called after a successful parse.</p>
 
 </div>
 </div>
-<a id="aaa8420df7348576ea1aa066395562a7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa8420df7348576ea1aa066395562a7b">&#9670;&nbsp;</a></span>parse() <span class="overload">[1/2]</span></h2>
+<a id="a86fd0acf8ef4f80a489a0f89125993c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86fd0acf8ef4f80a489a0f89125993c5">&#9670;&nbsp;</a></span>parse() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,17 +159,26 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">int ftCompiler::parse </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00095.html#a3b212fa71eb0ab9df59ae7eb8e90d30a">ftPath</a> &amp;&#160;</td>
-          <td class="paramname"><em>id</em></td><td>)</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Parses the source file at the supplied path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>Path to the source that should be parsed</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
 </div>
 </div>
-<a id="aa14b24b15caef7c264ef4150e23a00f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa14b24b15caef7c264ef4150e23a00f3">&#9670;&nbsp;</a></span>parse() <span class="overload">[2/2]</span></h2>
+<a id="a0dc3d97843faeb6ef5df59c0a9f8b3b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0dc3d97843faeb6ef5df59c0a9f8b3b0">&#9670;&nbsp;</a></span>parse() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,8 +186,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">int ftCompiler::parse </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00095.html#a3b212fa71eb0ab9df59ae7eb8e90d30a">ftPath</a> &amp;&#160;</td>
-          <td class="paramname"><em>id</em>, </td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -208,6 +208,17 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Parses the supplied memory buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>A path name for the memory buffer. Used to track a list of needed include files.</td></tr>
+    <tr><td class="paramname">data</td><td>The memory that should be read.</td></tr>
+    <tr><td class="paramname">len</td><td>The size in bytes of the supplied memory.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -235,10 +246,18 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sets the internal write mode </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mode</td><td>A value of <a class="el" href="a00104.html#a2b32205b1862ee7b2204557e0bf074c4">ftFlags::WriteMode</a></td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a2674773d914c3cc4e46c13f75d04db01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2674773d914c3cc4e46c13f75d04db01">&#9670;&nbsp;</a></span>writeFile() <span class="overload">[1/2]</span></h2>
+<a id="a036cbfd9529063d2db797e68c88b0728"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a036cbfd9529063d2db797e68c88b0728">&#9670;&nbsp;</a></span>writeFile() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -246,8 +265,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void ftCompiler::writeFile </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00095.html#afe93cba430ef81cf8b40e7ed67b8ed61">ftId</a> &amp;&#160;</td>
-          <td class="paramname"><em>id</em>, </td>
+          <td class="paramtype">const ftId &amp;&#160;</td>
+          <td class="paramname"><em>tableName</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -263,10 +282,19 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Writes the table to the supplied file path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tableName</td><td>The name of the table to use when writing the memory buffer.</td></tr>
+    <tr><td class="paramname">fp</td><td>An output stream to use to write to.</td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="aab603e755d656f6e0c30555d0684114d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aab603e755d656f6e0c30555d0684114d">&#9670;&nbsp;</a></span>writeFile() <span class="overload">[2/2]</span></h2>
+<a id="ae28c48acfdb2a4f8b5d370b8d70dd512"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae28c48acfdb2a4f8b5d370b8d70dd512">&#9670;&nbsp;</a></span>writeFile() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,13 +302,13 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void ftCompiler::writeFile </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00095.html#afe93cba430ef81cf8b40e7ed67b8ed61">ftId</a> &amp;&#160;</td>
-          <td class="paramname"><em>id</em>, </td>
+          <td class="paramtype">const ftId &amp;&#160;</td>
+          <td class="paramname"><em>tableName</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="a00095.html#a3b212fa71eb0ab9df59ae7eb8e90d30a">ftPath</a> &amp;&#160;</td>
+          <td class="paramtype">const ftPath &amp;&#160;</td>
           <td class="paramname"><em>path</em>&#160;</td>
         </tr>
         <tr>
@@ -290,6 +318,15 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Writes the table to the supplied file path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tableName</td><td>The name of the table to use when writing the memory buffer.</td></tr>
+    <tr><td class="paramname">path</td><td>The file path of the file to write.</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -309,6 +346,14 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Writes the table directly to the stream without formatting the output to be recompiled in c++. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fp</td><td>An output stream to use to write to.</td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 </div><!-- contents -->
@@ -318,7 +363,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="a00141.html">ftCompiler</a></li>
-    <li class="footer">Generated on Sat Apr 24 2021 17:09:27 for FileTools by
+    <li class="footer">Generated on Sat Apr 24 2021 20:07:49 for FileTools by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>
 </div>

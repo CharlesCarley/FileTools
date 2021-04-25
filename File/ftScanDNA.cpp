@@ -55,10 +55,10 @@ int ftScanDNA::findHeaderFlags(skStream* stream)
             if (*magic == FM_64_BIT)
             {
                 m_headerFlags |= FH_CHUNK_64;
-                if (FT_VOID4)
+                if (FT_VOID_4)
                     m_headerFlags |= FH_VAR_BITS;
             }
-            else if (FT_VOID8)
+            else if (FT_VOID_8)
                 m_headerFlags |= FH_VAR_BITS;
 
             const char endian = *++magic;

@@ -1,10 +1,10 @@
 var annotated_dup =
 [
-    [ "FBTByteInteger", "a00225.html", "a00225" ],
     [ "ftAtomicType", "a00109.html", "a00109" ],
     [ "ftAtomicUtils", "a00113.html", "a00113" ],
     [ "ftBuildMember", "a00197.html", "a00197" ],
     [ "ftBuildStruct", "a00201.html", "a00201" ],
+    [ "ftByteInteger", "a00225.html", "a00225" ],
     [ "ftCharHashKey", "a00153.html", "a00153" ],
     [ "ftChunk", "a00129.html", "a00129" ],
     [ "ftChunk32", "a00121.html", "a00121" ],

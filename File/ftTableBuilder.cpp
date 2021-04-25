@@ -175,15 +175,15 @@ int ftTableBuilder::getTLengths(ftBuildStruct::Array& structBuilders)
                     if (v.ptrCount > 0)
                     {
                         hasPtr = true;
-                        if (len % FT_VOIDP)
+                        if (len % FT_VOID_P)
                         {
                             printf(v.path.c_str(),
                                    v.line,
                                    "align %i: %s %s add %i bytes\n",
-                                   FT_VOIDP,
+                                   FT_VOID_P,
                                    v.type.c_str(),
                                    v.name.c_str(),
-                                   FT_VOIDP - len % FT_VOIDP);
+                                   FT_VOID_P - len % FT_VOID_P);
 
                             status |= LNK_ALIGNMENT_P;
                         }
@@ -199,14 +199,14 @@ int ftTableBuilder::getTLengths(ftBuildStruct::Array& structBuilders)
 
                             status |= LNK_ALIGNMENT_P;
                         }
-                        len += FT_VOIDP * v.arraySize;
+                        len += FT_VOID_P * v.arraySize;
                         fake64 += 8 * v.arraySize;
                     }
                     else if (tLens[ct])
                     {
                         if (ct >= firstNonAtomic)
                         {
-                            if (FT_VOID8 && len % 8)
+                            if (FT_VOID_8 && len % 8)
                             {
                                 printf(v.path.c_str(),
                                        v.line,
@@ -326,7 +326,7 @@ int ftTableBuilder::getTLengths(ftBuildStruct::Array& structBuilders)
                            "typeid:%-8inameid:%-8isizeof:%-8i%s %s\n",
                            var.typeId,
                            var.hashedName,
-                           (var.ptrCount > 0 ? FT_VOIDP : tLens[var.typeId]) * var.arraySize,
+                           (var.ptrCount > 0 ? FT_VOID_P : tLens[var.typeId]) * var.arraySize,
                            var.type.c_str(),
                            var.name.c_str());
                 }
