@@ -55,21 +55,40 @@ $(document).ready(function(){initNavTree('a00161.html','');});
 <div id="doc-content">
 <div class="header">
   <div class="headertitle">
-<div class="title">ftScanDna Member List</div>  </div>
+<div class="title">ftFile Member List</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>This is the complete list of members for <a class="el" href="a00161.html">ftScanDna</a>, including all inherited members.</p>
+<p>This is the complete list of members for <a class="el" href="a00161.html">ftFile</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="a00161.html#aba261232516bf6f714ace21cbda5a9d3">findHeaderFlags</a>(skStream *stream)</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="a00161.html#a3302437967b5288634750ce54ccab086">ftScanDna</a>()</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a5baa8a9570f03a26df4b9d8b6732ca90">getDNA</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="a00161.html#afb31283d9536412858d380ccb75dfd1a">getFlags</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a9a0274780bd8ff501da25b261d6c2a3d">getLength</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="a00161.html#ad8763f6390c6fbcb4a35120c8d16ff32">is64Bit</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a763f321acda63f106394ca88c35029b1">scan</a>(skStream *stream)</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="a00161.html#a4af624123016a0a05fe7c0b25072911a">setFlags</a>(int headerFlags)</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a0c3ba90a17cdaaf2fc509ffe237f6be1">~ftScanDna</a>()</td><td class="entry"><a class="el" href="a00161.html">ftScanDna</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#affb8258e44158e62156da90ad1758657">addFileFlag</a>(const int flag)</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#ae962e7bfe9b67ca077a033fb35b1f5c1">ChunkMap</a> typedef</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a56be5ce0966df728e7295897138bd529">ftFile</a>(const char *header)</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#a78a60e4fdf479f69f1dd04ea65b709ea">getChunks</a>()</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a4d835efb2c560b1602c10ab36b41e999">getFileFlags</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#aa31e7141b5a85291a411218a811c698c">getFileTable</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a857f18513e2b6fb96f8df359c48cfb7f">getHeader</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#aaf60f9f85d5428afdb1f5c8e37ab5e23">getMemoryTable</a>()</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#ab0a86979055e8f9349fe78f5e01f6781">getPath</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#a2d09fe373cd001a2c488d8a8d9ec9878">getTables</a>()=0</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a845d55027ca8babfa37fe9f57ac20497">getTableSize</a>()=0</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#aa3f719a3ff6df269cba5b9e8a49084ae">getVersion</a>() const</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a9b1c6e9dac21ef033c9b0b79caea528f">load</a>(const char *path, int mode=0)</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#a65802ab14c1b2f3a8a5caafe657cc0dd">load</a>(const void *memory, SKsize sizeInBytes)</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a8fb114a72af296c208eb57afe52236cd">m_chunks</a></td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#a5c1f58e5cab45f3b7a3aa63b9e45fc22">m_file</a></td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a185cf337aea013a94ed1c848c316962e">m_fileVersion</a></td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#afea8dca54a5669f3b31b38ef842fc779">m_map</a></td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a85e9adf9d07c6ad2f894ed5a768f1cf3">m_memory</a></td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#a35f4a8b4099e720eea554d8d9c2dfac7">m_memoryVersion</a></td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a6fc01fec576ea2ec87e483e4bbd0552e">MemoryChunks</a> typedef</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#a43d59a91ab40f4554d2ebcdacf99069a">notifyDataRead</a>(void *pointer, const ftChunk &amp;chunk)=0</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a9495150f7eae643e4ca7d32df34d0cb3">save</a>(const char *path, int mode=0)</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#a81b1d632dbc771b7e1b220433c5e56a5">serializeData</a>(skStream *stream)=0</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#ab3489eb0ad2d5c5a06a1a0cfff12cffb">setCastFilter</a>(SKhash *filter, SKuint32 length)</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#a92c060a92acf943917500984b2218213">setFileFlags</a>(const int flags)</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="a00161.html#a9f308e8ef35def5f7684f7105212fdae">setFilterList</a>(SKhash *filter, SKuint32 length, bool inclusive=false)</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="a00161.html#ac07be71b7669fe255e9e108453113bb6">~ftFile</a>()</td><td class="entry"><a class="el" href="a00161.html">ftFile</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.8.14-->

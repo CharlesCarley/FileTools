@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftName Struct Reference</title>
+<title>FileTools: ftPointerHashKey Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -56,50 +56,52 @@ $(document).ready(function(){initNavTree('a00169.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="a00166.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftName Struct Reference</div>  </div>
+<div class="title">ftPointerHashKey Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Structure to hold information about a c/c++ member. </p>
-<p>The name is defined with the following semantics: </p><div class="fragment"><div class="line">(type) [(<a class="code" href="a00169.html#adb1d06e179405b57d8cd9ee43c8c2264">pointerCount</a>)(<a class="code" href="a00169.html#a5ef8703c03fbe30682d9d1a760f97b2d">name</a>)(<a class="code" href="a00169.html#a888da94fed456ebefea9f5b88f5da759">arraySize</a>:<a class="code" href="a00169.html#a35d8de5213348c85515ac8f478b184cf">dimensions</a>)]</div></div><!-- fragment --> </div>
-<p><code>#include &lt;ftStruct.h&gt;</code></p>
+<div class="textblock"><p>Utility class to store a cached void pointer. </p>
+</div>
+<p><code>#include &lt;ftHashTypes.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0a845b23c57297cb73d6f7945f474be2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a0a845b23c57297cb73d6f7945f474be2">ftName</a> ()</td></tr>
-<tr class="memdesc:a0a845b23c57297cb73d6f7945f474be2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a0a845b23c57297cb73d6f7945f474be2">More...</a><br /></td></tr>
-<tr class="separator:a0a845b23c57297cb73d6f7945f474be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a5ef8703c03fbe30682d9d1a760f97b2d"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a5ef8703c03fbe30682d9d1a760f97b2d">name</a></td></tr>
-<tr class="memdesc:a5ef8703c03fbe30682d9d1a760f97b2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the name of the c/c++ member.  <a href="#a5ef8703c03fbe30682d9d1a760f97b2d">More...</a><br /></td></tr>
-<tr class="separator:a5ef8703c03fbe30682d9d1a760f97b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a839a278a20cfd0628bb4a8b85d54b08f"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a839a278a20cfd0628bb4a8b85d54b08f">hash</a></td></tr>
-<tr class="memdesc:a839a278a20cfd0628bb4a8b85d54b08f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the hashed version of the 'char* name' member  <a href="#a839a278a20cfd0628bb4a8b85d54b08f">More...</a><br /></td></tr>
-<tr class="separator:a839a278a20cfd0628bb4a8b85d54b08f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb1d06e179405b57d8cd9ee43c8c2264"><td class="memItemLeft" align="right" valign="top">SKint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#adb1d06e179405b57d8cd9ee43c8c2264">pointerCount</a></td></tr>
-<tr class="memdesc:adb1d06e179405b57d8cd9ee43c8c2264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the number of pointers that are attached to the name.  <a href="#adb1d06e179405b57d8cd9ee43c8c2264">More...</a><br /></td></tr>
-<tr class="separator:adb1d06e179405b57d8cd9ee43c8c2264"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6707696dac01c8986d31e85cd569fd9c"><td class="memItemLeft" align="right" valign="top">SKint8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a6707696dac01c8986d31e85cd569fd9c">dimensionCount</a></td></tr>
-<tr class="memdesc:a6707696dac01c8986d31e85cd569fd9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the number of array dimensions that are attached to the name.  <a href="#a6707696dac01c8986d31e85cd569fd9c">More...</a><br /></td></tr>
-<tr class="separator:a6707696dac01c8986d31e85cd569fd9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83793c5a3fc739c1c7cfa7ba4017544e"><td class="memItemLeft" align="right" valign="top">SKint8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a83793c5a3fc739c1c7cfa7ba4017544e">isFunctionPointer</a></td></tr>
-<tr class="memdesc:a83793c5a3fc739c1c7cfa7ba4017544e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains a true or false value if the member is defined to be a function pointer.  <a href="#a83793c5a3fc739c1c7cfa7ba4017544e">More...</a><br /></td></tr>
-<tr class="separator:a83793c5a3fc739c1c7cfa7ba4017544e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a888da94fed456ebefea9f5b88f5da759"><td class="memItemLeft" align="right" valign="top">SKint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a888da94fed456ebefea9f5b88f5da759">arraySize</a></td></tr>
-<tr class="memdesc:a888da94fed456ebefea9f5b88f5da759"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the total number of array dimensions.  <a href="#a888da94fed456ebefea9f5b88f5da759">More...</a><br /></td></tr>
-<tr class="separator:a888da94fed456ebefea9f5b88f5da759"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35d8de5213348c85515ac8f478b184cf"><td class="memItemLeft" align="right" valign="top">SKint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a35d8de5213348c85515ac8f478b184cf">dimensions</a> [FileTools_MaxArrayDim]</td></tr>
-<tr class="memdesc:a35d8de5213348c85515ac8f478b184cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is an array that holds the individual dimension for multi-dimensional arrays.  <a href="#a35d8de5213348c85515ac8f478b184cf">More...</a><br /></td></tr>
-<tr class="separator:a35d8de5213348c85515ac8f478b184cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf5940df867f80afdcc799dbbf5cfeb5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#abf5940df867f80afdcc799dbbf5cfeb5">ftPointerHashKey</a> ()</td></tr>
+<tr class="memdesc:abf5940df867f80afdcc799dbbf5cfeb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#abf5940df867f80afdcc799dbbf5cfeb5">More...</a><br /></td></tr>
+<tr class="separator:abf5940df867f80afdcc799dbbf5cfeb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81adf5fe60b066e41e08561a4d1be46b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a81adf5fe60b066e41e08561a4d1be46b">ftPointerHashKey</a> (void *pointer)</td></tr>
+<tr class="memdesc:a81adf5fe60b066e41e08561a4d1be46b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs from a pointer  <a href="#a81adf5fe60b066e41e08561a4d1be46b">More...</a><br /></td></tr>
+<tr class="separator:a81adf5fe60b066e41e08561a4d1be46b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad53725dba3201ea8b30007861d87248a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#ad53725dba3201ea8b30007861d87248a">ftPointerHashKey</a> (const SKsize &amp;pointer)</td></tr>
+<tr class="memdesc:ad53725dba3201ea8b30007861d87248a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs from a pointer address  <a href="#ad53725dba3201ea8b30007861d87248a">More...</a><br /></td></tr>
+<tr class="separator:ad53725dba3201ea8b30007861d87248a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a447bdea859f637459671860ba06ffe4a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a447bdea859f637459671860ba06ffe4a">ftPointerHashKey</a> (const <a class="el" href="a00169.html">ftPointerHashKey</a> &amp;other)</td></tr>
+<tr class="memdesc:a447bdea859f637459671860ba06ffe4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default copy constructor. Copies the other class's key and rehashes the internal key.  <a href="#a447bdea859f637459671860ba06ffe4a">More...</a><br /></td></tr>
+<tr class="separator:a447bdea859f637459671860ba06ffe4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35683725705805b6a32330e67731223b"><td class="memItemLeft" align="right" valign="top">const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a35683725705805b6a32330e67731223b">key</a> () const</td></tr>
+<tr class="memdesc:a35683725705805b6a32330e67731223b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides access to the internal pointer that was supplied during class construction.  <a href="#a35683725705805b6a32330e67731223b">More...</a><br /></td></tr>
+<tr class="separator:a35683725705805b6a32330e67731223b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83a043ae2c00966e291061c8aaf6fc8e"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a83a043ae2c00966e291061c8aaf6fc8e">hash</a> (void) const</td></tr>
+<tr class="memdesc:a83a043ae2c00966e291061c8aaf6fc8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the hash of the internal key, remembers it, and returns the result.  <a href="#a83a043ae2c00966e291061c8aaf6fc8e">More...</a><br /></td></tr>
+<tr class="separator:a83a043ae2c00966e291061c8aaf6fc8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af959d6d0ec2f48ebf9dfd26a702819ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#af959d6d0ec2f48ebf9dfd26a702819ba">operator==</a> (const <a class="el" href="a00169.html">ftPointerHashKey</a> &amp;rhs) const</td></tr>
+<tr class="memdesc:af959d6d0ec2f48ebf9dfd26a702819ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for equality using the computed hashes.  <a href="#af959d6d0ec2f48ebf9dfd26a702819ba">More...</a><br /></td></tr>
+<tr class="separator:af959d6d0ec2f48ebf9dfd26a702819ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95f4a9d15ef0f91ec4b3207b1c5309f1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a95f4a9d15ef0f91ec4b3207b1c5309f1">operator!=</a> (const <a class="el" href="a00169.html">ftPointerHashKey</a> &amp;rhs) const</td></tr>
+<tr class="memdesc:a95f4a9d15ef0f91ec4b3207b1c5309f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for inequality using the computed hashes.  <a href="#a95f4a9d15ef0f91ec4b3207b1c5309f1">More...</a><br /></td></tr>
+<tr class="separator:a95f4a9d15ef0f91ec4b3207b1c5309f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f94f881e7e3cff386fb08213c19edff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a8f94f881e7e3cff386fb08213c19edff">operator==</a> (const SKhash &amp;rhs) const</td></tr>
+<tr class="memdesc:a8f94f881e7e3cff386fb08213c19edff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for equality using the computed hash and a key computed elsewhere.  <a href="#a8f94f881e7e3cff386fb08213c19edff">More...</a><br /></td></tr>
+<tr class="separator:a8f94f881e7e3cff386fb08213c19edff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f85e645946d815b8250e72d32b3d720"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00169.html#a1f85e645946d815b8250e72d32b3d720">operator!=</a> (const SKhash &amp;rhs) const</td></tr>
+<tr class="memdesc:a1f85e645946d815b8250e72d32b3d720"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests for inequality using the computed hash and a key computed elsewhere.  <a href="#a1f85e645946d815b8250e72d32b3d720">More...</a><br /></td></tr>
+<tr class="separator:a1f85e645946d815b8250e72d32b3d720"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0a845b23c57297cb73d6f7945f474be2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a845b23c57297cb73d6f7945f474be2">&#9670;&nbsp;</a></span>ftName()</h2>
+<a id="abf5940df867f80afdcc799dbbf5cfeb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf5940df867f80afdcc799dbbf5cfeb5">&#9670;&nbsp;</a></span>ftPointerHashKey() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -108,7 +110,7 @@ Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ftName::ftName </td>
+          <td class="memname">ftPointerHashKey::ftPointerHashKey </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -125,116 +127,274 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a888da94fed456ebefea9f5b88f5da759"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a888da94fed456ebefea9f5b88f5da759">&#9670;&nbsp;</a></span>arraySize</h2>
+<a id="a81adf5fe60b066e41e08561a4d1be46b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81adf5fe60b066e41e08561a4d1be46b">&#9670;&nbsp;</a></span>ftPointerHashKey() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SKint16 ftName::arraySize</td>
+          <td class="memname">ftPointerHashKey::ftPointerHashKey </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>pointer</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Contains the total number of array dimensions. </p>
+<p>Constructs from a pointer </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointer</td><td>The pointer to hash.</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a id="a6707696dac01c8986d31e85cd569fd9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6707696dac01c8986d31e85cd569fd9c">&#9670;&nbsp;</a></span>dimensionCount</h2>
+<a id="ad53725dba3201ea8b30007861d87248a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad53725dba3201ea8b30007861d87248a">&#9670;&nbsp;</a></span>ftPointerHashKey() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SKint8 ftName::dimensionCount</td>
+          <td class="memname">ftPointerHashKey::ftPointerHashKey </td>
+          <td>(</td>
+          <td class="paramtype">const SKsize &amp;&#160;</td>
+          <td class="paramname"><em>pointer</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Contains the number of array dimensions that are attached to the name. </p>
+<p>Constructs from a pointer address </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointer</td><td>The pointer to hash.</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a id="a35d8de5213348c85515ac8f478b184cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35d8de5213348c85515ac8f478b184cf">&#9670;&nbsp;</a></span>dimensions</h2>
+<a id="a447bdea859f637459671860ba06ffe4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a447bdea859f637459671860ba06ffe4a">&#9670;&nbsp;</a></span>ftPointerHashKey() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SKint32 ftName::dimensions[FileTools_MaxArrayDim]</td>
+          <td class="memname">ftPointerHashKey::ftPointerHashKey </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="a00169.html">ftPointerHashKey</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Is an array that holds the individual dimension for multi-dimensional arrays. </p>
+<p>Default copy constructor. Copies the other class's key and rehashes the internal key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>The <a class="el" href="a00169.html" title="Utility class to store a cached void pointer. ">ftPointerHashKey</a> to copy.</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a id="a839a278a20cfd0628bb4a8b85d54b08f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a839a278a20cfd0628bb4a8b85d54b08f">&#9670;&nbsp;</a></span>hash</h2>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a83a043ae2c00966e291061c8aaf6fc8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83a043ae2c00966e291061c8aaf6fc8e">&#9670;&nbsp;</a></span>hash()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SKhash ftName::hash</td>
+          <td class="memname">SKhash ftPointerHashKey::hash </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Contains the hashed version of the 'char* name' member </p>
+<p>Computes the hash of the internal key, remembers it, and returns the result. </p>
 
 </div>
 </div>
-<a id="a83793c5a3fc739c1c7cfa7ba4017544e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83793c5a3fc739c1c7cfa7ba4017544e">&#9670;&nbsp;</a></span>isFunctionPointer</h2>
+<a id="a35683725705805b6a32330e67731223b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35683725705805b6a32330e67731223b">&#9670;&nbsp;</a></span>key()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SKint8 ftName::isFunctionPointer</td>
+          <td class="memname">const void* ftPointerHashKey::key </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Contains a true or false value if the member is defined to be a function pointer. </p>
+<p>Provides access to the internal pointer that was supplied during class construction. </p>
+<dl class="section return"><dt>Returns</dt><dd>The internal key.</dd></dl>
 
 </div>
 </div>
-<a id="a5ef8703c03fbe30682d9d1a760f97b2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ef8703c03fbe30682d9d1a760f97b2d">&#9670;&nbsp;</a></span>name</h2>
+<a id="a95f4a9d15ef0f91ec4b3207b1c5309f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95f4a9d15ef0f91ec4b3207b1c5309f1">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">char* ftName::name</td>
+          <td class="memname">bool ftPointerHashKey::operator!= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="a00169.html">ftPointerHashKey</a> &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Contains the name of the c/c++ member. </p>
+<p>Tests for inequality using the computed hashes. </p>
 
 </div>
 </div>
-<a id="adb1d06e179405b57d8cd9ee43c8c2264"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb1d06e179405b57d8cd9ee43c8c2264">&#9670;&nbsp;</a></span>pointerCount</h2>
+<a id="a1f85e645946d815b8250e72d32b3d720"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f85e645946d815b8250e72d32b3d720">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SKint32 ftName::pointerCount</td>
+          <td class="memname">bool ftPointerHashKey::operator!= </td>
+          <td>(</td>
+          <td class="paramtype">const SKhash &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Contains the number of pointers that are attached to the name. </p>
+<p>Tests for inequality using the computed hash and a key computed elsewhere. </p>
+
+</div>
+</div>
+<a id="af959d6d0ec2f48ebf9dfd26a702819ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af959d6d0ec2f48ebf9dfd26a702819ba">&#9670;&nbsp;</a></span>operator==() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ftPointerHashKey::operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="a00169.html">ftPointerHashKey</a> &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Tests for equality using the computed hashes. </p>
+
+</div>
+</div>
+<a id="a8f94f881e7e3cff386fb08213c19edff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f94f881e7e3cff386fb08213c19edff">&#9670;&nbsp;</a></span>operator==() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ftPointerHashKey::operator== </td>
+          <td>(</td>
+          <td class="paramtype">const SKhash &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Tests for equality using the computed hash and a key computed elsewhere. </p>
 
 </div>
 </div>
@@ -244,7 +404,7 @@ Public Attributes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00169.html">ftName</a></li>
+    <li class="navelem"><a class="el" href="a00169.html">ftPointerHashKey</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>

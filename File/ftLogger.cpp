@@ -419,3 +419,31 @@ void ftLogger::logInvalidInsert(ftMemoryChunk* bin)
     separator();
     log(bin->fileBlock, bin->chunk.length);
 }
+
+void ftLogger::logAlignment(const char* file,
+                            SKsize      line,
+                            SKsize      alignment,
+                            const char* type,
+                            const char* name,
+                            SKsize      needed)
+{
+    if (type && name)
+    {
+        logF("%s error (%i): align %i: %s %s add %i bytes\n",
+             file,
+             line,
+             alignment,
+             type,
+             name,
+             needed);
+    }
+    else
+    {
+        logF("%s error (%i): align %i: add %i bytes\n",
+             file,
+             line,
+             alignment,
+             needed);
+        
+    }
+}

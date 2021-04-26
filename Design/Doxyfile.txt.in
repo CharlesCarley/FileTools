@@ -139,7 +139,10 @@ EXCLUDE_SYMBOLS        = SK_INLINE \
                          isValidWriteData \
                          initializeTables \
                          initializeMemory \
-                         logUnresolvedStructure
+                         logUnresolvedStructure \
+                         ftBuildStruct \
+                         ftBuildMember 
+                         
 EXAMPLE_PATH           = "${CMAKE_CURRENT_SOURCE_DIR}/Source/Images"
 EXAMPLE_PATTERNS       = *.cpp \
                          *.h \

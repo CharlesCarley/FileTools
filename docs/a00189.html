@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftMaxAllocSize Struct Reference</title>
+<title>FileTools: ftType Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -55,96 +55,111 @@ $(document).ready(function(){initNavTree('a00189.html','');});
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="a00186.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftMaxAllocSize Struct Reference</div>  </div>
+<div class="title">ftType Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;ftTableBuilder.h&gt;</code></p>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Structure that is used to store information about a c/c++ type. </p>
+</div>
+<p><code>#include &lt;ftStruct.h&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:af1c7979c59a339c89a5ba574108888c1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#af1c7979c59a339c89a5ba574108888c1">ftType</a> ()</td></tr>
+<tr class="memdesc:af1c7979c59a339c89a5ba574108888c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#af1c7979c59a339c89a5ba574108888c1">More...</a><br /></td></tr>
+<tr class="separator:af1c7979c59a339c89a5ba574108888c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a9f39c8fd15a9c9c5819360465b6c1b8f"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#a9f39c8fd15a9c9c5819360465b6c1b8f">names</a></td></tr>
-<tr class="separator:a9f39c8fd15a9c9c5819360465b6c1b8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90eefa5bfaa4832d9d58d938f51b9bb8"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#a90eefa5bfaa4832d9d58d938f51b9bb8">types</a></td></tr>
-<tr class="separator:a90eefa5bfaa4832d9d58d938f51b9bb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab70fbd43de00b19f53a2029eeb84ed30"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#ab70fbd43de00b19f53a2029eeb84ed30">lengths</a></td></tr>
-<tr class="separator:ab70fbd43de00b19f53a2029eeb84ed30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9e4406bb265a7e9387496d911e379ac"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#ae9e4406bb265a7e9387496d911e379ac">structTable</a></td></tr>
-<tr class="separator:ae9e4406bb265a7e9387496d911e379ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61c3865d156f1622d76c83c76b518525"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#a61c3865d156f1622d76c83c76b518525">structures</a></td></tr>
-<tr class="separator:a61c3865d156f1622d76c83c76b518525"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a439d9a8a8f5ae59945d7cc59326d4d5e"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#a439d9a8a8f5ae59945d7cc59326d4d5e">name</a></td></tr>
+<tr class="memdesc:a439d9a8a8f5ae59945d7cc59326d4d5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the data type name.  <a href="#a439d9a8a8f5ae59945d7cc59326d4d5e">More...</a><br /></td></tr>
+<tr class="separator:a439d9a8a8f5ae59945d7cc59326d4d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54402c2dc7ccebbca43655a64254fa2b"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#a54402c2dc7ccebbca43655a64254fa2b">hash</a></td></tr>
+<tr class="memdesc:a54402c2dc7ccebbca43655a64254fa2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the hashed version of the 'char* name' member  <a href="#a54402c2dc7ccebbca43655a64254fa2b">More...</a><br /></td></tr>
+<tr class="separator:a54402c2dc7ccebbca43655a64254fa2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b2ea4327930bd6888d6c67e2ecb5109"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00189.html#a4b2ea4327930bd6888d6c67e2ecb5109">id</a></td></tr>
+<tr class="memdesc:a4b2ea4327930bd6888d6c67e2ecb5109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the structure index if the type is a structure. Otherwise, this field is unused and should be set to data type limit for an unsigned int.  <a href="#a4b2ea4327930bd6888d6c67e2ecb5109">More...</a><br /></td></tr>
+<tr class="separator:a4b2ea4327930bd6888d6c67e2ecb5109"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="af1c7979c59a339c89a5ba574108888c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1c7979c59a339c89a5ba574108888c1">&#9670;&nbsp;</a></span>ftType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ftType::ftType </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor. </p>
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab70fbd43de00b19f53a2029eeb84ed30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab70fbd43de00b19f53a2029eeb84ed30">&#9670;&nbsp;</a></span>lengths</h2>
+<a id="a54402c2dc7ccebbca43655a64254fa2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54402c2dc7ccebbca43655a64254fa2b">&#9670;&nbsp;</a></span>hash</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SKuint32 ftMaxAllocSize::lengths</td>
+          <td class="memname">SKhash ftType::hash</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Contains the hashed version of the 'char* name' member </p>
+
 </div>
 </div>
-<a id="a9f39c8fd15a9c9c5819360465b6c1b8f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f39c8fd15a9c9c5819360465b6c1b8f">&#9670;&nbsp;</a></span>names</h2>
+<a id="a4b2ea4327930bd6888d6c67e2ecb5109"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b2ea4327930bd6888d6c67e2ecb5109">&#9670;&nbsp;</a></span>id</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SKuint32 ftMaxAllocSize::names</td>
+          <td class="memname">SKuint32 ftType::id</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Contains the structure index if the type is a structure. Otherwise, this field is unused and should be set to data type limit for an unsigned int. </p>
+<p>Caution must be used here. All data types are stored in a single array of structures. This is the index into that array with an offset of the total number of atomic types. </p>
+
 </div>
 </div>
-<a id="ae9e4406bb265a7e9387496d911e379ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9e4406bb265a7e9387496d911e379ac">&#9670;&nbsp;</a></span>structTable</h2>
+<a id="a439d9a8a8f5ae59945d7cc59326d4d5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a439d9a8a8f5ae59945d7cc59326d4d5e">&#9670;&nbsp;</a></span>name</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SKuint32 ftMaxAllocSize::structTable</td>
+          <td class="memname">char* ftType::name</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a61c3865d156f1622d76c83c76b518525"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61c3865d156f1622d76c83c76b518525">&#9670;&nbsp;</a></span>structures</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SKuint32 ftMaxAllocSize::structures</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a90eefa5bfaa4832d9d58d938f51b9bb8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90eefa5bfaa4832d9d58d938f51b9bb8">&#9670;&nbsp;</a></span>types</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SKuint32 ftMaxAllocSize::types</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Contains the data type name. </p>
 
 </div>
 </div>
@@ -154,7 +169,7 @@ Public Attributes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00189.html">ftMaxAllocSize</a></li>
+    <li class="navelem"><a class="el" href="a00189.html">ftType</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>

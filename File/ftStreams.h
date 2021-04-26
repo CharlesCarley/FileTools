@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -26,42 +22,43 @@
 #ifndef _ftStreams_h_
 #define _ftStreams_h_
 
-#include "ftTypes.h"
-#include "Utils/skStreams.h"
 #include "Utils/skFileStream.h"
 #include "Utils/skMemoryStream.h"
-
+#include "Utils/skStreams.h"
+#include "ftTypes.h"
 
 #if FT_USE_ZLIB == 1
 
-class ftGzStream : public skStream
+class ftGzStream final : public skStream
 {
-public:
-    ftGzStream();
-    virtual ~ftGzStream();
-
-
-    void open(const char* path, int mode);
-
-    FBTsize read(void* dest, FBTsize nr) const;
-    FBTsize write(const void* src, FBTsize nr);
-    FBTsize writef(const char* buf, ...);
-    FBTsize position(void) const;
-    FBTsize size(void) const;
-    void    close(void);
-    bool    eof(void) const;
-    bool    seek(SKint64 offset, SKsize dir);
-
-
-    inline bool isOpen(void) const
-    {
-        return m_handle != 0;
-    }
-
 protected:
     void* m_handle;
-};
 
+public:
+    ftGzStream();
+    ~ftGzStream() override;
+
+    void open(const char* path, int mode) override;
+
+    SKsize read(void* dest, SKsize nr) const override;
+
+    SKsize write(const void* src, SKsize nr) override;
+
+    SKsize position(void) const override;
+
+    SKsize size(void) const override;
+
+    void close(void) override;
+
+    bool eof(void) const override;
+
+    bool seek(SKint64 offset, SKsize dir) override;
+
+    bool isOpen(void) const override
+    {
+        return m_handle != nullptr;
+    }
+};
 
 typedef skMemoryStream ftMemoryStream;
 
@@ -72,5 +69,4 @@ typedef skMemoryStream ftMemoryStream;
 
 #endif
 
-
-#endif//_ftStreams_h_
+#endif  //_ftStreams_h_

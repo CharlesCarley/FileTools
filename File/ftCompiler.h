@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -26,7 +22,12 @@
 #ifndef _ftCompiler_h_
 #define _ftCompiler_h_
 
-#include "ftTableBuilder.h"
+#include "ftTypes.h"
+#include "Utils/skArray.h"
+
+struct ftBuildMember;
+class ftBuildStruct;
+typedef skArray<ftBuildStruct> ftBuildStructArray;
 
 /// <summary>
 /// ftCompiler is a utility class to aid in building
@@ -84,7 +85,7 @@ public:
     /// Sets the internal write mode
     /// </summary>
     /// <param name="mode">A value of ftFlags::WriteMode</param>
-    void setWriteMode(int mode)
+    void setWriteMode(const int mode)
     {
         m_writeMode = mode;
     }
@@ -106,17 +107,20 @@ private:
 
     void errorUnknown(int& token, ftToken& tokenPtr);
 
-    void        writeBinPtr(skStream* fp, void* ptr, int len);
-    void        writeCharPtr(skStream* fp, const ftStringPtrArray& pointers);
-    void        writeValidationProgram(const ftPath& path);
+    void writeBinPtr(skStream* fp, void* ptr, int len);
+
+    void writeCharPtr(skStream* fp, const ftStringPtrArray& pointers);
+
+    void writeValidationProgram(const ftPath& path);
+
     static void makeName(ftBuildMember&, bool);
 
-    ftTableBuilder*      m_build;
-    ftPathArray          m_includes;
-    ftStringPtrArray     m_namespaces, m_skip;
-    ftBuildStruct::Array m_builders;
-    int                  m_curBuf, m_writeMode;
-    ftScanner*           m_scanner;
+    ftTableBuilder*    m_build;
+    ftPathArray        m_includes;
+    ftStringPtrArray   m_namespaces, m_skip;
+    ftBuildStructArray m_builders;
+    int                m_curBuf, m_writeMode;
+    ftScanner*         m_scanner;
 };
 
 #endif  //_ftCompiler_h_

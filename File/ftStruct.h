@@ -19,7 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-
 #ifndef _ftStruct_h_
 #define _ftStruct_h_
 
@@ -161,31 +160,31 @@ public:
     enum Flag
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        CAN_LINK      = 0,
+        CAN_LINK = 0,
         /// <summary>
         /// Flag that indicates that this structure was not found
         /// in either the file or memory table.
         /// </summary>
-        MISSING       = 0x001,
+        MISSING = 0x001,
         /// <summary>
         /// Flag that indicates a misalignment between loaded and calculated
-        /// offsets to member data. If this is reported the loader cannot jump 
+        /// offsets to member data. If this is reported the loader cannot jump
         /// directly to the member after the first misaligned offset.
         /// Which means that something is corrupted.
         /// </summary>
-        MISALIGNED    = 0x002,
+        MISALIGNED = 0x002,
         /// <summary>
         /// This flag is used to determine whether or not the file an memory versions of this
-        /// structure are in sync. If they are out of sync, then each member in the file structure 
+        /// structure are in sync. If they are out of sync, then each member in the file structure
         /// needs to be cast into each member of the memory structure.
         /// </summary>
-        NEED_CAST     = 0x004,
+        NEED_CAST = 0x004,
 
         /// <summary>
         /// Internal flag.
-        /// If this is set, then this structure has other structures for members. 
+        /// If this is set, then this structure has other structures for members.
         /// </summary>
         HAS_DEPENDENT = 0x008,
     };
@@ -359,7 +358,6 @@ public:
         return (m_flag & bit) != 0;
     }
 
-
     /// <remarks>
     /// Internal use only.
     /// It is used to separate and sort structures based on the declaration order of its dependencies.
@@ -396,7 +394,6 @@ public:
         return m_link != nullptr;
     }
 
-
     /// <remarks>
     /// Internal use only.
     /// It is used to separate and sort structures based on the declaration order of its dependencies.
@@ -407,7 +404,6 @@ public:
     {
         return (m_flag & HAS_DEPENDENT) != 0;
     }
-
 
     /// <remarks>
     /// Internal use only.

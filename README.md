@@ -25,6 +25,7 @@ The FileTools project is a small collection of tools that are centered around lo
     5. [Testing](#testing)
     6. [Building](#building)
     7. [Optional defines](#optional-defines)
+    8. [Extra documentation](#extra-documentation)
 
 ## File Structure
 
@@ -270,11 +271,15 @@ make
 ## Optional defines
 
 | Option                         | Description                         | Default |
-|:-------------------------------|:------------------------------------|:-------:|
-| FileTools_BUILD_TEST           | Build the unit test program.        |   OFF   |
-| FileTools_AUTO_RUN_TEST        | Automatically run the test program. |   OFF   |
-| FileTools_BUILD_COMPILER       | Build the table compiler.           |   ON    |
-| FileTools_BUILD_DECOMPILER     | Build the table decompiler.         |   ON    |
-| FileTools_BUILD_RECOMPILE_TEST | Build the Decompile/Recompile test. |   OFF   |
-| FileTools_BLEND_FILE           | Build the Blend file loader.        |   OFF   |
-| FileTools_BLEND_TEST           | Builds a test .blend program.       |   OFF   |
+|:-------------------------------|:------------------------------------|:--------|
+| FileTools_BUILD_TEST           | Build the unit test program.        | OFF     |
+| FileTools_AUTO_RUN_TEST        | Automatically run the test program. | OFF     |
+| FileTools_BUILD_COMPILER       | Build the table compiler.           | ON      |
+| FileTools_BUILD_DECOMPILER     | Build the table decompiler.         | ON      |
+| FileTools_BUILD_RECOMPILE_TEST | Build the Decompile/Recompile test. | OFF     |
+| FileTools_BLEND_FILE           | Build the Blend file loader.        | OFF     |
+| FileTools_BLEND_TEST           | Builds a test .blend program.       | OFF     |
+
+## Extra documentation
+
+Extra documentation can be found [here](https://charlescarley.github.io/FileTools/).

@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -115,18 +111,15 @@ namespace ftLogger
     /// </example>
     extern void log(ftMember* member);
 
-
     /// <summary>
     /// Logs the file memory structures side by side.
     /// </summary>
     extern void log(ftStruct* fileStruct, ftStruct* memoryStruct);
 
-
     /// <summary>
     /// Logs the ftName structure.
     /// </summary>
     extern void log(const ftName& name);
-
 
     /// <summary>
     /// Logs the ftType structure.
@@ -138,17 +131,15 @@ namespace ftLogger
     /// </summary>
     extern void log(const ftType& type, FTtype spacing);
 
-
     /// <summary>
-    /// Logs the chunk as well as a side by side log of the file and memory structures.    
+    /// Logs the chunk as well as a side by side log of the file and memory structures.
     /// </summary>
     extern void logDiagnosticsCastHeader(const ftChunk& chunk,
                                          ftStruct*      fileStruct,
                                          ftStruct*      memoryStruct);
 
-
     /// <summary>
-    /// Logs side by side information about the supplied members. 
+    /// Logs side by side information about the supplied members.
     /// </summary>
     extern void logDiagnosticsCastMemberHeader(ftMember* destMember,
                                                ftMember* sourceMember);
@@ -160,9 +151,8 @@ namespace ftLogger
                              const void*    block,
                              const SKsize&  len);
 
-
     /// <summary>
-    /// Prints a message stating that the chunk has been skipped. 
+    /// Prints a message stating that the chunk has been skipped.
     /// Logs the chunk header as well as a hex dump of the chunks data.
     /// </summary>
     extern void logSkipChunk(const ftChunk& chunk,
@@ -172,9 +162,16 @@ namespace ftLogger
     extern void logUnresolvedStructure(ftMemoryChunk* bin, ftStruct* fileStruct, ftStruct* memoryStruct);
 
     /// <summary>
-    /// Logs detailed information on a chunk that was not inserted into the hash table. 
+    /// Logs detailed information on a chunk that was not inserted into the hash table.
     /// </summary>
     extern void logInvalidInsert(ftMemoryChunk* bin);
+
+    void logAlignment(const char* file,
+                      SKsize      line,
+                      SKsize      alignment,
+                      const char* type,
+                      const char* name,
+                      SKsize      needed);
 
 }  // namespace ftLogger
 

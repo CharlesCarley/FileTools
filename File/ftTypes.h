@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -40,7 +36,11 @@
 
 #define FT_INLINE SK_INLINE
 
-using FTtype        = SKuint16;
+using FTtype = SKuint16;
+
+// Most code is dependent on this being a short
+SK_ASSERTCOMP(FTtypeSize, sizeof(FTtype) == 2);
+
 const SKhash NoHash = SK_MKMX(SKhash);
 
 #ifdef ftSCALAR_DOUBLE

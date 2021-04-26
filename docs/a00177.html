@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FileTools: ftMemberSearchKey Struct Reference</title>
+<title>FileTools: ftScanDna Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -55,50 +55,277 @@ $(document).ready(function(){initNavTree('a00177.html','');});
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="a00174.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ftMemberSearchKey Struct Reference</div>  </div>
+<div class="title">ftScanDna Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Type name hash to member search key. </p>
+<div class="textblock"><p><a class="el" href="a00177.html" title="ftScanDna is a utility class to read minimal information from the file by skipping from chunk to chun...">ftScanDna</a> is a utility class to read minimal information from the file by skipping from chunk to chunk. </p>
+<p>The idea of the DNA scan is to jump to the DNA1 block first, extract the table data, then seek back to the file header offset and read the chunks up to the DNA1 block. Then, create associations with the structure and member declarations along with every chunk. </p>
 </div>
-<p><code>#include &lt;ftStruct.h&gt;</code></p>
+<p><code>#include &lt;ftScanDNA.h&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:ab6810310dc12b0800b1e9a3d9dc948e8"><td class="memItemLeft" align="right" valign="top">SKhash&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#ab6810310dc12b0800b1e9a3d9dc948e8">hash</a></td></tr>
-<tr class="separator:ab6810310dc12b0800b1e9a3d9dc948e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93077a8206f8838fefd6beb415db7ac9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00157.html">ftMember</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#a93077a8206f8838fefd6beb415db7ac9">member</a></td></tr>
-<tr class="separator:a93077a8206f8838fefd6beb415db7ac9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a3302437967b5288634750ce54ccab086"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#a3302437967b5288634750ce54ccab086">ftScanDna</a> ()</td></tr>
+<tr class="separator:a3302437967b5288634750ce54ccab086"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c3ba90a17cdaaf2fc509ffe237f6be1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#a0c3ba90a17cdaaf2fc509ffe237f6be1">~ftScanDna</a> ()</td></tr>
+<tr class="separator:a0c3ba90a17cdaaf2fc509ffe237f6be1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba261232516bf6f714ace21cbda5a9d3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#aba261232516bf6f714ace21cbda5a9d3">findHeaderFlags</a> (skStream *stream)</td></tr>
+<tr class="memdesc:aba261232516bf6f714ace21cbda5a9d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the needed flags from the file header or an error status if the flags are not found.  <a href="#aba261232516bf6f714ace21cbda5a9d3">More...</a><br /></td></tr>
+<tr class="separator:aba261232516bf6f714ace21cbda5a9d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4af624123016a0a05fe7c0b25072911a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#a4af624123016a0a05fe7c0b25072911a">setFlags</a> (int headerFlags)</td></tr>
+<tr class="memdesc:a4af624123016a0a05fe7c0b25072911a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is here to provide an option to set the required flags if they have already been extracted from the file  <a href="#a4af624123016a0a05fe7c0b25072911a">More...</a><br /></td></tr>
+<tr class="separator:a4af624123016a0a05fe7c0b25072911a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb31283d9536412858d380ccb75dfd1a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#afb31283d9536412858d380ccb75dfd1a">getFlags</a> () const</td></tr>
+<tr class="memdesc:afb31283d9536412858d380ccb75dfd1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy of the internal <a class="el" href="a00104.html#a06ef5b36d1ad90d34db38fcdf528e606" title="FileHeader defines conditional flags that are set based on the file&#39;s header string. ">ftFlags::FileHeader</a> flags&gt;  <a href="#afb31283d9536412858d380ccb75dfd1a">More...</a><br /></td></tr>
+<tr class="separator:afb31283d9536412858d380ccb75dfd1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a763f321acda63f106394ca88c35029b1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#a763f321acda63f106394ca88c35029b1">scan</a> (skStream *stream)</td></tr>
+<tr class="memdesc:a763f321acda63f106394ca88c35029b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preforms the scan of the file. Execution stops on any error, or when the DNA1 chunk has been read.  <a href="#a763f321acda63f106394ca88c35029b1">More...</a><br /></td></tr>
+<tr class="separator:a763f321acda63f106394ca88c35029b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5baa8a9570f03a26df4b9d8b6732ca90"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#a5baa8a9570f03a26df4b9d8b6732ca90">getDNA</a> () const</td></tr>
+<tr class="memdesc:a5baa8a9570f03a26df4b9d8b6732ca90"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the DNA1 block is found, this will contain the memory that was extracted.  <a href="#a5baa8a9570f03a26df4b9d8b6732ca90">More...</a><br /></td></tr>
+<tr class="separator:a5baa8a9570f03a26df4b9d8b6732ca90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a0274780bd8ff501da25b261d6c2a3d"><td class="memItemLeft" align="right" valign="top">SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#a9a0274780bd8ff501da25b261d6c2a3d">getLength</a> () const</td></tr>
+<tr class="memdesc:a9a0274780bd8ff501da25b261d6c2a3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the length of the DNA1 block.  <a href="#a9a0274780bd8ff501da25b261d6c2a3d">More...</a><br /></td></tr>
+<tr class="separator:a9a0274780bd8ff501da25b261d6c2a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8763f6390c6fbcb4a35120c8d16ff32"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00177.html#ad8763f6390c6fbcb4a35120c8d16ff32">is64Bit</a> () const</td></tr>
+<tr class="memdesc:ad8763f6390c6fbcb4a35120c8d16ff32"><td class="mdescLeft">&#160;</td><td class="mdescRight">A test to see if the file is a 64bit file.  <a href="#ad8763f6390c6fbcb4a35120c8d16ff32">More...</a><br /></td></tr>
+<tr class="separator:ad8763f6390c6fbcb4a35120c8d16ff32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab6810310dc12b0800b1e9a3d9dc948e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6810310dc12b0800b1e9a3d9dc948e8">&#9670;&nbsp;</a></span>hash</h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a3302437967b5288634750ce54ccab086"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3302437967b5288634750ce54ccab086">&#9670;&nbsp;</a></span>ftScanDna()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SKhash ftMemberSearchKey::hash</td>
+          <td class="memname">ftScanDna::ftScanDna </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a93077a8206f8838fefd6beb415db7ac9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93077a8206f8838fefd6beb415db7ac9">&#9670;&nbsp;</a></span>member</h2>
+<a id="a0c3ba90a17cdaaf2fc509ffe237f6be1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c3ba90a17cdaaf2fc509ffe237f6be1">&#9670;&nbsp;</a></span>~ftScanDna()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ftScanDna::~ftScanDna </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="aba261232516bf6f714ace21cbda5a9d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba261232516bf6f714ace21cbda5a9d3">&#9670;&nbsp;</a></span>findHeaderFlags()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="a00157.html">ftMember</a>* ftMemberSearchKey::member</td>
+          <td class="memname">int ftScanDna::findHeaderFlags </td>
+          <td>(</td>
+          <td class="paramtype">skStream *&#160;</td>
+          <td class="paramname"><em>stream</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Extracts the needed flags from the file header or an error status if the flags are not found. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stream</td><td>The stream to use for reading.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="a00104.html#a06ef5b36d1ad90d34db38fcdf528e606" title="FileHeader defines conditional flags that are set based on the file&#39;s header string. ">ftFlags::FileHeader</a></dd></dl>
+
+</div>
+</div>
+<a id="a5baa8a9570f03a26df4b9d8b6732ca90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5baa8a9570f03a26df4b9d8b6732ca90">&#9670;&nbsp;</a></span>getDNA()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* ftScanDna::getDNA </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>If the DNA1 block is found, this will contain the memory that was extracted. </p>
+<dl class="section return"><dt>Returns</dt><dd>Null if it was not found or not read yet.</dd></dl>
+<p><code>Note</code>: that this class does not manage the memory allocated for the DNA1 block. It was allocated with malloc and the memory should be released with a call to free. </p>
+
+</div>
+</div>
+<a id="afb31283d9536412858d380ccb75dfd1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb31283d9536412858d380ccb75dfd1a">&#9670;&nbsp;</a></span>getFlags()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ftScanDna::getFlags </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a copy of the internal <a class="el" href="a00104.html#a06ef5b36d1ad90d34db38fcdf528e606" title="FileHeader defines conditional flags that are set based on the file&#39;s header string. ">ftFlags::FileHeader</a> flags&gt; </p>
+
+</div>
+</div>
+<a id="a9a0274780bd8ff501da25b261d6c2a3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a0274780bd8ff501da25b261d6c2a3d">&#9670;&nbsp;</a></span>getLength()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKsize ftScanDna::getLength </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the length of the DNA1 block. </p>
+
+</div>
+</div>
+<a id="ad8763f6390c6fbcb4a35120c8d16ff32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8763f6390c6fbcb4a35120c8d16ff32">&#9670;&nbsp;</a></span>is64Bit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ftScanDna::is64Bit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A test to see if the file is a 64bit file. </p>
+
+</div>
+</div>
+<a id="a763f321acda63f106394ca88c35029b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a763f321acda63f106394ca88c35029b1">&#9670;&nbsp;</a></span>scan()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ftScanDna::scan </td>
+          <td>(</td>
+          <td class="paramtype">skStream *&#160;</td>
+          <td class="paramname"><em>stream</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Preforms the scan of the file. Execution stops on any error, or when the DNA1 chunk has been read. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stream</td><td>The stream to use for reading.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732" title="Return status codes ">ftFlags::FileStatus</a></dd></dl>
+
+</div>
+</div>
+<a id="a4af624123016a0a05fe7c0b25072911a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4af624123016a0a05fe7c0b25072911a">&#9670;&nbsp;</a></span>setFlags()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ftScanDna::setFlags </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>headerFlags</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>This is here to provide an option to set the required flags if they have already been extracted from the file </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">headerFlags</td><td><a class="el" href="a00104.html#a06ef5b36d1ad90d34db38fcdf528e606" title="FileHeader defines conditional flags that are set based on the file&#39;s header string. ">ftFlags::FileHeader</a></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -108,7 +335,7 @@ Public Attributes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00177.html">ftMemberSearchKey</a></li>
+    <li class="navelem"><a class="el" href="a00177.html">ftScanDna</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">Doxygen</a>
   </ul>

@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -34,45 +30,42 @@
 #if FT_USE_ZLIB == 1
 
 ftGzStream::ftGzStream() :
-    m_handle(0)
+    m_handle(nullptr)
 {
 }
-
 
 ftGzStream::~ftGzStream()
 {
-    close();
+    ftGzStream::close();
 }
-
 
 void ftGzStream::open(const char* path, int mode)
 {
     if (path)
     {
         close();
-
         m_mode = mode;
         if (m_mode == READ || m_mode == READ_TEXT)
             m_handle = gzopen(path, "rb");
         else if (mode == WRITE || m_mode == WRITE_TEXT)
             m_handle = gzopen(path, "wb");
-        else m_mode  = SK_NPOS32;
+        else
+            m_mode = SK_NPOS32;
     }
     else
         printf("Invalid path name.\n");
 }
 
-
 void ftGzStream::close(void)
 {
-    if (m_handle != 0)
+    if (m_handle != nullptr)
     {
         gzclose((gzFile)m_handle);
-        m_handle = 0;
+        m_handle = nullptr;
     }
 }
 
-FBTsize ftGzStream::read(void* dest, FBTsize nr) const
+SKsize ftGzStream::read(void* dest, SKsize nr) const
 {
     if (!canRead() || !isOpen())
         return SK_NPOS;
@@ -80,8 +73,7 @@ FBTsize ftGzStream::read(void* dest, FBTsize nr) const
     return gzread((gzFile)m_handle, dest, (unsigned int)nr);
 }
 
-
-FBTsize ftGzStream::write(const void* src, FBTsize nr)
+SKsize ftGzStream::write(const void* src, SKsize nr)
 {
     if (!canWrite() || !isOpen() || !src)
         return SK_NPOS;
@@ -91,7 +83,6 @@ FBTsize ftGzStream::write(const void* src, FBTsize nr)
     return 0;
 }
 
-
 bool ftGzStream::eof(void) const
 {
     if (!m_handle)
@@ -99,25 +90,24 @@ bool ftGzStream::eof(void) const
     return gzeof((gzFile)m_handle) != 0;
 }
 
-FBTsize ftGzStream::position(void) const
+SKsize ftGzStream::position(void) const
 {
     return gztell((gzFile)m_handle);
 }
 
-FBTsize ftGzStream::size(void) const
+SKsize ftGzStream::size(void) const
 {
     return 0;
 }
 
-
 bool ftGzStream::seek(SKint64 offset, SKsize dir)
 {
-    if (!isOpen() || offset == SK_NPOS)
+    if (!isOpen())
         return false;
 
     long way;
     if (dir == SEEK_END)
-        way = SEEK_SET;  // supported ? 
+        way = SEEK_SET;  // supported ?
     else if (dir == SEEK_CUR)
         way = SEEK_CUR;
     else
@@ -128,14 +118,12 @@ bool ftGzStream::seek(SKint64 offset, SKsize dir)
     return false;
 }
 
-
-FBTsize ftGzStream::writef(const char* fmt, ...)
+SKsize ftGzStream::writef(const char* fmt, ...)
 {
     char tmp[1025];
-
     va_list lst;
     va_start(lst, fmt);
-    int size = ftp_printf(tmp, 1024, fmt, lst);
+    const int size = skp_printf(tmp, 1024, fmt, lst);
     va_end(lst);
 
     if (size > 0)
@@ -145,6 +133,5 @@ FBTsize ftGzStream::writef(const char* fmt, ...)
     }
     return SK_NPOS;
 }
-
 
 #endif

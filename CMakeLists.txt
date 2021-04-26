@@ -49,6 +49,11 @@ else()
         add_subdirectory(Design)
     endif()
 
+    if(FileTools_USE_ZLIB)
+        add_subdirectory(File/zlib)
+    endif()
+
+
 endif()
 
 add_subdirectory(File)

@@ -32,6 +32,431 @@
 
 using namespace ftFlags;
 
+/// <summary>
+/// Holds the count for all elements in the table.
+/// </summary>
+struct ftMaxAllocSize
+{
+    SKuint32 names;
+    SKuint32 types;
+    SKuint32 lengths;
+    SKuint32 structTable;
+    SKuint32 structures;
+};
+
+/// <summary>
+/// Utility struct to aid in building the tables.
+/// </summary>
+struct ftBuildMember
+{
+    ftBuildMember() :
+        typeId(-1),
+        nameId(-1),
+        ptrCount(0),
+        numDimensions(0),
+        isFunctionPointer(0),
+        undefined(0),
+        isDependentType(false),
+        arrays(),
+        arraySize(1),
+        line(-1)
+    {
+    }
+
+    ftId         type;
+    ftId         name;
+    FTtype       typeId;
+    FTtype       nameId;
+    SKuint16     ptrCount;
+    SKuint16     numDimensions;
+    int          isFunctionPointer;
+    int          undefined;
+    bool         isDependentType;
+    ftArraySlots arrays;
+    SKsize       arraySize;
+    ftPath       path;
+    SKsize       line;
+};
+
+/// <summary>
+/// Utility struct to aid in building the tables.
+/// </summary>
+class ftBuildStruct
+{
+public:
+    typedef skArray<ftBuildMember> Members;
+
+public:
+    ftBuildStruct() :
+        structureId(SK_NPOS),
+        nrDependentTypes(0),
+        line(-1)
+    {
+    }
+
+    SKsize  structureId;
+    ftId    name;
+    Members members;
+    SKsize  nrDependentTypes;
+    ftPath  path;
+    SKsize  line;
+};
+
+/// <summary>
+/// Utility class to build a table
+/// </summary>
+class ftTableBuilder
+{
+public:
+    typedef skArray<FTtype> IntPtrArray;
+    typedef skArray<FTtype> TypeArray;
+
+public:
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    ftTableBuilder();
+    ~ftTableBuilder() = default;
+
+    /// <summary>
+    /// Builds the information required to write the table.
+    /// </summary>
+    /// <param name="structBuilders">
+    /// Is a reference to a ftBuildStructArray that will hold the type information
+    /// until it is written.
+    /// </param>
+    /// <returns>
+    /// LNK_OK on success otherwise returns a bit flag containing one
+    /// or more flags from ftFlags::LinkerIssues.
+    /// </returns>
+    int compile(ftBuildStructArray& structBuilders);
+
+    /// <summary>
+    /// Computes the type length table and reports any alignment issues.
+    /// </summary>
+    /// <param name="structBuilders">
+    /// Is a reference to a ftBuildStructArray that will hold the type information
+    /// until it is written.
+    /// </param>
+    /// <returns>
+    /// LNK_OK on success otherwise returns a bit flag containing one
+    /// or more flags from ftFlags::LinkerIssues.
+    /// </returns>
+    int buildTypeLengthTable(ftBuildStructArray& structBuilders);
+
+    /// <summary>
+    /// Adds the builtin atomic types found in ftAtomicUtils::Types
+    /// </summary>
+    /// <returns>
+    /// LNK_OK on success otherwise returns a bit flag containing one
+    /// or more flags from ftFlags::LinkerIssues.
+    /// </returns>
+    int buildBuiltinTypes();
+
+    /// <summary>
+    /// Adds a type to the type table.
+    /// </summary>
+    /// <param name="type">The name of the type.</param>
+    /// <param name="len">The length of the type if it is known.</param>
+    /// <returns>The index of the element in the type array or SK_NPOS16 if the total types exceed 0xFFFF.</returns>
+    FTtype addType(const ftId& type, const SKuint16& len = 0);
+
+    /// <summary>
+    /// Preforms a linear search for the name and if it is not found.
+    /// it is appended to the name array.
+    /// </summary>
+    /// <param name="lookup">The name to add</param>
+    /// <returns>The index of the element in the name array.</returns>
+    ftStringPtrArray::SizeType addName(const ftId& lookup);
+
+    ftMaxAllocSize   allocationSizes;
+    ftStringPtrArray name;
+    ftStringPtrArray typeLookup;
+    IntPtrArray      typeLengths;
+    IntPtrArray      typeLengths64Bit;
+    TypeArray        structures;
+    ftStringPtrArray undefined;
+    SKuint32         numberOfBuiltIn;
+};
+
+ftTableBuilder::ftTableBuilder() :
+    allocationSizes{},
+    numberOfBuiltIn(0)
+{
+    allocationSizes.names       = 0;
+    allocationSizes.types       = 0;
+    allocationSizes.lengths     = 0;
+    allocationSizes.structTable = 0;
+    allocationSizes.structures  = 0;
+}
+
+int ftTableBuilder::buildBuiltinTypes()
+{
+    int status = LNK_OK;
+    for (size_t i = 0; i < ftAtomicUtils::NumberOfTypes && status == LNK_OK; ++i)
+    {
+        const FTtype type = addType(ftAtomicUtils::Types[i].name, ftAtomicUtils::Types[i].size);
+        if (type == SK_NPOS16)
+            status = LNK_ASSERT;
+    }
+
+    numberOfBuiltIn = typeLookup.size();
+    if (numberOfBuiltIn != ftAtomicUtils::NumberOfTypes)
+    {
+        ftLogger::logF("Failed to create builtin types.\n");
+        status = LNK_ASSERT;
+    }
+    return status;
+}
+
+FTtype ftTableBuilder::addType(const ftId& type, const SKuint16& len)
+{
+    SKsize loc = typeLookup.find(type);
+    if (loc == typeLookup.npos)
+    {
+        allocationSizes.types += type.size() + 1;
+        allocationSizes.lengths += sizeof(FTtype);
+        loc = typeLookup.size();
+
+        if (loc > FileTools_MaxTableSize)
+        {
+            ftLogger::logF("Type limit exceeded\n");
+            return SK_NPOS16;
+        }
+
+        typeLookup.push_back(type);
+        typeLengths.push_back(len);
+        typeLengths64Bit.push_back(len);
+    }
+    return (FTtype)loc;
+}
+
+ftStringPtrArray::SizeType ftTableBuilder::addName(const ftId& lookup)
+{
+    ftStringPtrArray::SizeType loc;
+    if ((loc = name.find(lookup)) == name.npos)
+    {
+        allocationSizes.names += name.size() + 1;
+        loc = name.size();
+        name.push_back(lookup);
+    }
+    return loc;
+}
+
+int ftTableBuilder::compile(ftBuildStructArray& structBuilders)
+{
+    int status;
+    if ((status = buildBuiltinTypes()) != LNK_OK)
+        return status;
+
+    for (ftBuildStruct& bs : structBuilders)
+    {
+        bs.structureId = addType(bs.name, 0);
+        if (bs.structureId == SK_NPOS16)
+            return LNK_ASSERT;
+
+        structures.push_back((SKuint16)bs.structureId);
+        structures.push_back((SKuint16)bs.members.size());
+
+        allocationSizes.structures += sizeof(FTtype) * 2;
+
+        for (ftBuildMember& member : bs.members)
+        {
+            member.typeId = addType(member.type, 0);
+            if (member.typeId == SK_NPOS16)
+                return LNK_ASSERT;
+
+            const ftStringPtrArray::SizeType idx = addName(member.name);
+            if (idx >= SK_NPOS16)
+            {
+                ftLogger::logF("Name limit exceeded\n");
+                return LNK_ASSERT;
+            }
+            member.nameId = (FTtype)idx;
+
+            structures.push_back(member.typeId);
+            structures.push_back(member.nameId);
+
+            allocationSizes.structures += sizeof(FTtype) * 2;
+        }
+    }
+
+    return buildTypeLengthTable(structBuilders);
+}
+
+int ftTableBuilder::buildTypeLengthTable(ftBuildStructArray& structBuilders)
+{
+    ftBuildStruct* structs = structBuilders.ptr();
+    const SKsize   total   = structBuilders.size();
+
+    SKsize next = total, prev = 0;
+
+    FTtype* tln64 = typeLengths64Bit.ptr();
+    FTtype* tLens = typeLengths.ptr();
+
+    int              status = LNK_OK;
+    ftStringPtrArray missingReport, missing;
+
+    FTtype firstNonAtomic = 0;
+    if (structs)
+        firstNonAtomic = (FTtype)structs[0].structureId;
+
+    while (next != prev && structs)
+    {
+        prev = next;
+        next = 0;
+
+        for (SKsize i = 0; i < total; ++i)
+        {
+            ftBuildStruct& cur = structs[i];
+
+            if (tLens[cur.structureId] != 0)
+            {
+                SKuint32 pos;
+                if ((pos = missingReport.find(cur.name)) != missingReport.npos)
+                    missingReport.remove(pos);
+            }
+            else
+            {
+                ftBuildMember* member = cur.members.ptr();
+                const SKsize   nrEle  = cur.members.size();
+
+                SKsize len    = 0;
+                SKsize fake64 = 0;
+                bool   hasPtr = false;
+
+                for (SKsize e = 0; e < nrEle; ++e)
+                {
+                    ftBuildMember& v  = member[e];
+                    const SKsize   ct = v.typeId;
+
+                    if (v.ptrCount > 0)
+                    {
+                        hasPtr = true;
+                        if (len % FT_VOID_P)
+                        {
+                            ftLogger::logAlignment(cur.path.c_str(),
+                                                   v.line,
+                                                   FT_VOID_P,
+                                                   v.type.c_str(),
+                                                   v.name.c_str(),
+                                                   FT_VOID_P - len % FT_VOID_P);
+
+                            status |= LNK_ALIGNMENT_P;
+                        }
+                        if (fake64 % 8)
+                        {
+                            ftLogger::logAlignment(cur.path.c_str(),
+                                                   v.line,
+                                                   8,
+                                                   v.type.c_str(),
+                                                   v.name.c_str(),
+                                                   8 - fake64 % 8);
+
+                            status |= LNK_ALIGNMENT_P;
+                        }
+                        len += FT_VOID_P * v.arraySize;
+                        fake64 += 8 * v.arraySize;
+                    }
+                    else if (tLens[ct])
+                    {
+                        if (ct >= firstNonAtomic)
+                        {
+                            if (FT_VOID_8 && len % 8)
+                            {
+                                ftLogger::logAlignment(cur.path.c_str(),
+                                                       v.line,
+                                                       8,
+                                                       v.type.c_str(),
+                                                       v.name.c_str(),
+                                                       8 - len % 8);
+                                status |= LNK_ALIGNMENT_S;
+                            }
+                        }
+
+                        if (tLens[ct] > 3 && len % 4)
+                        {
+                            ftLogger::logAlignment(cur.path.c_str(),
+                                                   v.line,
+                                                   4,
+                                                   v.type.c_str(),
+                                                   v.name.c_str(),
+                                                   4 - len % 4);
+
+                            status |= LNK_ALIGNMENT_4;
+                        }
+                        else if (tLens[ct] == 2 && len % 2)
+                        {
+                            ftLogger::logAlignment(cur.path.c_str(),
+                                                   v.line,
+                                                   2,
+                                                   v.type.c_str(),
+                                                   v.name.c_str(),
+                                                   2 - len % 2);
+
+                            status |= LNK_ALIGNMENT_2;
+                        }
+
+                        len += tLens[ct] * v.arraySize;
+                        fake64 += tln64[ct] * v.arraySize;
+                    }
+                    else
+                    {
+                        next++;
+                        len = 0;
+                        if (missingReport.find(cur.name) == missingReport.npos)
+                            missingReport.push_back(cur.name);
+
+                        tln64[cur.structureId] = 0;
+                        tLens[cur.structureId] = 0;
+                        break;
+                    }
+                }
+
+                tln64[cur.structureId] = (FTtype)fake64;
+                tLens[cur.structureId] = (FTtype)len;
+
+                if (len != 0)
+                {
+                    if (hasPtr || fake64 != len)
+                    {
+                        if (fake64 % 8)
+                        {
+                            ftLogger::logAlignment(cur.path.c_str(),
+                                                   cur.line,
+                                                   8,
+                                                   nullptr,
+                                                   nullptr,
+                                                   8 - fake64 % 8);
+                            status |= LNK_ALIGNMENT_8;
+                        }
+                    }
+
+                    if (len % 4)
+                    {
+                        ftLogger::logAlignment(cur.path.c_str(),
+                                               cur.line,
+                                               4,
+                                               nullptr,
+                                               nullptr,
+                                               4 - len % 4);
+                        status |= LNK_ALIGNMENT_4;
+                    }
+                }
+            }
+        }
+    }
+
+    if (!missingReport.empty())
+    {
+        status |= LNK_UNDEFINED_TYPES;
+        for (ftId& id : missingReport)
+            ftLogger::logF("Missing reference to type '%s'\n", id.c_str());
+    }
+
+    return status;
+}
+
 ftCompiler::ftCompiler() :
     m_build(new ftTableBuilder()),
     m_curBuf(0),
@@ -296,7 +721,7 @@ void ftCompiler::handleStatementClosure(int&           token,
         member.isDependentType = true;
     }
 
-    buildStruct.data.push_back(member);
+    buildStruct.members.push_back(member);
 
     // reset it for the next iteration
     member.ptrCount  = 0;
@@ -316,7 +741,7 @@ void ftCompiler::errorUnknown(int& token, ftToken& tokenPtr)
 
 int ftCompiler::compile()
 {
-    return m_build->getLengths(m_builders);
+    return m_build->compile(m_builders);
 }
 
 void ftCompiler::writeFile(const ftId& tableName, skStream* fp)
@@ -489,7 +914,6 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     string += "Validator.cpp";
 
     skFileStream fp;
-
     fp.open(string.c_str(), skStream::WRITE);
     if (!fp.isOpen())
     {
@@ -498,12 +922,7 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
     }
 
     for (const ftPath& include : m_includes)
-    {
-        split.clear();
-        include.split(split, '/', '\\');
-
         fp.writef("#include \"%s\"\n", include.c_str());
-    }
 
     fp.writef("#include <cstdlib>\n");
     fp.writef("#include <cstdio>\n\n");
@@ -521,12 +940,13 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
     if (!m_namespaces.empty())
     {
-        for (SKuint32 i = 0; i < m_namespaces.size(); ++i)
-            fp.writef("using namespace %s;\n\n\n", m_namespaces[i].c_str());
+        for (const ftId& ns : m_namespaces)
+            fp.writef("using namespace %s;\n\n\n", ns.c_str());
     }
 
     fp.writef("int main()\n{\n\tint errors=0;\n");
-    ftBuildStruct::Array::Iterator it = m_builders.iterator();
+
+    ftBuildStructArray::Iterator it = m_builders.iterator();
     while (it.hasMoreElements())
     {
         ftBuildStruct& bs = it.getNext();
@@ -536,11 +956,9 @@ void ftCompiler::writeValidationProgram(const ftPath& path)
 
         if (m_skip.find(cur) != m_skip.npos)
             continue;
-
 #ifdef FileTools_SwapEndian
         len = ftSwap16(len);
 #endif
-
         fp.writef("\tif (sizeof(%s) != %i)\n\t{\n\t\terrors ++;\n", cur.c_str(), len);
         fp.writef("\t\t");
         fp.writef("AssertFailed(ToString(%s), %i, (int)sizeof(%s));\n", cur.c_str(), len, cur.c_str());

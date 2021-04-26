@@ -31,12 +31,21 @@ option(FileTools_BUILD_RECOMPILE_TEST "Build the Decompile/Recompile test." OFF)
 option(FileTools_BLEND_FILE           "Build the Blend file loader." OFF)
 option(FileTools_BLEND_TEST           "Builds a test .blend program." OFF)
 option(FileTools_BUILD_DOCS           "Builds documentation." OFF)
+option(FileTools_USE_ZLIB             "Build with zlib." OFF)
+
 
 set(BUILD_GMOCK   OFF CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 set(GTEST_DIR     ${FileTools_SOURCE_DIR}/Test/googletest)
 set(GTEST_INCLUDE ${FileTools_SOURCE_DIR}/Test/googletest/googletest/include)
 set(GTEST_LIBRARY gtest_main)
+
+
+set(FileTools_ZLIB_INCLUDE  ${FileTools_SOURCE_DIR}/File/zlib)
+set(FileTools_ZLIB_LIBRARY  zlib)
+set(FileTools_ZLIB_DEFINITIONS "-DFT_USE_ZLIB=1")
+
+
 
 set(Extern ${FileTools_SOURCE_DIR}/External)
 
