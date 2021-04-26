@@ -61,6 +61,7 @@ add_subdirectory(File)
 if (FileTools_BLEND_FILE)
     unset(TargetGroup )
     add_subdirectory(FileFormats/Blend)
+    add_subdirectory(Tools/SwapChunkCodes)
 endif()
 
 

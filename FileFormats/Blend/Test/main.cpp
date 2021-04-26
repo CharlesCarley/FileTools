@@ -93,6 +93,38 @@ GTEST_TEST(BlendFile, CorruptChunks)
     EXPECT_EQ(FS_OK, status);
 }
 
+
+GTEST_TEST(BlendFile, RandomJunk)
+{
+    // This file has had the chunks filled with random bytes.
+    ftBlend   fp;
+    const int status = fp.load("RandomDataSwap.blend");
+    EXPECT_EQ(FS_OK, status);
+}
+
+
+GTEST_TEST(BlendFile, RandomDatablockSwap)
+{
+    // This file has had the data blocks swapped with other 'valid'
+    // blocks, but has left the reported chunk length the same
+    // The expected result is a read error because chunks will not be
+    // aligned.
+    ftBlend   fp;
+    const int status = fp.load("RandomDatablockSwap.blend");
+    EXPECT_NE(FS_OK, status);
+}
+
+GTEST_TEST(BlendFile, RandomChunkSwap)
+{
+    // This file has had the chunk codes swapped with other 'valid'
+    // codes.
+    ftBlend   fp;
+    const int status = fp.load("RandomChunkSwap.blend");
+    EXPECT_EQ(FS_OK, status);
+}
+
+
+
 GTEST_TEST(BlendFile, IterateObjects)
 {
     ftBlend fp;
