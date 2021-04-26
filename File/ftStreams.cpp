@@ -118,20 +118,4 @@ bool ftGzStream::seek(SKint64 offset, SKsize dir)
     return false;
 }
 
-SKsize ftGzStream::writef(const char* fmt, ...)
-{
-    char tmp[1025];
-    va_list lst;
-    va_start(lst, fmt);
-    const int size = skp_printf(tmp, 1024, fmt, lst);
-    va_end(lst);
-
-    if (size > 0)
-    {
-        tmp[size] = 0;
-        return write(tmp, size);
-    }
-    return SK_NPOS;
-}
-
 #endif

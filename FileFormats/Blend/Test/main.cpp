@@ -61,6 +61,38 @@ GTEST_TEST(BlendFile, ExtractScene)
     EXPECT_TRUE(strcmp(fp.m_fg->curscene->id.name, "SCScene") == 0);
 }
 
+GTEST_TEST(BlendFile, MissingDNA1)
+{
+    ftBlend fp;
+    // This file has it's DNA1 code deliberately removed.
+    const int status = fp.load("MissingDNA1.blend");
+    EXPECT_EQ(FS_DNA1_READ, status);
+}
+
+GTEST_TEST(BlendFile, InvalidDNASize)
+{
+    ftBlend fp;
+    // This file has it's DNA1 length field zeroed.
+    const int status = fp.load("InvalidDNASize.blend");
+    EXPECT_EQ(FS_INV_READ, status);
+}
+
+GTEST_TEST(BlendFile, DNA1WrongSize)
+{
+    ftBlend fp;
+    // This file has it's DNA1 length field divided by 2.
+    const int status = fp.load("DNA1WrongSize.blend");
+    EXPECT_EQ(FS_INV_VALUE, status);
+}
+
+GTEST_TEST(BlendFile, CorruptChunks)
+{
+    // This file has had the OB chunks zeroed.
+    ftBlend   fp;
+    const int status = fp.load("CorruptChunks.blend");
+    EXPECT_EQ(FS_OK, status);
+}
+
 GTEST_TEST(BlendFile, IterateObjects)
 {
     ftBlend fp;

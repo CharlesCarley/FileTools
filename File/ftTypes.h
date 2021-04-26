@@ -210,7 +210,7 @@ namespace ftFlags
         /// <summary>
         /// Start code for enumerated values.
         /// </summary>
-        FS_STATUS_MIN = -15,
+        FS_STATUS_MIN = -16,
 
         /// <summary>
         /// Invalid insert.
@@ -234,6 +234,11 @@ namespace ftFlags
         /// A stream read failed.
         /// </summary>
         FS_INV_READ,
+
+        /// <summary>
+        /// The DNA1 code was not found.
+        /// </summary>
+        FS_DNA1_READ,
 
         /// <summary>
         /// Invalid size.

@@ -52,7 +52,7 @@ class ftTable
 {
 public:
     /// <summary>
-    /// 
+    ///
     /// </summary>
     typedef ftName* Names;  // < FT_MAX_TABLE
 
@@ -92,7 +92,6 @@ public:
 public:
     ftTable(SKuint8 pointerLength);
     ~ftTable();
-
 
     int read(const void*   tableSource,
              const SKsize& tableLength,
@@ -264,7 +263,7 @@ private:
 
     void clearTables(void);
 
-    void convertName(ftName& dest, char* convString) const;
+    int convertName(ftName& dest, char* convString) const;
 
     int buildStruct(SKuint16*& structure, SKuint16 current, int headerFlags, int fileFlags);
 

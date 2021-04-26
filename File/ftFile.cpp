@@ -206,7 +206,7 @@ int ftFile::preScan(skStream* stream)
             }
         }
         else
-            status = FS_INV_READ;
+            status = FS_DNA1_READ;
     }
 
     return status;
@@ -334,7 +334,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         }
         else
         {
-            bin->fileBlock  = block;
+            bin->fileBlock         = block;
             ftStruct* memoryStruct = nullptr;
 
             if (bin->chunk.code == ftIdNames::DATA && bin->chunk.structId <= m_file->getFirstStructType())
@@ -1066,7 +1066,7 @@ int ftFile::save(const char* path, const int mode)
     }
 
     const SKuint8 cp = FT_VOID_8 ? FM_64_BIT : FM_32_BIT;
-    SKuint8 ce = getEndian();
+    SKuint8       ce = getEndian();
     if (ce == FT_ENDIAN_IS_BIG)
         ce = FM_BIG_ENDIAN;
     else

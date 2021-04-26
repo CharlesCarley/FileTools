@@ -24,8 +24,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../
     ${GTEST_INCLUDE} 
     )
 
+
+file(GLOB Blends *.blend)
 set(Target_Source 
   main.cpp
+  ${Blends}
 )
 
 

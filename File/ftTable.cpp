@@ -272,7 +272,7 @@ int ftTable::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFlag
     ftName   name{};
     SKuint32 count = 0;
 
-    SKuint32 status = readTableHeader(stream, ftIdNames::FT_NAME, fileFlags);
+    SKint32 status = readTableHeader(stream, ftIdNames::FT_NAME, fileFlags);
     if (status == FS_OK)
     {
         stream.readInt32(count);
@@ -286,7 +286,8 @@ int ftTable::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFlag
 
             for (m_nameCount = 0; m_nameCount < count; ++m_nameCount)
             {
-                convertName(name, stream.addressAtPosition());
+                if ((status = convertName(name, stream.addressAtPosition())) != FS_OK)
+                    return status;
 
                 m_names[m_nameCount] = name;
                 m_hashedNames.push_back(name.hash);
@@ -295,7 +296,7 @@ int ftTable::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFlag
             }
 
             count = (SKuint32)stream.getVaryingInt();
-            count = ((count + 3) & ~3) - count;
+            count = (count + 3 & ~3) - count;
             if (count)
                 stream.seek(count, SEEK_CUR);
         }
@@ -393,9 +394,11 @@ int ftTable::readStructureTable(ftMemoryStream& stream, const int headerFlags, c
     return status;
 }
 
-void ftTable::convertName(ftName& dest, char* convString) const
+int ftTable::convertName(ftName& dest, char* convString) const
 {
     dest = InvalidName;
+    if (!convString)
+        return FS_INV_VALUE;
 
     // All of the names are a reference to the block of data
     // that houses the tables. This is storing the address
@@ -405,8 +408,10 @@ void ftTable::convertName(ftName& dest, char* convString) const
     dest.hash      = skHash(dest.name);
     dest.arraySize = 1;
 
+    int    status = FS_OK;
+
     SKint8 i = 0;
-    while (*convString)
+    while (convString  && * convString)
     {
         int iVal = 0;
         switch (*convString)
@@ -435,6 +440,8 @@ void ftTable::convertName(ftName& dest, char* convString) const
                 dest.dimensions[i] = iVal;
                 dest.arraySize *= dest.dimensions[i++];
             }
+            else
+                status = FS_INV_VALUE;
             break;
         }
     }
@@ -442,6 +449,7 @@ void ftTable::convertName(ftName& dest, char* convString) const
         dest.dimensionCount = 0;
     else
         dest.dimensionCount = i;
+    return status;
 }
 
 int ftTable::buildStruct(SKuint16*&     structure,
