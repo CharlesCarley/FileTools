@@ -206,7 +206,7 @@ int ftFile::preScan(skStream* stream)
             }
         }
         else
-            status = FS_DNA1_READ;
+            status = FS_TABLE_INIT_FAILED;
     }
 
     return status;
@@ -348,9 +348,32 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
             {
                 ftStruct* fileStruct = m_file->findStructByType(bin->chunk.structId);
                 if (fileStruct)
+                {
                     memoryStruct = findInMemoryTable(fileStruct);
 
-                if (fileStruct && memoryStruct)
+                    if (memoryStruct)
+                    {
+
+                        const SKuint32 expected = fileStruct->getSizeInBytes() * chunk.count;
+                        if (expected != chunk.length)
+                        {
+                            if (m_fileFlags & LF_MIS_REPORTED)
+                                ftLogger::logMisCalculatedChunk(chunk, expected, chunk.length);
+
+                            if (chunk.code == ftIdNames::REND && expected == 16 && chunk.length == 72)
+                            {
+                                // It seems that the REND chunk contains more
+                                // than it should...
+                                // allow it for now
+                            }
+                            else
+                                status = FS_INV_LENGTH;
+                        }
+                    }
+                }
+
+
+                if (fileStruct && memoryStruct && status == FS_OK)
                 {
                     bin->fileStruct   = fileStruct;
                     bin->memoryStruct = memoryStruct;

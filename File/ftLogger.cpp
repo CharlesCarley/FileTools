@@ -388,6 +388,20 @@ void ftLogger::logSkipChunk(const ftChunk& chunk,
     separator();
 }
 
+void ftLogger::logMisCalculatedChunk(const ftChunk& chunk,
+                                     SKsize         expected,
+                                     SKsize         reported)
+{
+    log(chunk);
+    color(CS_RED);
+    logF(
+        "Error the calculated chunk size does "
+        "not match the reported size from the file:\n\texpected(%i) -> actual(%i)",
+        expected,
+        reported);
+    color(CS_WHITE);
+}
+
 void ftLogger::logUnresolvedStructure(ftMemoryChunk* bin, ftStruct* fileStruct, ftStruct* memoryStruct)
 {
     separator();
@@ -444,6 +458,5 @@ void ftLogger::logAlignment(const char* file,
              line,
              alignment,
              needed);
-        
     }
 }

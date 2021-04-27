@@ -160,6 +160,13 @@ union ftByteInteger
     SKuint8  int8[8];
 };
 
+union ftByteInteger32
+{
+    SKuint32 int32;
+    SKuint16 int16[2];
+    SKuint8  int8[4];
+};
+
 class skStream;
 class ftTable;
 class ftStruct;
@@ -236,11 +243,6 @@ namespace ftFlags
         FS_INV_READ,
 
         /// <summary>
-        /// The DNA1 code was not found.
-        /// </summary>
-        FS_DNA1_READ,
-
-        /// <summary>
         /// Invalid size.
         /// An expected size constraint was not met.
         /// </summary>
@@ -267,6 +269,25 @@ namespace ftFlags
         /// A general fail status.
         /// </summary>
         FS_FAILED,
+
+
+        /// <summary>
+        /// If this status is returned, it means that every byte in the code
+        /// did not match the following criteria:
+        /// <remarks>
+        /// <code>
+        /// upper case characters
+        /// lower case characters
+        /// ASCII digits [0,9]
+        /// underscore character '_'
+        /// space character ' '
+        /// </code>
+        /// Assuming that the code was constructed properly, then this most likely
+        /// means that some data is out of alignment with what was computed and or reported.
+        /// </remarks>
+        /// </summary>
+        FS_CODE_ERROR,
+
 
         // Table codes
         RS_INVALID_PTR,
@@ -331,6 +352,7 @@ namespace ftFlags
         LF_DUMP_CAST        = 0x0400,  // Log the before and after buffers while casting.
         LF_UNRESOLVED       = 0x0800,  // Log cases where there is not a memory structure associated with a file structure.
         LF_MISSING_PTR_PTR  = 0x1000,  // Log cases where the pointer to pointer lookup address is valid but was not found.
+        LF_MIS_REPORTED     = 0x2000,  // Log cases where the calculated size does not match the reported size.
     };
 
     enum LinkerIssues

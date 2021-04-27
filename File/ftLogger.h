@@ -159,6 +159,11 @@ namespace ftLogger
                              ftStruct*      fileStruct,
                              const void*    block,
                              const SKsize&  len);
+
+    extern void logMisCalculatedChunk(const ftChunk& chunk,
+                                 SKsize         expected,
+                                 SKsize         reported);
+
     extern void logUnresolvedStructure(ftMemoryChunk* bin, ftStruct* fileStruct, ftStruct* memoryStruct);
 
     /// <summary>

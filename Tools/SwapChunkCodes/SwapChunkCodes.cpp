@@ -174,10 +174,9 @@ public:
                         else
                         {
                             m_readChunks.push_back(mc);
-
-                            // linear
                             if (chunk.code != ftIdNames::DNA1)
                             {
+                                // linear
                                 if (m_readChunkCodes.find(chunk.code) == m_readChunkCodes.npos)
                                     m_readChunkCodes.push_back(chunk.code);
                             }

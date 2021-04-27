@@ -23,6 +23,7 @@
 #include <cstdio>
 #include "Utils/skPlatformHeaders.h"
 #include "ftEndianUtils.h"
+#include "ftLogger.h"
 #include "ftStreams.h"
 
 using namespace ftEndianUtils;
@@ -38,7 +39,6 @@ SKsize ftChunkUtils::write(ftChunk* source, skStream* stream)
     return size;
 }
 
-/// FIXME: This should not return FS_INV_READ
 SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int headerFlags)
 {
     SKsize bytesRead = 0;
@@ -68,10 +68,13 @@ SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int headerFlags)
             dest->code >>= 16;
         dest->length = swap32(dest->length);
     }
+
+    if (!isValidCode(dest->code))
+        return FS_CODE_ERROR;
+
     return bytesRead;
 }
 
-/// FIXME: This should not return FS_INV_READ
 SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags)
 {
     SKsize   bytesRead = 0;
@@ -112,11 +115,11 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags)
             if ((bytesRead = stream->read(&src, Block64)) <= 0)
                 return FS_INV_READ;
 
-            ftByteInteger ptr  = {0};
-            c32.code           = src.code;
-            c32.length         = src.length;
-            c32.structId       = src.structId;
-            c32.count          = src.count;
+            ftByteInteger ptr = {0};
+            c32.code          = src.code;
+            c32.length        = src.length;
+            c32.structId      = src.structId;
+            c32.count         = src.count;
 
             ptr.int64 = src.address;
             if (ptr.int32[0] != 0)
@@ -150,5 +153,49 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags)
         return FS_INV_LENGTH;
 
     memcpy(dest, tmp, BlockSize);
+
+    if (!isValidCode(tmp->code))
+        return FS_CODE_ERROR;
+
     return bytesRead;
+}
+
+bool ftChunkUtils::isValidCode(const SKuint32& code)
+{
+    ftByteInteger32 bInt = {};
+    bInt.int32           = code;
+
+    const bool isSmallerCode = code < 0xFFFF;
+    bool result = true;
+    for (int i = 0; i < (isSmallerCode ? 2 : 4) && result; ++i)
+    {
+        const SKuint8 ch = bInt.int8[i];
+
+        result = ch >= 'a' && ch <= 'z';
+        result = result || ch >= 'A' && ch <= 'Z';
+        result = result || ch >= '0' && ch <= '9';
+        result = result || ch == '_' || ch == ' ';
+
+        if (!result && isSmallerCode)
+        {
+            ftLogger::logF(
+                "Found an invalid code sequence "
+                "in the code 0x%04X [0x%02X, 0x%02X]\n",
+                bInt.int32,
+                bInt.int8[0],
+                bInt.int8[1]);
+        }
+        else if (!result)
+        {
+            ftLogger::logF(
+                "Found an invalid code sequence "
+                "in the code 0x%04X [0x%02X, 0x%02X, 0x%02X, 0x%02X]\n",
+                bInt.int32,
+                bInt.int8[0],
+                bInt.int8[1],
+                bInt.int8[2],
+                bInt.int8[3]);
+        }
+    }
+    return result;
 }

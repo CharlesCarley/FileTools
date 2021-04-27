@@ -43,6 +43,7 @@ namespace ftIdNames
     const SKuint32 ENDB = FT_TYPEID('E', 'N', 'D', 'B');
     const SKuint32 DATA = FT_TYPEID('D', 'A', 'T', 'A');
     const SKuint32 TEST = FT_TYPEID('T', 'E', 'S', 'T');
+    const SKuint32 REND = FT_TYPEID('R', 'E', 'N', 'D');
 }  // namespace ftIdNames
 
 /// <summary>
@@ -263,7 +264,7 @@ private:
 
     void clearTables(void);
 
-    int convertName(ftName& dest, char* convString) const;
+    int convertName(ftName& dest, char* cp) const;
 
     int buildStruct(SKuint16*& structure, SKuint16 current, int headerFlags, int fileFlags);
 
@@ -286,7 +287,7 @@ private:
                  SKuint32& currentOffset,
                  SKuint32  recursiveDepth,
                  int       fileFlags,
-                 int&      status);
+                 int&      status) const;
 
     int compile(int fileFlags);
 

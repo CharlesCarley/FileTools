@@ -234,6 +234,25 @@ struct ftChunkUtils
     /// <returns>The total number of bytes that were read from the stream. </returns>
     static SKsize scan(ftChunkScan* dest, skStream* stream, int headerFlags);
 
+
+    /// <summary>
+    /// Test to determine if the supplied code meets the criteria for a valid code.
+    /// </summary>
+    /// <param name="code">The sequence to test</param>
+    /// <returns>
+    /// True if every byte in the code is composed of a mixture of:
+    /// ```txt
+    /// upper case characters
+    /// lower case characters
+    /// ASCII digits [0,9]
+    /// underscore character '_'
+    /// space character ' '
+    /// ```
+    /// Otherwise this will return false.
+    /// </returns>
+    static bool isValidCode(const SKuint32& code);
+
+
     static const ftChunk BlankChunk;
 };
 

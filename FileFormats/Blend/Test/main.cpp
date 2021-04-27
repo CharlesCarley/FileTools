@@ -43,7 +43,7 @@ SKhash reportFilter[]{
 GTEST_TEST(BlendFile, BasicLoad)
 {
     ftBlend fp;
-    fp.setFileFlags(LF_DIAGNOSTICS | LF_DO_CHECKS | LF_DUMP_CAST);
+    //fp.setFileFlags(LF_DIAGNOSTICS | LF_DO_CHECKS | LF_DUMP_CAST);
     fp.setCastFilter(reportFilter, sizeof(reportFilter) / sizeof(SKhash));
     const int status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
@@ -66,7 +66,7 @@ GTEST_TEST(BlendFile, MissingDNA1)
     ftBlend fp;
     // This file has it's DNA1 code deliberately removed.
     const int status = fp.load("MissingDNA1.blend");
-    EXPECT_EQ(FS_DNA1_READ, status);
+    EXPECT_EQ(FS_CODE_ERROR, status);
 }
 
 GTEST_TEST(BlendFile, InvalidDNASize)
@@ -120,7 +120,7 @@ GTEST_TEST(BlendFile, RandomChunkSwap)
     // codes.
     ftBlend   fp;
     const int status = fp.load("RandomChunkSwap.blend");
-    EXPECT_EQ(FS_OK, status);
+    EXPECT_EQ(FS_INV_LENGTH, status);
 }
 
 

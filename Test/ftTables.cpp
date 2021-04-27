@@ -87,10 +87,9 @@ using namespace std;
 
 GTEST_TEST(ftCompiler, RebuildTest)
 {
-    int        status;
     ftCompiler compiler;
 
-    status = compiler.parse("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
+    int status = compiler.parse("TestGen", (const char*)TETSTAPI, TETSTAPI_SIZE);
     EXPECT_GE(status, 0);
 
     status = compiler.compile();

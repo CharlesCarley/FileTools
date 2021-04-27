@@ -105,7 +105,7 @@ int ftScanDna::scan(skStream* stream)
     {
         const SKsize bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags);
         if ((int)bytesRead <= 0 || bytesRead == SK_NPOS)
-            status = FS_INV_READ;
+            status = (int)bytesRead;
         else if (scan.code != ftIdNames::ENDB)
         {
             if (scan.code == ftIdNames::DNA1)

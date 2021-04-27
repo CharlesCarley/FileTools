@@ -123,7 +123,7 @@ int ftTable::allocateTable(void**       destination,
         return RS_LIMIT_REACHED;
     }
 
-    if (numberOfEntries > FileTools_MaxTableSize || numberOfEntries <= 0)
+    if (numberOfEntries > FileTools_MaxTableSize || (int)numberOfEntries <= 0)
     {
         if (fileFlags != LF_NONE)
         {
@@ -284,21 +284,31 @@ int ftTable::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFlag
         {
             m_hashedNames.reserve(count);
 
-            for (m_nameCount = 0; m_nameCount < count; ++m_nameCount)
+            for (m_nameCount = 0; m_nameCount < count && status == FS_OK; ++m_nameCount)
             {
-                if ((status = convertName(name, stream.addressAtPosition())) != FS_OK)
-                    return status;
+                SKbyte* cp = stream.addressAtPosition();
+                if (cp != nullptr)
+                {
+                    if ((status = convertName(name, cp)) != FS_OK)
+                        return status;
 
-                m_names[m_nameCount] = name;
-                m_hashedNames.push_back(name.hash);
+                    m_names[m_nameCount] = name;
+                    m_hashedNames.push_back(name.hash);
+                }
+                else
+                    status = FS_INV_VALUE;
 
-                (void)stream.seekString();
+                if (stream.seekString() == SK_NPOS)
+                    status = FS_INV_VALUE;
             }
 
-            count = (SKuint32)stream.getVaryingInt();
-            count = (count + 3 & ~3) - count;
-            if (count)
-                stream.seek(count, SEEK_CUR);
+            if (status == FS_OK)
+            {
+                count = (SKuint32)stream.getVaryingInt();
+                count = (count + 3 & ~3) - count;
+                if (count)
+                    stream.seek(count, SEEK_CUR);
+            }
         }
     }
     return status;
@@ -317,21 +327,29 @@ int ftTable::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFlag
         status = allocateTable((void**)&m_types, count, sizeof(ftType), fileFlags);
         if (status == FS_OK)
         {
-            for (m_typeCount = 0; m_typeCount < count; ++m_typeCount)
+            for (m_typeCount = 0; m_typeCount < count && status == FS_OK; ++m_typeCount)
             {
                 SKbyte* cp = stream.addressAtPosition();
+                if (cp != nullptr)
+                {
+                    m_types[m_typeCount].name = cp;
+                    m_types[m_typeCount].hash = skHash(cp);
+                    m_types[m_typeCount].id   = SK_NPOS32;
+                }
+                else
+                    status = FS_INV_VALUE;
 
-                m_types[m_typeCount].name = cp;
-                m_types[m_typeCount].hash = skHash(cp);
-                m_types[m_typeCount].id   = SK_NPOS32;
-
-                (void)stream.seekString();
+                if (stream.seekString() == SK_NPOS)
+                    status = FS_INV_VALUE;
             }
 
-            count = (SKuint32)stream.getVaryingInt();
-            count = (count + 3 & ~3) - count;
-            if (count)
-                stream.seek(count, SEEK_CUR);
+            if (status == FS_OK)
+            {
+                count = (SKuint32)stream.getVaryingInt();
+                count = (count + 3 & ~3) - count;
+                if (count)
+                    stream.seek(count, SEEK_CUR);
+            }
         }
     }
     return status;
@@ -394,57 +412,100 @@ int ftTable::readStructureTable(ftMemoryStream& stream, const int headerFlags, c
     return status;
 }
 
-int ftTable::convertName(ftName& dest, char* convString) const
+int ftTable::convertName(ftName& dest, char* cp) const
 {
     dest = InvalidName;
-    if (!convString)
+    if (!cp)
         return FS_INV_VALUE;
 
     // All of the names are a reference to the block of data
     // that houses the tables. This is storing the address
     // of the current name's location in the buffer
     // of null terminated strings.
-    dest.name      = convString;
+    dest.name      = cp;
     dest.hash      = skHash(dest.name);
     dest.arraySize = 1;
 
-    int    status = FS_OK;
+    const SKsize len = skChar::length(dest.name);
+
+    // make sure that the name is in some sane limit.
+    if (len > FileTools_MaxCharArray)
+        return FS_INV_VALUE;
+
+    int status = FS_OK;
 
     SKint8 i = 0;
-    while (convString  && * convString)
+    for (SKsize n = 0, k; n < len && status == FS_OK; ++n)
     {
-        int iVal = 0;
-        switch (*convString)
+        const SKint8 ch = cp[n];
+        int          av = 0;
+        switch (ch)
         {
         case ')':
         case ']':
-        default:
-            ++convString;
             break;
         case '(':
-            ++convString;
             dest.isFunctionPointer = 1;
             break;
         case '*':
-            ++convString;
             dest.pointerCount++;
             break;
         case '[':
-            while (*++convString != ']')
+            for (k = n + 1; k < len && status == FS_OK; ++k, ++n)
             {
-                if (*convString >= '0' && *convString <= '9')
-                    iVal = (iVal * 10) + (*convString - '0');
+                const SKuint8 nch = cp[k];
+                if (nch >= '0' && nch <= '9')
+                    av = av * 10 + (nch - '0');
+                else if (nch == ']')
+                    break;
+                else
+                {
+                    ftLogger::logF(
+                        "Invalid character parsed when building "
+                        "an array dimension '0x%02X'\n",
+                        nch);
+                    status = FS_INV_VALUE;
+                }
             }
-            if (i < FileTools_MaxArrayDim)
+            if (status == FS_OK)
             {
-                dest.dimensions[i] = iVal;
-                dest.arraySize *= dest.dimensions[i++];
+                if (i < FileTools_MaxArrayDim)
+                {
+                    dest.dimensions[i] = av;
+                    dest.arraySize *= dest.dimensions[i++];
+                }
+                else
+                {
+                    ftLogger::logF(
+                        "Array dimension "
+                        "overflow(%i:%i)\n",
+                        i,
+                        FileTools_MaxArrayDim);
+                    status = FS_INV_VALUE;
+                }
             }
-            else
+            break;
+        case '\0':
+            break;
+        default:
+            // Filter over the range of valid characters
+            // that can define a c/c++ identifier.
+            bool valid = ch >= 'a' && ch <= 'z';
+            valid      = valid || ch >= 'A' && ch <= 'Z';
+            valid      = valid || ch >= '0' && ch <= '9';
+            valid      = valid || ch >= '_';
+            if (!valid)
+            {
+                ftLogger::logF(
+                    "Read an invalid character in "
+                    "the name table: '0x%02X'",
+                    (SKuint8)ch);
                 status = FS_INV_VALUE;
+            }
             break;
         }
     }
+
     if (i > FileTools_MaxArrayDim)
         dest.dimensionCount = 0;
     else
@@ -651,7 +712,8 @@ int ftTable::compile(const int fileFlags)
             if (fileFlags != LF_NONE)
             {
                 ftLogger::logF(
-                    "The parsed structure type (%d) exceeds the number of types(%d)",
+                    "The parsed structure type (%d) "
+                    "exceeds the number of types(%d)",
                     type,
                     m_typeCount);
             }
@@ -664,7 +726,8 @@ int ftTable::compile(const int fileFlags)
                 if (fileFlags != LF_NONE)
                 {
                     ftLogger::logF(
-                        "The current structure (%d) is out of alignment with the type table.",
+                        "The current structure (%d) is out "
+                        "of alignment with the type table.",
                         type);
                 }
             }
@@ -748,7 +811,7 @@ void ftTable::compile(FTtype    owningStructureType,
                       SKuint32& currentOffset,
                       SKuint32  recursiveDepth,
                       int       fileFlags,
-                      int&      status)
+                      int&      status) const
 {
     if (owningStructureType > m_strcCount)
     {
@@ -890,24 +953,36 @@ void ftTable::hashMember(skString&    name,
     // TODO: this needs to take into account types
     //       that may change but still may be usable
     //  EG;
-    //   SomeSturct-SubStruct-int-val
-    //   SomeSturct-SubStruct-long-val
+    //   SomeStruct-SubStruct-int-val
+    //   SomeStruct-SubStruct-long-val
     //
     // In this case the member currently will not be found.
     // But since the types are related enough to still be usable,
     // this needs to define the type as such:
     //
-    //   SomeSturct-SubStruct-number_t-val
+    //   SomeStruct-SubStruct-number_t-val
     //
     name.reserve(96);
 
     if (owningStructMemberName == SK_NPOS)
     {
-        skString::format(name, FT_MEMBER_HASH_FMT, parentStructName, memberType, memberName, memberType, memberName);
+        skString::format(name, 
+            FT_MEMBER_HASH_FMT, 
+            parentStructName, 
+            memberType, 
+            memberName, 
+            memberType, 
+            memberName);
     }
     else
     {
-        skString::format(name, FT_MEMBER_HASH_FMT, parentStructName, owningStructType, owningStructMemberName, memberType, memberName);
+        skString::format(name, 
+            FT_MEMBER_HASH_FMT, 
+            parentStructName, 
+            owningStructType, 
+            owningStructMemberName, 
+            memberType, 
+            memberName);
     }
 }
 

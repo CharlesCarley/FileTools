@@ -92,6 +92,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ad30deec08b6f3683772fc3c597a4a3e3"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#ad30deec08b6f3683772fc3c597a4a3e3">scan</a> (<a class="el" href="a00117.html">ftChunkScan</a> *dest, skStream *stream, int headerFlags)</td></tr>
 <tr class="memdesc:ad30deec08b6f3683772fc3c597a4a3e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to scan over chunks from the supplied stream.  <a href="#ad30deec08b6f3683772fc3c597a4a3e3">More...</a><br /></td></tr>
 <tr class="separator:ad30deec08b6f3683772fc3c597a4a3e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb4aa086c3a7ffc683e081a096391785"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#afb4aa086c3a7ffc683e081a096391785">isValidCode</a> (const SKuint32 &amp;code)</td></tr>
+<tr class="memdesc:afb4aa086c3a7ffc683e081a096391785"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the supplied code meets the criteria for a valid code.  <a href="#afb4aa086c3a7ffc683e081a096391785">More...</a><br /></td></tr>
+<tr class="separator:afb4aa086c3a7ffc683e081a096391785"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="ae974096933e10a719720b1b5d9535230"></a>
@@ -115,6 +118,41 @@ Static Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="afb4aa086c3a7ffc683e081a096391785"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb4aa086c3a7ffc683e081a096391785">&#9670;&nbsp;</a></span>isValidCode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ftChunkUtils::isValidCode </td>
+          <td>(</td>
+          <td class="paramtype">const SKuint32 &amp;&#160;</td>
+          <td class="paramname"><em>code</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Test to determine if the supplied code meets the criteria for a valid code. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">code</td><td>The sequence to test</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if every byte in the code is composed of a mixture of: <div class="fragment"><div class="line">upper <span class="keywordflow">case</span> characters</div><div class="line">lower <span class="keywordflow">case</span> characters</div><div class="line">ASCII digits [0,9]</div><div class="line">underscore character <span class="charliteral">&#39;_&#39;</span></div><div class="line">space character <span class="charliteral">&#39; &#39;</span></div></div><!-- fragment --> Otherwise this will return false. </dd></dl>
+
+</div>
+</div>
 <a id="a58bafa7847b5efdd2b2952e935b8d7c3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a58bafa7847b5efdd2b2952e935b8d7c3">&#9670;&nbsp;</a></span>read()</h2>
 
@@ -156,7 +194,6 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Reads a chunk from the supplied stream. </p>
-<p>FIXME: This should not return FS_INV_READ.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dest</td><td>The destination memory.</td></tr>
@@ -211,7 +248,6 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Utility to scan over chunks from the supplied stream. </p>
-<p>FIXME: This should not return FS_INV_READ.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dest</td><td>The destination memory.</td></tr>

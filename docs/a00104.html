@@ -81,7 +81,7 @@ Enumerations</h2></td></tr>
 <tr class="memdesc:a3718ad5783459fda07b443e5f7f8c7f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">FileMagic contains values that have been extracted from file's header string.  <a href="a00104.html#a3718ad5783459fda07b443e5f7f8c7f7">More...</a><br /></td></tr>
 <tr class="separator:a3718ad5783459fda07b443e5f7f8c7f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e2e7a8c26859361086051166d668732"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732">FileStatus</a> { <br />
-&#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a09357718b25111dd4420dbac3b21d990">FS_STATUS_MIN</a> = -15, 
+&#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a09357718b25111dd4420dbac3b21d990">FS_STATUS_MIN</a> = -16, 
 <br />
 &#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a92d7c855486042f871cebdb9d8725740">FS_INV_INSERT</a>, 
 <br />
@@ -100,6 +100,8 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a929519bc423f216073cb981dc4a83d7c">FS_OVERFLOW</a>, 
 <br />
 &#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a5b5e71e80117d39c7d9bb16c28b2d51b">FS_FAILED</a>, 
+<br />
+&#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a1585b65929382ee723d5ee8ed2f5e371">FS_CODE_ERROR</a>, 
 <br />
 &#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a6d7c7c52aa5f9a804cf35cb85f14674f">RS_INVALID_PTR</a>, 
 <br />
@@ -162,7 +164,9 @@ Enumerations</h2></td></tr>
 <br />
 &#160;&#160;<a class="el" href="a00104.html#a068297a199e7c6f9adeaf3331d52661aa4fd1c2307c1de8bc75e93c5710f67680">LF_UNRESOLVED</a> = 0x0800, 
 <br />
-&#160;&#160;<a class="el" href="a00104.html#a068297a199e7c6f9adeaf3331d52661aa2e1822e763e6548501c7c204d324667b">LF_MISSING_PTR_PTR</a> = 0x1000
+&#160;&#160;<a class="el" href="a00104.html#a068297a199e7c6f9adeaf3331d52661aa2e1822e763e6548501c7c204d324667b">LF_MISSING_PTR_PTR</a> = 0x1000, 
+<br />
+&#160;&#160;<a class="el" href="a00104.html#a068297a199e7c6f9adeaf3331d52661aaf5eccb070790c0b51d1c50b16e2d568c">LF_MIS_REPORTED</a> = 0x2000
 <br />
  }</td></tr>
 <tr class="separator:a068297a199e7c6f9adeaf3331d52661a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -365,6 +369,9 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732a5b5e71e80117d39c7d9bb16c28b2d51b"></a>FS_FAILED&#160;</td><td class="fielddoc"><p>A general fail status. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732a1585b65929382ee723d5ee8ed2f5e371"></a>FS_CODE_ERROR&#160;</td><td class="fielddoc"><p>If this status is returned, it means that every byte in the code did not match the following criteria: </p>
+<div class="fragment"><div class="line">upper <span class="keywordflow">case</span> characters</div><div class="line">lower <span class="keywordflow">case</span> characters</div><div class="line">ASCII digits [0,9]</div><div class="line">underscore character <span class="charliteral">&#39;_&#39;</span></div><div class="line">space character <span class="charliteral">&#39; &#39;</span></div></div><!-- fragment --><p> Assuming that the code was constructed properly, then this most likely means that some data is out of alignment with what was computed and or reported. </p>
+</td></tr>
 <tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732a6d7c7c52aa5f9a804cf35cb85f14674f"></a>RS_INVALID_PTR&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732a562b9352bb008f0148ca15a262b00223"></a>RS_INVALID_CODE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732a21dd88c4712dd93db5b60f7697014c72"></a>RS_LIMIT_REACHED&#160;</td><td class="fielddoc"></td></tr>
@@ -450,6 +457,7 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a068297a199e7c6f9adeaf3331d52661aa4bb076201b41a42271cdd8a271487fc6"></a>LF_DUMP_CAST&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a068297a199e7c6f9adeaf3331d52661aa4fd1c2307c1de8bc75e93c5710f67680"></a>LF_UNRESOLVED&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a068297a199e7c6f9adeaf3331d52661aa2e1822e763e6548501c7c204d324667b"></a>LF_MISSING_PTR_PTR&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a068297a199e7c6f9adeaf3331d52661aaf5eccb070790c0b51d1c50b16e2d568c"></a>LF_MIS_REPORTED&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
