@@ -23,13 +23,12 @@
 # ------------------------------------------------------------------------------
 set(TargetName SwapChunkCodes)
 set(TargetGroup "Tools")
-
 include_directories(${FileTools_INCLUDE} ${Utils_INCLUDE})
 link_libraries(${FileTools_LIBRARY} ${Utils_LIBRARY})
 
-
 add_executable(${TargetName} 
     SwapChunkCodes.cpp 
+    CMake/SwapChunkCodes.cmake
     )
 
 if (TargetFolders)

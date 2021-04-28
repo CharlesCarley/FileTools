@@ -43,6 +43,7 @@ private:
     int         m_fileFlags;
     const char* m_headerId;
     ftHeader    m_header;
+    SKsize      m_fileSizeInBytes;
     skString    m_curFile;
     void*       m_fileTableData;
     SKhash*     m_filterList;
@@ -147,7 +148,6 @@ public:
         return m_chunks;
     }
 
-
     /// <summary>
     /// Gets the flags that are currently set for the file.
     /// </summary>
@@ -160,7 +160,6 @@ public:
         return m_fileFlags;
     }
 
-
     /// <summary>
     /// Sets the flags that for the file.
     /// </summary>
@@ -172,7 +171,7 @@ public:
     }
 
     /// <summary>
-    /// Attaches a flag to the current flag. 
+    /// Attaches a flag to the current flag.
     /// </summary>
     /// <param name="flag">The flag value should contain one or more
     /// of the bit flags found in ftFlags::LogFlags</param>
@@ -219,10 +218,9 @@ public:
     void serialize(skStream* stream, SKsize len, void* writeData) const;
 
 protected:
-
     /// <summary>
     /// This is an abstract method that allows this class to gain access
-    /// to the memory tables. 
+    /// to the memory tables.
     /// </summary>
     /// <returns>
     /// The return value should be the character array that was generated
@@ -239,23 +237,22 @@ protected:
     /// </returns>
     virtual SKsize getTableSize() = 0;
 
-
     /// <summary>
     /// This is a notification callback which allows derived classes
     /// a chance to handle a chunk further. This method is invoked after
     /// each successful chunk read.
     /// </summary>
     /// <param name="pointer">Contains the memory of the reconstructed data.</param>
+    /// <param name="sizeInBytes">Holds the size in bytes of the memory</param>
     /// <param name="chunk">Is the chunk that was read from the file for the reconstructed memory.</param>
     /// <returns>
     /// This method should return one of the status codes found in ftFlags::FileStatus.
     /// A return code of FS_OK lets this class know that it should keep reading.
     /// Any other code will force an exit.
     /// </returns>
-    virtual int notifyDataRead(void* pointer, const ftChunk& chunk) = 0;
+    virtual int notifyDataRead(void* pointer, SKsize sizeInBytes, const ftChunk& chunk) = 0;
 
     virtual int serializeData(skStream* stream) = 0;
-
 
     bool isValidWriteData(void* writeData, const SKsize& len) const;
 
@@ -277,7 +274,7 @@ private:
 
     ftMemoryChunk* findBlock(const SKsize& iPtr);
 
-    static skStream* openStream(const char* path, int mode);
+    skStream* openStream(const char* path, int mode);
 
     bool skip(const SKhash& id) const;
 
@@ -288,7 +285,11 @@ private:
                         SKsize    len,
                         void*     writeData) const;
 
-    void handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status);
+    void handleChunk(skStream*      stream,
+                     void*          block,
+                     SKsize         allocLen,
+                     const ftChunk& chunk,
+                     int&           status);
 
     void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, bool addToRebuildList, int& status);
 

@@ -1,5 +1,7 @@
 /*
 -------------------------------------------------------------------------------
+    Copyright (c) Charles Carley.
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -20,14 +22,14 @@
 #ifndef _ftBlend_h_
 #define _ftBlend_h_
 
-#include "ftFile.h"
 #include "Blender.h"
+#include "ftFile.h"
 
-class ftBlend : public ftFile
+class ftBlend final : public ftFile
 {
 public:
     ftBlend();
-    virtual ~ftBlend();
+    ~ftBlend() override;
 
     ftList m_scene;
     ftList m_library;
@@ -60,15 +62,16 @@ public:
 
     Blender::FileGlobal* m_fg;
 
-    int save(const char* path, const int mode = 0) override;
+    int save(const char* path, int mode = 0) override;
 
 protected:
-    int notifyDataRead(void* p, const ftChunk& id) override;
+    int notifyDataRead(void* pointer, SKsize sizeInBytes, const ftChunk& chunk) override;
+
     int serializeData(skStream* stream) override;
 
-    void*   getTables(void) override;
+    void* getTables(void) override;
+
     SKsize getTableSize(void) override;
 };
 
-
-#endif//_ftBlend_h_
+#endif  //_ftBlend_h_

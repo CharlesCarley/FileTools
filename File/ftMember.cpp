@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "Utils/skDisableWarnings.h"
 #include "ftMember.h"
+#include "Utils/skDisableWarnings.h"
 #include "ftAtomic.h"
 #include "ftStruct.h"
 #include "ftTable.h"
@@ -42,7 +42,6 @@ ftMember::ftMember(ftStruct* owner) :
     m_searchKey(SK_NPOS)
 {
 }
-
 
 const char* ftMember::getName() const
 {
@@ -189,9 +188,16 @@ void* ftMember::getChunk() const
     return m_parent ? m_parent->m_attached : nullptr;
 }
 
-SKsize* ftMember::jumpToOffset(void* base) const
+SKsize* ftMember::jumpToOffset(void* base, SKsize maxAlloc) const
 {
-    if (base && m_offset < m_parent->m_sizeInBytes)
-        return (SKsize*)(static_cast<SKbyte*>(base) + m_offset);
-    return nullptr;
+    if (!base || !m_parent)
+        return nullptr;
+
+    if (m_parent->m_sizeInBytes > (SKint32)maxAlloc)
+        return nullptr;
+    if (m_offset > (SKint32)maxAlloc)
+        return nullptr;
+    if (m_offset > m_parent->m_sizeInBytes)
+        return nullptr;
+    return (SKsize*)(static_cast<SKbyte*>(base) + m_offset);
 }

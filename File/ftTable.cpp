@@ -989,7 +989,7 @@ void ftTable::hashMember(skString&    name,
 ftStruct* ftTable::findStructByType(const SKint32& type)
 {
     const SKint32 size = (SKint32)m_structures.size();
-    if (type < size && size > 0)
+    if (type > 0 && type < size && size > 0)
     {
         ftStruct* structure = m_structures.at(type);
         if (type != structure->m_structureId)

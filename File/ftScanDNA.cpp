@@ -99,11 +99,13 @@ int ftScanDna::scan(skStream* stream)
     int         status = FS_OK;
     ftChunkScan scan   = {0, 0};
 
+    m_totalLen         = stream->size();
+
     while (scan.code != ftIdNames::ENDB &&
            scan.code != ftIdNames::DNA1 &&
            status == FS_OK && !stream->eof())
     {
-        const SKsize bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags);
+        const SKsize bytesRead = ftChunkUtils::scan(&scan, stream, m_headerFlags, m_totalLen);
         if ((int)bytesRead <= 0 || bytesRead == SK_NPOS)
             status = (int)bytesRead;
         else if (scan.code != ftIdNames::ENDB)

@@ -66,7 +66,7 @@ public:
 
     bool compare(ftMember* rhs) const;
 
-    SKsize* jumpToOffset(void* base) const;
+    SKsize* jumpToOffset(void* base, SKsize maxAlloc) const;
 
     void*   getChunk() const;
 

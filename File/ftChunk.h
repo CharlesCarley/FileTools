@@ -116,7 +116,9 @@ struct ftMemoryChunk
         prev(nullptr),
         chunk{},
         fileBlock(nullptr),
+        fileBlockLen(0),
         memoryBlock(nullptr),
+        memoryBlockLen(0),
         pointerBlock(nullptr),
         pointerBlockLen(0),
         flag(0),
@@ -150,11 +152,21 @@ struct ftMemoryChunk
     void* fileBlock;
 
     /// <summary>
+    /// Contains the total length of allocated memory for memoryBlock.
+    /// </summary>
+    SKuint32 fileBlockLen;
+
+    /// <summary>
     /// Is the block of memory allocated for conversion.
     /// Its length is the size of the corresponding structure in the memory table.
     /// If the file and memory structures are different, the data from fileBlock gets cast into memoryBlock one member at a time.
     /// </summary>
     void* memoryBlock;
+
+    /// <summary>
+    /// Contains the total length of allocated memory for memoryBlock.
+    /// </summary>
+    SKuint32 memoryBlockLen;
 
     /// <summary>
     /// Is the storage location for pointers to pointers.
@@ -215,7 +227,7 @@ struct ftChunkUtils
     /// <param name="headerFlags">A copy of the file's header flags.</param>
     /// <returns>The total number of bytes that were read from the stream.</returns>
     /// <seealso cref="ftFlags::FileHeader"/>
-    static SKsize read(ftChunk* dest, skStream* stream, int headerFlags);
+    static SKsize read(ftChunk* dest, skStream* stream, int headerFlags, SKsize totalSize);
 
     /// <summary>
     /// Utility to write a chunk to the supplied stream.
@@ -232,7 +244,7 @@ struct ftChunkUtils
     /// <param name="stream">The stream to read from.</param>
     /// <param name="headerFlags">A copy of the file's header flags.</param>
     /// <returns>The total number of bytes that were read from the stream. </returns>
-    static SKsize scan(ftChunkScan* dest, skStream* stream, int headerFlags);
+    static SKsize scan(ftChunkScan* dest, skStream* stream, int headerFlags, SKsize totalSize);
 
 
     /// <summary>

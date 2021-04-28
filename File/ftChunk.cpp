@@ -39,7 +39,7 @@ SKsize ftChunkUtils::write(ftChunk* source, skStream* stream)
     return size;
 }
 
-SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int headerFlags)
+SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int headerFlags, SKsize totalSize)
 {
     SKsize bytesRead = 0;
     SKsize blockLen  = BlockSize;
@@ -72,10 +72,13 @@ SKsize ftChunkUtils::scan(ftChunkScan* dest, skStream* stream, int headerFlags)
     if (!isValidCode(dest->code))
         return FS_CODE_ERROR;
 
+    if (dest->length > totalSize)
+        return FS_INV_LENGTH;
+
     return bytesRead;
 }
 
-SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags)
+SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags, SKsize totalSize)
 {
     SKsize   bytesRead = 0;
     ftChunk* tmp;
@@ -149,13 +152,18 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags)
     if (tmp->length == SK_NPOS32)
         return FS_INV_LENGTH;
 
-    if (tmp->count < 1 || tmp->count == SK_NPOS32)
+    if (tmp->count < 1 || tmp->count > 0x7FFFFFFF)
+        return FS_INV_LENGTH;
+
+    if ((SKsize)tmp->count * (SKsize)tmp->length > totalSize)
         return FS_INV_LENGTH;
 
     memcpy(dest, tmp, BlockSize);
 
     if (!isValidCode(tmp->code))
         return FS_CODE_ERROR;
+
+
 
     return bytesRead;
 }

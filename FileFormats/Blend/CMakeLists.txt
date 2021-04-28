@@ -28,8 +28,6 @@ else()
     unset(TargetGroup )
 endif()
 
-
-
 set(BlendFile_INCLUDE 
     ${CMAKE_CURRENT_SOURCE_DIR}  
     ${FileTools_INCLUDE} 
@@ -42,13 +40,17 @@ set(BlendFile_LIBRARY
 
 
 list(APPEND CMAKE_MODULE_PATH  ${FileTools_SOURCE_DIR}/Tools/Compiler/CMake)
+
 include(TableCompiler)
 add_table(bfBlender Blender.h)
+
+
 
 set(BlendFile_SRC
     ftBlend.h
     ftBlend.cpp
     Blender.h
+    ${TrashedFiles}
 )
 
 include_directories(${BlendFile_INCLUDE})

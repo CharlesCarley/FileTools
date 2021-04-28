@@ -37,6 +37,7 @@ ftFile::ftFile(const char* header) :
     m_headerFlags(0),
     m_fileFlags(LF_ONLY_ERR),
     m_headerId(header),
+    m_fileSizeInBytes(0),
     m_curFile(nullptr),
     m_fileTableData(nullptr),
     m_filterList(nullptr),
@@ -117,6 +118,8 @@ skStream* ftFile::openStream(const char* path, int mode)
         stream = new skMemoryStream();
 
     stream->open(path, skStream::READ);
+
+    m_fileSizeInBytes = stream->size();
     return stream;
 }
 
@@ -271,7 +274,7 @@ int ftFile::parseStreamImpl(skStream* stream)
            chunk.code != ftIdNames::DNA1 &&
            status == FS_OK && !stream->eof())
     {
-        if (ftChunkUtils::read(&chunk, stream, m_headerFlags) <= 0)
+        if (ftChunkUtils::read(&chunk, stream, m_headerFlags, m_fileSizeInBytes) <= 0)
             status = FS_INV_READ;
         else if (chunk.code == ftIdNames::TEST)
         {
@@ -284,7 +287,8 @@ int ftFile::parseStreamImpl(skStream* stream)
         }
         else if (chunk.code != ftIdNames::ENDB && chunk.code != ftIdNames::DNA1)
         {
-            if (chunk.length > 0 && chunk.length != SK_NPOS32)
+
+            if ((int)chunk.length > 0 && chunk.length < m_fileSizeInBytes)
             {
                 void* curPtr = malloc(chunk.length);
                 if (!curPtr)
@@ -294,7 +298,7 @@ int ftFile::parseStreamImpl(skStream* stream)
                     if (stream->read(curPtr, chunk.length) <= 0)
                         status = FS_INV_READ;
                     else
-                        handleChunk(stream, curPtr, chunk, status);
+                        handleChunk(stream, curPtr, chunk.length, chunk, status);
                 }
             }
             else
@@ -308,13 +312,22 @@ int ftFile::parseStreamImpl(skStream* stream)
     {
         if (status != FS_OK)
             ftLogger::log(status, "File read failed.");
-        else if (chunk.code != ftIdNames::DNA1)
+    }
+
+    if (chunk.code != ftIdNames::DNA1)
+    {
+        if (m_fileFlags != LF_NONE)
             ftLogger::logF("Failed to reach the end byte.");
+        status = FS_INV_READ;
     }
     return status;
 }
 
-void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, int& status)
+void ftFile::handleChunk(skStream*      stream,
+                         void*          block,
+                         SKsize         allocLen,
+                         const ftChunk& chunk,
+                         int&           status)
 {
     ftMemoryChunk* bin = (ftMemoryChunk*)malloc(sizeof(ftMemoryChunk));
     if (bin)
@@ -324,7 +337,7 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 
         // This is saved here to recalculate the total
         // number of elements in a pointer array.
-        bin->pointerBlockLen = chunk.length;
+        bin->pointerBlockLen = (SKuint32)allocLen;
 
         const ftPointerHashKey phk(chunk.address);
         if (m_map.find(phk) != m_map.npos)
@@ -334,14 +347,16 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
         }
         else
         {
-            bin->fileBlock         = block;
+            bin->fileBlock    = block;
+            bin->fileBlockLen = (SKuint32)allocLen;
+
             ftStruct* memoryStruct = nullptr;
 
             if (bin->chunk.code == ftIdNames::DATA && bin->chunk.structId <= m_file->getFirstStructType())
             {
                 status = allocateMBlock(phk,
                                         bin,
-                                        (SKsize)bin->chunk.count * (SKsize)bin->chunk.length,
+                                        (SKsize)chunk.length * (SKsize)chunk.count,
                                         false);
             }
             else
@@ -353,14 +368,13 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 
                     if (memoryStruct)
                     {
-
                         const SKuint32 expected = fileStruct->getSizeInBytes() * chunk.count;
                         if (expected != chunk.length)
                         {
                             if (m_fileFlags & LF_MIS_REPORTED)
-                                ftLogger::logMisCalculatedChunk(chunk, expected, chunk.length);
+                                ftLogger::logMisCalculatedChunk(chunk, expected, bin->fileBlockLen);
 
-                            if (chunk.code == ftIdNames::REND && expected == 16 && chunk.length == 72)
+                            if (chunk.code == ftIdNames::REND && expected == 16 && bin->fileBlockLen == 72)
                             {
                                 // It seems that the REND chunk contains more
                                 // than it should...
@@ -372,7 +386,6 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
                     }
                 }
 
-
                 if (fileStruct && memoryStruct && status == FS_OK)
                 {
                     bin->fileStruct   = fileStruct;
@@ -381,9 +394,11 @@ void ftFile::handleChunk(skStream* stream, void* block, const ftChunk& chunk, in
 
                     if (!skip(fileStruct->getHashedType()))
                     {
+                        const SKsize totalAlloc = (SKsize)bin->chunk.count * (SKsize)bin->memoryStruct->getSizeInBytes();
+
                         status = allocateMBlock(phk,
                                                 bin,
-                                                (SKsize)bin->chunk.count * (SKsize)bin->memoryStruct->getSizeInBytes(),
+                                                totalAlloc,
                                                 true);
                     }
                     else
@@ -413,10 +428,10 @@ int ftFile::allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, cons
     // Change the length of the file structure's memory
     // to account for the memory structures size.
     const SKuint32 totSize = (SKuint32)len;
-    if (totSize > 0 && totSize != SK_NPOS32)
+    if (totSize > 0 && totSize < m_fileSizeInBytes)
     {
-        bin->chunk.length = totSize;
-        bin->memoryBlock  = malloc(totSize);
+        bin->memoryBlockLen = totSize;
+        bin->memoryBlock    = malloc(totSize) ;
         if (!bin->memoryBlock)
             status = FS_BAD_ALLOC;
         else
@@ -429,7 +444,12 @@ int ftFile::allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, cons
                 // as DATA, and the structure ID is less than the first
                 // user-defined type. I.E. it's an atomic pointer type so it's
                 // safe to just copy this block
-                memcpy(bin->memoryBlock, bin->fileBlock, totSize);
+
+                SKsize cpSize = bin->memoryBlockLen;
+                if (cpSize > bin->fileBlockLen)
+                    cpSize = bin->fileBlockLen;
+
+                memcpy(bin->memoryBlock, bin->fileBlock, cpSize);
             }
         }
 
@@ -487,35 +507,37 @@ int ftFile::rebuildStructures()
 
     for (ftMemoryChunk* node = (ftMemoryChunk*)m_chunks.first; node && status == FS_OK; node = node->next)
     {
-        const ftChunk& chunk = node->chunk;
-        ftStruct*      fstrc = node->fileStruct;
-        ftStruct*      mstrc = node->memoryStruct;
+        const ftChunk& chunk        = node->chunk;
+        ftStruct*      fileStruct   = node->fileStruct;
+        ftStruct*      memoryStruct = node->memoryStruct;
 
-        if (diagnosticFlag && fstrc && mstrc)
+        if (diagnosticFlag && fileStruct && memoryStruct)
         {
-            diagnostics = m_castFilter ? searchFilter(m_castFilter, fstrc->getHashedType(), m_castFilterLen) : true;
+            diagnostics = m_castFilter ? searchFilter(m_castFilter, fileStruct->getHashedType(), m_castFilterLen) : true;
             if (diagnostics)
-                ftLogger::logDiagnosticsCastHeader(chunk, fstrc, mstrc);
+                ftLogger::logDiagnosticsCastHeader(chunk, fileStruct, memoryStruct);
         }
 
         for (SKuint32 n = 0;
-             n < chunk.count && status == FS_OK && fstrc && mstrc && (node->flag & ftMemoryChunk::BLK_LINKED) == 0;
+             n < chunk.count && status == FS_OK &&
+             fileStruct && memoryStruct &&
+             (node->flag & ftMemoryChunk::BLK_LINKED) == 0;
              ++n)
         {
-            SKbyte* dst = mstrc->getChunk(node->memoryBlock, n, chunk.count);
-            SKbyte* src = fstrc->getChunk(node->fileBlock, n, chunk.count);
+            SKbyte* dst = memoryStruct->getChunk(node->memoryBlock, n, node->memoryBlockLen);
+            SKbyte* src = fileStruct->getChunk(node->fileBlock, n, node->fileBlockLen);
 
-            ftStruct::Members::Iterator it = mstrc->getMemberIterator();
+            ftStruct::Members::Iterator it = memoryStruct->getMemberIterator();
             while (it.hasMoreElements())
             {
                 ftMember* dstMember = it.getNext();
-                ftMember* srcMember = fstrc->find(dstMember);
+                ftMember* srcMember = fileStruct->find(dstMember);
 
                 if (srcMember)
                 {
-                    dstPtr = dstMember->jumpToOffset(dst);
+                    dstPtr = dstMember->jumpToOffset(dst, node->memoryBlockLen);
 
-                    SKsize* srcPtr = srcMember->jumpToOffset(src);
+                    SKsize* srcPtr = srcMember->jumpToOffset(src, node->fileBlockLen);
                     if (dstPtr && srcPtr)
                     {
                         if (diagnostics)
@@ -578,7 +600,7 @@ int ftFile::rebuildStructures()
                     // the data at that offset should already be initialized.
                     // But if it's not it should be zeroed, and its probably
                     // a bug somewhere because something overflowed into it.
-                    dstPtr = dstMember->jumpToOffset(dst);
+                    dstPtr = dstMember->jumpToOffset(dst, node->memoryBlockLen);
 
                     if (m_fileFlags & LF_DO_CHECKS)
                     {
@@ -616,9 +638,10 @@ int ftFile::rebuildStructures()
         if (node->memoryBlock && status == FS_OK)
         {
             node->flag |= ftMemoryChunk::BLK_LINKED;
-            status = notifyDataRead(node->memoryBlock, node->chunk);
+            status = notifyDataRead(node->memoryBlock, node->memoryBlockLen, node->chunk);
         }
     }
+   
 
     return status;
 }

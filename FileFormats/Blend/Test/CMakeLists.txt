@@ -16,6 +16,11 @@
 # 3. This notice may not be removed or altered from any source distribution.
 #------------------------------------------------------------------------------
 set(TargetName BlendFileTest)
+list(APPEND CMAKE_MODULE_PATH  ${FileTools_SOURCE_DIR}/Tools/SwapChunkCodes/CMake)
+
+set(ExtraFileDir ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(ExtraFiles.in "${CMAKE_CURRENT_BINARY_DIR}/ExtraFiles.h")
+
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ 
     ${BlendFile_INCLUDE} 
@@ -23,13 +28,21 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../
     ${Utils_INCLUDE}
     ${GTEST_INCLUDE} 
     )
+include(SwapChunkCodes)
+
+set(FilesToCorrupt Test.blend)
+corrupt_file(TrashedFiles ${FilesToCorrupt})
+
 
 
 file(GLOB Blends *.blend)
 set(Target_Source 
   main.cpp
+  ExtraFiles.in
   ${Blends}
+  ${TrashedFiles}
 )
+
 
 
 add_executable(${TargetName} ${Target_Source})

@@ -217,7 +217,7 @@ namespace ftFlags
         /// <summary>
         /// Start code for enumerated values.
         /// </summary>
-        FS_STATUS_MIN = -16,
+        FS_STATUS_MIN = -17,
 
         /// <summary>
         /// Invalid insert.
@@ -288,6 +288,11 @@ namespace ftFlags
         /// </summary>
         FS_CODE_ERROR,
 
+        /// <summary>
+        /// If this status is returned, it means that the size of the data block that was provided
+        /// did not match the size of the block it was provided for.
+        /// </summary>
+        FS_INTEGRITY_FAIL,
 
         // Table codes
         RS_INVALID_PTR,

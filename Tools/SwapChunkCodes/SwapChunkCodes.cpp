@@ -49,7 +49,10 @@ const skCommandLine::Switch Switches[SWP_MAX] = {
         "    - 0: Swaps only the chunk's code leaving the data block the same.\n"
         "    - 1: Swaps the chunks data block leaving the length untouched so that data is corrupted.\n"
         "    - 2: Randomly fills the chunks data block with junk.\n"
-        "    - 3: Leaves the data untouched, and reflects what is read to the output file.\n",
+        "    - 3: Leaves the data untouched, and reflects what is read to the output file.\n"
+        "    - 4: Randomizes both chunk and chunk data .\n"
+        "    - 5: Zeros all chunk data .\n"
+        "    - 6: Zeros chunks and data .\n",
         false,
         1,
     },
@@ -69,10 +72,12 @@ private:
     skArray<ftMemoryChunk> m_readChunks;
     skArray<SKuint32>      m_readChunkCodes;
     int                    m_headerFlags;
+    SKsize                 m_totalSize;
 
 public:
     ftSwapChunks() :
-        m_headerFlags(0)
+        m_headerFlags(0),
+        m_totalSize(0)
     {
         skRandInit();
     }
@@ -91,6 +96,8 @@ public:
         int status = FS_OK;
 
         char buf[13] = {};
+
+        m_totalSize = stream->size();
 
         const SKsize read = stream->read(buf, 12);
         if (read != SK_NPOS && read > 0)
@@ -150,7 +157,7 @@ public:
                chunk.code != ftIdNames::DNA1 &&
                status == FS_OK && !stream->eof())
         {
-            const SKsize bytesRead = ftChunkUtils::read(&chunk, stream, m_headerFlags);
+            const SKsize bytesRead = ftChunkUtils::read(&chunk, stream, m_headerFlags, m_totalSize);
             if ((int)bytesRead <= 0 || bytesRead == SK_NPOS)
                 status = FS_INV_READ;
             else if (chunk.code != ftIdNames::ENDB)
@@ -232,7 +239,7 @@ public:
         }
     }
 
-    static void zeroData(skFileStream& of, ftMemoryChunk& element)
+    static void randDataBlock(skFileStream& of, ftMemoryChunk& element)
     {
         of.write(&element.chunk, sizeof(ftChunk));
         if (element.fileBlock)
@@ -249,11 +256,71 @@ public:
         }
     }
 
+    static void zeroData(skFileStream& of, ftMemoryChunk& element)
+    {
+        of.write(&element.chunk, sizeof(ftChunk));
+
+        if (element.fileBlock)
+        {
+            if (element.chunk.code != ftIdNames::DNA1)
+            {
+                SKuint8* ptr = (SKuint8*)element.fileBlock;
+                for (SKuint32 i = 0; i < element.chunk.length; ++i)
+                    ptr[i] = 0x00;
+                of.write(ptr, element.chunk.length);
+            }
+            else
+                of.write(element.fileBlock, element.chunk.length);
+        }
+    }
+
+    static void zeroAllData(skFileStream& of, ftMemoryChunk& element)
+    {
+        if (element.chunk.code != ftIdNames::DNA1)
+        {
+            ftChunk nc  = element.chunk;
+            nc.address  = 0;
+            nc.count    = 0;
+            nc.length   = 0;
+            nc.structId = 0;
+            of.write(&nc, sizeof(ftChunk));
+        }
+        else
+        {
+            of.write(&element.chunk, sizeof(ftChunk));
+            if (element.fileBlock)
+                of.write(element.fileBlock, element.chunk.length);
+        }
+    }
+
     static void reflectData(skFileStream& of, ftMemoryChunk& element)
     {
         of.write(&element.chunk, sizeof(ftChunk));
         if (element.fileBlock)
             of.write(element.fileBlock, element.chunk.length);
+    }
+
+    static void randData(skFileStream& of, ftMemoryChunk& element)
+    {
+        ftChunk nc = element.chunk;
+
+        nc.address  = (SKsize)(skUnitRandom() * (double)SK_NPOS);
+        nc.structId = (SKuint32)(skUnitRandom() * (double)SK_NPOS32);
+        nc.count    = (SKuint32)(skUnitRandom() * (double)SK_NPOS32);
+        of.write(&nc, sizeof(ftChunk));
+
+        if (element.fileBlock)
+        {
+            if (element.chunk.code != ftIdNames::DNA1)
+            {
+                SKuint8* ptr = (SKuint8*)element.fileBlock;
+                for (SKuint32 i = 0; i < element.chunk.length; ++i)
+                    ptr[i] = (SKuint8)skRandomUnsignedInt(0xFF);
+                of.write(ptr, element.chunk.length);
+            }
+            else
+                of.write(element.fileBlock, element.chunk.length);
+        }
     }
 
     int writeShuffledChunks(const skString& output, skStream* input, int shuffle)
@@ -282,7 +349,16 @@ public:
                 swapData(of, element);
                 break;
             case 2:
+                randDataBlock(of, element);
+                break;
+            case 4:
+                randData(of, element);
+                break;
+            case 5:
                 zeroData(of, element);
+                break;
+            case 6:
+                zeroAllData(of, element);
                 break;
             case 3:
             default:

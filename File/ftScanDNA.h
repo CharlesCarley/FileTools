@@ -40,7 +40,7 @@ class ftScanDna
 {
 private:
     void*  m_foundBlock;
-    SKsize m_foundLen;
+    SKsize m_foundLen, m_totalLen;
     int    m_headerFlags;
 
 public:

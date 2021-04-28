@@ -70,10 +70,10 @@ ftMember* ftStruct::find(ftMember* other) const
 
 SKbyte* ftStruct::getChunk(void* base, SKsize idx, const SKsize max) const
 {
-    SKbyte* val = nullptr;
-    if (base && idx < max)
-        val = static_cast<SKbyte*>(base) + m_sizeInBytes * idx;
-    return val;
+    const SKsize next = m_sizeInBytes * idx;
+    if (base && next <= max)
+        return static_cast<SKbyte*>(base) + next;
+    return nullptr;
 }
 
 const char* ftStruct::getName() const
