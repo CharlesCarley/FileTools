@@ -81,7 +81,7 @@ Enumerations</h2></td></tr>
 <tr class="memdesc:a3718ad5783459fda07b443e5f7f8c7f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">FileMagic contains values that have been extracted from file's header string.  <a href="a00104.html#a3718ad5783459fda07b443e5f7f8c7f7">More...</a><br /></td></tr>
 <tr class="separator:a3718ad5783459fda07b443e5f7f8c7f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e2e7a8c26859361086051166d668732"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732">FileStatus</a> { <br />
-&#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a09357718b25111dd4420dbac3b21d990">FS_STATUS_MIN</a> = -17, 
+&#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a09357718b25111dd4420dbac3b21d990">FS_STATUS_MIN</a> = -18, 
 <br />
 &#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a92d7c855486042f871cebdb9d8725740">FS_INV_INSERT</a>, 
 <br />
@@ -104,6 +104,8 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a1585b65929382ee723d5ee8ed2f5e371">FS_CODE_ERROR</a>, 
 <br />
 &#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a9857fb30efb15ee58f4ea7d15e9af974">FS_INTEGRITY_FAIL</a>, 
+<br />
+&#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732ad2077a6bf025745addd164f1783090c6">FS_DUPLICATE_BLOCK</a>, 
 <br />
 &#160;&#160;<a class="el" href="a00104.html#a6e2e7a8c26859361086051166d668732a6d7c7c52aa5f9a804cf35cb85f14674f">RS_INVALID_PTR</a>, 
 <br />
@@ -375,6 +377,8 @@ Enumerations</h2></td></tr>
 <div class="fragment"><div class="line">upper <span class="keywordflow">case</span> characters</div><div class="line">lower <span class="keywordflow">case</span> characters</div><div class="line">ASCII digits [0,9]</div><div class="line">underscore character <span class="charliteral">&#39;_&#39;</span></div><div class="line">space character <span class="charliteral">&#39; &#39;</span></div></div><!-- fragment --><p> Assuming that the code was constructed properly, then this most likely means that some data is out of alignment with what was computed and or reported. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732a9857fb30efb15ee58f4ea7d15e9af974"></a>FS_INTEGRITY_FAIL&#160;</td><td class="fielddoc"><p>If this status is returned, it means that the size of the data block that was provided did not match the size of the block it was provided for. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732ad2077a6bf025745addd164f1783090c6"></a>FS_DUPLICATE_BLOCK&#160;</td><td class="fielddoc"><p>If this status is returned, it means that the address stored in a chunk header was already processed. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732a6d7c7c52aa5f9a804cf35cb85f14674f"></a>RS_INVALID_PTR&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a6e2e7a8c26859361086051166d668732a562b9352bb008f0148ca15a262b00223"></a>RS_INVALID_CODE&#160;</td><td class="fielddoc"></td></tr>

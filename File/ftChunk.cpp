@@ -152,7 +152,7 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags, SKsi
     if (tmp->length == SK_NPOS32)
         return FS_INV_LENGTH;
 
-    if (tmp->count < 1 || tmp->count > 0x7FFFFFFF)
+    if (tmp->count < 1 || tmp->count > FileTools_MaxChunkArrayLength)
         return FS_INV_LENGTH;
 
     if ((SKsize)tmp->count * (SKsize)tmp->length > totalSize)
@@ -163,8 +163,6 @@ SKsize ftChunkUtils::read(ftChunk* dest, skStream* stream, int headerFlags, SKsi
     if (!isValidCode(tmp->code))
         return FS_CODE_ERROR;
 
-
-
     return bytesRead;
 }
 
@@ -174,7 +172,7 @@ bool ftChunkUtils::isValidCode(const SKuint32& code)
     bInt.int32           = code;
 
     const bool isSmallerCode = code < 0xFFFF;
-    bool result = true;
+    bool       result        = true;
     for (int i = 0; i < (isSmallerCode ? 2 : 4) && result; ++i)
     {
         const SKuint8 ch = bInt.int8[i];

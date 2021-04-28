@@ -178,7 +178,7 @@ int ftTable::read(const void*   tableSource,
         return RS_INVALID_PTR;
 
     ftMemoryStream stream;
-    stream.open((SKbyte*)tableSource, tableLength, 0, true);
+    stream.open((const SKbyte*)tableSource, tableLength, 0, true);
 
     // FIXME: there should be no guarantee on the order that the NAME codes come in.
 
@@ -701,7 +701,7 @@ int ftTable::compile(const int fileFlags)
     // atomic types first.
     m_firstStruct = m_strcs[0][0];
 
-    for (SKuint32 i = 0; i < m_strcCount && status == FS_OK; i++)
+    for (SKuint16 i = 0; i < m_strcCount && status == FS_OK; i++)
     {
         FTtype* structure = m_strcs[i];
 
@@ -889,9 +889,13 @@ void ftTable::putMember(const FTtype   owningStructureType,
     const SKuint16& type = currentMember[0];
     const SKuint16& name = currentMember[1];
 
-    if (type < 0 || type >= m_typeCount || owningStructureType >= m_typeCount)
-        status = RS_LIMIT_REACHED;
-    else if (name < 0 || name >= m_nameCount)
+    bool limitTest = (SKint16)type < 0 ||
+                     type >= m_typeCount ||
+                     owningStructureType >= m_typeCount;
+    if (!limitTest)
+        limitTest = (SKint16)name < 0 || name >= m_nameCount;
+
+    if (limitTest)
         status = RS_LIMIT_REACHED;
     else
     {
@@ -966,23 +970,23 @@ void ftTable::hashMember(skString&    name,
 
     if (owningStructMemberName == SK_NPOS)
     {
-        skString::format(name, 
-            FT_MEMBER_HASH_FMT, 
-            parentStructName, 
-            memberType, 
-            memberName, 
-            memberType, 
-            memberName);
+        skString::format(name,
+                         FT_MEMBER_HASH_FMT,
+                         parentStructName,
+                         memberType,
+                         memberName,
+                         memberType,
+                         memberName);
     }
     else
     {
-        skString::format(name, 
-            FT_MEMBER_HASH_FMT, 
-            parentStructName, 
-            owningStructType, 
-            owningStructMemberName, 
-            memberType, 
-            memberName);
+        skString::format(name,
+                         FT_MEMBER_HASH_FMT,
+                         parentStructName,
+                         owningStructType,
+                         owningStructMemberName,
+                         memberType,
+                         memberName);
     }
 }
 

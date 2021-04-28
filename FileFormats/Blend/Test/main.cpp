@@ -162,6 +162,29 @@ GTEST_TEST(BlendFile, AllZeroed)
 }
 
 
+GTEST_TEST(BlendFile, ChunkHeadersMaxed)
+{
+    /// This test sets the chunk header's members to their data-type's maximum value. 
+    ftBlend fp;
+    fp.setFileFlags(LF_DIAGNOSTICS | LF_UNRESOLVED | LF_DO_CHECKS);
+    const int status = fp.load(GetFilePathCString("Test_Junked7.blend"));
+    EXPECT_NE(FS_OK, status);
+}
+
+
+GTEST_TEST(BlendFile, FileMaxed)
+{
+    /// This test sets the chunk header's address members the data-type's maximum value.
+    /// Then fills the data block with the same value.
+    /// The expected return is FS_DUPLICATE_BLOCK, because in theory the saved address
+    /// for a chunk should be unique.
+
+    ftBlend fp;
+    fp.setFileFlags(LF_DIAGNOSTICS | LF_UNRESOLVED | LF_DO_CHECKS);
+    const int status = fp.load(GetFilePathCString("Test_Junked8.blend"));
+    EXPECT_EQ(FS_DUPLICATE_BLOCK, status);
+}
+
 void BlendFile_TestCommonScene(Scene *sc)
 {
     EXPECT_NE(sc, nullptr);

@@ -209,8 +209,6 @@ struct ftMemoryChunk
 /// </summary>
 struct ftChunkUtils
 {
-
-
     enum Size
     {
         BlockSize = sizeof(ftChunk),
@@ -225,6 +223,7 @@ struct ftChunkUtils
     /// <param name="dest">The destination memory.</param>
     /// <param name="stream">The stream to read from.</param>
     /// <param name="headerFlags">A copy of the file's header flags.</param>
+    /// <param name="totalSize">Should be the size in bytes of the file.</param>
     /// <returns>The total number of bytes that were read from the stream.</returns>
     /// <seealso cref="ftFlags::FileHeader"/>
     static SKsize read(ftChunk* dest, skStream* stream, int headerFlags, SKsize totalSize);
@@ -234,31 +233,32 @@ struct ftChunkUtils
     /// </summary>
     /// <param name="source">The source memory to write</param>
     /// <param name="stream">The stream to write to.</param>
-    /// <returns>The total number of bytes that were read from the stream. </returns>
+    /// <returns>The total number of bytes that were written. </returns>
     static SKsize write(ftChunk* source, skStream* stream);
 
     /// <summary>
-    /// Utility to scan over chunks from the supplied stream.
+    /// Utility to scan over chunks with the supplied stream.
     /// </summary>
     /// <param name="dest">The destination memory.</param>
     /// <param name="stream">The stream to read from.</param>
     /// <param name="headerFlags">A copy of the file's header flags.</param>
+    /// <param name="totalSize">Should be the size in bytes of the file.</param>
     /// <returns>The total number of bytes that were read from the stream. </returns>
     static SKsize scan(ftChunkScan* dest, skStream* stream, int headerFlags, SKsize totalSize);
 
 
     /// <summary>
-    /// Test to determine if the supplied code meets the criteria for a valid code.
+    /// This tests to determine if the supplied code meets the criteria for a valid code.
     /// </summary>
-    /// <param name="code">The sequence to test</param>
+    /// <param name="code">The sequence to test.</param>
     /// <returns>
-    /// True if every byte in the code is composed of a mixture of:
-    /// ```txt
-    /// upper case characters
-    /// lower case characters
-    /// ASCII digits [0,9]
-    /// underscore character '_'
-    /// space character ' '
+    /// True if every byte in the code is a mixture of:
+    /// ```
+    /// 1. upper case characters
+    /// 2. lower case characters
+    /// 3. ASCII digits [0,9]
+    /// 4. underscore character '_'
+    /// 5. space character ' '
     /// ```
     /// Otherwise this will return false.
     /// </returns>

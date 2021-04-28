@@ -90,10 +90,10 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:aeab84d89020f5dadd359278a98d35e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to write a chunk to the supplied stream.  <a href="#aeab84d89020f5dadd359278a98d35e9e">More...</a><br /></td></tr>
 <tr class="separator:aeab84d89020f5dadd359278a98d35e9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6227fcba61c2733e226fdf41cd488bfd"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a6227fcba61c2733e226fdf41cd488bfd">scan</a> (<a class="el" href="a00117.html">ftChunkScan</a> *dest, skStream *stream, int headerFlags, SKsize totalSize)</td></tr>
-<tr class="memdesc:a6227fcba61c2733e226fdf41cd488bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to scan over chunks from the supplied stream.  <a href="#a6227fcba61c2733e226fdf41cd488bfd">More...</a><br /></td></tr>
+<tr class="memdesc:a6227fcba61c2733e226fdf41cd488bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to scan over chunks with the supplied stream.  <a href="#a6227fcba61c2733e226fdf41cd488bfd">More...</a><br /></td></tr>
 <tr class="separator:a6227fcba61c2733e226fdf41cd488bfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb4aa086c3a7ffc683e081a096391785"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#afb4aa086c3a7ffc683e081a096391785">isValidCode</a> (const SKuint32 &amp;code)</td></tr>
-<tr class="memdesc:afb4aa086c3a7ffc683e081a096391785"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the supplied code meets the criteria for a valid code.  <a href="#afb4aa086c3a7ffc683e081a096391785">More...</a><br /></td></tr>
+<tr class="memdesc:afb4aa086c3a7ffc683e081a096391785"><td class="mdescLeft">&#160;</td><td class="mdescRight">This tests to determine if the supplied code meets the criteria for a valid code.  <a href="#afb4aa086c3a7ffc683e081a096391785">More...</a><br /></td></tr>
 <tr class="separator:afb4aa086c3a7ffc683e081a096391785"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Enumeration Documentation</h2>
@@ -142,14 +142,14 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Test to determine if the supplied code meets the criteria for a valid code. </p>
+<p>This tests to determine if the supplied code meets the criteria for a valid code. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">code</td><td>The sequence to test</td></tr>
+    <tr><td class="paramname">code</td><td>The sequence to test.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if every byte in the code is composed of a mixture of: <div class="fragment"><div class="line">upper <span class="keywordflow">case</span> characters</div><div class="line">lower <span class="keywordflow">case</span> characters</div><div class="line">ASCII digits [0,9]</div><div class="line">underscore character <span class="charliteral">&#39;_&#39;</span></div><div class="line">space character <span class="charliteral">&#39; &#39;</span></div></div><!-- fragment --> Otherwise this will return false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if every byte in the code is a mixture of: <div class="fragment"><div class="line">1. upper <span class="keywordflow">case</span> characters</div><div class="line">2. lower <span class="keywordflow">case</span> characters</div><div class="line">3. ASCII digits [0,9]</div><div class="line">4. underscore character <span class="charliteral">&#39;_&#39;</span></div><div class="line">5. space character <span class="charliteral">&#39; &#39;</span></div></div><!-- fragment --> Otherwise this will return false. </dd></dl>
 
 </div>
 </div>
@@ -205,6 +205,7 @@ Static Public Member Functions</h2></td></tr>
     <tr><td class="paramname">dest</td><td>The destination memory.</td></tr>
     <tr><td class="paramname">stream</td><td>The stream to read from.</td></tr>
     <tr><td class="paramname">headerFlags</td><td>A copy of the file's header flags.</td></tr>
+    <tr><td class="paramname">totalSize</td><td>Should be the size in bytes of the file.</td></tr>
   </table>
   </dd>
 </dl>
@@ -259,12 +260,13 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Utility to scan over chunks from the supplied stream. </p>
+<p>Utility to scan over chunks with the supplied stream. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dest</td><td>The destination memory.</td></tr>
     <tr><td class="paramname">stream</td><td>The stream to read from.</td></tr>
     <tr><td class="paramname">headerFlags</td><td>A copy of the file's header flags.</td></tr>
+    <tr><td class="paramname">totalSize</td><td>Should be the size in bytes of the file.</td></tr>
   </table>
   </dd>
 </dl>
@@ -314,7 +316,7 @@ Static Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The total number of bytes that were read from the stream. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The total number of bytes that were written. </dd></dl>
 
 </div>
 </div>

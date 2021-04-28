@@ -42,8 +42,7 @@ set(FileTools_DefaultAllocationSize 1024 CACHE STRING "Table default allocation 
 set(FileTools_MaxArrayDim           3 CACHE STRING "Maximum N dimensional array.")
 set(FileTools_TypeLengthValidate    TRUE CACHE BOOL "Write a validation file.")
 set(FileTools_SwapEndian            FALSE CACHE BOOL "Swap from native endian when writing the table. (Test only)")
-
-
+set(FileTools_MaxChunkArrayLength   256 CACHE STRING "Defines the maximum number of data blocks that can be assigned to a chunk.")
 
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/ftConfig.h.in

@@ -45,14 +45,16 @@ const skCommandLine::Switch Switches[SWP_MAX] = {
         's',
         "swap",
         "Specify a swap type .\n"
-        "  - Arguments: [0, 6]\n"
+        "  - Arguments: [0, 8]\n"
         "    - 0: Swaps only the chunk's code leaving the data block the same.\n"
         "    - 1: Swaps the chunks data block leaving the length untouched so that data is corrupted.\n"
         "    - 2: Randomly fills the chunks data block with junk.\n"
         "    - 3: Leaves the data untouched, and reflects what is read to the output file.\n"
         "    - 4: Randomizes both chunk and chunk data .\n"
         "    - 5: Zeros all chunk data .\n"
-        "    - 6: Zeros chunks and data .\n",
+        "    - 6: Zeros chunks and data .\n"
+        "    - 7: Maxes out all bytes in the chunk headers.\n"
+        "    - 8: Maxes out all bytes in the chunk headers and data blocks.\n",
         false,
         1,
     },
@@ -323,6 +325,42 @@ public:
         }
     }
 
+    static void maxChunkHeaders(skFileStream& of, ftMemoryChunk& element)
+    {
+        ftChunk nc  = element.chunk;
+        nc.address  = SK_MAX;
+        nc.structId = SK_MAX32;
+        nc.count    = SK_MAX32;
+        of.write(&nc, sizeof(ftChunk));
+
+        if (element.fileBlock)
+            of.write(element.fileBlock, element.chunk.length);
+    }
+
+    static void maxChunkHeadersAndData(skFileStream& of, ftMemoryChunk& element)
+    {
+        ftChunk nc = element.chunk;
+
+        ftByteInteger bi{};
+        bi.int64   = SK_MAX;
+        nc.address = bi.int64;
+
+        of.write(&nc, sizeof(ftChunk));
+
+        if (element.fileBlock)
+        {
+            if (element.chunk.code != ftIdNames::DNA1)
+            {
+                SKuint8* ptr = (SKuint8*)element.fileBlock;
+                for (SKuint32 i = 0; i < element.chunk.length; ++i)
+                    ptr[i] = bi.int8[i % 8];
+                of.write(ptr, element.chunk.length);
+            }
+            else
+                of.write(element.fileBlock, element.chunk.length);
+        }
+    }
+
     int writeShuffledChunks(const skString& output, skStream* input, int shuffle)
     {
         skFileStream of(output.c_str(), skStream::WRITE);
@@ -359,6 +397,12 @@ public:
                 break;
             case 6:
                 zeroAllData(of, element);
+                break;
+            case 7:
+                maxChunkHeaders(of, element);
+                break;
+            case 8:
+                maxChunkHeadersAndData(of, element);
                 break;
             case 3:
             default:

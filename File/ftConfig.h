@@ -22,9 +22,6 @@
 #ifndef _ftConfig_h_
 #define _ftConfig_h_
 
-#define FT_DEBUG 3                    // Detail
-
-
 /// <summary>Upper limit for the size in bytes of a single member. </summary>
 #define FileTools_MaxStructMember  65536
 
@@ -48,6 +45,15 @@
 
 /// <summary>Swap from native endian when writing the table. (Test only) </summary>
 /* #undef FileTools_SwapEndian */
+
+
+/// <summary>
+/// Defines the maximum number of data blocks that can be 
+/// assigned to a chunk. 
+/// This clamps the ftChunk::count field.
+/// If this limit is reached, the status FS_INV_LENGTH will be returned.
+/// </summary>
+#define FileTools_MaxChunkArrayLength  256
 
 
 #endif  //_ftConfig_h_

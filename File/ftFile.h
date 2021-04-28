@@ -261,7 +261,10 @@ protected:
     int initializeMemory();
 
 private:
-    static bool searchFilter(const SKhash* searchIn, const SKhash& searchFor, const SKint32& len);
+
+    static bool searchFilter(const SKhash*  searchIn,
+                             const SKhash&  searchFor,
+                             const SKint32& len);
 
     static void setFilter(SKhash*& dest, SKint32& destLen, SKhash* filter, SKint32 length);
 
@@ -291,7 +294,10 @@ private:
                      const ftChunk& chunk,
                      int&           status);
 
-    void insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, bool addToRebuildList, int& status);
+    void insertChunk(const ftPointerHashKey& phk,
+                     ftMemoryChunk*&         chunk,
+                     bool                    addToRebuildList,
+                     int&                    status);
 
     static void freeChunk(ftMemoryChunk*& chunk);
 
@@ -307,7 +313,10 @@ private:
 
     int rebuildStructures();
 
-    int allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, const SKsize& len, bool zero);
+    int allocateMBlock(const ftPointerHashKey& phk, 
+        ftMemoryChunk* bin, 
+        const SKsize& len, 
+        bool zero);
 
     void castMember(
         ftMember* dst,

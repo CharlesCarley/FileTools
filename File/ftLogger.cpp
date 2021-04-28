@@ -32,7 +32,7 @@
 using namespace std;
 using namespace ftFlags;
 
-void ftLogger::log(const int status)
+void ftLogger::log(int status)
 {
     cout << "Exit status: ";
     switch (status)
@@ -76,7 +76,26 @@ void ftLogger::log(const int status)
     case RS_MIS_ALIGNED:
         cout << "RS_MIS_ALIGNED";
         break;
-    default:
+    case FS_INV_VALUE:
+        cout << "FS_INV_VALUE";
+        break;
+    case FS_CODE_ERROR:
+        cout << "FS_CODE_ERROR";
+        break;
+    case FS_INTEGRITY_FAIL:
+        cout << "FS_INTEGRITY_FAIL";
+        break;
+    case FS_DUPLICATE_BLOCK:
+        cout << "FS_DUPLICATE_BLOCK";
+        break;
+    case FS_OK:
+        cout << "FS_OK";
+        break;
+    case FS_STATUS_MIN:
+        cout << "FS_STATUS_MIN";
+        break;
+    default: 
+        cout << "Unknown";
         break;
     }
     cout << endl;

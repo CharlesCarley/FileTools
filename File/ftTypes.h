@@ -217,7 +217,7 @@ namespace ftFlags
         /// <summary>
         /// Start code for enumerated values.
         /// </summary>
-        FS_STATUS_MIN = -17,
+        FS_STATUS_MIN = -18,
 
         /// <summary>
         /// Invalid insert.
@@ -293,6 +293,12 @@ namespace ftFlags
         /// did not match the size of the block it was provided for.
         /// </summary>
         FS_INTEGRITY_FAIL,
+
+        /// <summary>
+        /// If this status is returned, it means that the address
+        /// stored in a chunk header was already processed.
+        /// </summary>
+        FS_DUPLICATE_BLOCK,
 
         // Table codes
         RS_INVALID_PTR,

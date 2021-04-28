@@ -318,7 +318,9 @@ int ftFile::parseStreamImpl(skStream* stream)
     {
         if (m_fileFlags != LF_NONE)
             ftLogger::logF("Failed to reach the end byte.");
-        status = FS_INV_READ;
+
+        if (status == FS_OK)
+            status = FS_INV_READ;
     }
     return status;
 }
@@ -344,6 +346,10 @@ void ftFile::handleChunk(skStream*      stream,
         {
             free(block);
             freeChunk(bin);
+
+            // This should be an error if it's properly linked,
+            // in theory there should be no duplicates.
+            status = FS_DUPLICATE_BLOCK;
         }
         else
         {
