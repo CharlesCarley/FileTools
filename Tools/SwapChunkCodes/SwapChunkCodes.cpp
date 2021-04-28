@@ -170,9 +170,7 @@ public:
                     mc.chunk     = chunk;
                     mc.fileBlock = malloc(chunk.length);
                     if (!mc.fileBlock)
-                    {
                         status = FS_BAD_ALLOC;
-                    }
                     else
                     {
                         if (!stream->read(mc.fileBlock, chunk.length))
@@ -236,7 +234,6 @@ public:
             if (mc.chunk.code != ftIdNames::DNA1)
                 of.write(mc.fileBlock, mc.chunk.length);
             else
-
                 of.write(element.fileBlock, element.chunk.length);
         }
     }

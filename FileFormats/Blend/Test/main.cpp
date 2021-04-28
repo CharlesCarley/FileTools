@@ -105,12 +105,14 @@ GTEST_TEST(BlendFile, RandomDatablockSwap)
 {
     // This file has had the data blocks swapped with other 'valid'
     // blocks, but has left the reported chunk length the same.
-    // The expected result is a read error because chunks will not be
-    // aligned.
+    // The expected result is a code error because chunks will not be
+    // aligned. When it goes to the next chunk that misaligned data
+    // will be read as a chunk. 'Chances' are that whatever data is read
+    // will not meet the criteria for ftChunkUtils::isValidCode.
     ftBlend fp;
     fp.setFileFlags(LF_DIAGNOSTICS | LF_UNRESOLVED | LF_DO_CHECKS);
     const int status = fp.load(GetFilePathCString("Test_Junked1.blend"));
-    EXPECT_NE(FS_OK, status);
+    EXPECT_EQ(FS_CODE_ERROR, status);
 }
 
 GTEST_TEST(BlendFile, RandomChunkSwap)

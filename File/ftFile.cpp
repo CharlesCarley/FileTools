@@ -396,7 +396,7 @@ void ftFile::handleChunk(skStream*      stream,
                 {
                     bin->fileStruct   = fileStruct;
                     bin->memoryStruct = memoryStruct;
-                    bin->newTypeId    = bin->memoryStruct->getStructIndex();
+                    bin->newTypeId    = (FTtype)bin->memoryStruct->getStructIndex();
 
                     if (!skip(fileStruct->getHashedType()))
                     {
