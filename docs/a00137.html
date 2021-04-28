@@ -83,15 +83,15 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a58bafa7847b5efdd2b2952e935b8d7c3">read</a> (<a class="el" href="a00129.html">ftChunk</a> *dest, skStream *stream, int headerFlags)</td></tr>
-<tr class="memdesc:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a chunk from the supplied stream.  <a href="#a58bafa7847b5efdd2b2952e935b8d7c3">More...</a><br /></td></tr>
-<tr class="separator:a58bafa7847b5efdd2b2952e935b8d7c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62fba893f45ad626a77558dfa7569b0b"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a62fba893f45ad626a77558dfa7569b0b">read</a> (<a class="el" href="a00129.html">ftChunk</a> *dest, skStream *stream, int headerFlags, SKsize totalSize)</td></tr>
+<tr class="memdesc:a62fba893f45ad626a77558dfa7569b0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a chunk from the supplied stream.  <a href="#a62fba893f45ad626a77558dfa7569b0b">More...</a><br /></td></tr>
+<tr class="separator:a62fba893f45ad626a77558dfa7569b0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeab84d89020f5dadd359278a98d35e9e"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#aeab84d89020f5dadd359278a98d35e9e">write</a> (<a class="el" href="a00129.html">ftChunk</a> *source, skStream *stream)</td></tr>
 <tr class="memdesc:aeab84d89020f5dadd359278a98d35e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to write a chunk to the supplied stream.  <a href="#aeab84d89020f5dadd359278a98d35e9e">More...</a><br /></td></tr>
 <tr class="separator:aeab84d89020f5dadd359278a98d35e9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad30deec08b6f3683772fc3c597a4a3e3"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#ad30deec08b6f3683772fc3c597a4a3e3">scan</a> (<a class="el" href="a00117.html">ftChunkScan</a> *dest, skStream *stream, int headerFlags)</td></tr>
-<tr class="memdesc:ad30deec08b6f3683772fc3c597a4a3e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to scan over chunks from the supplied stream.  <a href="#ad30deec08b6f3683772fc3c597a4a3e3">More...</a><br /></td></tr>
-<tr class="separator:ad30deec08b6f3683772fc3c597a4a3e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6227fcba61c2733e226fdf41cd488bfd"><td class="memItemLeft" align="right" valign="top">static SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#a6227fcba61c2733e226fdf41cd488bfd">scan</a> (<a class="el" href="a00117.html">ftChunkScan</a> *dest, skStream *stream, int headerFlags, SKsize totalSize)</td></tr>
+<tr class="memdesc:a6227fcba61c2733e226fdf41cd488bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to scan over chunks from the supplied stream.  <a href="#a6227fcba61c2733e226fdf41cd488bfd">More...</a><br /></td></tr>
+<tr class="separator:a6227fcba61c2733e226fdf41cd488bfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb4aa086c3a7ffc683e081a096391785"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00137.html#afb4aa086c3a7ffc683e081a096391785">isValidCode</a> (const SKuint32 &amp;code)</td></tr>
 <tr class="memdesc:afb4aa086c3a7ffc683e081a096391785"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the supplied code meets the criteria for a valid code.  <a href="#afb4aa086c3a7ffc683e081a096391785">More...</a><br /></td></tr>
 <tr class="separator:afb4aa086c3a7ffc683e081a096391785"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,8 +153,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a58bafa7847b5efdd2b2952e935b8d7c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58bafa7847b5efdd2b2952e935b8d7c3">&#9670;&nbsp;</a></span>read()</h2>
+<a id="a62fba893f45ad626a77558dfa7569b0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62fba893f45ad626a77558dfa7569b0b">&#9670;&nbsp;</a></span>read()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +178,13 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>headerFlags</em>&#160;</td>
+          <td class="paramname"><em>headerFlags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SKsize&#160;</td>
+          <td class="paramname"><em>totalSize</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -207,8 +213,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad30deec08b6f3683772fc3c597a4a3e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad30deec08b6f3683772fc3c597a4a3e3">&#9670;&nbsp;</a></span>scan()</h2>
+<a id="a6227fcba61c2733e226fdf41cd488bfd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6227fcba61c2733e226fdf41cd488bfd">&#9670;&nbsp;</a></span>scan()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -232,7 +238,13 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>headerFlags</em>&#160;</td>
+          <td class="paramname"><em>headerFlags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SKsize&#160;</td>
+          <td class="paramname"><em>totalSize</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

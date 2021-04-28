@@ -45,7 +45,7 @@ const skCommandLine::Switch Switches[SWP_MAX] = {
         's',
         "swap",
         "Specify a swap type .\n"
-        "  - Arguments: [0, 3]\n"
+        "  - Arguments: [0, 6]\n"
         "    - 0: Swaps only the chunk's code leaving the data block the same.\n"
         "    - 1: Swaps the chunks data block leaving the length untouched so that data is corrupted.\n"
         "    - 2: Randomly fills the chunks data block with junk.\n"

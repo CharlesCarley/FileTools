@@ -134,9 +134,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a845d55027ca8babfa37fe9f57ac20497"><td class="memItemLeft" align="right" valign="top">virtual SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00161.html#a845d55027ca8babfa37fe9f57ac20497">getTableSize</a> ()=0</td></tr>
 <tr class="memdesc:a845d55027ca8babfa37fe9f57ac20497"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows this class to access the size of the table output.  <a href="#a845d55027ca8babfa37fe9f57ac20497">More...</a><br /></td></tr>
 <tr class="separator:a845d55027ca8babfa37fe9f57ac20497"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43d59a91ab40f4554d2ebcdacf99069a"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00161.html#a43d59a91ab40f4554d2ebcdacf99069a">notifyDataRead</a> (void *pointer, const <a class="el" href="a00129.html">ftChunk</a> &amp;chunk)=0</td></tr>
-<tr class="memdesc:a43d59a91ab40f4554d2ebcdacf99069a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a notification callback which allows derived classes a chance to handle a chunk further. This method is invoked after each successful chunk read.  <a href="#a43d59a91ab40f4554d2ebcdacf99069a">More...</a><br /></td></tr>
-<tr class="separator:a43d59a91ab40f4554d2ebcdacf99069a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52d7ba301e5641dd502ff6c3eb371e51"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00161.html#a52d7ba301e5641dd502ff6c3eb371e51">notifyDataRead</a> (void *pointer, SKsize sizeInBytes, const <a class="el" href="a00129.html">ftChunk</a> &amp;chunk)=0</td></tr>
+<tr class="memdesc:a52d7ba301e5641dd502ff6c3eb371e51"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a notification callback which allows derived classes a chance to handle a chunk further. This method is invoked after each successful chunk read.  <a href="#a52d7ba301e5641dd502ff6c3eb371e51">More...</a><br /></td></tr>
+<tr class="separator:a52d7ba301e5641dd502ff6c3eb371e51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81b1d632dbc771b7e1b220433c5e56a5"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00161.html#a81b1d632dbc771b7e1b220433c5e56a5">serializeData</a> (skStream *stream)=0</td></tr>
 <tr class="separator:a81b1d632dbc771b7e1b220433c5e56a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -594,8 +594,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a43d59a91ab40f4554d2ebcdacf99069a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43d59a91ab40f4554d2ebcdacf99069a">&#9670;&nbsp;</a></span>notifyDataRead()</h2>
+<a id="a52d7ba301e5641dd502ff6c3eb371e51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52d7ba301e5641dd502ff6c3eb371e51">&#9670;&nbsp;</a></span>notifyDataRead()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -608,6 +608,12 @@ Protected Attributes</h2></td></tr>
           <td>(</td>
           <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>pointer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SKsize&#160;</td>
+          <td class="paramname"><em>sizeInBytes</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -632,6 +638,7 @@ Protected Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pointer</td><td>Contains the memory of the reconstructed data.</td></tr>
+    <tr><td class="paramname">sizeInBytes</td><td>Holds the size in bytes of the memory</td></tr>
     <tr><td class="paramname">chunk</td><td>Is the chunk that was read from the file for the reconstructed memory.</td></tr>
   </table>
   </dd>

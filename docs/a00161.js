@@ -16,7 +16,7 @@ var a00161 =
     [ "getVersion", "a00161.html#aa3f719a3ff6df269cba5b9e8a49084ae", null ],
     [ "load", "a00161.html#a9b1c6e9dac21ef033c9b0b79caea528f", null ],
     [ "load", "a00161.html#a65802ab14c1b2f3a8a5caafe657cc0dd", null ],
-    [ "notifyDataRead", "a00161.html#a43d59a91ab40f4554d2ebcdacf99069a", null ],
+    [ "notifyDataRead", "a00161.html#a52d7ba301e5641dd502ff6c3eb371e51", null ],
     [ "save", "a00161.html#a9495150f7eae643e4ca7d32df34d0cb3", null ],
     [ "serializeData", "a00161.html#a81b1d632dbc771b7e1b220433c5e56a5", null ],
     [ "setCastFilter", "a00161.html#ab3489eb0ad2d5c5a06a1a0cfff12cffb", null ],

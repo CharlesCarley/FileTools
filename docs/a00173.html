@@ -105,8 +105,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a09ee5b8062d9386e420fa20ed477799b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f144c7bd7ca6a559616670d0f5e9bf5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a4f144c7bd7ca6a559616670d0f5e9bf5">compare</a> (<a class="el" href="a00173.html">ftMember</a> *rhs) const</td></tr>
 <tr class="separator:a4f144c7bd7ca6a559616670d0f5e9bf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9cb7012dcf39363323e97ccbf7e601a"><td class="memItemLeft" align="right" valign="top">SKsize *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#af9cb7012dcf39363323e97ccbf7e601a">jumpToOffset</a> (void *base) const</td></tr>
-<tr class="separator:af9cb7012dcf39363323e97ccbf7e601a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8d6e17c7c7d156e9c3a48c5ef016f75"><td class="memItemLeft" align="right" valign="top">SKsize *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#aa8d6e17c7c7d156e9c3a48c5ef016f75">jumpToOffset</a> (void *base, SKsize maxAlloc) const</td></tr>
+<tr class="separator:aa8d6e17c7c7d156e9c3a48c5ef016f75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a598ccfb5ae95cb6ce644999452e4c01c"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a598ccfb5ae95cb6ce644999452e4c01c">getChunk</a> () const</td></tr>
 <tr class="separator:a598ccfb5ae95cb6ce644999452e4c01c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16b6f9ced2e31f47c2d317b4a8a6d9d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a16b6f9ced2e31f47c2d317b4a8a6d9d7">isValidAtomicType</a> () const</td></tr>
@@ -616,8 +616,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="af9cb7012dcf39363323e97ccbf7e601a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9cb7012dcf39363323e97ccbf7e601a">&#9670;&nbsp;</a></span>jumpToOffset()</h2>
+<a id="aa8d6e17c7c7d156e9c3a48c5ef016f75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8d6e17c7c7d156e9c3a48c5ef016f75">&#9670;&nbsp;</a></span>jumpToOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -626,8 +626,18 @@ Friends</h2></td></tr>
           <td class="memname">SKsize * ftMember::jumpToOffset </td>
           <td>(</td>
           <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>base</em></td><td>)</td>
-          <td> const</td>
+          <td class="paramname"><em>base</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SKsize&#160;</td>
+          <td class="paramname"><em>maxAlloc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">

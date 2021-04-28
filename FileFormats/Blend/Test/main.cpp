@@ -1,11 +1,7 @@
 /*
 -------------------------------------------------------------------------------
-
     Copyright (c) Charles Carley.
 
-    Contributor(s): none yet.
-
--------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -66,7 +62,7 @@ GTEST_TEST(BlendFile, ExtractScene)
 GTEST_TEST(BlendFile, MissingDNA1)
 {
     ftBlend fp;
-    // This file has it's DNA1 code deliberately removed.
+    // This file has had it's DNA1 code deliberately removed.
     const int status = fp.load("MissingDNA1.blend");
     EXPECT_EQ(FS_CODE_ERROR, status);
 }
@@ -74,7 +70,7 @@ GTEST_TEST(BlendFile, MissingDNA1)
 GTEST_TEST(BlendFile, InvalidDNASize)
 {
     ftBlend fp;
-    // This file has it's DNA1 length field zeroed.
+    // This file has had it's DNA1 length field zeroed.
     const int status = fp.load("InvalidDNASize.blend");
     EXPECT_EQ(FS_INV_READ, status);
 }
@@ -82,7 +78,7 @@ GTEST_TEST(BlendFile, InvalidDNASize)
 GTEST_TEST(BlendFile, DNA1WrongSize)
 {
     ftBlend fp;
-    // This file has it's DNA1 length field divided by 2.
+    // This file has had it's DNA1 length field divided by 2.
     const int status = fp.load("DNA1WrongSize.blend");
     EXPECT_EQ(FS_INV_VALUE, status);
 }
@@ -90,9 +86,8 @@ GTEST_TEST(BlendFile, DNA1WrongSize)
 GTEST_TEST(BlendFile, RandomJunk)
 {
     // This file has had the chunks filled with random bytes.
-    // The expected is that it should till be able to read it,
-    // but whatever data was read and built off of the valid structures
-    // is expected to be random nonsense.
+    // The expected result is that it should be able to read it,
+    // but whatever data that was read is expected to be nonsense.
     ftBlend fp;
     fp.setFileFlags(LF_DIAGNOSTICS | LF_UNRESOLVED | LF_DO_CHECKS);
     const int status = fp.load(GetFilePathCString("Test_Junked2.blend"));
@@ -100,9 +95,8 @@ GTEST_TEST(BlendFile, RandomJunk)
 
     // This should be null because, the original address at the time of saving
     // a chunk should not match any know address in a data block that is completely randomized.
-    // If it does match link to something, it would mean that 4|8 random bytes matched
+    // If it does match, or link to something, it would mean that 4|8 random bytes matched
     // a chunk address from the file.
-
     Scene* sc = fp.m_fg->curscene;
     EXPECT_EQ(sc, nullptr);
 }
@@ -110,7 +104,7 @@ GTEST_TEST(BlendFile, RandomJunk)
 GTEST_TEST(BlendFile, RandomDatablockSwap)
 {
     // This file has had the data blocks swapped with other 'valid'
-    // blocks, but has left the reported chunk length the same
+    // blocks, but has left the reported chunk length the same.
     // The expected result is a read error because chunks will not be
     // aligned.
     ftBlend fp;
@@ -122,7 +116,7 @@ GTEST_TEST(BlendFile, RandomDatablockSwap)
 GTEST_TEST(BlendFile, RandomChunkSwap)
 {
     // This file has had the chunk codes swapped with other 'valid'
-    // codes.  If the code alone is used to determine what type of data
+    // codes. If the code alone is used to determine what type of data
     // is supplied for structure memory then casting to that memory will
     // corrupt the heap.
 
@@ -132,11 +126,11 @@ GTEST_TEST(BlendFile, RandomChunkSwap)
     EXPECT_EQ(FS_INTEGRITY_FAIL, status);
 }
 
-
 GTEST_TEST(BlendFile, Randomized)
 {
     // This keeps the DNA1, chunk codes, and lengths intact
     // but randomized everything else.
+
     ftBlend fp;
     fp.setFileFlags(LF_DIAGNOSTICS | LF_UNRESOLVED | LF_DO_CHECKS);
     const int status = fp.load(GetFilePathCString("Test_Junked4.blend"));
@@ -145,8 +139,10 @@ GTEST_TEST(BlendFile, Randomized)
 
 GTEST_TEST(BlendFile, Zeroed)
 {
-    // This keeps the DNA1, chunk codes, and lengths intact
-    // but randomized everything else.
+    // This test zeros every data block in the file but leaves the
+    // chunk headers intact.
+    // The DNA1 block is kept intact.
+
     ftBlend fp;
     fp.setFileFlags(LF_DIAGNOSTICS | LF_UNRESOLVED | LF_DO_CHECKS);
     const int status = fp.load(GetFilePathCString("Test_Junked5.blend"));
@@ -155,13 +151,84 @@ GTEST_TEST(BlendFile, Zeroed)
 
 GTEST_TEST(BlendFile, AllZeroed)
 {
-    // This keeps the DNA1, chunk codes, and lengths intact
-    // but randomized everything else.
+    //  This test zeros everything in the chunk header except it's code, and
+    //  drops the data blocks with them.
+    //  The DNA1 block is kept intact.
+
     ftBlend fp;
     fp.setFileFlags(LF_DIAGNOSTICS | LF_UNRESOLVED | LF_DO_CHECKS);
     const int status = fp.load(GetFilePathCString("Test_Junked6.blend"));
     EXPECT_NE(FS_OK, status);
 }
+
+
+void BlendFile_TestCommonScene(Scene *sc)
+{
+    EXPECT_NE(sc, nullptr);
+    EXPECT_NE(sc->master_collection, nullptr);
+
+    ListBase         lb = sc->master_collection->children;
+    CollectionChild* cc = (CollectionChild*)lb.first;
+    EXPECT_NE(cc, nullptr);
+
+    if (cc)
+    {
+        EXPECT_NE(cc->collection, nullptr);
+        EXPECT_TRUE(strcmp(cc->collection->id.name, "GRCollection") == 0);
+
+        ListBase collections = cc->collection->gobject;
+
+        CollectionObject* co = (CollectionObject*)collections.first;
+
+        int i = 0;
+        while (co)
+        {
+            EXPECT_NE(co->ob, nullptr);
+            Object* obj = co->ob;
+
+            switch (i)
+            {
+            case 0:
+            {
+                EXPECT_TRUE(strcmp(obj->id.name, "OBCube") == 0);
+                EXPECT_TRUE(obj->type == 1);
+                EXPECT_TRUE(obj->data != nullptr);
+
+                Mesh* me = (Mesh*)obj->data;
+                EXPECT_TRUE(strcmp(me->id.name, "MECube") == 0);
+
+                break;
+            }
+            case 1:
+            {
+                EXPECT_TRUE(strcmp(obj->id.name, "OBLight") == 0);
+                EXPECT_TRUE(obj->data != nullptr);
+
+                Lamp* ca = (Lamp*)obj->data;
+                EXPECT_TRUE(strcmp(ca->id.name, "LALight") == 0);
+                break;
+            }
+            case 2:
+            {
+                EXPECT_TRUE(strcmp(obj->id.name, "OBCamera") == 0);
+                EXPECT_TRUE(obj->type == 11);
+                EXPECT_TRUE(obj->data != nullptr);
+
+                Camera* ca = (Camera*)obj->data;
+                EXPECT_TRUE(strcmp(ca->id.name, "CACamera") == 0);
+                break;
+            }
+            default:
+                break;
+            }
+
+            ++i;
+            co = co->next;
+        }
+        EXPECT_EQ(cc->next, nullptr);
+    }
+}
+
 
 GTEST_TEST(BlendFile, AssertReflection)
 {
@@ -170,139 +237,17 @@ GTEST_TEST(BlendFile, AssertReflection)
     EXPECT_EQ(FS_OK, status);
 
     Scene* sc = fp.m_fg->curscene;
-    EXPECT_NE(sc->master_collection, nullptr);
-
-    ListBase         lb = sc->master_collection->children;
-    CollectionChild* cc = (CollectionChild*)lb.first;
-    EXPECT_NE(cc, nullptr);
-
-    if (cc)
-    {
-        EXPECT_NE(cc->collection, nullptr);
-        EXPECT_TRUE(strcmp(cc->collection->id.name, "GRCollection") == 0);
-
-        ListBase collections = cc->collection->gobject;
-
-        CollectionObject* co = (CollectionObject*)collections.first;
-
-        int i = 0;
-        while (co)
-        {
-            EXPECT_NE(co->ob, nullptr);
-            Object* obj = co->ob;
-
-            switch (i)
-            {
-            case 0:
-            {
-                EXPECT_TRUE(strcmp(obj->id.name, "OBCube") == 0);
-                EXPECT_TRUE(obj->type == 1);
-                EXPECT_TRUE(obj->data != nullptr);
-
-                Mesh* me = (Mesh*)obj->data;
-                EXPECT_TRUE(strcmp(me->id.name, "MECube") == 0);
-
-                break;
-            }
-            case 1:
-            {
-                EXPECT_TRUE(strcmp(obj->id.name, "OBLight") == 0);
-                EXPECT_TRUE(obj->data != nullptr);
-
-                Lamp* ca = (Lamp*)obj->data;
-                EXPECT_TRUE(strcmp(ca->id.name, "LALight") == 0);
-                break;
-            }
-            case 2:
-            {
-                EXPECT_TRUE(strcmp(obj->id.name, "OBCamera") == 0);
-                EXPECT_TRUE(obj->type == 11);
-                EXPECT_TRUE(obj->data != nullptr);
-
-                Camera* ca = (Camera*)obj->data;
-                EXPECT_TRUE(strcmp(ca->id.name, "CACamera") == 0);
-                break;
-            }
-            default:
-                break;
-            }
-
-            ++i;
-            co = co->next;
-        }
-        EXPECT_EQ(cc->next, nullptr);
-    }
+    BlendFile_TestCommonScene(sc);
 }
 
 GTEST_TEST(BlendFile, IterateObjects)
 {
-    ftBlend fp;
-    int     status = fp.load("Test.blend");
+    ftBlend   fp;
+    const int status = fp.load("Test.blend");
     EXPECT_EQ(FS_OK, status);
 
     Scene* sc = fp.m_fg->curscene;
-    EXPECT_NE(sc->master_collection, nullptr);
-
-    ListBase         lb = sc->master_collection->children;
-    CollectionChild* cc = (CollectionChild*)lb.first;
-    EXPECT_NE(cc, nullptr);
-
-    if (cc)
-    {
-        EXPECT_NE(cc->collection, nullptr);
-        EXPECT_TRUE(strcmp(cc->collection->id.name, "GRCollection") == 0);
-
-        ListBase collections = cc->collection->gobject;
-
-        CollectionObject* co = (CollectionObject*)collections.first;
-
-        int i = 0;
-        while (co)
-        {
-            EXPECT_NE(co->ob, nullptr);
-            Object* obj = co->ob;
-
-            switch (i)
-            {
-            case 0:
-            {
-                EXPECT_TRUE(strcmp(obj->id.name, "OBCube") == 0);
-                EXPECT_TRUE(obj->type == 1);
-                EXPECT_TRUE(obj->data != nullptr);
-
-                Mesh* me = (Mesh*)obj->data;
-                EXPECT_TRUE(strcmp(me->id.name, "MECube") == 0);
-
-                break;
-            }
-            case 1:
-            {
-                EXPECT_TRUE(strcmp(obj->id.name, "OBLight") == 0);
-                EXPECT_TRUE(obj->data != nullptr);
-
-                Lamp* ca = (Lamp*)obj->data;
-                EXPECT_TRUE(strcmp(ca->id.name, "LALight") == 0);
-                break;
-            }
-            case 2:
-            {
-                EXPECT_TRUE(strcmp(obj->id.name, "OBCamera") == 0);
-                EXPECT_TRUE(obj->type == 11);
-                EXPECT_TRUE(obj->data != nullptr);
-
-                Camera* ca = (Camera*)obj->data;
-                EXPECT_TRUE(strcmp(ca->id.name, "CACamera") == 0);
-                break;
-            }
-            default:
-                break;
-            }
-
-            ++i;
-            co = co->next;
-        }
-        EXPECT_EQ(cc->next, nullptr);
-    }
+    BlendFile_TestCommonScene(sc);
 }
 
 GTEST_TEST(BlendFile, AssertTypes)

@@ -98,9 +98,15 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a671821f43a54e71ca95301acfd8c6097"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a671821f43a54e71ca95301acfd8c6097">fileBlock</a></td></tr>
 <tr class="memdesc:a671821f43a54e71ca95301acfd8c6097"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the block of memory that was allocated and read from the file. It contains the data of the structure at the time of saving. Its length is the size of the corresponding structure in the file table.  <a href="#a671821f43a54e71ca95301acfd8c6097">More...</a><br /></td></tr>
 <tr class="separator:a671821f43a54e71ca95301acfd8c6097"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ada1471151ccd0433965a9b2dc2479c"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a3ada1471151ccd0433965a9b2dc2479c">fileBlockLen</a></td></tr>
+<tr class="memdesc:a3ada1471151ccd0433965a9b2dc2479c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the total length of allocated memory for memoryBlock.  <a href="#a3ada1471151ccd0433965a9b2dc2479c">More...</a><br /></td></tr>
+<tr class="separator:a3ada1471151ccd0433965a9b2dc2479c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e25e65e0124a7efad9e48e36fa499e4"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a9e25e65e0124a7efad9e48e36fa499e4">memoryBlock</a></td></tr>
 <tr class="memdesc:a9e25e65e0124a7efad9e48e36fa499e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the block of memory allocated for conversion. Its length is the size of the corresponding structure in the memory table. If the file and memory structures are different, the data from fileBlock gets cast into memoryBlock one member at a time.  <a href="#a9e25e65e0124a7efad9e48e36fa499e4">More...</a><br /></td></tr>
 <tr class="separator:a9e25e65e0124a7efad9e48e36fa499e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae789641b6bdfd2b482ffdcf86fa84c31"><td class="memItemLeft" align="right" valign="top">SKuint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#ae789641b6bdfd2b482ffdcf86fa84c31">memoryBlockLen</a></td></tr>
+<tr class="memdesc:ae789641b6bdfd2b482ffdcf86fa84c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the total length of allocated memory for memoryBlock.  <a href="#ae789641b6bdfd2b482ffdcf86fa84c31">More...</a><br /></td></tr>
+<tr class="separator:ae789641b6bdfd2b482ffdcf86fa84c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cb87fe02431349d96926a7b8ad13e7d"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00133.html#a2cb87fe02431349d96926a7b8ad13e7d">pointerBlock</a></td></tr>
 <tr class="memdesc:a2cb87fe02431349d96926a7b8ad13e7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the storage location for pointers to pointers. When casting fileBlock into memoryBlock, if the current member is a pointer to a pointer, this block provides the storage location for each of the pointers. The address of pointerBlock is assigned to memoryBlock at the offset to the specific pointer to pointer member.  <a href="#a2cb87fe02431349d96926a7b8ad13e7d">More...</a><br /></td></tr>
 <tr class="separator:a2cb87fe02431349d96926a7b8ad13e7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,6 +208,22 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a3ada1471151ccd0433965a9b2dc2479c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ada1471151ccd0433965a9b2dc2479c">&#9670;&nbsp;</a></span>fileBlockLen</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKuint32 ftMemoryChunk::fileBlockLen</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains the total length of allocated memory for memoryBlock. </p>
+
+</div>
+</div>
 <a id="ab91a4b34aa0d76aac00fbc1dc61b9bae"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab91a4b34aa0d76aac00fbc1dc61b9bae">&#9670;&nbsp;</a></span>fileStruct</h2>
 
@@ -247,6 +269,22 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Is the block of memory allocated for conversion. Its length is the size of the corresponding structure in the memory table. If the file and memory structures are different, the data from fileBlock gets cast into memoryBlock one member at a time. </p>
+
+</div>
+</div>
+<a id="ae789641b6bdfd2b482ffdcf86fa84c31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae789641b6bdfd2b482ffdcf86fa84c31">&#9670;&nbsp;</a></span>memoryBlockLen</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SKuint32 ftMemoryChunk::memoryBlockLen</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains the total length of allocated memory for memoryBlock. </p>
 
 </div>
 </div>
