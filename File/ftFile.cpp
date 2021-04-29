@@ -299,7 +299,7 @@ int ftFile::parseStreamImpl(skStream* stream)
                     if (stream->read(curPtr, chunk.length) <= 0)
                         status = FS_INV_READ;
                     else
-                        handleChunk(stream, curPtr, chunk.length, chunk, status);
+                        handleChunk(curPtr, chunk.length, chunk, status);
                 }
             }
             else
@@ -326,8 +326,7 @@ int ftFile::parseStreamImpl(skStream* stream)
     return status;
 }
 
-void ftFile::handleChunk(skStream*      stream,
-                         void*          block,
+void ftFile::handleChunk(void*          block,
                          SKsize         allocLen,
                          const ftChunk& chunk,
                          int&           status)
@@ -484,7 +483,7 @@ void ftFile::insertChunk(const ftPointerHashKey& phk, ftMemoryChunk*& chunk, boo
     }
     else if (addToRebuildList)
     {
-        m_chunks.push_back(chunk);
+        m_chunks.pushBack(chunk);
     }
 }
 
@@ -1221,12 +1220,13 @@ void ftFile::serializeChunk(skStream*      stream,
 {
     if (isValidWriteData(writeData, len))
     {
-        ftChunk ch{};
-        ch.code     = code;
-        ch.length   = (SKuint32)len;
-        ch.count    = nr;
-        ch.address  = (SKsize)writeData;
-        ch.structId = typeIndex;
+        ftChunk ch{
+            code,
+            (SKuint32)len,
+            (SKsize)writeData,
+            typeIndex,
+            nr,
+        };
         ftChunkUtils::write(&ch, stream);
 
         if (m_fileFlags & LF_WRITE_CHUNKS)

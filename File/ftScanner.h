@@ -26,8 +26,7 @@
 #include "ftTypes.h"
 
 /// <summary>
-/// ftScanner is a basic c/c++ scanner to that is used to extract
-/// class members.
+/// ftScanner is a basic c/c++ scanner that is used to extract class members.
 /// </summary>
 class ftScanner
 {
@@ -45,7 +44,7 @@ public:
     /// <summary>
     /// Default constructor.
     /// </summary>
-    /// <param name="ptr">A memory buffer that contains the source that should be parsed.</param>
+    /// <param name="ptr">Is a memory buffer that contains the source that should be parsed.</param>
     /// <param name="length">The size in bytes of the memory buffer.</param>
     ftScanner(const char* ptr, SKsize length);
 

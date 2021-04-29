@@ -219,7 +219,7 @@ int ftBlend::notifyDataRead(void* pointer, const SKsize sizeInBytes, const ftChu
 
                 if (ftData[i].integrityCheck == sizeInBytes)
                 {
-                    (this->*ftData[i].ptr).push_back(pointer);
+                    (this->*ftData[i].ptr).pushBack(pointer);
                     return ftFlags::FS_OK;
                 }
 

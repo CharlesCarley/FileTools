@@ -106,7 +106,7 @@ public:
 
 
     /// <summary>
-    /// A test to see if the file is a 64bit file. 
+    /// A test to see if the file is a 64-bit file. 
     /// </summary>
     bool is64Bit() const;
 };

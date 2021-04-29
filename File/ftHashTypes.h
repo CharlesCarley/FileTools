@@ -68,7 +68,7 @@ public:
 
     /// <summary>
     /// Default copy constructor.
-    /// Copies the other class's key and rehashes the internal key.
+    /// Copies the other class's pointer and rehashes the internal key.
     /// </summary>
     /// <param name="other">The character ftCharHashKey to copy.</param>
     ftCharHashKey(const ftCharHashKey& other) :
@@ -179,7 +179,7 @@ public:
 
     /// <summary>
     /// Default copy constructor.
-    /// Copies the other class's key and rehashes the internal key.
+    /// Copies the other class's pointer and rehashes the internal key.
     /// </summary>
     /// <param name="other">The ftPointerHashKey to copy.</param>
     ftPointerHashKey(const ftPointerHashKey& other) :

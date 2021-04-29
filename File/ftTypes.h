@@ -75,6 +75,7 @@ enum ftPointerLen
 class ftList
 {
 public:
+
     struct Link
     {
         Link* next;
@@ -96,14 +97,25 @@ public:
         clear();
     }
 
-    void clear(void)
+    /// <summary>
+    /// Sets the first and last pointers in the list to null.
+    /// </summary>
+    void clear()
     {
         first = last = nullptr;
     }
 
-    void push_back(void* v)
+
+    /// <summary>
+    /// Appends an element to the back of the list.
+    /// </summary>
+    /// <param name="pointer">
+    /// Needs to be a block of memory that
+    /// starts with the Link signature.
+    /// </param>
+    void pushBack(void* pointer)
     {
-        Link* link = (Link*)v;
+        Link* link = (Link*)pointer;
         if (!link)
             return;
         link->prev = last;
@@ -116,9 +128,17 @@ public:
         last = link;
     }
 
-    bool erase(void* vp)
+    /// <summary>
+    /// Disconnects the supplied pointer form the list. 
+    /// </summary>
+    /// <param name="pointer">
+    /// Needs to be a block of memory that
+    /// starts with the Link signature.
+    /// </param>
+    /// <returns>True on success otherwise false.</returns>
+    bool erase(void* pointer)
     {
-        Link* link = (Link*)vp;
+        Link* link = (Link*)pointer;
         if (!link)
             return false;
 
@@ -132,11 +152,6 @@ public:
             first = link->next;
         return true;
     }
-
-    bool remove(void* vp)
-    {
-        return erase(vp);
-    }
 };
 
 /// <summary>
@@ -145,7 +160,7 @@ public:
 typedef skFixedString<12> ftHeader;
 
 /// <summary>
-/// ftByteInteger is a utility union to split a 64 bit integer into smaller bytes.
+/// ftByteInteger is a utility union to split a 64-bit integer into smaller bytes.
 /// </summary>
 union ftByteInteger
 {
@@ -156,7 +171,7 @@ union ftByteInteger
 };
 
 /// <summary>
-/// ftByteInteger32 is a utility union to split a 32 bit integer into smaller bytes.
+/// ftByteInteger32 is a utility union to split a 32-bit integer into smaller bytes.
 /// </summary>
 union ftByteInteger32
 {
@@ -185,24 +200,24 @@ namespace ftFlags
     enum FileMagic
     {
         /// <summary>
-        /// Indicates that the file was saved on a big endian platform.
+        /// This indicates that the file was saved on a big-endian platform.
         /// </summary>
         FM_BIG_ENDIAN = 0x56,
         /// <summary>
-        /// Indicates that the file was saved on a little endian platform.
+        /// This indicates that the file was saved on a little-endian platform.
         /// </summary>
         FM_LITTLE_ENDIAN = 0x76,
         /// <summary>
-        /// Indicates that the file was saved on a 32bit platform.
+        /// This indicates that the file was saved on a 32-bit platform.
         /// </summary>
         FM_32_BIT = 0x5F,
         /// <summary>
-        /// Indicates that the file was saved on a 64bit platform.
+        /// This indicates that the file was saved on a 64-bit platform.
         /// </summary>
         FM_64_BIT = 0x2D,
 
         /// <summary>
-        /// Offset to the end of the file's header.
+        /// Is the offset to the end of the file's header.
         /// </summary>
         HEADER_OFFSET = 0x0C,
     };
@@ -305,9 +320,10 @@ namespace ftFlags
         RS_BAD_ALLOC,
         RS_MIS_ALIGNED,
 
-        /// This should always be zero
-        /// until < 0 tests are removed
-        /// and replaced with != FS_OK
+
+        // This should always be zero
+        // until < 0 tests are removed
+        // and replaced with != FS_OK
         FS_OK,
     };
 

@@ -99,7 +99,7 @@ public:
     /// </summary>
     /// <param name="tableSource">The compiled memory table.</param>
     /// <param name="tableLength">The length of the supplied memory.</param>
-    /// <param name="headerFlags">The ftFlags::FileMagic flags that were extracted from the file header.</param>
+    /// <param name="headerFlags">Are the ftFlags::FileMagic flags that were extracted from the file header.</param>
     /// <param name="fileFlags">A copy of the logging flags that are set in ftFile::setFileFlags.</param>
     /// <returns>One of the status codes that are found in ftFlags::FileStatus.</returns>
     int read(const void*   tableSource,
@@ -112,8 +112,8 @@ public:
     /// </summary>
     /// <param name="type">A hashed version of the data type name.</param>
     /// <returns>
-    /// The data types index into the type table if it is
-    /// found otherwise returns SK_NPOS32.
+    /// The data types index into the type table, if it is
+    /// found, otherwise returns SK_NPOS32.
     /// </returns>
     SKuint32 findTypeId(const ftCharHashKey& type);
 
@@ -146,9 +146,9 @@ public:
 
 
     /// <summary>
-    /// Does a hash table lookup for the supplied key
+    /// Performs a hash table lookup for the supplied key
     /// </summary>
-    /// <param name="key">Should be the structures defined name.</param>
+    /// <param name="key">Should be the structure's defined name.</param>
     /// <returns>
     /// If found, an instance of the structure that is stored by
     /// the supplied name otherwise returns null.
@@ -223,7 +223,7 @@ public:
     }
 
     /// <summary>
-    /// Returns a structure record at the supplied index or null of the index is out of bounds.
+    /// Returns a record of a structure at the supplied index or null if the index is out of bounds.
     /// </summary>
     FTtype* getStructAt(SKuint32 idx) const
     {
@@ -234,7 +234,7 @@ public:
 
     /// <summary>
     /// Returns the offset in the type table that defines where atomic types stop
-    /// and user defined structures begin.
+    /// and user-defined structures begin.
     /// </summary>
     SKuint16 getFirstStructType() const
     {
@@ -310,7 +310,7 @@ private:
 
     int buildStruct(SKuint16*& structure, SKuint16 current, int headerFlags, int fileFlags);
 
-    int isValidTypeName(const SKuint16& type, const SKuint16& name, int fileFlags) const;
+    int isValidTypeName(const SKuint16& type, const SKuint16& name, int flags) const;
 
     void putMember(FTtype        owningStructureType,
                    ftName*       owningStructureName,

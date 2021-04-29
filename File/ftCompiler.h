@@ -49,10 +49,14 @@ public:
     /// <summary>
     /// Parses the supplied memory buffer.
     /// </summary>
-    /// <param name="path">A path name for the memory buffer. Used to track a list of needed include files.</param>
+    /// <param name="path">
+    /// A pathname for the memory buffer.
+    /// It is used to track a list of needed include files that will be included
+    /// in the validation source file.
+    /// </param>
     /// <param name="data">The memory that should be read.</param>
     /// <param name="len">The size in bytes of the supplied memory.</param>
-    /// <returns>Negative one on an error, otherwise returns last token id that was read.</returns>
+    /// <returns>Negative one on an error otherwise returns last token id that was read.</returns>
     int parse(const char* path, const char* data, SKsize len);
 
     /// <summary>
@@ -103,7 +107,7 @@ private:
                                        ftBuildStruct& buildStruct,
                                        ftBuildMember& member,
                                        bool           forceArray,
-                                       bool           isId);
+                                       bool           isIdentifier);
 
     void errorUnknown(int& token, ftToken& tokenPtr);
 

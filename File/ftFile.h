@@ -141,8 +141,8 @@ public:
 
     /// <summary>
     /// Returns a linked list of all chunks that
-    /// have been extracted from the file.<
-    /// /summary>
+    /// have been extracted from the file.
+    /// </summary>
     MemoryChunks& getChunks()
     {
         return m_chunks;
@@ -238,7 +238,7 @@ protected:
     virtual SKsize getTableSize() = 0;
 
     /// <summary>
-    /// This is a notification callback which allows derived classes
+    /// This is a notification callback that allows derived classes
     /// a chance to handle a chunk further. This method is invoked after
     /// each successful chunk read.
     /// </summary>
@@ -247,7 +247,7 @@ protected:
     /// <param name="chunk">Is the chunk that was read from the file for the reconstructed memory.</param>
     /// <returns>
     /// This method should return one of the status codes found in ftFlags::FileStatus.
-    /// A return code of FS_OK lets this class know that it should keep reading.
+    /// A return code of FS_OK signals to this class that it should keep reading.
     /// Any other code will force an exit.
     /// </returns>
     virtual int notifyDataRead(void* pointer, SKsize sizeInBytes, const ftChunk& chunk) = 0;
@@ -288,11 +288,11 @@ private:
                         SKsize    len,
                         void*     writeData) const;
 
-    void handleChunk(skStream*      stream,
-                     void*          block,
-                     SKsize         allocLen,
-                     const ftChunk& chunk,
-                     int&           status);
+    void handleChunk(
+        void*          block,
+        SKsize         allocLen,
+        const ftChunk& chunk,
+        int&           status);
 
     void insertChunk(const ftPointerHashKey& phk,
                      ftMemoryChunk*&         chunk,

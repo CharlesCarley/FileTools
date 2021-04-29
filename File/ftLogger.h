@@ -132,7 +132,7 @@ namespace ftLogger
     extern void log(const ftType& type, FTtype spacing);
 
     /// <summary>
-    /// Logs the chunk as well as a side by side log of the file and memory structures.
+    /// Logs the chunk as well as a side-by-side log of the file and memory structures.
     /// </summary>
     extern void logDiagnosticsCastHeader(const ftChunk& chunk,
                                          ftStruct*      fileStruct,
@@ -145,7 +145,7 @@ namespace ftLogger
                                                ftMember* sourceMember);
 
     /// <summary>
-    /// Logs the chunk header as well as a hex dump of the chunks data.
+    /// Logs the chunk header as well as a hex dump of the chunk's data.
     /// </summary>
     extern void logReadChunk(const ftChunk& chunk,
                              const void*    block,
@@ -153,7 +153,7 @@ namespace ftLogger
 
     /// <summary>
     /// Prints a message stating that the chunk has been skipped.
-    /// Logs the chunk header as well as a hex dump of the chunks data.
+    /// Then logs the chunk header as well as a hex dump of the chunk's data.
     /// </summary>
     extern void logSkipChunk(const ftChunk& chunk,
                              ftStruct*      fileStruct,

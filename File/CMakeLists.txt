@@ -51,7 +51,6 @@ configure_file(
 
 set(File_SRC
     ftAtomic.cpp
-    ftTableBuilder.cpp
     ftChunk.cpp
     ftCompiler.cpp
     ftEndianUtils.cpp
@@ -69,7 +68,6 @@ set(File_SRC
 
 set(File_HDR
     ftAtomic.h
-    ftTableBuilder.h
     ftChunk.h
     ftCompiler.h
     ftConfig.h

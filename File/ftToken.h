@@ -26,7 +26,7 @@
 
 /// <summary>
 /// ftKeywordTable is a lookup table for common c/c++
-/// keywords and builtin data types. 
+/// keywords and built-in data types. 
 /// </summary>
 struct ftKeywordTable
 {

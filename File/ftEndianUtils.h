@@ -40,7 +40,7 @@ namespace ftEndianUtils
     const SKsize MaxSwapSpace = 8;
 
     /// <summary>
-    /// Returns the current platforms byte order.
+    /// Returns the current platform's byte order.
     /// </summary>
     extern ftEndian getEndian();
 
@@ -56,65 +56,65 @@ namespace ftEndianUtils
     extern bool isEndian(const ftEndian& endian);
 
     /// <summary>
-    /// Swaps the supplied 16bit unsigned integer.
+    /// Swaps the supplied 16-bit unsigned integer.
     /// </summary>
-    /// <param name="in">The input integer that should be swapped.</param>
+    /// <param name="in">Is the input integer that should be swapped.</param>
     /// <returns>A swapped copy of the input.</returns>
     extern SKuint16 swap16(SKuint16 in);
 
     /// <summary>
-    /// Swaps the supplied 32bit unsigned integer.
+    /// Swaps the supplied 32-bit unsigned integer.
     /// </summary>
-    /// <param name="in">The input integer that should be swapped.</param>
+    /// <param name="in">Is the input integer that should be swapped.</param>
     /// <returns>A swapped copy of the input.</returns>
     extern SKuint32 swap32(const SKuint32& in);
 
     /// <summary>
-    /// Swaps the supplied 16bit signed integer.
+    /// Swaps the supplied 16-bit signed integer.
     /// </summary>
-    /// <param name="in">The input integer that should be swapped.</param>
+    /// <param name="in">Is the input integer that should be swapped.</param>
     /// <returns>A swapped copy of the input.</returns>
     extern SKint16 swap16(SKint16 in);
 
     /// <summary>
-    /// Swaps the supplied 32bit signed integer.
+    /// Swaps the supplied 32-bit signed integer.
     /// </summary>
-    /// <param name="in">The input integer that should be swapped.</param>
+    /// <param name="in">Is the input integer that should be swapped.</param>
     /// <returns>A swapped copy of the input.</returns>
     extern SKint32 swap32(const SKint32& in);
 
     /// <summary>
-    /// Swaps the supplied 64bit unsigned integer.
+    /// Swaps the supplied 64-bit unsigned integer.
     /// </summary>
-    /// <param name="in">The input integer that should be swapped.</param>
+    /// <param name="in">Is the input integer that should be swapped.</param>
     /// <returns>A swapped copy of the input.</returns>
     extern SKuint64 swap64(const SKuint64& in);
 
     /// <summary>
-    /// Swaps the supplied 64bit signed integer.
+    /// Swaps the supplied 64-bit signed integer.
     /// </summary>
-    /// <param name="in">The input integer that should be swapped.</param>
+    /// <param name="in">Is the input integer that should be swapped.</param>
     /// <returns>A swapped copy of the input.</returns>
     extern SKint64 swap64(const SKint64& in);
 
     /// <summary>
-    /// Preforms a swap on the supplied array of 16bit unsigned integers.
+    /// Performs a swap on the supplied array of 16-bit unsigned integers.
     /// </summary>
-    /// <param name="sp">The input integer array that should be swapped.</param>
+    /// <param name="sp">Is the array of input integers that should be swapped.</param>
     /// <param name="len">The number of elements in the array.</param>
     extern void swap16(SKuint16* sp, SKsize len);
 
     /// <summary>
-    /// Preforms a swap on the supplied array of 32bit unsigned integers.
+    /// Performs a swap on the supplied array of 32-bit unsigned integers.
     /// </summary>
-    /// <param name="ip">The input integer array that should be swapped.</param>
+    /// <param name="ip">Is the array of input integers that should be swapped.</param>
     /// <param name="len">The number of elements in the array.</param>
     extern void swap32(SKuint32* ip, SKsize len);
 
     /// <summary>
-    /// Preforms a swap on the supplied array of 64bit unsigned integers.
+    /// Performs a swap on the supplied array of 64-bit unsigned integers.
     /// </summary>
-    /// <param name="dp">The input integer array that should be swapped.</param>
+    /// <param name="dp">Is the array of input integers that should be swapped.</param>
     /// <param name="len">The number of elements in the array.</param>
     extern void swap64(SKuint64* dp, SKsize len);
 

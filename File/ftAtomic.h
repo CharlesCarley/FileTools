@@ -33,65 +33,23 @@
 /// </remarks>
 enum ftAtomic
 {
-    /// <summary>
-    /// `char` data type.
-    /// </summary>
     FT_ATOMIC_CHAR,
-    /// <summary>
-    /// 'uchar' data type.
-    /// </summary>
     FT_ATOMIC_UCHAR,
-    /// <summary>
-    /// 'short' data type.
-    /// </summary>
     FT_ATOMIC_SHORT,
-    /// <summary>
-    /// 'ushort' data type.
-    /// </summary>
     FT_ATOMIC_USHORT,
-    /// <summary>
-    /// 'int' data type.
-    /// </summary>
     FT_ATOMIC_INT,
-    /// <summary>
-    /// 'long' data type.
-    /// </summary>
     FT_ATOMIC_LONG,
-    /// <summary>
-    /// 'ulong' data type.
-    /// </summary>
     FT_ATOMIC_ULONG,
-    /// <summary>
-    /// 'float' data type.
-    /// </summary>
     FT_ATOMIC_FLOAT,
-    /// <summary>
-    /// 'double' data type.
-    /// </summary>
     FT_ATOMIC_DOUBLE,
-    /// <summary>
-    /// 'int64_t' data type.
-    /// </summary>
     FT_ATOMIC_INT64_T,
-    /// <summary>
-    /// 'uint64_t' data type.
-    /// </summary>
     FT_ATOMIC_UINT64_T,
-    /// <summary>
-    /// 'scalar_t' varying data type.
-    /// </summary>
     FT_ATOMIC_SCALAR_T,
-    /// <summary>
-    /// 'void' .
-    /// </summary>
     FT_ATOMIC_VOID,
-    /// <summary>
-    /// Max value to indicate an unknown data type.
-    /// </summary>
     FT_ATOMIC_UNKNOWN
 };
-/// <summary>
 
+/// <summary>
 /// ftAtomicType is a structure that is used to manage the default data types.
 /// </summary>
 struct ftAtomicType
@@ -107,12 +65,12 @@ struct ftAtomicType
     SKuint16 size;
 
     /// <summary>
-    /// Enumerated type code of the data type.
+    /// Is an enumerated type code of the data type.
     /// </summary>
     ftAtomic type;
 
     /// <summary>
-    /// Computed hash of the data type.
+    /// The computed hash of the data type.
     /// </summary>
     SKhash hash;
 };
@@ -124,17 +82,17 @@ class ftAtomicUtils
 {
 public:
     /// <summary>
-    /// Preforms a linear search of the builtin types to determine if
-    /// the supplied key matches a predefined builtin type.
+    /// Performs a linear search of the built-in types to
+    /// determine if the provided key is a match.
     /// </summary>
     /// <param name="typeKey">The key to test.</param>
-    /// <returns>The corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN
+    /// <returns>The corresponding ftAtomic enumeration, or FT_ATOMIC_UNKNOWN
     /// if it is not a primitive type defined in this system.
     /// </returns>
     static ftAtomic getPrimitiveType(const SKhash& typeKey);
 
     /// <summary>
-    /// Hashes the supplied type name then calls ftAtomicUtils::getPrimitiveType with the hash result.
+    /// Hashes the supplied type name then calls ftAtomicUtils::getPrimitiveType with the result.
     /// </summary>
     /// <param name="typeName">The name to hash.</param>
     /// <returns>The corresponding ftAtomic enumeration or FT_ATOMIC_UNKNOWN
@@ -150,7 +108,7 @@ public:
     static bool isInteger(const SKhash& typeKey);
 
     /// <summary>
-    /// Test to determine if the supplied key is a floating point data type.
+    /// Test to determine if the supplied key is a floating-point data type.
     /// </summary>
     /// <param name="typeKey">The key to test.</param>
     /// <returns>True if it is a type in the range of [FT_ATOMIC_FLOAT,  FT_ATOMIC_SCALAR_T].</returns>
@@ -205,7 +163,7 @@ public:
                      SKsize   length);
 
     /// <summary>
-    /// Static type table for the builtin atomic types.
+    /// Static type table for the built-in atomic types.
     /// </summary>
     static const ftAtomicType Types[];
 

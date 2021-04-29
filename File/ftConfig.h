@@ -22,22 +22,22 @@
 #ifndef _ftConfig_h_
 #define _ftConfig_h_
 
-/// <summary>Upper limit for the size in bytes of a single member. </summary>
+/// <summary>The upper limit for the size in bytes of a single member. </summary>
 #define FileTools_MaxStructMember  65536
 
-/// <summary>Maximum number of structures that are allowed in a table. </summary>
+/// <summary>The maximum number of structures that are allowed in a table. </summary>
 #define FileTools_MaxTableSize  5000
 
-/// <summary>Maximum length of a character array. </summary>
+/// <summary>The maximum length of a character array. </summary>
 #define FileTools_MaxCharArray 64
 
-/// <summary>Maximum number of members in a struct or class. </summary>
+/// <summary>The maximum number of members in a struct or class. </summary>
 #define FileTools_MaxMember 256
 
 /// <summary>Hash table initial allocation size. </summary>
 #define FileTools_DefaultAllocationSize 1024
 
-/// <summary>Maximum allowed N dimensional array. </summary>
+/// <summary>Maximum allowed N-dimensional array. </summary>
 #define FileTools_MaxArrayDim 3
 
 /// <summary>Write a validation file. </summary>

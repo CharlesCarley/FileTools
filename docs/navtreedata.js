@@ -24,7 +24,7 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "FileTools", "index.html", [
-    [ "FileTools", "a00334.html", null ],
+    [ "FileTools", "a00328.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -51,8 +51,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"a00101.html",
-"a00209.html"
+"a00095.html",
+"a00203.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

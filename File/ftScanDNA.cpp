@@ -32,6 +32,7 @@ using namespace ftEndianUtils;
 ftScanDna::ftScanDna() :
     m_foundBlock(nullptr),
     m_foundLen(0),
+    m_totalLen(0),
     m_headerFlags(0)
 {
 }

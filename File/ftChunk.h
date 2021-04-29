@@ -42,7 +42,7 @@ struct ftChunkScan
 
 /// <summary>
 /// ftChunk32 is a structure that represents
-/// a chunk saved on a 32bit platform.
+/// a chunk saved on a 32-bit platform.
 /// </summary>
 struct ftChunk32
 {
@@ -57,7 +57,7 @@ SK_ASSERTCOMP(ChunkLen32, sizeof(ftChunk32) == 20);
 
 /// <summary>
 /// ftChunk64 is a structure that represents
-/// a chunk saved on a 64bit platform.
+/// a chunk saved on a 64-bit platform.
 /// </summary>
 struct ftChunk64
 {
@@ -71,7 +71,7 @@ SK_ASSERTCOMP(ChunkLen64, sizeof(ftChunk64) == 24);
 
 /// <summary>
 /// ftChunk is a varying size structure that
-/// represent a chunk saved on a 32bit or a 64bit platform.
+/// represents a chunk saved on a 32-bit or a 64-bit platform.
 /// </summary>
 struct ftChunk
 {

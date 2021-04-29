@@ -135,7 +135,7 @@ public:
     /// Computes the type length table and reports any alignment issues.
     /// </summary>
     /// <param name="structBuilders">
-    /// Is a reference to a ftBuildStructArray that will hold the type information
+    /// Is a reference to a ftBuildStructArray that will hold the TYPE information
     /// until it is written.
     /// </param>
     /// <returns>
@@ -158,11 +158,11 @@ public:
     /// </summary>
     /// <param name="type">The name of the type.</param>
     /// <param name="len">The length of the type if it is known.</param>
-    /// <returns>The index of the element in the type array or SK_NPOS16 if the total types exceed 0xFFFF.</returns>
+    /// <returns>The index of the element in the TYPE array or SK_NPOS16 if the total types exceed 0xFFFF.</returns>
     FTtype addType(const ftId& type, const SKuint16& len = 0);
 
     /// <summary>
-    /// Preforms a linear search for the name and if it is not found.
+    /// Performs a linear search for the name and if it is not found.
     /// it is appended to the name array.
     /// </summary>
     /// <param name="lookup">The name to add</param>

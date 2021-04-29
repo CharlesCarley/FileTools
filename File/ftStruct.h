@@ -163,17 +163,14 @@ public:
 
     enum Flag
     {
-        /// <summary>
-        ///
-        /// </summary>
         CAN_LINK = 0,
         /// <summary>
-        /// Flag that indicates that this structure was not found
+        /// This flag indicates that this structure was not found
         /// in either the file or memory table.
         /// </summary>
         MISSING = 0x001,
         /// <summary>
-        /// Flag that indicates a misalignment between loaded and calculated
+        /// This flag indicates a misalignment between loaded and calculated
         /// offsets to member data. If this is reported the loader cannot jump
         /// directly to the member after the first misaligned offset.
         /// Which means that something is corrupted.
@@ -222,7 +219,7 @@ public:
     // String type name
 
     /// <summary>
-    /// Gets the structure's user defined name.
+    /// Gets the structure's user-defined name.
     /// </summary>
     /// <returns>A reference to the character memory in the NAME table for this structure.</returns>
     const char* getName() const;
@@ -235,14 +232,14 @@ public:
     ftMember* getMember(const Members::SizeType& index);
 
     /// <summary>
-    /// Preforms a non recursive binary search for the supplied member.
+    /// Performs a non-recursive binary search for the supplied member.
     /// </summary>
     /// <param name="other">
     /// The corresponding member to find.
     /// </param>
     /// <returns>
     /// Null if other is null, other's search key is not defined, or if other is not found.
-    /// Otherwise it will return the found corresponding member.
+    /// Otherwise, it will return the found corresponding member.
     /// </returns>
     /// <remarks>
     /// This method is meant to be used to find a previously declared member in another table.
@@ -287,7 +284,7 @@ public:
     /// <param name="base">The start address</param>
     /// <param name="idx">The offset to the address.</param>
     /// <param name="max">The maximum offset</param>
-    /// <returns>Null if base is null or if idx is greater than max.</returns>
+    /// <returns>Null if the base parameter is null or if the idx parameter is greater than max.</returns>
     /// <remarks>
     /// This is only used when there are chunks back to back.
     /// It simply offsets to the next chunk.

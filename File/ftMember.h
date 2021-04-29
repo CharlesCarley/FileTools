@@ -70,7 +70,7 @@ public:
     ~ftMember() = default;
 
     /// <summary>
-    /// Returns variable the name of the member.
+    /// Returns the name of the member.
     /// </summary>
     const char* getName() const;
 
@@ -160,8 +160,8 @@ public:
     /// </summary>
     /// <param name="rhs">
     /// The other member to test against.
-    /// Regardless of what 'this' points to (fileMember | memoryMember)
-    /// rhs needs to be in the opposite table.
+    /// Regardless of what 'this' points to (fileMember or memoryMember)
+    /// the rhs parameter needs to be in the opposite table.
     /// </param>
     /// <returns>True if the internal keys match.</returns>
     /// <remarks>
@@ -176,10 +176,10 @@ public:
     bool compare(ftMember* rhs) const;
 
     /// <summary>
-    /// Offsets to this members memory location.
+    /// Offsets to this member's memory location.
     /// </summary>
-    /// <param name="base">Is the memory allocated from the chunk.</param>
-    /// <param name="maxAlloc">Is the amount of memory allocated from The chunk.</param>
+    /// <param name="base">Is the memory that was allocated from the chunk.</param>
+    /// <param name="maxAlloc">Is the amount of memory allocated from the chunk.</param>
     /// <returns>
     /// The start address of this member, or null if the
     /// precomputed offset falls outside the range [0, maxAlloc).
