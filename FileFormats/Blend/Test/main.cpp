@@ -163,16 +163,14 @@ GTEST_TEST(BlendFile, AllZeroed)
     EXPECT_NE(FS_OK, status);
 }
 
-
 GTEST_TEST(BlendFile, ChunkHeadersMaxed)
 {
-    /// This test sets the chunk header's members to their data-type's maximum value. 
+    /// This test sets the chunk header's members to their data-type's maximum value.
     ftBlend fp;
     fp.setFileFlags(LF_DIAGNOSTICS | LF_UNRESOLVED | LF_DO_CHECKS);
     const int status = fp.load(GetFilePathCString("Test_Junked7.blend"));
     EXPECT_NE(FS_OK, status);
 }
-
 
 GTEST_TEST(BlendFile, FileMaxed)
 {
@@ -187,7 +185,7 @@ GTEST_TEST(BlendFile, FileMaxed)
     EXPECT_EQ(FS_DUPLICATE_BLOCK, status);
 }
 
-void BlendFile_TestCommonScene(Scene *sc)
+void BlendFile_TestCommonScene(Scene* sc)
 {
     EXPECT_NE(sc, nullptr);
     EXPECT_NE(sc->master_collection, nullptr);
@@ -253,7 +251,6 @@ void BlendFile_TestCommonScene(Scene *sc)
         EXPECT_EQ(cc->next, nullptr);
     }
 }
-
 
 GTEST_TEST(BlendFile, AssertReflection)
 {

@@ -28,7 +28,7 @@
 #include "ftTypes.h"
 
 /// <summary>
-/// Base class for a file in this system.
+/// ftFile is the base class for a file in this system.
 /// Derived classes should override the table methods and supply them to this class.
 /// </summary>
 class ftFile
@@ -153,7 +153,7 @@ public:
     /// </summary>
     /// <returns>
     /// An integer that contains one or more of the bit flags found in
-    /// ftFlags::LogFlags
+    /// ftFlags::LogFlags.
     /// </returns>
     int getFileFlags() const
     {
@@ -161,10 +161,10 @@ public:
     }
 
     /// <summary>
-    /// Sets the flags that for the file.
+    /// Sets the flags for the file.
     /// </summary>
     /// <param name="flags">The flags value should contain one or more
-    /// of the bit flags found in ftFlags::LogFlags</param>
+    /// of the bit flags found in ftFlags::LogFlags.</param>
     void setFileFlags(const int flags)
     {
         m_fileFlags = flags;

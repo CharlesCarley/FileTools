@@ -26,7 +26,7 @@
 #include "ftTypes.h"
 
 /// <summary>
-/// A basic c/c++ scanner to that is used to extract
+/// ftScanner is a basic c/c++ scanner to that is used to extract
 /// class members.
 /// </summary>
 class ftScanner

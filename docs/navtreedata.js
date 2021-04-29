@@ -24,7 +24,7 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "FileTools", "index.html", [
-    [ "FileTools", "a00338.html", null ],
+    [ "FileTools", "a00334.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -43,8 +43,7 @@ var NAVTREE =
         [ "Variables", "functions_vars.html", null ],
         [ "Typedefs", "functions_type.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
-        [ "Enumerator", "functions_eval.html", null ],
-        [ "Related Functions", "functions_rela.html", null ]
+        [ "Enumerator", "functions_eval.html", null ]
       ] ]
     ] ]
   ] ]
@@ -53,7 +52,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "a00101.html",
-"a00201.html#a11f6d5312d8f38863d6d88c67ffacfda"
+"a00209.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

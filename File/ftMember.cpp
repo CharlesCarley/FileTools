@@ -133,10 +133,6 @@ int ftMember::getArrayElementSize() const
     return m_sizeInBytes / arraySize;
 }
 
-bool ftMember::isValidAtomicType() const
-{
-    return isBuiltinType();
-}
 
 ftAtomic ftMember::getAtomicType()
 {
@@ -181,11 +177,6 @@ bool ftMember::compare(ftMember* rhs) const
     if (!rhs)
         return false;
     return m_searchKey == rhs->m_searchKey;
-}
-
-void* ftMember::getChunk() const
-{
-    return m_parent ? m_parent->m_attached : nullptr;
 }
 
 SKsize* ftMember::jumpToOffset(void* base, SKsize maxAlloc) const

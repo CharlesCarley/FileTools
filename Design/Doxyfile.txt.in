@@ -70,8 +70,8 @@ EXTRACT_LOCAL_METHODS  = YES
 EXTRACT_ANON_NSPACES   = YES
 HIDE_UNDOC_MEMBERS     = YES
 HIDE_UNDOC_CLASSES     = YES
-HIDE_FRIEND_COMPOUNDS  = NO
-HIDE_IN_BODY_DOCS      = NO
+HIDE_FRIEND_COMPOUNDS  = YES
+HIDE_IN_BODY_DOCS      = YES
 INTERNAL_DOCS          = NO
 CASE_SENSE_NAMES       = NO
 HIDE_SCOPE_NAMES       = NO
@@ -130,6 +130,7 @@ EXCLUDE_SYMBOLS        = SK_INLINE \
                          setLink \
                          addRef \
                          getReferences \
+                         ftMaxAllocSize \
                          lock \
                          isLocked \
                          MaxSwapSpace \
@@ -141,7 +142,11 @@ EXCLUDE_SYMBOLS        = SK_INLINE \
                          initializeMemory \
                          logUnresolvedStructure \
                          ftBuildStruct \
-                         ftBuildMember 
+                         ftBuildMember \
+                         ftTableBuilder \
+                         InvalidName \
+                         InvalidType \
+                         ~ftTable()
                          
 EXAMPLE_PATH           = "${CMAKE_CURRENT_SOURCE_DIR}/Source/Images"
 EXAMPLE_PATTERNS       = *.cpp \

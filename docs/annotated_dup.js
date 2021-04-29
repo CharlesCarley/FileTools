@@ -14,7 +14,6 @@ var annotated_dup =
     [ "ftFile", "a00161.html", "a00161" ],
     [ "ftKeywordTable", "a00205.html", "a00205" ],
     [ "ftList", "a00213.html", "a00213" ],
-    [ "ftMaxAllocSize", "a00141.html", "a00141" ],
     [ "ftMember", "a00173.html", "a00173" ],
     [ "ftMemberSearchKey", "a00193.html", "a00193" ],
     [ "ftMemoryChunk", "a00133.html", "a00133" ],
@@ -24,7 +23,6 @@ var annotated_dup =
     [ "ftScanner", "a00181.html", "a00181" ],
     [ "ftStruct", "a00197.html", "a00197" ],
     [ "ftTable", "a00201.html", "a00201" ],
-    [ "ftTableBuilder", "a00153.html", "a00153" ],
     [ "ftToken", "a00209.html", "a00209" ],
     [ "ftType", "a00189.html", "a00189" ]
 ];

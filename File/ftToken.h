@@ -25,7 +25,8 @@
 #include "ftTypes.h"
 
 /// <summary>
-/// Lookup table for common c/c++ keywords and builtin data types.
+/// ftKeywordTable is a lookup table for common c/c++
+/// keywords and builtin data types. 
 /// </summary>
 struct ftKeywordTable
 {
@@ -46,7 +47,7 @@ struct ftKeywordTable
 };
 
 /// <summary>
-/// Is a temporary data storage class to store a c/c++ language semantic.
+/// ftToken is a temporary data storage class to store a c/c++ language semantic.
 /// It is used when extracting member data with ftScanner.
 /// </summary>
 class ftToken

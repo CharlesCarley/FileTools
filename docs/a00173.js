@@ -6,7 +6,6 @@ var a00173 =
     [ "getArrayElementSize", "a00173.html#a50495736af9388fa20680eeefc80e953", null ],
     [ "getArraySize", "a00173.html#aebc730ea8211a2b06275db3ea1d0a930", null ],
     [ "getAtomicType", "a00173.html#a09ee5b8062d9386e420fa20ed477799b", null ],
-    [ "getChunk", "a00173.html#a598ccfb5ae95cb6ce644999452e4c01c", null ],
     [ "getHashedName", "a00173.html#aaabc3c1478823434f0bb28fc72b16004", null ],
     [ "getHashedType", "a00173.html#a5c4597cd20fb31b3c590c7996cd81282", null ],
     [ "getName", "a00173.html#a22cdd2bb725193197058c6ee59bfabdf", null ],
@@ -24,10 +23,7 @@ var a00173 =
     [ "isInteger64", "a00173.html#a71f51169b5128e17e8731509a3cc3d20", null ],
     [ "isPointer", "a00173.html#afb5ef1c4563545b343bd0e7bad399e21", null ],
     [ "isStructure", "a00173.html#a39ce36b8a40cc5406365810da64e4dbd", null ],
-    [ "isValidAtomicType", "a00173.html#a16b6f9ced2e31f47c2d317b4a8a6d9d7", null ],
     [ "jumpToOffset", "a00173.html#aa8d6e17c7c7d156e9c3a48c5ef016f75", null ],
-    [ "setNameIndex", "a00173.html#a1344b620bf8e9e89f9a33a5897dd3b2c", null ],
-    [ "setTypeIndex", "a00173.html#a513efd034b4d085e9b7b37340df85a22", null ],
     [ "ftStruct", "a00173.html#ad83093430dada3e713ce6e5a0f3cefe1", null ],
     [ "ftTable", "a00173.html#a20b597e29bff7708b640aab071994fbf", null ]
 ];

@@ -127,7 +127,8 @@ int ftFile::load(const void* memory, SKsize sizeInBytes)  //, int mode)
 {
     // Fix this, perhaps move zlib to utils
     // if the gzStream ever materializes..
-    // and if there is really every enough use
+    // and if there is really ever enough use for it.
+
     skMemoryStream ms;
     ms.open(memory, sizeInBytes, skStream::READ);  //, mode == PM_COMPRESSED);
 
@@ -141,6 +142,7 @@ int ftFile::load(const void* memory, SKsize sizeInBytes)  //, int mode)
         }
         return FS_FAILED;
     }
+
     return parseStreamImpl(&ms);
 }
 
@@ -153,7 +155,7 @@ int ftFile::parseHeader(skStream* stream)
     stream->read(hp, HEADER_OFFSET);
     m_header.resize(HEADER_OFFSET);
 
-    if (!ftCharNEq(hp, m_headerId, 7))
+    if (skChar::equalsn(hp, m_headerId, 7) != 0)
         return FS_INV_HEADER_STR;
 
     SKbyte* magic = hp + 7;
@@ -287,7 +289,6 @@ int ftFile::parseStreamImpl(skStream* stream)
         }
         else if (chunk.code != ftIdNames::ENDB && chunk.code != ftIdNames::DNA1)
         {
-
             if ((int)chunk.length > 0 && chunk.length < m_fileSizeInBytes)
             {
                 void* curPtr = malloc(chunk.length);
@@ -437,7 +438,7 @@ int ftFile::allocateMBlock(const ftPointerHashKey& phk, ftMemoryChunk* bin, cons
     if (totSize > 0 && totSize < m_fileSizeInBytes)
     {
         bin->memoryBlockLen = totSize;
-        bin->memoryBlock    = malloc(totSize) ;
+        bin->memoryBlock    = malloc(totSize);
         if (!bin->memoryBlock)
             status = FS_BAD_ALLOC;
         else
@@ -647,7 +648,6 @@ int ftFile::rebuildStructures()
             status = notifyDataRead(node->memoryBlock, node->memoryBlockLen, node->chunk);
         }
     }
-   
 
     return status;
 }
@@ -1139,12 +1139,13 @@ int ftFile::save(const char* path, const int mode)
     // happens in the  derived classes.
     serializeData(fs);
 
-    ftChunk ch;
-    ch.code     = ftIdNames::DNA1;
-    ch.length   = (SKuint32)getTableSize();
-    ch.count    = 1;
-    ch.address  = 0;  // cannot be looked back up
-    ch.structId = 0;
+    ftChunk ch = {
+        ftIdNames::DNA1,
+        (SKuint32)getTableSize(),
+        0,
+        0,
+        1,
+    };
     fs->write(&ch, ftChunkUtils::BlockSize);
     fs->write(getTables(), ch.length);
 
@@ -1220,7 +1221,7 @@ void ftFile::serializeChunk(skStream*      stream,
 {
     if (isValidWriteData(writeData, len))
     {
-        ftChunk ch;
+        ftChunk ch{};
         ch.code     = code;
         ch.length   = (SKuint32)len;
         ch.count    = nr;

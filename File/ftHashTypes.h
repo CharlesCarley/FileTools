@@ -26,7 +26,7 @@
 #include "ftConfig.h"
 
 /// <summary>
-/// Utility class to store a cached char hashed key.
+/// ftCharHashKey is a utility class to store a cached char hashed key.
 /// </summary>
 class ftCharHashKey
 {
@@ -137,7 +137,7 @@ public:
 };
 
 /// <summary>
-/// Utility class to store a cached void pointer.
+/// ftPointerHashKey is a utility class to store a cached void pointer.
 /// </summary>
 class ftPointerHashKey
 {

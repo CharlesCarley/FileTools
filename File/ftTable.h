@@ -29,6 +29,9 @@
 #include "ftStruct.h"
 #include "ftTypes.h"
 
+/// <summary>
+/// Grouping of common type codes.
+/// </summary>
 namespace ftIdNames
 {
     const char FT_SDNA[5] = {'S', 'D', 'N', 'A', '\0'};
@@ -47,171 +50,211 @@ namespace ftIdNames
 }  // namespace ftIdNames
 
 /// <summary>
-/// Class for handling the structure table.
+/// ftTable is the main class for handling the structure tables.
 /// </summary>
 class ftTable
 {
 public:
     /// <summary>
-    ///
+    /// Definition for the NAME table.
     /// </summary>
-    typedef ftName* Names;  // < FT_MAX_TABLE
+    typedef ftName* Names;
 
     /// <summary>
-    ///
+    /// Definition for the TYPE table.
     /// </summary>
-    typedef ftType* Types;  // < FT_MAX_TABLE
+    typedef ftType* Types;
 
     /// <summary>
-    ///
+    /// Definition for the TLEN table.
     /// </summary>
-    typedef FTtype* TypeLengths;  // < FT_MAX_TABLE
+    typedef FTtype* TypeLengths;
 
     /// <summary>
-    ///
+    /// Definition for the STRC table.
     /// </summary>
-    typedef FTtype** StructurePointers;  // < FT_MAX_TABLE * FT_MAX_MEMBERS;
+    typedef FTtype** StructurePointers;
 
-    /// <summary>
-    ///
-    /// </summary>
     typedef skArray<SKsize> NameHash;
 
-    /// <summary>
-    ///
-    /// </summary>
-    typedef skArray<ftStruct*> StructureArray;
-
-    /// <summary>
-    ///
-    /// </summary>
+    typedef skArray<ftStruct*>                 StructureArray;
     typedef skHashTable<ftCharHashKey, ftType> TypeFinder;
 
     static const ftName InvalidName;
     static const ftType InvalidType;
 
 public:
-    ftTable(SKuint8 pointerLength);
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    /// <param name="pointerLength">
+    /// Should be the sizeof(void*) from the perspective of the table.
+    /// </param>
+    explicit ftTable(SKuint8 pointerLength);
+
     ~ftTable();
 
+    /// <summary>
+    /// Rebuilds the table memory.
+    /// </summary>
+    /// <param name="tableSource">The compiled memory table.</param>
+    /// <param name="tableLength">The length of the supplied memory.</param>
+    /// <param name="headerFlags">The ftFlags::FileMagic flags that were extracted from the file header.</param>
+    /// <param name="fileFlags">A copy of the logging flags that are set in ftFile::setFileFlags.</param>
+    /// <returns>One of the status codes that are found in ftFlags::FileStatus.</returns>
     int read(const void*   tableSource,
              const SKsize& tableLength,
              int           headerFlags,
              int           fileFlags);
 
     /// <summary>
-    ///
+    /// Searches for a named data type in the TYPE table.
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
+    /// <param name="type">A hashed version of the data type name.</param>
+    /// <returns>
+    /// The data types index into the type table if it is
+    /// found otherwise returns SK_NPOS32.
+    /// </returns>
     SKuint32 findTypeId(const ftCharHashKey& type);
 
-    ftCharHashKey getStructHashByType(const SKuint16& type) const;
 
-    const ftName& getStructNameByIdx(const SKuint16& idx) const;
-    SKhash        getTypeHash(const SKuint16& type) const;
-    bool          isPointer(const SKuint16& name) const;
-
+    /// <summary>
+    /// Returns an array of ftStruct types.
+    /// </summary>
     const StructureArray& getStructureArray() const
     {
         return m_structures;
     }
 
+    /// <summary>
+    /// Returns an array Iterator for ftStruct types.
+    /// </summary>
     StructureArray::Iterator getStructIterator()
     {
         return m_structures.iterator();
     }
 
-    // Access to the size of a pointer when it was saved in the table.
-    // This is cheating a bit here, it depends on the correct flag
-    // being set when loaded it's not actually being computed.
+    /// <summary>
+    /// Returns the size of a pointer from the perspective of the table. 
+    /// </summary>
     SKuint8 getSizeofPointer() const
     {
+         // FIXME: It depends on the correct flag being set when loaded it's not
+         // actually being computed, so this needs fixed.
         return m_ptrLength;
     }
 
-    bool isValidType(const SKuint32& typeIdx) const
-    {
-        return typeIdx < m_strcCount && typeIdx < m_structures.size();
-    }
 
-    ftStruct* findStructByName(const ftCharHashKey& kvp);
-    ftStruct* findStructByType(const SKint32& type);
-    SKuint32  findStructIdByType(const SKuint16& type) const;
+    /// <summary>
+    /// Does a hash table lookup for the supplied key
+    /// </summary>
+    /// <param name="key">Should be the structures defined name.</param>
+    /// <returns>
+    /// If found, an instance of the structure that is stored by
+    /// the supplied name otherwise returns null.
+    /// </returns>
+    ftStruct* findStructByName(const ftCharHashKey& key);
 
+    /// <summary>
+    /// Attempts to find the structure at the supplied index.
+    /// </summary>
+    /// <param name="typeIdx">If the type index is known in advance then
+    /// this method directly accesses the structure array at the supplied index.
+    /// </param>
+    /// <returns>
+    /// The structure at the supplied index or null
+    /// if the supplied index is out of bounds.
+    /// </returns>
+    ftStruct* findStructByType(const SKint32& typeIdx);
+
+
+    /// <summary>
+    /// Returns the total number of names in the NAME table.
+    /// </summary>
     SKuint32 getNumberOfNames() const
     {
         return m_nameCount;
     }
 
-    const ftName& getNameAt(SKuint32 idx) const
+    /// <summary>
+    /// Returns a name record at the supplied index.
+    /// </summary>
+    const ftName& getNameAt(const SKuint32 idx) const
     {
         if (idx < m_nameCount)
             return m_names[idx];
         return InvalidName;
     }
 
-    const char* getStringNameAt(SKuint32 idx) const
-    {
-        if (idx < m_nameCount)
-            return m_names[idx].name;
-        return "";
-    }
-
+    /// <summary>
+    /// Returns the total number of types in the TYPE table.
+    /// </summary>
     SKuint32 getNumberOfTypes() const
     {
         return m_typeCount;
     }
 
-    const ftType& getTypeAt(SKuint32 idx) const
+    /// <summary>
+    /// Returns a type record at the supplied index.
+    /// </summary>
+    const ftType& getTypeAt(const SKuint32 idx) const
     {
         if (idx < m_typeCount)
             return m_types[idx];
         return InvalidType;
     }
 
-    char* getTypeNameAt(SKuint32 idx) const
+    /// <summary>
+    /// Returns a type name at the supplied index or null if the index is out of bounds.
+    /// </summary>
+    char* getTypeNameAt(const SKuint32 idx) const
     {
         if (idx < m_typeCount)
             return m_types[idx].name;
         return nullptr;
     }
 
-    SKuint32 getNumberOfTypeLengths() const
-    {
-        return m_typeCount;
-    }
-
-    const FTtype& getTypeLengthAt(SKuint32 idx) const
-    {
-        if (idx < m_typeCount)
-            return m_tlens[idx];
-        return SK_NPOS16;
-    }
-
+    /// <summary>
+    /// Returns the total number of structures in the STRC table.
+    /// </summary>
     SKuint32 getNumberOfStructs() const
     {
         return m_strcCount;
     }
 
+    /// <summary>
+    /// Returns a structure record at the supplied index or null of the index is out of bounds.
+    /// </summary>
     FTtype* getStructAt(SKuint32 idx) const
     {
         if (idx < m_strcCount)
             return m_strcs[idx];
-        return 0;
+        return nullptr;
     }
 
+    /// <summary>
+    /// Returns the offset in the type table that defines where atomic types stop
+    /// and user defined structures begin.
+    /// </summary>
     SKuint16 getFirstStructType() const
     {
         return m_firstStruct;
     }
 
-    bool testDuplicateKeys() const;
 
+    /// <summary>
+    /// Returns a const reference to the TYPE table.
+    /// </summary>
     const Types& getTypes() const
     {
         return m_types;
     }
+
+    /// <summary>
+    /// Checks the validity of the computed hashed names.
+    /// </summary>
+    /// <returns>True if they are unique.</returns>
+    bool testDuplicateKeys() const;
 
 private:
     friend class ftStruct;
@@ -219,17 +262,16 @@ private:
 
     Names             m_names;
     Types             m_types;
-    TypeLengths       m_tlens;
+    TypeLengths       m_sizes;
     StructurePointers m_strcs;
-
-    NameHash       m_hashedNames;
-    SKuint16       m_nameCount;
-    SKuint16       m_typeCount;
-    SKuint16       m_strcCount;
-    SKuint16       m_firstStruct;
-    StructureArray m_structures;
-    SKuint8        m_ptrLength;
-    TypeFinder     m_typeFinder;
+    NameHash          m_hashedNames;
+    SKuint16          m_nameCount;
+    SKuint16          m_typeCount;
+    SKuint16          m_strcCount;
+    SKuint16          m_firstStruct;
+    StructureArray    m_structures;
+    SKuint8           m_ptrLength;
+    TypeFinder        m_typeFinder;
 
     static int readTableHeader(
         ftMemoryStream& stream,

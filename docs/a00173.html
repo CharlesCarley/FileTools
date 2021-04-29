@@ -56,80 +56,89 @@ $(document).ready(function(){initNavTree('a00173.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#friends">Friends</a> &#124;
 <a href="a00170.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">ftMember Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="a00173.html" title="ftMember is a utility class to access member data from the ftStruct class. ">ftMember</a> is a utility class to access member data from the <a class="el" href="a00197.html" title="ftStruct is a class that is used to store information about a c/c++ class or struct. ">ftStruct</a> class. </p>
+</div>
 <p><code>#include &lt;ftMember.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a31e37167ae292e6a767e483d8ace19ea"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a31e37167ae292e6a767e483d8ace19ea">ftMember</a> (<a class="el" href="a00197.html">ftStruct</a> *owner)</td></tr>
+<tr class="memdesc:a31e37167ae292e6a767e483d8ace19ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor  <a href="#a31e37167ae292e6a767e483d8ace19ea">More...</a><br /></td></tr>
 <tr class="separator:a31e37167ae292e6a767e483d8ace19ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a002dad7bad024e150d9128dab18b1b67"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a002dad7bad024e150d9128dab18b1b67">~ftMember</a> ()=default</td></tr>
 <tr class="separator:a002dad7bad024e150d9128dab18b1b67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22cdd2bb725193197058c6ee59bfabdf"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a22cdd2bb725193197058c6ee59bfabdf">getName</a> () const</td></tr>
+<tr class="memdesc:a22cdd2bb725193197058c6ee59bfabdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns variable the name of the member.  <a href="#a22cdd2bb725193197058c6ee59bfabdf">More...</a><br /></td></tr>
 <tr class="separator:a22cdd2bb725193197058c6ee59bfabdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9274741ebc5dc3cbcccddf76815c2da"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#aa9274741ebc5dc3cbcccddf76815c2da">getType</a> () const</td></tr>
+<tr class="memdesc:aa9274741ebc5dc3cbcccddf76815c2da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the data type name of the member.  <a href="#aa9274741ebc5dc3cbcccddf76815c2da">More...</a><br /></td></tr>
 <tr class="separator:aa9274741ebc5dc3cbcccddf76815c2da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1344b620bf8e9e89f9a33a5897dd3b2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a1344b620bf8e9e89f9a33a5897dd3b2c">setNameIndex</a> (const SKuint16 &amp;idx)</td></tr>
-<tr class="separator:a1344b620bf8e9e89f9a33a5897dd3b2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a513efd034b4d085e9b7b37340df85a22"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a513efd034b4d085e9b7b37340df85a22">setTypeIndex</a> (const SKuint16 &amp;idx)</td></tr>
-<tr class="separator:a513efd034b4d085e9b7b37340df85a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7debf42dedd01007ba867db71d79f9d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a7debf42dedd01007ba867db71d79f9d7">isBuiltinType</a> () const</td></tr>
+<tr class="memdesc:a7debf42dedd01007ba867db71d79f9d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the data type of this member is a primitive type or a structure.  <a href="#a7debf42dedd01007ba867db71d79f9d7">More...</a><br /></td></tr>
 <tr class="separator:a7debf42dedd01007ba867db71d79f9d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39ce36b8a40cc5406365810da64e4dbd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a39ce36b8a40cc5406365810da64e4dbd">isStructure</a> () const</td></tr>
+<tr class="memdesc:a39ce36b8a40cc5406365810da64e4dbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if the data type of this member is a structure.  <a href="#a39ce36b8a40cc5406365810da64e4dbd">More...</a><br /></td></tr>
 <tr class="separator:a39ce36b8a40cc5406365810da64e4dbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb5ef1c4563545b343bd0e7bad399e21"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#afb5ef1c4563545b343bd0e7bad399e21">isPointer</a> () const</td></tr>
+<tr class="memdesc:afb5ef1c4563545b343bd0e7bad399e21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if this type is a pointer to a memory location.  <a href="#afb5ef1c4563545b343bd0e7bad399e21">More...</a><br /></td></tr>
 <tr class="separator:afb5ef1c4563545b343bd0e7bad399e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8e7b01e7b61a3a92d678aaffedaa285"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#ac8e7b01e7b61a3a92d678aaffedaa285">isArray</a> () const</td></tr>
+<tr class="memdesc:ac8e7b01e7b61a3a92d678aaffedaa285"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to determine if this type has more than one subscript.  <a href="#ac8e7b01e7b61a3a92d678aaffedaa285">More...</a><br /></td></tr>
 <tr class="separator:ac8e7b01e7b61a3a92d678aaffedaa285"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33fd42ddfb9d3fed6bbb5c207a663404"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a33fd42ddfb9d3fed6bbb5c207a663404">isCharacter</a> ()</td></tr>
+<tr class="memdesc:a33fd42ddfb9d3fed6bbb5c207a663404"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this type is defined as 'char' or 'uchar'.  <a href="#a33fd42ddfb9d3fed6bbb5c207a663404">More...</a><br /></td></tr>
 <tr class="separator:a33fd42ddfb9d3fed6bbb5c207a663404"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28bbef319c962841da418095269bdba0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a28bbef319c962841da418095269bdba0">isCharacterArray</a> ()</td></tr>
+<tr class="memdesc:a28bbef319c962841da418095269bdba0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this member is defined as a character and has an array subscript.  <a href="#a28bbef319c962841da418095269bdba0">More...</a><br /></td></tr>
+<tr class="separator:a28bbef319c962841da418095269bdba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1c3807db660022b78ef4edb349c9473"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#ac1c3807db660022b78ef4edb349c9473">isInteger16</a> ()</td></tr>
+<tr class="memdesc:ac1c3807db660022b78ef4edb349c9473"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this type is defined as 'short' or 'ushort'.  <a href="#ac1c3807db660022b78ef4edb349c9473">More...</a><br /></td></tr>
 <tr class="separator:ac1c3807db660022b78ef4edb349c9473"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24d31ddc7b75ac03feceeb0dd9135840"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a24d31ddc7b75ac03feceeb0dd9135840">isInteger32</a> ()</td></tr>
+<tr class="memdesc:a24d31ddc7b75ac03feceeb0dd9135840"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this type is defined as 'int' or 'uint'.  <a href="#a24d31ddc7b75ac03feceeb0dd9135840">More...</a><br /></td></tr>
 <tr class="separator:a24d31ddc7b75ac03feceeb0dd9135840"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71f51169b5128e17e8731509a3cc3d20"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a71f51169b5128e17e8731509a3cc3d20">isInteger64</a> ()</td></tr>
+<tr class="memdesc:a71f51169b5128e17e8731509a3cc3d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this type is defined as 'int64_t' or 'uint64_t'.  <a href="#a71f51169b5128e17e8731509a3cc3d20">More...</a><br /></td></tr>
 <tr class="separator:a71f51169b5128e17e8731509a3cc3d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebc730ea8211a2b06275db3ea1d0a930"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#aebc730ea8211a2b06275db3ea1d0a930">getArraySize</a> () const</td></tr>
+<tr class="memdesc:aebc730ea8211a2b06275db3ea1d0a930"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the total size of the array or 1 if the type is not defined as an array.  <a href="#aebc730ea8211a2b06275db3ea1d0a930">More...</a><br /></td></tr>
 <tr class="separator:aebc730ea8211a2b06275db3ea1d0a930"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7cd32117f592c7aeb3ad0614ed130b6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#aa7cd32117f592c7aeb3ad0614ed130b6">getPointerCount</a> () const</td></tr>
+<tr class="memdesc:aa7cd32117f592c7aeb3ad0614ed130b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the total number asterisks that are attached to the name.  <a href="#aa7cd32117f592c7aeb3ad0614ed130b6">More...</a><br /></td></tr>
 <tr class="separator:aa7cd32117f592c7aeb3ad0614ed130b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50495736af9388fa20680eeefc80e953"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a50495736af9388fa20680eeefc80e953">getArrayElementSize</a> () const</td></tr>
+<tr class="memdesc:a50495736af9388fa20680eeefc80e953"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the underlying data type length.  <a href="#a50495736af9388fa20680eeefc80e953">More...</a><br /></td></tr>
 <tr class="separator:a50495736af9388fa20680eeefc80e953"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09ee5b8062d9386e420fa20ed477799b"><td class="memItemLeft" align="right" valign="top">ftAtomic&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a09ee5b8062d9386e420fa20ed477799b">getAtomicType</a> ()</td></tr>
+<tr class="memdesc:a09ee5b8062d9386e420fa20ed477799b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the underlying enumeration for this type.  <a href="#a09ee5b8062d9386e420fa20ed477799b">More...</a><br /></td></tr>
 <tr class="separator:a09ee5b8062d9386e420fa20ed477799b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f144c7bd7ca6a559616670d0f5e9bf5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a4f144c7bd7ca6a559616670d0f5e9bf5">compare</a> (<a class="el" href="a00173.html">ftMember</a> *rhs) const</td></tr>
+<tr class="memdesc:a4f144c7bd7ca6a559616670d0f5e9bf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to test semi-equal members so that an offset to the correct member in both file and memory buffers can be matched.  <a href="#a4f144c7bd7ca6a559616670d0f5e9bf5">More...</a><br /></td></tr>
 <tr class="separator:a4f144c7bd7ca6a559616670d0f5e9bf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8d6e17c7c7d156e9c3a48c5ef016f75"><td class="memItemLeft" align="right" valign="top">SKsize *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#aa8d6e17c7c7d156e9c3a48c5ef016f75">jumpToOffset</a> (void *base, SKsize maxAlloc) const</td></tr>
+<tr class="memdesc:aa8d6e17c7c7d156e9c3a48c5ef016f75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Offsets to this members memory location.  <a href="#aa8d6e17c7c7d156e9c3a48c5ef016f75">More...</a><br /></td></tr>
 <tr class="separator:aa8d6e17c7c7d156e9c3a48c5ef016f75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a598ccfb5ae95cb6ce644999452e4c01c"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a598ccfb5ae95cb6ce644999452e4c01c">getChunk</a> () const</td></tr>
-<tr class="separator:a598ccfb5ae95cb6ce644999452e4c01c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16b6f9ced2e31f47c2d317b4a8a6d9d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a16b6f9ced2e31f47c2d317b4a8a6d9d7">isValidAtomicType</a> () const</td></tr>
-<tr class="separator:a16b6f9ced2e31f47c2d317b4a8a6d9d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28bbef319c962841da418095269bdba0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a28bbef319c962841da418095269bdba0">isCharacterArray</a> ()</td></tr>
-<tr class="separator:a28bbef319c962841da418095269bdba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a6e1f6ec865c0fdc459f88e0457d9b5"><td class="memItemLeft" align="right" valign="top">SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a3a6e1f6ec865c0fdc459f88e0457d9b5">getSizeInBytes</a> () const</td></tr>
+<tr class="memdesc:a3a6e1f6ec865c0fdc459f88e0457d9b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size in bytes for this member.  <a href="#a3a6e1f6ec865c0fdc459f88e0457d9b5">More...</a><br /></td></tr>
 <tr class="separator:a3a6e1f6ec865c0fdc459f88e0457d9b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cb45ca38dd4ed24f08c16bcee3f3f4f"><td class="memItemLeft" align="right" valign="top">SKsize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a6cb45ca38dd4ed24f08c16bcee3f3f4f">getOffset</a> () const</td></tr>
+<tr class="memdesc:a6cb45ca38dd4ed24f08c16bcee3f3f4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the direct offset to this member from the start address of the parent structure.  <a href="#a6cb45ca38dd4ed24f08c16bcee3f3f4f">More...</a><br /></td></tr>
 <tr class="separator:a6cb45ca38dd4ed24f08c16bcee3f3f4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c4597cd20fb31b3c590c7996cd81282"><td class="memItemLeft" align="right" valign="top">const SKhash &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a5c4597cd20fb31b3c590c7996cd81282">getHashedType</a> () const</td></tr>
+<tr class="memdesc:a5c4597cd20fb31b3c590c7996cd81282"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the data type name as a hash code.  <a href="#a5c4597cd20fb31b3c590c7996cd81282">More...</a><br /></td></tr>
 <tr class="separator:a5c4597cd20fb31b3c590c7996cd81282"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaabc3c1478823434f0bb28fc72b16004"><td class="memItemLeft" align="right" valign="top">const SKhash &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#aaabc3c1478823434f0bb28fc72b16004">getHashedName</a> () const</td></tr>
+<tr class="memdesc:aaabc3c1478823434f0bb28fc72b16004"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the member name as a hash code.  <a href="#aaabc3c1478823434f0bb28fc72b16004">More...</a><br /></td></tr>
 <tr class="separator:aaabc3c1478823434f0bb28fc72b16004"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cf68240e74dae777164078b1a2307a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00197.html">ftStruct</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a8cf68240e74dae777164078b1a2307a9">getParent</a> () const</td></tr>
+<tr class="memdesc:a8cf68240e74dae777164078b1a2307a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the structure that this member belongs to.  <a href="#a8cf68240e74dae777164078b1a2307a9">More...</a><br /></td></tr>
 <tr class="separator:a8cf68240e74dae777164078b1a2307a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:a20b597e29bff7708b640aab071994fbf"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#a20b597e29bff7708b640aab071994fbf">ftTable</a></td></tr>
-<tr class="separator:a20b597e29bff7708b640aab071994fbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad83093430dada3e713ce6e5a0f3cefe1"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00173.html#ad83093430dada3e713ce6e5a0f3cefe1">ftStruct</a></td></tr>
-<tr class="separator:ad83093430dada3e713ce6e5a0f3cefe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a31e37167ae292e6a767e483d8ace19ea"></a>
@@ -137,6 +146,9 @@ Friends</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">ftMember::ftMember </td>
@@ -146,7 +158,20 @@ Friends</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p>Default constructor </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">owner</td><td>A handle to the parent structure.</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -192,6 +217,17 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Used to test semi-equal members so that an offset to the correct member in both file and memory buffers can be matched. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rhs</td><td>The other member to test against. Regardless of what 'this' points to (fileMember | memoryMember) rhs needs to be in the opposite table. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the internal keys match.</dd></dl>
+<p>The data may change over time: </p>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> foo;    =&gt; <span class="keywordtype">short</span> foo;</div><div class="line"><span class="keywordtype">int</span> bar[3]; =&gt; <span class="keywordtype">int</span> bar[8];</div></div><!-- fragment --><p>Ideally this is meant to weed out those subtle changes. In the current state, this is not 100 percent. </p>
+
 </div>
 </div>
 <a id="a50495736af9388fa20680eeefc80e953"></a>
@@ -208,6 +244,8 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns the underlying data type length. </p>
 
 </div>
 </div>
@@ -226,6 +264,8 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Returns the total size of the array or 1 if the type is not defined as an array. </p>
+
 </div>
 </div>
 <a id="a09ee5b8062d9386e420fa20ed477799b"></a>
@@ -243,22 +283,8 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a598ccfb5ae95cb6ce644999452e4c01c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a598ccfb5ae95cb6ce644999452e4c01c">&#9670;&nbsp;</a></span>getChunk()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void * ftMember::getChunk </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Returns the underlying enumeration for this type. </p>
+<dl class="section return"><dt>Returns</dt><dd>If this member is a primitive type then the return code will be less than FT_ATOMIC_UNKNOWN otherwise, it will be FT_ATOMIC_UNKNOWN </dd></dl>
 
 </div>
 </div>
@@ -285,6 +311,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns the member name as a hash code. </p>
+
 </div>
 </div>
 <a id="a5c4597cd20fb31b3c590c7996cd81282"></a>
@@ -310,6 +338,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns the data type name as a hash code. </p>
+
 </div>
 </div>
 <a id="a22cdd2bb725193197058c6ee59bfabdf"></a>
@@ -326,6 +356,8 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns variable the name of the member. </p>
 
 </div>
 </div>
@@ -352,6 +384,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns the direct offset to this member from the start address of the parent structure. </p>
+
 </div>
 </div>
 <a id="a8cf68240e74dae777164078b1a2307a9"></a>
@@ -377,6 +411,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns the structure that this member belongs to. </p>
+
 </div>
 </div>
 <a id="aa7cd32117f592c7aeb3ad0614ed130b6"></a>
@@ -393,6 +429,8 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns the total number asterisks that are attached to the name. </p>
 
 </div>
 </div>
@@ -419,6 +457,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns the size in bytes for this member. </p>
+
 </div>
 </div>
 <a id="aa9274741ebc5dc3cbcccddf76815c2da"></a>
@@ -435,6 +475,8 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns the data type name of the member. </p>
 
 </div>
 </div>
@@ -453,6 +495,8 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Test to determine if this type has more than one subscript. </p>
+
 </div>
 </div>
 <a id="a7debf42dedd01007ba867db71d79f9d7"></a>
@@ -470,6 +514,8 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Test to determine if the data type of this member is a primitive type or a structure. </p>
+
 </div>
 </div>
 <a id="a33fd42ddfb9d3fed6bbb5c207a663404"></a>
@@ -486,6 +532,8 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns true if this type is defined as 'char' or 'uchar'. </p>
 
 </div>
 </div>
@@ -512,6 +560,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns true if this member is defined as a character and has an array subscript. </p>
+
 </div>
 </div>
 <a id="ac1c3807db660022b78ef4edb349c9473"></a>
@@ -528,6 +578,8 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns true if this type is defined as 'short' or 'ushort'. </p>
 
 </div>
 </div>
@@ -546,6 +598,8 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Returns true if this type is defined as 'int' or 'uint'. </p>
+
 </div>
 </div>
 <a id="a71f51169b5128e17e8731509a3cc3d20"></a>
@@ -562,6 +616,8 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns true if this type is defined as 'int64_t' or 'uint64_t'. </p>
 
 </div>
 </div>
@@ -580,6 +636,8 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Test to determine if this type is a pointer to a memory location. </p>
+
 </div>
 </div>
 <a id="a39ce36b8a40cc5406365810da64e4dbd"></a>
@@ -597,22 +655,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a16b6f9ced2e31f47c2d317b4a8a6d9d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16b6f9ced2e31f47c2d317b4a8a6d9d7">&#9670;&nbsp;</a></span>isValidAtomicType()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool ftMember::isValidAtomicType </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Test to determine if the data type of this member is a structure. </p>
 
 </div>
 </div>
@@ -642,86 +685,15 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a1344b620bf8e9e89f9a33a5897dd3b2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1344b620bf8e9e89f9a33a5897dd3b2c">&#9670;&nbsp;</a></span>setNameIndex()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftMember::setNameIndex </td>
-          <td>(</td>
-          <td class="paramtype">const SKuint16 &amp;&#160;</td>
-          <td class="paramname"><em>idx</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a513efd034b4d085e9b7b37340df85a22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a513efd034b4d085e9b7b37340df85a22">&#9670;&nbsp;</a></span>setTypeIndex()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ftMember::setTypeIndex </td>
-          <td>(</td>
-          <td class="paramtype">const SKuint16 &amp;&#160;</td>
-          <td class="paramname"><em>idx</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="ad83093430dada3e713ce6e5a0f3cefe1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad83093430dada3e713ce6e5a0f3cefe1">&#9670;&nbsp;</a></span>ftStruct</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="a00197.html">ftStruct</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a20b597e29bff7708b640aab071994fbf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20b597e29bff7708b640aab071994fbf">&#9670;&nbsp;</a></span>ftTable</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="a00201.html">ftTable</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Offsets to this members memory location. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base</td><td>Is the memory allocated from the chunk.</td></tr>
+    <tr><td class="paramname">maxAlloc</td><td>Is the amount of memory allocated from The chunk.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The start address of this member, or null if the precomputed offset falls outside the range [0, maxAlloc). </dd></dl>
 
 </div>
 </div>

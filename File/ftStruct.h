@@ -31,7 +31,7 @@ class ftStruct;
 class ftMember;
 
 /// <summary>
-/// Structure to hold information about a c/c++ member.
+/// ftName is a structure to hold information about a c/c++ member.
 /// </summary>
 /// <remarks>
 /// The name is defined with the following semantics:
@@ -92,7 +92,7 @@ struct ftName
 };
 
 /// <summary>
-/// Structure that is used to store information about a c/c++ type.
+/// ftType is a structure that is used to store information about a c/c++ type.
 /// </summary>
 struct ftType
 {
@@ -130,8 +130,12 @@ struct ftType
 };
 
 /// <summary>
-/// Type name hash to member search key.
+/// ftMemberSearchKey is a paired type name hash to ftMember search key.
 /// </summary>
+/// <remarks>
+/// It is used with the ftStruct::MemberLookup binary search tree to speed up
+/// searching for differences between file and memory members.
+/// </remarks>
 struct ftMemberSearchKey
 {
     SKhash    hash;
@@ -149,7 +153,7 @@ inline bool operator==(const ftMemberSearchKey& a, const ftMemberSearchKey& b)
 }
 
 /// <summary>
-/// Class that is used to store information about a c/c++ class or struct.
+/// ftStruct is a class that is used to store information about a c/c++ class or struct.
 /// </summary>
 class ftStruct final
 {
@@ -197,7 +201,6 @@ private:
 
     SKuint16     m_type;
     SKhash       m_hashedType;
-    void*        m_attached;
     SKint32      m_sizeInBytes;
     SKint32      m_refs, m_lock;
     SKint32      m_structureId;

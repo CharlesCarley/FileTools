@@ -37,7 +37,7 @@ const ftType ftTable::InvalidType = {};
 ftTable::ftTable(const SKuint8 pointerLength) :
     m_names(nullptr),
     m_types(nullptr),
-    m_tlens(nullptr),
+    m_sizes(nullptr),
     m_strcs(nullptr),
     m_nameCount(0),
     m_typeCount(0),
@@ -52,21 +52,9 @@ ftTable::~ftTable()
     clearTables();
 }
 
-bool ftTable::isPointer(const SKuint16& name) const
+ftStruct* ftTable::findStructByName(const ftCharHashKey& key)
 {
-    return getNameAt(name).pointerCount > 0;
-}
-
-ftCharHashKey ftTable::getStructHashByType(const SKuint16& type) const
-{
-    if (type < m_typeCount)
-        return ftCharHashKey(m_types[type].name);
-    return ftCharHashKey();
-}
-
-ftStruct* ftTable::findStructByName(const ftCharHashKey& kvp)
-{
-    const SKuint32 i = findTypeId(kvp);
+    const SKuint32 i = findTypeId(key);
     if (i != SK_NPOS32)
         return m_structures.at(i);
     return nullptr;
@@ -76,9 +64,8 @@ void ftTable::clearTables(void)
 {
     if (!m_structures.empty())
     {
-        StructureArray::Iterator it = m_structures.iterator();
-        while (it.hasMoreElements())
-            delete it.getNext();
+        for (ftStruct* structure : m_structures)
+            delete structure;
     }
 
     m_typeFinder.clear();
@@ -96,10 +83,10 @@ void ftTable::clearTables(void)
         m_types = nullptr;
     }
 
-    if (m_tlens)
+    if (m_sizes)
     {
-        free(m_tlens);
-        m_tlens = nullptr;
+        free(m_sizes);
+        m_sizes = nullptr;
     }
     if (m_strcs)
     {
@@ -180,8 +167,6 @@ int ftTable::read(const void*   tableSource,
     ftMemoryStream stream;
     stream.open((const SKbyte*)tableSource, tableLength, 0, true);
 
-    // FIXME: there should be no guarantee on the order that the NAME codes come in.
-
     int status = readTableHeader(stream, ftIdNames::FT_SDNA, fileFlags);
     if (status != FS_OK)
     {
@@ -246,19 +231,19 @@ int ftTable::read(const void*   tableSource,
             if (fileFlags & LF_DUMP_SIZE_TABLE)
             {
                 for (SKuint32 i = 0; i < m_typeCount; ++i)
-                    ftLogger::log(m_types[i], m_tlens[i]);
+                    ftLogger::log(m_types[i], m_sizes[i]);
             }
         }
     }
     return status;
 }
 
-int ftTable::readTableHeader(ftMemoryStream& stream, const char* headerName, int fileFlags)
+int ftTable::readTableHeader(ftMemoryStream& stream, const char* headerName, const int fileFlags)
 {
     char cp[5] = {};
     stream.read(cp, 4);
 
-    if (!ftCharNEq(cp, headerName, 4))
+    if (skChar::equalsn(cp, headerName, 4) != 0)
     {
         if (fileFlags != LF_NONE)
             ftLogger::logF("Table is missing the %s code.", headerName);
@@ -314,7 +299,7 @@ int ftTable::readNameTable(ftMemoryStream& stream, int headerFlags, int fileFlag
     return status;
 }
 
-int ftTable::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
+int ftTable::readTypeTable(ftMemoryStream& stream, const int headerFlags, const int fileFlags)
 {
     SKuint32 count  = 0;
     SKuint32 status = readTableHeader(stream, ftIdNames::FT_TYPE, fileFlags);
@@ -355,12 +340,12 @@ int ftTable::readTypeTable(ftMemoryStream& stream, int headerFlags, int fileFlag
     return status;
 }
 
-int ftTable::readSizeTable(ftMemoryStream& stream, int headerFlags, int fileFlags)
+int ftTable::readSizeTable(ftMemoryStream& stream, const int headerFlags, const int fileFlags)
 {
     SKuint32 status = readTableHeader(stream, ftIdNames::FT_TLEN, fileFlags);
     if (status == FS_OK)
     {
-        status = allocateTable((void**)&m_tlens, m_typeCount, sizeof(FTtype), fileFlags);
+        status = allocateTable((void**)&m_sizes, m_typeCount, sizeof(FTtype), fileFlags);
         if (status == FS_OK)
         {
             SKuint16 type;
@@ -370,7 +355,7 @@ int ftTable::readSizeTable(ftMemoryStream& stream, int headerFlags, int fileFlag
                 stream.readInt16(type);
                 if (headerFlags & FH_ENDIAN_SWAP)
                     type = swap16(type);
-                m_tlens[i] = type;
+                m_sizes[i] = type;
             }
 
             if (m_typeCount & 1)
@@ -420,8 +405,7 @@ int ftTable::convertName(ftName& dest, char* cp) const
 
     // All of the names are a reference to the block of data
     // that houses the tables. This is storing the address
-    // of the current name's location in the buffer
-    // of null terminated strings.
+    // of the current name's location in the buffer.
     dest.name      = cp;
     dest.hash      = skHash(dest.name);
     dest.arraySize = 1;
@@ -741,7 +725,7 @@ int ftTable::compile(const int fileFlags)
                 newStruct->m_type        = type;
                 newStruct->m_hashedType  = m_types[type].hash;
                 newStruct->m_structureId = i;
-                newStruct->m_sizeInBytes = m_tlens[type];
+                newStruct->m_sizeInBytes = m_sizes[type];
                 newStruct->m_link        = nullptr;
                 newStruct->m_flag        = ftStruct::CAN_LINK;
                 m_structures.push_back(newStruct);
@@ -827,7 +811,7 @@ void ftTable::compile(FTtype    owningStructureType,
 
             const FTtype   structureType = structure[0];
             const SKuint32 oldOffset     = currentOffset;
-            const SKuint32 origLen       = m_tlens[structure[0]];
+            const SKuint32 origLen       = m_sizes[structure[0]];
 
             const SKuint32 length = structure[1];
             structure += 2;
@@ -938,7 +922,7 @@ void ftTable::putMember(const FTtype   owningStructureType,
         if (m_names[name].pointerCount > 0)
             member->m_sizeInBytes = m_ptrLength * m_names[name].arraySize;
         else
-            member->m_sizeInBytes = m_tlens[type] * m_names[name].arraySize;
+            member->m_sizeInBytes = m_sizes[type] * m_names[name].arraySize;
 
         currentOffset += member->m_sizeInBytes;
 
@@ -990,13 +974,13 @@ void ftTable::hashMember(skString&    name,
     }
 }
 
-ftStruct* ftTable::findStructByType(const SKint32& type)
+ftStruct* ftTable::findStructByType(const SKint32& typeIdx)
 {
     const SKint32 size = (SKint32)m_structures.size();
-    if (type > 0 && type < size && size > 0)
+    if (typeIdx > 0 && typeIdx < size && size > 0)
     {
-        ftStruct* structure = m_structures.at(type);
-        if (type != structure->m_structureId)
+        ftStruct* structure = m_structures.at(typeIdx);
+        if (typeIdx != structure->m_structureId)
             ftLogger::logF("Type mismatch!");
         return structure;
     }
@@ -1009,25 +993,4 @@ SKuint32 ftTable::findTypeId(const ftCharHashKey& type)
     if (pos != m_typeFinder.npos)
         return m_typeFinder.at(pos).id;
     return SK_NPOS32;
-}
-
-SKhash ftTable::getTypeHash(const SKuint16& type) const
-{
-    if (type < m_typeCount)
-        return m_types[type].hash;
-    return SK_NPOS;
-}
-
-SKuint32 ftTable::findStructIdByType(const SKuint16& type) const
-{
-    if (type < m_typeCount)
-        return m_types[type].id;
-    return SK_NPOS32;
-}
-
-const ftName& ftTable::getStructNameByIdx(const SKuint16& idx) const
-{
-    if (idx < m_nameCount)
-        return m_names[idx];
-    return InvalidName;
 }

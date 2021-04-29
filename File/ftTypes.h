@@ -70,7 +70,7 @@ enum ftPointerLen
 };
 
 /// <summary>
-/// Utility list class
+/// ftList is a utility list class
 /// </summary>
 class ftList
 {
@@ -139,18 +139,13 @@ public:
     }
 };
 
-#define ftCharNEq(a, b, n) ((a && b) && !strncmp(a, b, n))
-#define ftCharEq(a, b) ((a && b) && (*a == *b) && !strcmp(a, b))
-#define ftCharEqL(a, b, l) ((a && b) && (*a == *b) && !memcmp(a, b, l))
-#define ftStrLen(a) ::strlen(a)
-
 /// <summary>
-/// Fixed character array for the file header.
+/// ftHeader is a fixed character array for the file header.
 /// </summary>
 typedef skFixedString<12> ftHeader;
 
 /// <summary>
-/// Utility union to split a 64 bit integer into smaller bytes.
+/// ftByteInteger is a utility union to split a 64 bit integer into smaller bytes.
 /// </summary>
 union ftByteInteger
 {
@@ -160,6 +155,9 @@ union ftByteInteger
     SKuint8  int8[8];
 };
 
+/// <summary>
+/// ftByteInteger32 is a utility union to split a 32 bit integer into smaller bytes.
+/// </summary>
 union ftByteInteger32
 {
     SKuint32 int32;
@@ -269,7 +267,6 @@ namespace ftFlags
         /// A general fail status.
         /// </summary>
         FS_FAILED,
-
 
         /// <summary>
         /// If this status is returned, it means that every byte in the code
