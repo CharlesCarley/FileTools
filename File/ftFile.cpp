@@ -358,7 +358,9 @@ void ftFile::handleChunk(void*          block,
 
             ftStruct* memoryStruct = nullptr;
 
-            if (bin->chunk.code == ftIdNames::DATA && bin->chunk.structId <= m_file->getFirstStructType())
+            if ((bin->chunk.code == ftIdNames::DATA ||
+                 bin->chunk.code == ftIdNames::REND) &&
+                bin->chunk.structId <= m_file->getFirstStructType())
             {
                 status = allocateMBlock(phk,
                                         bin,

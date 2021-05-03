@@ -42,7 +42,7 @@ set(BlendFile_LIBRARY
 list(APPEND CMAKE_MODULE_PATH  ${FileTools_SOURCE_DIR}/Tools/Compiler/CMake)
 
 include(TableCompiler)
-add_table(bfBlender Blender.h)
+add_table(bfBlender Blender/292.h)
 
 
 
@@ -61,11 +61,7 @@ add_library(
 )
 
 target_link_libraries(${TargetName} ${BlendFile_TOOLS_LIBRARY})
-message("${TargetGroup}")
-
-
 
 if (TargetFolders)
     set_target_properties(${TargetName} PROPERTIES FOLDER "${TargetGroup}")
 endif()
-
