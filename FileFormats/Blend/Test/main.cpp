@@ -59,6 +59,20 @@ GTEST_TEST(BlendFile, ExtractScene)
     EXPECT_TRUE(strcmp(fp.m_fg->curscene->id.name, "SCScene") == 0);
 }
 
+
+
+GTEST_TEST(BlendFile, LargeChunkCount)
+{
+    ftBlend fp;
+    // This file has a chunk.count larger than 256, which was the
+    // old value for it. ( Currently the max for chunk.count is 65536 )
+    // Limiting the count is only a precaution to prevent possible
+    // invalid values from creeping in.  
+    const int status = fp.load("Test1.blend");
+    EXPECT_EQ(FS_OK, status);
+}
+
+
 GTEST_TEST(BlendFile, MissingDNA1)
 {
     ftBlend fp;

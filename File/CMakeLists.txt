@@ -38,11 +38,11 @@ set(FileTools_MaxStructMember       65536 CACHE STRING "Upper limit for the size
 set(FileTools_MaxTableSize          5000 CACHE STRING "Maximum number of structures in a table.")
 set(FileTools_MaxCharArray          64 CACHE STRING "Maximum character array length.")
 set(FileTools_MaxMember             256 CACHE STRING "Maximum number of members in a struct or class.")
-set(FileTools_DefaultAllocationSize 1024 CACHE STRING "Table default allocation size.")
+set(FileTools_DefaultAllocationSize 2048 CACHE STRING "Table default allocation size.")
 set(FileTools_MaxArrayDim           3 CACHE STRING "Maximum N dimensional array.")
 set(FileTools_TypeLengthValidate    TRUE CACHE BOOL "Write a validation file.")
 set(FileTools_SwapEndian            FALSE CACHE BOOL "Swap from native endian when writing the table. (Test only)")
-set(FileTools_MaxChunkArrayLength   256 CACHE STRING "Defines the maximum number of data blocks that can be assigned to a chunk.")
+set(FileTools_MaxChunkArrayLength   65536 CACHE STRING "Defines the maximum number of data blocks that can be assigned to a chunk.")
 
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/ftConfig.h.in

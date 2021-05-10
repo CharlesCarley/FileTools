@@ -35,7 +35,7 @@
 #define FileTools_MaxMember 256
 
 /// <summary>Hash table initial allocation size. </summary>
-#define FileTools_DefaultAllocationSize 1024
+#define FileTools_DefaultAllocationSize 2048
 
 /// <summary>Maximum allowed N-dimensional array. </summary>
 #define FileTools_MaxArrayDim 3
@@ -53,7 +53,7 @@
 /// This clamps the ftChunk::count field.
 /// If this limit is reached, the status FS_INV_LENGTH will be returned.
 /// </summary>
-#define FileTools_MaxChunkArrayLength  256
+#define FileTools_MaxChunkArrayLength  65536
 
 
 #endif  //_ftConfig_h_

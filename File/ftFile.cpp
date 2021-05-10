@@ -276,7 +276,7 @@ int ftFile::parseStreamImpl(skStream* stream)
            chunk.code != ftIdNames::DNA1 &&
            status == FS_OK && !stream->eof())
     {
-        if (ftChunkUtils::read(&chunk, stream, m_headerFlags, m_fileSizeInBytes) <= 0)
+        if ((int)ftChunkUtils::read(&chunk, stream, m_headerFlags, m_fileSizeInBytes) <= 0)
             status = FS_INV_READ;
         else if (chunk.code == ftIdNames::TEST)
         {
@@ -382,14 +382,7 @@ void ftFile::handleChunk(void*          block,
                             if (m_fileFlags & LF_MIS_REPORTED)
                                 ftLogger::logMisCalculatedChunk(chunk, expected, bin->fileBlockLen);
 
-                            if (chunk.code == ftIdNames::REND && expected == 16 && bin->fileBlockLen == 72)
-                            {
-                                // It seems that the REND chunk contains more
-                                // than it should...
-                                // allow it for now
-                            }
-                            else
-                                status = FS_INV_LENGTH;
+                            status = FS_INV_LENGTH;
                         }
                     }
                 }
